@@ -5,10 +5,15 @@
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a deterministic parity automaton. For $w \in \Sigma^* \cup \Sigma^\omega$ and $q \in Q$, we define $\lambda_\mathcal{A}(q, w) \in \mathbb{N}^{1+|w|}$ as follows: Let $q_0 q_1 \dots \in Q^{1+|w|}$ be the unique run of $\mathcal{A}$ on $w$. Then $\lambda_\mathcal{A}(q, w)(n) = c(q_n)$.
 	
-	We call two states $p, q \in Q$ \textbf{priority almost-equivalent}, if for all words $\alpha \in \Sigma^\omega$, $\lambda_\mathcal{A}(p, \alpha)$ and $\lambda_\mathcal{A}(q, \alpha)$ differ in only finitely many positions.
+	Two DPAs $\mathcal{A}$ and $\mathcal{B}$ are \textbf{priority almost-equivalent}, if for all words $\alpha \in \Sigma^\omega$, $\lambda_\mathcal{A}(q_0^\mathcal{A}, \alpha)$ and $\lambda_\mathcal{B}(q_0^\mathcal{B}, \alpha)$ differ in only finitely many positions.
+	We call two states $p, q \in Q$ of $\mathcal{A}$ priority almost-equivalent, $\mathcal{A}_q$ and $\mathcal{A}_p$ are priority almost-equivalent, where $\mathcal{A}_q$ behaves like $\mathcal{A}$ with initial state $q$.
 	
 	We define the \textbf{reachability order} $\preceq_\text{reach}^\mathcal{A} \subseteq Q \times Q$ as $p \preceq_\text{reach}^\mathcal{A} q$ iff $q$ is reachable from $p$. (\enquote{$p$ is closer to $q_0$ than $q$}). Note that $p \preceq_\text{reach}^\mathcal{A} q$ and $q \preceq_\text{reach}^\mathcal{A} p$ together mean that $p$ and $q$ reside in the same SCC.
 \end{defn}
+
+\begin{lem}
+	Priority almost-equivalence is a congruence relation.
+\end{lem}
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $\sim \subseteq Q \times Q$ be a congruence relation on $\mathcal{A}$. We define the \textbf{Schewe} automaton $\mathcal{S}$ as follows:
@@ -41,11 +46,23 @@ We focus on a specialized version of the Schewe automaton. Let $\sim$ be the pri
 \end{proof}
 
 \begin{lem}
-	Let $\mathcal{A}$ a DPA and $\mathcal{S}_m$ be the specialized Schewe automaton. Then $\mathcal{A}$ and $\mathcal{S}_m$ are priority almost-equivalent.
+	Let $\mathcal{A}$ a DPA, $\sim$ the relation of priority almost-equivalence, and $\mathcal{S}$ be the Schewe automaton. Then $\mathcal{A}$ and $\mathcal{S}$ are priority almost-equivalent.
 \end{lem}
 
 \begin{proof}
-	Let $\mathcal{A} = (Q,$
+	Let $\mathcal{A} = (Q, \Sigma, q_0^\mathcal{A}, \delta_\mathcal{A}, c)$ and $\mathcal{S} = (Q, \Sigma, q_0^\mathcal{S}, \delta_\mathcal{S}, c)$. Let $\alpha \in \Sigma^\omega$. We have to show that $\lambda_\mathcal{A}(q_0^\mathcal{A}, \alpha)$ and $\lambda_\mathcal{S}(q_0^\mathcal{S}, \alpha)$ differ in only finitely many positions. For that, let $a_0 a_1 \cdots \in Q^\omega$ and $s_0 s_1 \cdots \in Q^\omega$ be the respective runs of the automata on $\alpha$.
+	
+	\paragraph{Claim 1} For all $i$, $\mathcal{A}_{a_i}$ and $\mathcal{A}_{s_i}$ are priority almost-equivalent. ($a_i \sim s_i$)
+	
+	For $i = 0$, we have $a_i = q_0^\mathcal{A}$ and $s_i = q_0^\mathcal{S} = r_{[q_0^\mathcal{A}]_\sim}$. By definition, $s_i = r_{[q_0^\mathcal{A}]_\sim} \in [q_0^\mathcal{A}]_\sim$, so $s_i \sim a_i$.
+	
+	Using induction, assume $a_i \sim s_i$ and consider $i+1$. We seperate two cases: If $\delta_\mathcal{S}(s_i, \alpha(i)) = \delta_\mathcal{A}(s_i, \alpha(i))$, then $a_{i+1} \sim s_{i+1}$ follows from $\sim$ being a congruence relation.
+	
+	For the second case, consider $\delta_\mathcal{S}(s_i, \alpha(i)) = r_{[p]_\sim}$, where $\delta_\mathcal{A}(s_i, \alpha(i)) = p$. Again we have $s_{i+1} = r_{[p]_\sim} \in [p]_\sim$, so $s_{i+1} \sim p$. Since $\sim$ is a congruence relation, we have $\delta_\mathcal{A}(a_i, \alpha(i)) \sim \delta_\mathcal{A}(s_i, \alpha(i))$, which is $a_{i+1} \sim p$ and therefore $a_{i+1} \sim s_{i+1}$ by transitivity.
+	
+	\paragraph{Claim 2} $\lambda_\mathcal{A}(q_0^\mathcal{A}, \alpha)$ and $\lambda_\mathcal{S}(q_0^\mathcal{S}, \alpha)$ differ in only finitely many positions.
+	
+	We can see from the definition of $\mathcal{S}$ that the \enquote{new type of transition} is taken only when the target state of $\delta_\mathcal{A}$ is strictly bigger w.r.t. $\preceq_\text{reach}^\mathcal{A}$. Since this is a partial order on $Q$, this means in particular that from some point $k$ onwards, only the transition type $\delta_\mathcal{S}(q, a) = \delta_\mathcal{A}(q, a)$ is taken. Hence, $s_k s_{k+1} \cdots$ is the valid run of $\mathcal{A}_{s_k}$ on some suffix $\beta$ of $\alpha$. If now $\lambda_\mathcal{A}(q_0^\mathcal{A}, \alpha)$ and $\lambda_\mathcal{S}(q_0^\mathcal{S}, \alpha)$ would differ at infinitely many positions, then also $\lambda_\mathcal{A}(a_k, \beta)$ and $\lambda_\mathcal{A}(s_k, \beta)$ would (as these are suffixes of the former). However, we have shown in claim 1 that $\mathcal{A}_{a_k}$ and $\mathcal{A}_{s_k}$ are priority almost-equivalent.
 \end{proof}
 
 \begin{lem}
