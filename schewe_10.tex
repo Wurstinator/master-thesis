@@ -1,0 +1,65 @@
+
+
+
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a deterministic parity automaton. For $w \in \Sigma^* \cup \Sigma^\omega$ and $q \in Q$, we define $\lambda_\mathcal{A}(q, w) \in \mathbb{N}^{1+|w|}$ as follows: Let $q_0 q_1 \dots \in Q^{1+|w|}$ be the unique run of $\mathcal{A}$ on $w$. Then $\lambda_\mathcal{A}(q, w)(n) = c(q_n)$.
+	
+	We call two states $p, q \in Q$ \textbf{priority almost-equivalent}, if for all words $\alpha \in \Sigma^\omega$, $\lambda_\mathcal{A}(p, \alpha)$ and $\lambda_\mathcal{A}(q, \alpha)$ differ in only finitely many positions.
+	
+	We define the \textbf{reachability order} $\preceq_\text{reach}^\mathcal{A} \subseteq Q \times Q$ as $p \preceq_\text{reach}^\mathcal{A} q$ iff $q$ is reachable from $p$. (\enquote{$p$ is closer to $q_0$ than $q$}). Note that $p \preceq_\text{reach}^\mathcal{A} q$ and $q \preceq_\text{reach}^\mathcal{A} p$ together mean that $p$ and $q$ reside in the same SCC.
+\end{defn}
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $\sim \subseteq Q \times Q$ be a congruence relation on $\mathcal{A}$. We define the \textbf{Schewe} automaton $\mathcal{S}$ as follows:
+	
+	For each state $q$, let $[q]_\sim = \{ p \in Q \mid q \sim p \}$ be its equivalence class of $\sim$ and let $\bigslant{Q}{\sim} = \{[q]_\sim \mid q \in Q\}$ be the set of equivalence classes. For each such class $\mathfrak{c}$ we fix a representative $r_\mathfrak{c} \in \mathfrak{c}$ which is $\preceq_\text{reach}^\mathcal{A}$-maximal in its class, meaning that all states in $\mathfrak{c}$ that are reachable from $r_\mathfrak{c}$ are also in its SCC. 
+	
+	The automaton is then almost the same as the original DPA, with only a few modifications. Namely, $\mathcal{S} = (Q, \Sigma, r_{[q_0]_\sim}, \delta_\mathcal{S}, c)$.
+	
+	For each transition $\delta_\mathcal{S}(q, a)$, let $\delta(q, a) = p$. If $q \prec_\text{reach}^\mathcal{A} r_{[p]_\sim}$ (i.e. $q$ is not reachable from the representative of $[p]_\sim$), then $\delta_\mathcal{S}(q, a) = r_{[p]_\sim}$. Otherwise, we keep $\delta_\mathcal{S}(q, a) = p$. In other words, every time a transition moves to a different quotient class, it skips to the representative which lies as \enquote{deep} inside the automaton as possible.
+\end{defn}
+
+\begin{lem}
+	For a given $\mathcal{A}$ and $\sim$, the Schewe automaton $\mathcal{S}$ can be computed in $\mathcal{O}(|\mathcal{A}|)$.
+\end{lem}
+
+\begin{proof}
+	Using e.g. Kosaraju's algorithm \ref{}, the SCCs of $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|)$. %TODO
+\end{proof}
+
+We focus on a specialized version of the Schewe automaton. Let $\sim$ be the priority equivalence and let $\mathcal{S}$ be the according automaton. We define $\mathcal{S}_m$ as the Moore-minimization of $\mathcal{S}$.
+
+\begin{lem}
+	Priority almost-equivalence implies language equivalence.
+\end{lem}
+
+\begin{proof}
+	Let $\mathcal{A} = (Q_\mathcal{A}, \Sigma, q_0^\mathcal{A}, \delta_\mathcal{A}, c_\mathcal{A})$ and $\mathcal{B} = (Q_\mathcal{B}, \Sigma, q_0^\mathcal{B}, \delta_\mathcal{B}, c_\mathcal{B})$ be two DPA that are priority almost-equivalent and assume towards a contradiction that they are not language equivalent. Due to symmetry we can assume that there is a $w \in L(\mathcal{A}) \setminus L(\mathcal{B})$. 
+	
+	Consider $\alpha = \lambda_\mathcal{A}(q_0^\mathcal{A}, w)$ and $\beta = \lambda_\mathcal{B}(q_0^\mathcal{B}, w)$, the priority outputs of the automata on $w$. By choice of $w$, we know that $a := \max \text{Inf}(\alpha)$ is even and $b := \max \text{Inf}(\beta)$ is odd. Without loss of generality, assume $a > b$. That means $a$ is seen only finitely often in $\beta$ but infinitely often in $a$. Hence, $\alpha$ and $\beta$ differ at infinitely many positions where $a$ occurs in $\alpha$. That would mean $w$ is a witness that the two automata are not priority almost-equivalent, contradicting our assumption.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ a DPA and $\mathcal{S}_m$ be the specialized Schewe automaton. Then $\mathcal{A}$ and $\mathcal{S}_m$ are priority almost-equivalent.
+\end{lem}
+
+\begin{proof}
+	Let $\mathcal{A} = (Q,$
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ a DPA and $\mathcal{S}_m = (Q, \Sigma, q_0, \delta, c)$ be the specialized Schewe automaton. If $p, q \in Q$ are almost priority-equivalent, then they lie in the same SCC.
+\end{lem}
+
+\begin{lem}
+	There is no DPA almost priority-equivalent to $\mathcal{A}$ that is smaller than $\mathcal{S}_m$.
+\end{lem}
+
+\begin{theorem}
+	For a given DPA $\mathcal{A}$, a minimal almost priority-equivalent automaton can be computed in $\mathcal{O}$. 
+\end{theorem}
+	
+
+
+

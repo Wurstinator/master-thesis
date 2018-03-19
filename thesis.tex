@@ -1,0 +1,77 @@
+\documentclass{report}
+
+% PACKAGES
+\usepackage[german,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{marvosym}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage[nottoc]{tocbibind}
+\usepackage{environ}
+
+\usepackage{geometry}
+
+% COMMANDS
+\newcommand{\enquote}[1]{``#1''}
+
+% Quotient classes
+\newcommand{\bigslant}[2]{{\raisebox{.2em}{$#1$}\left/\raisebox{-.2em}{$#2$}\right.}}
+
+
+% THEOREM STYLES
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lem}[theorem]{Lemma}
+\newtheorem{appendixlem}{Lemma}[chapter]
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{cor}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}
+\newtheorem{exmp}{Example}[chapter]
+\theoremstyle{remark}
+\newtheorem*{rem}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem{case}{Case}
+
+%FIX HYPERREF
+\AtBeginDocument{\let\textlabel\label}
+
+% REMOVE PROOFS
+\NewEnviron{killcontents}{}
+%\let\proof\killcontents
+%\let\endproof\endkillcontents
+
+
+% DISALLOW LINE BREAKS
+\relpenalty=9999
+\binoppenalty=9999
+
+
+\begin{document}
+
+\include{schewe_10}
+
+\nocite{*}
+%\bibliography{quellen}
+\bibliographystyle{plain}
+
+
+%\clearpage\null\thispagestyle{empty}\newpage
+
+\end{document}
+
+
+
+
+
+
+
+
+
