@@ -25,16 +25,29 @@
 
 
 % THEOREM STYLES
-\theoremstyle{plain}
+\newtheoremstyle{slplain}% name
+  {.6\baselineskip\@plus.2\baselineskip\@minus.2\baselineskip}% Space above
+  {0}% Space below
+  {\slshape}% Body font
+  {}%Indent amount (empty = no indent, \parindent = para indent)
+  {\bfseries}%  Thm head font
+  {.}%       Punctuation after thm head
+  { }%      Space after thm head: " " = normal interword space;
+        %       \newline = linebreak
+  {}%       Thm head spec
+
+\theoremstyle{slplain}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lem}[theorem]{Lemma}
 \newtheorem{appendixlem}{Lemma}[chapter]
 \newtheorem{prop}[theorem]{Proposition}
 \newtheorem{cor}[theorem]{Corollary}
+
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}[section]
 \newtheorem{conj}{Conjecture}
 \newtheorem{exmp}{Example}[chapter]
+
 \theoremstyle{remark}
 \newtheorem*{rem}{Remark}
 \newtheorem*{note}{Note}

@@ -30,7 +30,7 @@
 \end{lem}
 
 \begin{proof}
-	Using e.g. Kosaraju's algorithm \ref{}, the SCCs of $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|)$. %TODO
+	Using e.g. Kosaraju's algorithm \ref{}, the SCCs of $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|)$ if we assume an adjacency list or similar as the underlying data structure. A topological sorting of the states and therefore the SCCs can then be computed in $\mathcal{O}(|\mathcal{A}|)$ again, e.g. by DFS.
 \end{proof}
 
 We focus on a specialized version of the Schewe automaton. Let $\sim$ be the priority equivalence and let $\mathcal{S}$ be the according automaton. We define $\mathcal{S}_m$ as the Moore-minimization of $\mathcal{S}$.
@@ -65,18 +65,65 @@ We focus on a specialized version of the Schewe automaton. Let $\sim$ be the pri
 	We can see from the definition of $\mathcal{S}$ that the \enquote{new type of transition} is taken only when the target state of $\delta_\mathcal{A}$ is strictly bigger w.r.t. $\preceq_\text{reach}^\mathcal{A}$. Since this is a partial order on $Q$, this means in particular that from some point $k$ onwards, only the transition type $\delta_\mathcal{S}(q, a) = \delta_\mathcal{A}(q, a)$ is taken. Hence, $s_k s_{k+1} \cdots$ is the valid run of $\mathcal{A}_{s_k}$ on some suffix $\beta$ of $\alpha$. If now $\lambda_\mathcal{A}(q_0^\mathcal{A}, \alpha)$ and $\lambda_\mathcal{S}(q_0^\mathcal{S}, \alpha)$ would differ at infinitely many positions, then also $\lambda_\mathcal{A}(a_k, \beta)$ and $\lambda_\mathcal{A}(s_k, \beta)$ would (as these are suffixes of the former). However, we have shown in claim 1 that $\mathcal{A}_{a_k}$ and $\mathcal{A}_{s_k}$ are priority almost-equivalent.
 \end{proof}
 
+
 \begin{lem}
-	Let $\mathcal{A}$ a DPA and $\mathcal{S}_m = (Q, \Sigma, q_0, \delta, c)$ be the specialized Schewe automaton. If $p, q \in Q$ are almost priority-equivalent, then they lie in the same SCC.
+	Let $\mathcal{A}$ a DPA, $\sim$ the relation of priority almost-equivalence, and $\mathcal{S}$ be the Schewe automaton. If $p$ and $q$ are priority almost-equivalent and reachable states in $\mathcal{S}$, then they lie in the same SCC.
+\end{lem}
+
+\begin{proof} 
+	Let $\sim$ the relation of priority almost-equivalence.
+	
+	\paragraph{Claim 1} If $p$ and $q$ are reachable in $\mathcal{S}$ and $\mathcal{A}_p$ and $\mathcal{A}_q$ are priority almost-equivalent, then $\mathcal{S}_p$ and $\mathcal{S}_q$ are priority almost-equivalent.
+	
+	Assume towards a contradiction that $p, q$ form a counterexample with $\lambda_\mathcal{S}(p, \alpha)$ and $\lambda_\mathcal{S}(q, \alpha)$ differing at infinitely many positions. Let $\rho_p$, $\rho_q$, $\pi_p$, and $\pi_q$ be the runs of $\mathcal{A}_p$, $\mathcal{A}_q$, $\mathcal{S}_p$, and $\mathcal{S}_q$ on $\alpha$ respectively.	Similar to the proof of \ref{}, we can  %TODO
+	
+	\paragraph{Claim 2} Let $p$ and $q$ be reachable states in $\mathcal{S}$ that are priority almost-equivalent and in $\mathcal{A}$ there is a path $\rho$ from $p$ to $q$. Then $\rho$ is also a valid path in $\mathcal{S}$.
+	
+	Let $\rho = p_0 \cdots p_m$ with $p_0 = p$ and $p_m = q$. Assume towards a contradiction that $k$ is the first position at which this path is not valid in $\mathcal{S}$, i.e. $\delta_\mathcal{S}(p_k, a) \neq p_{k+1}$. That means that the transition was redirected to $\delta_\mathcal{S}(p_k, a) = r_{[p_{k+1}]_\sim}$. Therefore, $r_{[p_k]_\sim} \prec_\text{reach}^\mathcal{A} r_{[p_{k+1}]_\sim}$ by definition of the Schewe automaton. Let $u, v \in \Sigma^*$ with $p_0 \overset{u}{\underset{\mathcal{A}}{\rightarrow}} p_k \overset{a}{\underset{\mathcal{A}}{\rightarrow}} p_{k+1} \overset{v}{\underset{\mathcal{A}}{\rightarrow}} p_m$.
+	
+	We define $\delta^*_\mathcal{A}(p_{k+1}, vu) = s$ and $\delta^*_\mathcal{A}(r_{[p_{k+1}]_\sim}, vu) = t$. Since $\mathcal{A}_{p_{k+1}}$ and $\mathcal{A}_{r_{[p_{k+1}]_\sim}}$ are priority almost-equivalent and $\sim$ is a congruence relation, also $\mathcal{A}_s$ and $\mathcal{A}_t$ are priority almost-equivalent. The former is priority-almost equivalent to $\mathcal{A}_{p_k}$. That means, in $\mathcal{A}$, we have $t \sim s \sim p_k \sim r_{[p_k]_\sim}$.
+	
+	On the other hand we have shown that via $vu$ we can reach $t$ from $r_{[p_{k+1}]_\sim}$, so $r_{[p_{k+1}]_\sim} \preceq_\text{reach}^\mathcal{A} t$ and therefore $r_{[p_k]_\sim} \preceq_\text{reach}^\mathcal{A} t$. This together with the fact that $t \sim r_{[p_k]_\sim}$ contradicts the choice of $r_{[p_k]_\sim}$ as a $\preceq_\text{reach}^\mathcal{A}$-maximal element in its equivalence class. Hence, $k$ cannot exist and $\rho$ is a valid path in $\mathcal{S}$.
+	
+	\paragraph{Claim 3} In the (not-minimized) Schewe automaton $\mathcal{S}$, for all reachable states $q$ we have $q \preceq_\text{reach}^\mathcal{S} r_{[q]_\sim}$.
+	
+	Let $q$ be a reachable state, so there is a run $q_0 \cdots q_m$ in $\mathcal{S}$ on $w$ with $q_m = q$. By definition of the automaton, there is a position $k$ on this run at which a $\sim$-equivalence class $\mathfrak{c}$ is entered with $r_{[q]_\sim} \preceq_\text{reach}^\mathcal{A} r_\mathfrak{c}$. At latest this happens when $[q]_\sim$ is reached for the first time, as then the transition is directed to $r_{[q]_\sim}$ directly. Let $k' \geq k$ be the position in this run at which $[q]_\sim$ is entered for the first time.
+	
+	Let $p_k \cdots p_{k'}$ be the run of $\mathcal{A}$ on $w(k) \cdots w(k'-1)$ with $p_k = q_k$. Using induction we can show that $\mathcal{A}_{p_i}$ and $\mathcal{A}_{q_i}$ are priority almost-equivalent for all $k \leq i \leq k'$. For $i = k$ this is obvious since $p_k = q_k$. Otherwise consider index $i+1$. Note that because $\sim$ is a congruence relation, $\mathcal{A}_{\delta_\mathcal{A}(p_i, w(i))}$ and $\mathcal{A}_{\delta_\mathcal{A}(q_i, w(i))}$ are priority almost-equivalent. The definition of the Schewe automaton sets $\delta_\mathcal{S}(q_i, w(i))$ either to the state $\delta_\mathcal{A}(q_i, w(i))$ or to its representative; in both cases, $\mathcal{A}_{\delta_\mathcal{S}(q_i, w(i))} = \mathcal{A}_{q_{i+1}}$ is priority almost-equivalent to $\mathcal{A}_{\delta_\mathcal{A}(q_i, w(i))}$ and therefore to $\mathcal{A}_{\delta_\mathcal{A}(p_i, w(i))} = \mathcal{A}_{q_i}$.
+	
+	This observation together with claim 1 implies that all $\mathcal{S}_{p_i}$ and $\mathcal{S}_{q_i}$ are priority almost-equivalent as well. In particular, $p_{k'} \sim q$ (in $\mathcal{S}$). 
+	
+
+	\paragraph{Claim 4} If $p$ and $q$ are priority almost-equivalent in $\mathcal{S}$ and reachable, then they lie in the same SCC.
+
+	%TODO
+\end{proof}
+
+\begin{lem}
+	There is no DPA priority almost-equivalent to $\mathcal{A}$ that is smaller than $\mathcal{S}_m$.
 \end{lem}
 
 \begin{lem}
-	There is no DPA almost priority-equivalent to $\mathcal{A}$ that is smaller than $\mathcal{S}_m$.
+	The priority almost-equivalence of a DPA $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|^2)$.
 \end{lem}
 
 \begin{theorem}
-	For a given DPA $\mathcal{A}$, a minimal almost priority-equivalent automaton can be computed in $\mathcal{O}$. 
+	For a given DPA $\mathcal{A}$, a minimal almost priority-equivalent automaton can be computed in $\mathcal{O}(|\mathcal{A}|^2)$. 
 \end{theorem}
 	
+
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. We define the \textbf{Moore-minimization} $\mathcal{B}$ as the parity automaton corresponding to the minimal Moore automaton of $\mathcal{A}$. That means it is the minimal automaton such that $\lambda_\mathcal{A}(\alpha) = \lambda_\mathcal{B}(\alpha)$ for all $\alpha \in \Sigma^\omega$.
+	
+	More specifically, we define the congruence relation $\sim \subseteq Q \times Q$ by $p \sim q$ iff $\forall w \in \Sigma^*: \lambda_\mathcal{A}(p, w) = \lambda_\mathcal{A}(q, w)$. Then $\mathcal{A}'$ is constructed from $\mathcal{A}$ by removing unreachable states (from $q_0$). $\mathcal{B} = (\bigslant{Q}{\sim}, \Sigma, [q_0]_\sim, \delta_\mathcal{B}, c_\mathcal{B})$ is the quotient automaton of $\bigslant{\mathcal{A}'}{\sim}$ with $\delta_\mathcal{B}([q]_\sim, a) = [\delta(q, a)]_\sim$ and $c_\mathcal{B}([q]_\sim) = c(q)$.
+\end{defn}
+
+\begin{lem}
+	For a given DPA $\mathcal{A}$, the Moore-minimization can be computed in $\mathcal{O}$.
+\end{lem}
+
+
 
 
 
