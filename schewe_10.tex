@@ -45,6 +45,109 @@ We focus on a specialized version of the Schewe automaton. Let $\sim$ be the pri
 	Consider $\alpha = \lambda_\mathcal{A}(q_0^\mathcal{A}, w)$ and $\beta = \lambda_\mathcal{B}(q_0^\mathcal{B}, w)$, the priority outputs of the automata on $w$. By choice of $w$, we know that $a := \max \text{Inf}(\alpha)$ is even and $b := \max \text{Inf}(\beta)$ is odd. Without loss of generality, assume $a > b$. That means $a$ is seen only finitely often in $\beta$ but infinitely often in $a$. Hence, $\alpha$ and $\beta$ differ at infinitely many positions where $a$ occurs in $\alpha$. That would mean $w$ is a witness that the two automata are not priority almost-equivalent, contradicting our assumption.
 \end{proof}
 
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and $\sim \subseteq Q \times Q$ a congruence relation. We call $\sim$ a \textbf{finite difference relation} if for all $p, q \in Q$ and all $\alpha \in \Sigma^\omega$, there is a finite prefix $w \sqsubset \alpha$ such that $\delta^*(p, w)$ and $\delta^*(q, w)$ are language equivalent.
+\end{defn}
+
+Examples of finite difference relations include the priority almost-equivalence relation and language equivalence relation.
+
+
+\newpage
+
+\subsection{Structure of the Schewe automaton}
+For this section, we consider the Schewe automaton $\mathcal{S} = (Q, \Sigma, r_{[q_0]_\sim}, \delta_\mathcal{S}, c)$ of a DPA $\mathcal{A} = (Q, \Sigma, q_0, \delta_\mathcal{A}, c)$ with a congruence relation $\sim$.
+
+\begin{lem}
+	Let $p, q \in Q$ such that $p \preceq_\text{reach}^\mathcal{A} q$. Then $r_{[q]_\sim} \not\prec_\text{reach}^\mathcal{A} r_{[p]_\sim}$.
+\end{lem}
+\begin{proof}
+	We have to show that $r_{[q]_\sim}$ and $r_{[p]_\sim}$ lie in the same SCC or are not connected at all. For that, let $r_{[q]_\sim} \preceq_\text{reach}^\mathcal{A} r_{[p]_\sim}$. We will prove that $r_{[p]_\sim} \preceq_\text{reach}^\mathcal{A} r_{[q]_\sim}$ holds as well.
+	
+	Let $w \in \Sigma^*$ with $p \overset{w}{\underset{\mathcal{A}}{\rightarrow}} q$. Since $p \sim r_{[p]_\sim}$ and $\sim$ is a congruence relation, we also have $r_{[p]_\sim} \overset{w}{\underset{\mathcal{A}}{\rightarrow}} q'$ for some $q' \sim q$. Now we find $r_{[q]_\sim} \preceq_\text{reach}^\mathcal{A} r_{[p]_\sim} \preceq_\text{reach}^\mathcal{A} q'$. Since $q' \sim r_{[q]_\sim}$ and the representatives are chosen as $\preceq_\text{reach}^\mathcal{A}$-maximal elements, we have $q' \preceq_\text{reach}^\mathcal{A} r_{[q]_\sim}$ via some word $v$. Hence, $r_{[q]_\sim}$ is reachable from $r_{[p]_\sim}$ via $wv$.
+\end{proof}
+
+\begin{lem}
+	For all $q \in Q$ and $a \in \Sigma$, $\delta_\mathcal{A}(q, a) \sim \delta_\mathcal{S}(q, a)$.
+\end{lem}
+
+\begin{proof}
+	This statement is rather trivial. If $\delta_\mathcal{A}(q, a) = \delta_\mathcal{S}(q, a)$, then it is implied by the reflexivity of $\sim$. Otherwise we have $\delta_\mathcal{S}(q, a) = r_{[\delta_\mathcal{A}(q, a)]_\sim}$ which is equivalent to $\delta_\mathcal{A}(q, a)$ by definition of the representative.
+\end{proof}
+
+
+\begin{lem}
+	Let $\rho \in Q^\omega$ be an infinite run in $\mathcal{S}$ starting at a reachable state. Then $\rho$ has a suffix that is a run in $\mathcal{A}$.
+\end{lem}
+
+\begin{proof}
+	Let $\rho = p_0 \cdots$ be the run and let $r_i = r_{[p_i]_\sim}$ for all $i$. Let $I \subseteq \mathbb{N}$ be the set of positions at which a \enquote{redirected} transition is taken, i.e. $\delta_\mathcal{S}(p_i, \alpha(i)) \neq \delta_\mathcal{A}(p_i, \alpha(i))$.
+	
+	\paragraph{Claim 1} $I$ is finite.
+	
+	In particular, it has as most as many elements as there are equivalence classes in $\sim$. Assume the opposite towards a contradiction. There are positions $i_0, \dots, i_k \in I$ which describe a cycle in the visited equivalence classes. More formally we want the sequence $(i_j)_{0 \leq j \leq k}$ to satisfy:
+	\begin{itemize}
+		\item The indices are strictly growing, i.e. $i_0 < i_1 < \dots < i_k$.
+		\item Between $i_0$ and $i_k$, all transitions not at the given indices are transitions from $\mathcal{A}$ (i.e. not redirected transitions).
+		\item $r_{i_j} \prec_\text{reach}^\mathcal{A} r_{i_j + 1} = p_{i_j + 1}$.
+		\item $p_{i_0 + 1} \sim p_{i_k + 1}$.
+	\end{itemize}
+	
+	Let $\mathfrak{C}$ be the set of equivalence classes which occur in the run between $i_0$ and $i_k$. For each representative $r_{i_j + 1}$, its SCC in $\mathcal{A}$ contains a state in $\mathfrak{c}$ for every $\mathfrak{c} \in \mathfrak{C}$: there are words to reach $r_{i_k + 1}$ from $r_{i_j + 1}$ and to reach $r_{i_j + 1}$ from $r_{i_0 + 1}$. By Lemma \ref{}, we can use these words to find a run in $\mathcal{A}$ starting at $r_{i_j + 1}$, ending in a state in $[p_{i_j + 1}]_\sim$ and visiting all classes $\mathfrak{C}$ inbetween.
+	
+	Now consider an arbitrary redirected transition, e.g. the first one. The definition of the Schewe automaton tells us that $r_{i_0} \prec_\text{reach}^\mathcal{A} r_{i_0 + 1}$. From $r_{i_0 + 1}$ we can find a state $t \sim r_{i_0}$ as we have just shown, so $r_{i_0 + 1} \preceq_\text{reach}^\mathcal{A} t$. However, $r_{i_0}$ is a $\preceq_\text{reach}^\mathcal{A}$-maximal element in its class, so $t \preceq_\text{reach}^\mathcal{A} r_{i_0} \prec_\text{reach}^\mathcal{A} r_{i_0 + 1} \preceq_\text{reach}^\mathcal{A} t$, which is a contradiction.
+	
+	\paragraph{Claim 2} $\rho$ has a suffix that is a run in $\mathcal{A}$.
+	
+	$I$ is finite, so let $k = 1 + \max I$. That means, from position $k$ onwards, we have $\delta_\mathcal{S}(p_i, \alpha(i)) = \delta_\mathcal{A}(p_i, \alpha(i))$ for all $i$. Hence, the suffix $\pi = \rho(k) \rho(k+1) \cdots$ is a run in $\mathcal{A}$ on the word $\alpha(k) \alpha(k+1) \cdots$.
+\end{proof}
+
+
+\begin{lem}
+	Let $R \subseteq Q$ be the states that are reachable in $\mathcal{S}$. If $\sim$ implies language equivalence on $R$ in $\mathcal{A}$, then it is also implies language equivalence in $\mathcal{S}$.
+\end{lem}
+
+\begin{proof}
+	Let $p, q \in R$ be reachable states with $p \sim q$ and let $\alpha \in \Sigma^\omega$ be arbitrary. We show that $\mathcal{S}_p$ accepts $\alpha$ if and only if $\mathcal{S}_q$ accepts $\alpha$.
+	
+	Let $\rho_p$ and $\rho_q$ be the runs of $\mathcal{S}$ on $\alpha$ which start at $p$ and $q$ respectively. By Lemma \ref{}, there are suffixes $\pi_p$ and $\pi_q$ of these runs in $\mathcal{A}$. The \enquote{offset} of a suffix, i.e. the starting point in the original string, can be increased without violating this property. By choosing the greater offset of both runs, we can assume that $\pi_p$ and $\pi_q$ start at the same offset $k$.
+	
+	Because $\sim$ is a congruence relation, $p \sim q$, and Lemma \ref{}, we know that $p' = \pi_p(0) = \rho_p(k) \sim q' = \pi_q(0) = \rho_q(k)$. Let $\beta = \alpha(k) \alpha(k+1) \cdots$. Since $\sim$ implies language equivalence in $\mathcal{A}$, $\mathcal{A}_{p'}$ accepts $\beta$ if and only if $\mathcal{A}_{q'}$ accepts $\beta$. The parity condition is prefix independent, so this is extended to $\mathcal{S}_p$ and $\mathcal{S}_q$ on $\alpha$.
+\end{proof}
+
+
+\begin{lem}
+	Let $p$ and $q$ be reachable states in $\mathcal{S}$ with $p \sim q$. If there is a path in $\mathcal{A}$ from $p$ to $q$, then that same path exists in $\mathcal{S}$.
+\end{lem}
+
+\begin{proof}
+	Let $\rho = p_0 \cdots p_m$ be the path with $p_0 = p$ and $p_m = q$. Assume towards a contradiction that there is a position $k$ at which this path is not valid in $\mathcal{S}$ anymore, i.e. $\delta_\mathcal{S}(p_k, a) \neq p_{k+1}$. Let this $k$ be minimal. We split the word that is used for $\rho$ into parts $u \in \Sigma^*$, $a \in \Sigma$, and $v \in \Sigma^*$ such that $p_0 \overset{u}{\underset{\mathcal{A}}{\rightarrow}} p_k \overset{a}{\underset{\mathcal{A}}{\rightarrow}} p_{k+1} \overset{v}{\underset{\mathcal{A}}{\rightarrow}} p_m$.
+	
+	We consider the states reached by $\mathcal{A}$ if it would use the redirected transition at $k$ and analyze their relation w.r.t. $\sim$. Let $p'_{k+1} = \delta_\mathcal{S}(p_k, a)$ and let $p'_{k+2}, \dots, p'_m$ be the following run of $\mathcal{A}$ on $v$. Then let $s = \delta^*_\mathcal{A}(p_m, u)$ and $s' = \delta^*_\mathcal{A}(p'_m, u)$. As $\sim$ is a congruence relation, $p \sim q$, and Lemma \ref{}, we have $s \sim s'$. With the same argument we also find $s \sim \delta^*_\mathcal{A}(p_0, u) = p_k$, so $s' \sim p_k$.
+	
+	On the other hand, we can analyze reachability between the states. $k$ is a position where the transition is redirected which implies $r_{[p_k]_\sim} \prec_\text{reach}^\mathcal{A} r_{[p_{k+1}]_\sim}$ by definition of the construction. Redirected transitions in $\mathcal{S}$ always lead to representatives of the original target, so $p'_{k+1} = r_{[p_{k+1}]_\sim}$. The definition of $s'$ shows $p'_{k+1} \preceq_\text{reach}^\mathcal{A} s'$. Putting these two statements together we obtain $r_{[p_k]_\sim} \prec_\text{reach}^\mathcal{A} s'$.
+	
+	However, $r_{[p_k]_\sim}$ is a $\preceq_\text{reach}^\mathcal{A}$-maximal element in its class, which implies that $r_{[p_k]_\sim} \not\sim s'$. This stands in contradiction to our previous observation that $p_k \sim s'$.
+\end{proof}
+
+\newpage
+
+\begin{lem}
+	Let $\sim$ imply language equivalence in $\mathcal{A}$. If two states $p$ and $q$ are reachable and not Moore-equivalent in $\mathcal{S}$, then they are in the same SCC.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+
+
+
+
+
+
+
+
 \begin{lem}
 	Let $\mathcal{A}$ a DPA, $\sim$ the relation of priority almost-equivalence, and $\mathcal{S}$ be the Schewe automaton. Then $\mathcal{A}$ and $\mathcal{S}$ are priority almost-equivalent.
 \end{lem}
