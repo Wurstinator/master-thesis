@@ -1,0 +1,3 @@
+[submodule "code/nbautils"]
+	path = code/nbautils
+	url = https://github.com/apirogov/nbautils.git
