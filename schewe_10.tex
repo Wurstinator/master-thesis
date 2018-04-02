@@ -140,16 +140,52 @@ Note that the choice of $\preceq$ and the representatives allow some degree of f
 \end{lem}
 
 \begin{proof}
-	%TODO
+	Let $\mathcal{B}$ be a DPA that is smaller than $\mathcal{S}'$. Our goal is to construct a word on which their priorities differ infinitely often.
+	
+	First of all, $\mathcal{B}$ must have \enquote{the same} $\sim$-equivalence classes as $\mathcal{S}'$, i.e. for all states $p$ in $\mathcal{S}'$, there is a state $q$ in $\mathcal{B}$ s.t. $\mathcal{B}_q$ and $\mathcal{S}'_p$ are priority almost-equivalent. If this would not be the case, there is a $p$ for which no such $q$ exists. As $\mathcal{S}'$ was minimized, $p$ is reachable by some word $w$. Whatever state $q$ is reached in $\mathcal{B}$ via $w$, $\mathcal{B}_q$ and $\mathcal{S}'_p$ are not priority almost-equivalent and there is some witness $\alpha$ for that. Hence, $w \alpha$ is a witness that $\mathcal{B}$ and $\mathcal{S}'$ are not priority almost-equivalent.
+	
+	We define $f$ as a function that maps every $\sim$-equivalence class in $\mathcal{S}'$ to its respective class in $\mathcal{B}$. $\mathcal{B}$ has at least as many $\sim$-equivalence classes but less states than $\mathcal{S}'$, so there is a class $\mathfrak{c}$ in $\mathcal{S}'$ such that $f(\mathfrak{c})$ contains less elements than $\mathfrak{c}$.
+	
+	By Lemma \ref{}, there is a unique SCC $C$ in $\mathcal{S}'$ in which all states in $\mathfrak{c}$ are contained. The same must be true for some SCC $D$ in $\mathcal{B}$ for the states in $f(\mathfrak{c})$. Otherwise we could apply the Schewe automaton construction to $\mathcal{B}$ which does not increase the number of states, is priority almost-equivalent to $\mathcal{B}$, and has this property.
+	
+	$C$ and $D$ must be non-trivial SCCs. If $C$ would be trivial, then $\mathfrak{c}$ would only contain one element and $f(\mathfrak{c})$ would be empty. Hence, one can force multiple visits to a state in $\mathfrak{c}$ in $\mathcal{S}'$. If $D$ would be trivial, this would not be possible and we could again find a seperating witness of the two automata.
+	
+	We claim: There is a state $p \in \mathfrak{c}$ s.t. for all $q \in f(\mathfrak{c})$, there is a word $w_q \in \Sigma^*$ that is a witness for non-Moore equivalence of $\mathcal{B}_q$ and $\mathcal{S}'_r$ and $\mathcal{S}'$ does not leave $C$ when reading $w_q$ from $p$. Assume the opposite, i.e. for all $p \in \mathfrak{c}$, there is a $q_p \in f(\mathfrak{c})$ which does not satisfy said property. 
+	
+	As $|\mathfrak{c}| < |f(\mathfrak{c})|$, there are two states $p_1$ and $p_2$ such that $q_{p_1} = q_{p_2} =: q$. For both $i \in \{1,2\}$ and for each word $w \in \Sigma^*$, we have $\lambda_\mathcal{B}(q, w) = \lambda_{\mathcal{S}'}(p_i, w)$ or $\mathcal{S}'$ leaves the SCC $C$ when reading $w$ from $p_i$. If for both $i$ and all words $w$ the first case would apply, then $p_1$ and $p_2$ would be Moore-equivalent and would have been merged in the minimization process of $\mathcal{S}'$. Hence, there are $i$ (which we assume to be $i=1$ wlog) and $w$ such that $\lambda_\mathcal{B}(q, w) \neq \lambda_{\mathcal{S}'}(p_i, w)$ but $\mathcal{S}'_{p_i}$ leaves $C$ when reading $w$. Let this $w$ be minimal in length.
+	
+	Let $\rho$ and $\pi$ be the runs of $\mathcal{S}'$ from $p_1$ and $p_2$ via $w$. At some position $k$, $\rho$ leaves $C$. By Lemma \ref{lem:schewe:run_growing}, this means that a redirected transition was taken to $\rho(k+1) = r_{[\rho(k+1)]_\sim}$. $\sim$ is a congruence relation and $p_1 \sim p_2$, so $\pi(k+1) \sim \rho(k+1)$. As $p_1 \simeq p_2$ and $p_1 \prec r_{[\rho(k+1)]_\sim}$, we also have $p_2 \prec r_{[\rho(k+1)]_\sim}$ and $\pi(k+1) = \rho(k+1)$. As $w$ was chosen minimal in length, the priorities of the runs are equal everywhere except for $\delta^*_{\mathcal{S}'}(p_1, w)$ and $\delta^*_{\mathcal{S}'}(p_2, w)$. However, the runs converge at $k+1$ which means that they visit the same states from that point on. In particular, $\delta^*_{\mathcal{S}'}(p_1, w) = \delta^*_{\mathcal{S}'}(p_2, w)$.
+	
+	We have thus proven that the described state $p \in \mathfrak{c}$ and the words $w_q \in \Sigma^*$ exist. We can use these to finally construct our witness $\alpha$. We define a sequence $(\alpha_n)_{n \in \mathbb{N}} \in \Sigma^*$ such that on $\alpha_n$, the runs of $\mathcal{S}'$ and $\mathcal{B}$ differ at least $n$ times in priority. Then $\alpha := \bigcup_n \alpha_n$ satisfies our requirements. Furthermore, we make sure that after reading $\alpha_n$, $\mathcal{S}'$ always stops in $p$.
+	
+	Every state in $\mathcal{S}'$ is reachable, so let $\alpha_0$ be a word that reaches $p$ from the initial state. Now assume that $\alpha_n$ was already defined. Let $q = \delta^*_\mathcal{B}(q_0^\mathcal{B}, \alpha_n)$. As $p \in \mathfrak{c}$, we can use the same argument as earlier to find $q \in f(\mathfrak{c})$. There is a suitable word $w_q$ that is a witness for Moore non-equivalence while staying in $C$. As we stay in $C$, there is also a word $u$ such that $\delta^*_{\mathcal{S}'}(p, w_q u) = p$. We set $\alpha_{n+1} := \alpha_n w_q u$. By choice of $w_q$, there is a position during the segment on $w_q u$ at which runs of $\mathcal{S}'$ and $\mathcal{B}$ differ in priority. By induction, $\alpha_{n+1}$ satisfies all our required properties.
 \end{proof}
 
+
+\begin{defn}
+	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. We define the deterministic Büchi automaton $\mathcal{A} \intercal \mathcal{B} = (Q_1 \times Q_2, \Sigma, (q^1_0, q^2_0), \delta_\intercal, F_\intercal)$ with $\delta_\intercal((q_1, q_2), a) = (\delta_1(q_1, a), \delta_2(q_2, a))$. The transition structure is a common product automaton.
+	
+	The final states are $F_\intercal = \{ (p, q) \in Q_1 \times Q_2 \mid c_1(p) \neq c_2(q) \}$, i.e. every pair of states at which the priorities differ. 
+\end{defn}
+
+\begin{lem}
+	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. $\mathcal{A}$ and $\mathcal{B}$ are priority almost-equivalent iff $L(\mathcal{A} \intercal \mathcal{B}) = \emptyset$.
+\end{lem}
+
+\begin{proof}
+	For the first direction of implication, let $L(\mathcal{A} \intercal \mathcal{B}) \neq \emptyset$, so there is a word $\alpha$ accepted by that automaton. Let $(p_0, q_0) (p_1, q_1) \cdots$ be the accepting run on $\alpha$. Then $p_0 p_1 \cdots$ and $q_0 q_1 \cdots$ are the runs of $\mathcal{A}$ and $\mathcal{B}$ on $\alpha$ respectively. Whenever $(p_i, q_i) \in F_\intercal$, $p_i$ and $q_i$ have different priorities. As the run of the product automaton vists infinitely many accepting states, $\alpha$ is a witness for $\mathcal{A}$ and $\mathcal{B}$ being not priority almost-equivalent.
+	
+	For the second direction, let $\mathcal{A}$ and $\mathcal{B}$ be not priority almost-equivalent, so there is a witness $\alpha$ at which infinitely many positions differ in priority. Analogously to the first direction, this means that the run of $\mathcal{A} \intercal \mathcal{B}$ on the same word is accepting and therefore the language is not empty.
+\end{proof}
 
 \begin{lem}
 	The priority almost-equivalence of a DPA $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|^2)$.
 \end{lem}
 
 \begin{proof}
-	%TODO
+	The definition of $\mathcal{A} \intercal \mathcal{A}$ is a straightforward construction and can be done in quadratic time. By Lemma \ref{}, we know that $p$ and $q$ are priority almost-equivalent iff the language of $(\mathcal{A} \intercal \mathcal{A})_{(p,q)}$ is empty. 
+
+	Using e.g. Kosaraju's algorithm \ref{}, the SCCs %TODO
 \end{proof}
 
 
