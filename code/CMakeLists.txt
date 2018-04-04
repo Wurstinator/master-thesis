@@ -25,10 +25,10 @@ set(nbautils_HDRS
   ${NBAUTILS_DIR}/src/ps.hh
   ${NBAUTILS_DIR}/src/level.hh
   ${NBAUTILS_DIR}/src/det.hh
-)
+        find_goal_sccs.h find_goal_sccs.cpp)
 
 
-add_executable(hello_world hello_world.cpp ${nbautils_HDRS})
+add_executable(hello_world hello_world.cpp ${nbautils_HDRS} merge_sccs.h)
 target_link_libraries(hello_world nbautils-lib)
 add_dependencies(hello_world cpphoafparser)
 target_include_directories(hello_world PRIVATE ${NBAUTILS_DIR}/src)
