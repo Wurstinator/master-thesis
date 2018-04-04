@@ -1,7 +1,7 @@
 
 #pragma once
 
-
+#include <functional>
 #include <swa.hh>
 
 // Given an SCC, determines whether it is trivial.
@@ -20,7 +20,7 @@ bool SCCContainsAccepting(const std::set<nbautils::state_t>& scc, const std::set
 
 // Given a Büchi automaton, returns a list of SCCs that non-trivial and contain an accepting state.
 template <typename TagT>
-std::vector<std::set<nbautils::state_t>> MergeSCCs(const nbautils::SWA<TagT>& automaton) {
+std::vector<std::set<nbautils::state_t>> FindGoalSCCs(const nbautils::SWA<TagT>& automaton) {
     // Find SCCs.
     nbautils::SCCDat<nbautils::state_t>::uptr sccs_raw = nbautils::get_sccs(
             automaton.states(),
@@ -36,11 +36,15 @@ std::vector<std::set<nbautils::state_t>> MergeSCCs(const nbautils::SWA<TagT>& au
             );
 
     // Filter trivial SCCs.
-    sccs.erase(std::remove_if(sccs.begin(), sccs.end(), std::bind2nd(&SCCIsTrivial, automaton)), sccs.end());
+    sccs.erase(std::remove_if(sccs.begin(), sccs.end(), std::bind(&SCCIsTrivial<TagT>, std::placeholders::_1, automaton)), sccs.end());
 
-    // Filter SCCs without an accepting state.
-    const std::set<nbautils::state_t> accepting_states; //TODO
-    const auto not_accepting = [](const std::set<nbautils::state_t>& scc) {return !SCCContainsAccepting(scc, accepting_states);};
+    // Filter SCCs without an accepting states
+    std::set<nbautils::state_t> accepting_states;
+    for (nbautils::state_t q : automaton.states()) {
+        if (!automaton.get_accs(q).empty())
+            accepting_states.insert(q);
+    }
+    const auto not_accepting = [&accepting_states](const std::set<nbautils::state_t>& scc) {return !SCCContainsAccepting(scc, accepting_states);};
     sccs.erase(std::remove_if(sccs.begin(), sccs.end(), not_accepting), sccs.end());
 
     return sccs;

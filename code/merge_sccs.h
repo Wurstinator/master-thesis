@@ -5,6 +5,7 @@
 #include <set>
 #include "common/scc.hh"
 #include <algorithm>
+#include "merge_states.h"
 
 
 // Given an automaton, creates a new automaton by merging all SCCs.
@@ -17,8 +18,9 @@ nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton) {
           [&](nbautils::state_t q) {return automaton.succ(q);});
 
     // Merge SCCs.
+    std::map<std::vector<nbautils::state_t>, nbautils::state_t> representatives;
     for (const std::vector<nbautils::state_t>& scc : sccs->sccs) {
-        automaton.merge_states(scc, scc[0]);
+        representatives[scc] = MergeStates(&automaton, std::set<nbautils::state_t>(scc.begin(), scc.end()));
     }
 
     // Create new automaton with renamed states.
@@ -35,7 +37,7 @@ nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton) {
     nbautils::state_t merged_state = 0;
     for (const std::vector<nbautils::state_t>& scc : sccs->sccs) {
         for (nbautils::sym_t sym = 0; sym < result.num_syms(); ++sym) {
-            std::vector<nbautils::state_t> succs = automaton.succ(scc[0], sym);
+            std::vector<nbautils::state_t> succs = automaton.succ(representatives[scc], sym);
             for (nbautils::state_t& q : succs)
                 q = sccs->scc_of[q];
             result.set_succs(merged_state, sym, succs);
