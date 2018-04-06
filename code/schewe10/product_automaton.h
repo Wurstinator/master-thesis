@@ -39,9 +39,23 @@ nbautils::SWA<std::pair<TagT1, TagT2>> ProductAutomaton(const nbautils::SWA<TagT
     // Assign tags to the new states.
     for (nbautils::state_t q : product.states()) {
         const auto ids = ProdID2CompID(q, automaton2.num_states());
-        const TagT1& tag1 = automaton1.tag->geti(ids.first);
-        const TagT2& tag2 = automaton2.tag->geti(ids.second);
-        product.tag->put(std::make_pair(tag1, tag2), q);
+        TagT1 tag1;
+        if (automaton1.tag->hasi(ids.first))
+            tag1 = automaton1.tag->geti(ids.first);
+        else if (std::is_default_constructible<TagT1>::value)
+            tag1 = TagT1();
+        else
+            continue;
+
+        TagT1 tag2;
+        if (automaton2.tag->hasi(ids.second))
+            tag2 = automaton2.tag->geti(ids.second);
+        else if (std::is_default_constructible<TagT2>::value)
+            tag2 = TagT2();
+        else
+            continue;
+
+        product.tag->put(std::make_pair(std::move(tag1), std::move(tag2)), q);
     }
 
     // Set initial states.

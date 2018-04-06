@@ -29,10 +29,10 @@ set(nbautils_HDRS
   ${NBAUTILS_DIR}/src/ps.hh
   ${NBAUTILS_DIR}/src/level.hh
   ${NBAUTILS_DIR}/src/det.hh
-        find_goal_sccs.h find_goal_sccs.cpp product_automaton.h equivalence_relation.h almost_equivalent_states.h merge_states.h can_reach_state.h)
+        schewe10/find_goal_sccs.h schewe10/find_goal_sccs.cpp schewe10/product_automaton.h schewe10/equivalence_relation.h schewe10/almost_equivalent_states.h schewe10/merge_states.h schewe10/can_reach_state.h schewe10/backwards_automaton.h)
 
 
-add_executable(hello_world hello_world.cpp ${nbautils_HDRS} merge_sccs.h)
+add_executable(hello_world hello_world.cpp ${nbautils_HDRS} schewe10/merge_sccs.h)
 target_link_libraries(hello_world nbautils-lib)
 add_dependencies(hello_world cpphoafparser)
 target_include_directories(hello_world PRIVATE ${NBAUTILS_DIR}/src)

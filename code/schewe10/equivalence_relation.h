@@ -14,7 +14,7 @@ public:
     using EquivClass = std::unordered_set<T>;
 
     // Creates a new empty relation.
-    EquivalenceRelation() {}
+    EquivalenceRelation() = default;
 
     // Creates a new relation with the given equivalence classes.
     EquivalenceRelation(std::vector<EquivClass> classes);
@@ -39,11 +39,13 @@ public:
     bool IsEquiv(const T& x, const T& y) const;
 
 private:
+    using RelationMap = std::unordered_map<T, typename std::vector<EquivClass>::size_type>;
+
     // From a list of classes, creates a relation map.
-    static std::unordered_map<T, std::vector<EquivClass>::size_type> InitRelation(const std::vector<EquivClass>& classes);
+    static RelationMap InitRelation(const std::vector<EquivClass>& classes);
 
     std::vector<EquivClass> classes;
-    std::unordered_map<T, std::vector<EquivClass>::size_type> relation;
+    RelationMap relation;
 };
 
 // Implementation
@@ -53,10 +55,10 @@ EquivalenceRelation<T>::EquivalenceRelation(std::vector<EquivClass> classes)
         : classes(std::move(classes)), relation(EquivalenceRelation<T>::InitRelation(classes)) {};
 
 template<typename T>
-std::unordered_map<T, std::vector<EquivalenceRelation<T>::EquivClass>::size_type>
+typename EquivalenceRelation<T>::RelationMap
 EquivalenceRelation<T>::InitRelation(const std::vector<EquivClass>& classes) {
-    std::unordered_map<T, std::vector<EquivClass>::size_type> relation;
-    for (std::vector<EquivClass>::size_type i = 0; i < classes.size(); ++i) {
+    RelationMap relation;
+    for (typename std::vector<EquivClass>::size_type i = 0; i < classes.size(); ++i) {
         for (const T& x : classes[i]) {
             relation[x] = i;
         }
@@ -78,7 +80,7 @@ void EquivalenceRelation<T>::AddConnection(const T& x, const T& y) {
             classes[y].insert(x);
             relation[x] = relation[y];
         } else {
-            const EquivClass new_class {x, y};
+            const EquivClass new_class{x, y};
             classes.push_back(new_class);
             relation[x] = relation[y] = classes.size() - 1;
         }
@@ -89,8 +91,8 @@ void EquivalenceRelation<T>::AddConnection(const T& x, const T& y) {
 template<typename T>
 void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass& c1,
                                           const EquivalenceRelation::EquivClass& c2) {
-    std::vector<EquivClass>::size_type index1 = relation[*c1.begin()];
-    std::vector<EquivClass>::size_type index2 = relation[*c2.begin()];
+    typename std::vector<EquivClass>::size_type index1 = relation[*c1.begin()];
+    typename std::vector<EquivClass>::size_type index2 = relation[*c2.begin()];
 
     if (index1 == index2)
         return;
@@ -100,7 +102,7 @@ void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass&
         return;
     }
 
-    for (std::vector<EquivClass>::size_type i = index2 + 1; i < classes.size(); ++i) {
+    for (auto i = index2 + 1; i < classes.size(); ++i) {
         for (const T& x : classes[i]) {
             relation[x] -= 1;
         }
@@ -109,7 +111,7 @@ void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass&
 
     for (const T& x : c2)
         relation[x] = index1;
-    std::copy(c2.begin(), c2.end(), std::inserter(classes[index1]));
+    std::copy(c2.begin(), c2.end(), std::inserter(classes[index1], classes[index1].begin()));
 }
 
 
@@ -121,7 +123,7 @@ bool EquivalenceRelation<T>::Exists(const T& x) const {
 
 template<typename T>
 const typename EquivalenceRelation<T>::EquivClass& EquivalenceRelation<T>::GetClass(const T& x) const {
-    return this->relation.at(x);
+    return classes[relation.at(x)];
 }
 
 template<typename T>

@@ -15,7 +15,7 @@
 // TODO there is probably some error in this function
 template <typename TagT>
 nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton,
-                                        std::map<std::set<nbautils::state_t>, nbautils::state_t>* representatives) {
+                                        std::map<std::set<nbautils::state_t>, nbautils::state_t>* representatives = nullptr) {
     // Find SCCs.
     nbautils::SCCDat<nbautils::state_t>::uptr sccs = nbautils::get_sccs(
           automaton.states(),
@@ -35,7 +35,8 @@ nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton,
     for (const std::pair<const std::set<nbautils::state_t>, nbautils::state_t>& scc_rep : representatives_) {
         std::set<TagT> tag_set;
         for (nbautils::state_t q : scc_rep.first)
-            tag_set.insert(automaton.tag->geti(q));
+            if (automaton.tag->hasi(q))
+                tag_set.insert(automaton.tag->geti(q));
         result.tag->put(std::move(tag_set), result.num_states());
         result.add_state(result.num_states());
     }

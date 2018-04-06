@@ -18,8 +18,10 @@ nbautils::state_t FindMergeRepresentative(const nbautils::SWA<TagT>& automaton, 
 // Merges a set of states in an automaton. The new representative is returned.
 template <typename TagT>
 nbautils::state_t MergeStates(nbautils::SWA<TagT>* automaton, std::set<nbautils::state_t> merge_states) {
+    assert(!merge_states.empty());
+
     // Remove the representative from the set.
-    nbautils::state_t representative = FindMergeRepresentative(*automaton, merge_states.begin(), merge_states.end();
+    nbautils::state_t representative = FindMergeRepresentative(*automaton, merge_states.begin(), merge_states.end());
     merge_states.erase(merge_states.find(representative));
 
     // Merge.

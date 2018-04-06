@@ -32,6 +32,9 @@ EquivalenceRelation<nbautils::state_t> PriorityAlmostEquivalence(const nbautils:
 
     // Find the accepting SCCs of the original product automaton and merge them in the reduced automaton.
     std::vector<std::set<nbautils::state_t>> goal_sccs = FindGoalSCCs(product);
+    if (goal_sccs.empty())
+        return EquivalenceRelation<nbautils::state_t>();
+
     std::set<nbautils::state_t> goal_sccs_merged_ids;
     for (const std::set<nbautils::state_t>& goal_scc : goal_sccs) {
         const nbautils::state_t merged_id = scc_representatives[goal_scc];
