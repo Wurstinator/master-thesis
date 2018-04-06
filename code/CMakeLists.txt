@@ -29,7 +29,7 @@ set(nbautils_HDRS
   ${NBAUTILS_DIR}/src/ps.hh
   ${NBAUTILS_DIR}/src/level.hh
   ${NBAUTILS_DIR}/src/det.hh
-        find_goal_sccs.h find_goal_sccs.cpp product_automaton.h equivalence_relation.h almost_equivalent_states.h merge_states.h)
+        find_goal_sccs.h find_goal_sccs.cpp product_automaton.h equivalence_relation.h almost_equivalent_states.h merge_states.h can_reach_state.h)
 
 
 add_executable(hello_world hello_world.cpp ${nbautils_HDRS} merge_sccs.h)

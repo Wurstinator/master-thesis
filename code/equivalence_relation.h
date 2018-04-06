@@ -19,9 +19,18 @@ public:
     // Creates a new relation with the given equivalence classes.
     EquivalenceRelation(std::vector<EquivClass> classes);
 
-    // TODO add element
+    // Adds a new connection between to elements to the relation. If neither of them is present already, a new class
+    // is created. If only one of them is present already, the other one is added to its class. If both exist in the
+    // relation, their classes are merged. (note that the two elements can be the same to create a new singleton class)
+    void AddConnection(const T& x, const T& y);
 
     // TODO remove element
+
+    // Merges two given equivalence classes.
+    void MergeClasses(const EquivClass& c1, const EquivClass& c2);
+
+    // Returns whether some element is already present in the relation in some form.
+    bool Exists(const T& x) const;
 
     // Returns the equivalence class of a given element.
     const EquivClass& GetClass(const T& x) const;
@@ -31,10 +40,10 @@ public:
 
 private:
     // From a list of classes, creates a relation map.
-    static std::unordered_map<T, EquivClass*> InitRelation(const std::vector<EquivClass>& classes);
+    static std::unordered_map<T, std::vector<EquivClass>::size_type> InitRelation(const std::vector<EquivClass>& classes);
 
     std::vector<EquivClass> classes;
-    std::unordered_map<T, EquivClass*> relation;
+    std::unordered_map<T, std::vector<EquivClass>::size_type> relation;
 };
 
 // Implementation
@@ -44,24 +53,51 @@ EquivalenceRelation<T>::EquivalenceRelation(std::vector<EquivClass> classes)
         : classes(std::move(classes)), relation(EquivalenceRelation<T>::InitRelation(classes)) {};
 
 template<typename T>
-std::unordered_map<T, typename EquivalenceRelation<T>::EquivClass*>
+std::unordered_map<T, std::vector<EquivalenceRelation<T>::EquivClass>::size_type>
 EquivalenceRelation<T>::InitRelation(const std::vector<EquivClass>& classes) {
-    std::unordered_map<T, EquivalenceRelation<T>::EquivClass*> relation;
-    for (const EquivClass& clas : classes) {
-        for (const T& x : clas) {
-            relation[x] = &clas;
+    std::unordered_map<T, std::vector<EquivClass>::size_type> relation;
+    for (std::vector<EquivClass>::size_type i = 0; i < classes.size(); ++i) {
+        for (const T& x : classes[i]) {
+            relation[x] = i;
         }
     }
     return relation;
 }
 
 template<typename T>
+void EquivalenceRelation<T>::AddConnection(const T& x, const T& y) {
+    if (Exists(x)) {
+        if (Exists(y)) {
+            MergeClasses(GetClass(x), GetClass(y));
+        } else {
+            classes[x].insert(y);
+            relation[y] = relation[x];
+        }
+    } else {
+        if (Exists(y)) {
+            classes[y].insert(x);
+            relation[x] = relation[y];
+        } else {
+            const EquivClass new_class {x, y};
+            classes.push_back(new_class);
+            relation[x] = relation[y] = classes.size() - 1;
+        }
+    }
+};
+
+template<typename T>
+bool EquivalenceRelation<T>::Exists(const T& x) const {
+    return this->relation.find(x) != this->relation.end();
+}
+
+
+template<typename T>
 const typename EquivalenceRelation<T>::EquivClass& EquivalenceRelation<T>::GetClass(const T& x) const {
-    return this->relation[x];
+    return this->relation.at(x);
 }
 
 template<typename T>
 bool EquivalenceRelation<T>::IsEquiv(const T& x, const T& y) const {
     const EquivClass& c = GetClass(x);
     return c.find(y) != c.end();
-};
+}
