@@ -51,7 +51,8 @@ EquivalenceRelation<nbautils::state_t> PriorityAlmostEquivalence(const nbautils:
 
     // Now construct the equivalence relation object.
     EquivalenceRelation<nbautils::state_t> relation;
-    for (nbautils::state_t equiv_pair : equivalent_pairs) {
-        relation.AddElement(equiv_pair.first, equiv_pair.second);
+    for (const std::pair<nbautils::state_t, nbautils::state_t>& equiv_pair : equivalent_pairs) {
+        relation.AddConnection(equiv_pair.first, equiv_pair.second);
     }
+    return relation;
 }

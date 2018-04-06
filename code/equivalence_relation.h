@@ -85,6 +85,34 @@ void EquivalenceRelation<T>::AddConnection(const T& x, const T& y) {
     }
 };
 
+
+template<typename T>
+void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass& c1,
+                                          const EquivalenceRelation::EquivClass& c2) {
+    std::vector<EquivClass>::size_type index1 = relation[*c1.begin()];
+    std::vector<EquivClass>::size_type index2 = relation[*c2.begin()];
+
+    if (index1 == index2)
+        return;
+
+    if (index1 > index2) {
+        MergeClasses(c2, c1);
+        return;
+    }
+
+    for (std::vector<EquivClass>::size_type i = index2 + 1; i < classes.size(); ++i) {
+        for (const T& x : classes[i]) {
+            relation[x] -= 1;
+        }
+    }
+    classes.erase(classes.begin() + index2);
+
+    for (const T& x : c2)
+        relation[x] = index1;
+    std::copy(c2.begin(), c2.end(), std::inserter(classes[index1]));
+}
+
+
 template<typename T>
 bool EquivalenceRelation<T>::Exists(const T& x) const {
     return this->relation.find(x) != this->relation.end();
