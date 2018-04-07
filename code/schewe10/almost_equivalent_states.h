@@ -40,11 +40,12 @@ EquivalenceRelation<nbautils::state_t> PriorityAlmostEquivalence(const nbautils:
         const nbautils::state_t merged_id = scc_representatives[goal_scc];
         goal_sccs_merged_ids.insert(merged_id);
     }
+    // TODO somehow merged_sccs is normalized here so the representatives dont match?
     nbautils::state_t final_scc = MergeStates(&merged_sccs, goal_sccs_merged_ids);
 
-    // All state-pairs in SCCs from which "final_scc" is reachable are pairs of almost-equivalent states.
+    // All state-pairs in SCCs from which "final_scc" is not reachable are pairs of almost-equivalent states.
     // Convert the IDs of the merged SCCs back to pairs of original state IDs.
-    const std::vector<nbautils::state_t> equivalent_pairs_sccs = CanReachState(merged_sccs, final_scc);
+    const std::vector<nbautils::state_t> equivalent_pairs_sccs = CannotReachState(merged_sccs, final_scc);
     std::vector<std::pair<nbautils::state_t, nbautils::state_t>> equivalent_pairs;
     for (nbautils::state_t scc_q : equivalent_pairs_sccs) {
         for (nbautils::state_t q : representative_sccs[scc_q]) {

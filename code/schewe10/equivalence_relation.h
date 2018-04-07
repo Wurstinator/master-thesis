@@ -72,12 +72,12 @@ void EquivalenceRelation<T>::AddConnection(const T& x, const T& y) {
         if (Exists(y)) {
             MergeClasses(GetClass(x), GetClass(y));
         } else {
-            classes[x].insert(y);
+            classes[relation[x]].insert(y);
             relation[y] = relation[x];
         }
     } else {
         if (Exists(y)) {
-            classes[y].insert(x);
+            classes[relation[y]].insert(x);
             relation[x] = relation[y];
         } else {
             const EquivClass new_class{x, y};
@@ -107,11 +107,12 @@ void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass&
             relation[x] -= 1;
         }
     }
-    classes.erase(classes.begin() + index2);
 
     for (const T& x : c2)
         relation[x] = index1;
     std::copy(c2.begin(), c2.end(), std::inserter(classes[index1], classes[index1].begin()));
+
+    classes.erase(classes.begin() + index2);
 }
 
 

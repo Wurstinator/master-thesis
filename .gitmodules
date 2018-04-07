@@ -1,3 +1,6 @@
 [submodule "code/nbautils"]
 	path = code/nbautils
 	url = https://github.com/apirogov/nbautils.git
+[submodule "code/Catch2"]
+	path = code/Catch2
+	url = https://github.com/catchorg/Catch2.git

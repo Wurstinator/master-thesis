@@ -37,8 +37,8 @@ nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton,
         for (nbautils::state_t q : scc_rep.first)
             if (automaton.tag->hasi(q))
                 tag_set.insert(automaton.tag->geti(q));
-        result.tag->put(std::move(tag_set), result.num_states());
-        result.add_state(result.num_states());
+        result.tag->put(std::move(tag_set), scc_rep.second);
+        result.add_state(scc_rep.second);
     }
 
     // Add transitions between the states.
