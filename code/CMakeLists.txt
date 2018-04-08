@@ -14,6 +14,10 @@ set(CATCH2_DIR ./Catch2)
 add_subdirectory(nbautils)
 add_subdirectory(Catch2)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 set(nbautils_HDRS
   ${NBAUTILS_DIR}/src/dev/memusage.h
   ${NBAUTILS_DIR}/src/dev/bench.hh
