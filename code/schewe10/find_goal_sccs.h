@@ -11,7 +11,7 @@ bool SCCIsTrivial(const std::set<nbautils::state_t>& scc, const nbautils::SWA<Ta
         return false;
     const nbautils::state_t q = *scc.begin();
     const std::vector<nbautils::state_t> q_successors = automaton.succ(q);
-    return std::find(q_successors.begin(), q_successors.end(), q) != q_successors.end();
+    return std::find(q_successors.begin(), q_successors.end(), q) == q_successors.end();
 }
 
 // Given an SCC, determines whether it contains an accepting state.

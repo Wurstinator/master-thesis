@@ -12,9 +12,9 @@
 // The new tags are sets of old tags.
 // If the second parameter is not null, the underlying map object is set so that each SCC is mapped to its
 // representative.
-// TODO there is probably some error in this function
+// TODO correctly collect the tags into a set
 template <typename TagT>
-nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton,
+nbautils::SWA<TagT> MergeSCCs(nbautils::SWA<TagT> automaton,
                                         std::map<std::set<nbautils::state_t>, nbautils::state_t>* representatives = nullptr) {
     // Find SCCs.
     nbautils::SCCDat<nbautils::state_t>::uptr sccs = nbautils::get_sccs(
@@ -28,6 +28,11 @@ nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton,
         representatives_[scc_set] = MergeStates(&automaton, scc_set);
     }
 
+
+    if (representatives != nullptr)
+        *representatives = std::move(representatives_);
+    return automaton;
+/*
     // Create new automaton with renamed states.
     nbautils::SWA<std::set<TagT>> result(automaton.get_acceptance(), automaton.get_name(), automaton.get_aps());
 
@@ -52,8 +57,12 @@ nbautils::SWA<std::set<TagT>> MergeSCCs(nbautils::SWA<TagT> automaton,
         }
     }
 
+    // Set initial states and acceptance.
+    result.set_init(automaton.get_init());
+
+
     if (representatives != nullptr)
         *representatives = std::move(representatives_);
 
-    return result;
+    return result;*/
 }

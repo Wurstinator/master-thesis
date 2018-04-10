@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
@@ -49,44 +49,36 @@ set(SCHEWE10_HDRS
         schewe10/can_reach_state.h
         schewe10/merge_sccs.h
         schewe10/backwards_automaton.h
+        schewe10/topological_ordering.h
+        schewe10/product_automaton.cpp
         )
+
+ExternalProject_Get_Property(cpphoafparser source_dir)
+include_directories(${source_dir}/include)
 
 add_executable(hello_world hello_world.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
 target_link_libraries(hello_world nbautils-lib)
 add_dependencies(hello_world cpphoafparser)
 target_include_directories(hello_world PRIVATE ${NBAUTILS_DIR}/src)
 
-add_executable(test_almost_equivalent_states schewe10/test_almost_equivalent_states.cpp ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(test_almost_equivalent_states nbautils-lib)
-add_dependencies(test_almost_equivalent_states cpphoafparser)
-target_include_directories(test_almost_equivalent_states PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
+add_executable(schewe_main schewe10/schewe_main.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
+target_link_libraries(schewe_main nbautils-lib)
+add_dependencies(schewe_main cpphoafparser)
+target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src)
 
-add_executable(test_backwards_automaton schewe10/test_backwards_automaton.cpp ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(test_backwards_automaton nbautils-lib)
-add_dependencies(test_backwards_automaton cpphoafparser)
-target_include_directories(test_backwards_automaton PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
+add_library(schewe_automaton schewe10/schewe_automaton.h ${nbautils_HDRS} ${SCHEWE10_HDRS})
+target_link_libraries(schewe_automaton nbautils-lib)
+target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src)
 
-add_executable(test_can_reach_state schewe10/test_can_reach_state.cpp ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(test_can_reach_state nbautils-lib)
-add_dependencies(test_can_reach_state cpphoafparser)
-target_include_directories(test_can_reach_state PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
+set(SCHEWE10_TESTS
+        schewe10/test_almost_equivalent_states.cpp
+        schewe10/test_backwards_automaton.cpp
+        schewe10/test_can_reach_state.cpp
+        schewe10/test_find_goal_sccs.cpp
+        schewe10/test_merge_sccs.cpp
+        schewe10/test_merge_states.cpp
+        schewe10/test_product_automaton.cpp)
 
-add_executable(test_find_goal_sccs schewe10/test_find_goal_sccs.cpp ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(test_find_goal_sccs nbautils-lib)
-add_dependencies(test_find_goal_sccs cpphoafparser)
-target_include_directories(test_find_goal_sccs PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
-
-add_executable(test_merge_sccs schewe10/test_merge_sccs.cpp ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(test_merge_sccs nbautils-lib)
-add_dependencies(test_merge_sccs cpphoafparser)
-target_include_directories(test_merge_sccs PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
-
-add_executable(test_merge_states schewe10/test_merge_states.cpp ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(test_merge_states nbautils-lib)
-add_dependencies(test_merge_states cpphoafparser)
-target_include_directories(test_merge_states PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
-
-add_executable(test_product_automaton schewe10/test_product_automaton.cpp ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(test_product_automaton nbautils-lib)
-add_dependencies(test_product_automaton cpphoafparser)
-target_include_directories(test_product_automaton PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
+add_executable(test_schewe10 schewe10/test_schewe10.cpp ${SCHEWE10_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
+target_link_libraries(test_schewe10 nbautils-lib)
+target_include_directories(test_schewe10 PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)

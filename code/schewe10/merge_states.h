@@ -7,7 +7,7 @@
 // representative is an arbitrary element.
 template <typename TagT, typename IterT>
 nbautils::state_t FindMergeRepresentative(const nbautils::SWA<TagT>& automaton, IterT first_state, IterT last_state) {
-    auto representative_iter = std::find_if(first_state, last_state, [automaton](nbautils::state_t q) { return automaton.is_init(q); });
+    auto representative_iter = std::find_if(first_state, last_state, [&automaton](nbautils::state_t q) { return automaton.is_init(q); });
     if (representative_iter != last_state)
         return *representative_iter;
     else

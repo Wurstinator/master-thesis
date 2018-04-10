@@ -23,7 +23,7 @@ EquivalenceRelation<nbautils::state_t> PriorityAlmostEquivalence(const nbautils:
 
     // Merge all SCCs in the product automaton so that there are no more cycles.
     std::map<std::set<nbautils::state_t>, nbautils::state_t> scc_representatives;
-    nbautils::SWA<std::set<std::pair<TagT, TagT>>> merged_sccs = MergeSCCs(product, &scc_representatives);
+    nbautils::SWA<std::pair<TagT, TagT>> merged_sccs = MergeSCCs(product, &scc_representatives);
 
     // From the SCC-Repr. map, also compute a Repr.-SCC map for later.
     std::map<nbautils::state_t, std::set<nbautils::state_t>> representative_sccs;
@@ -32,15 +32,18 @@ EquivalenceRelation<nbautils::state_t> PriorityAlmostEquivalence(const nbautils:
 
     // Find the accepting SCCs of the original product automaton and merge them in the reduced automaton.
     std::vector<std::set<nbautils::state_t>> goal_sccs = FindGoalSCCs(product);
-    if (goal_sccs.empty())
-        return EquivalenceRelation<nbautils::state_t>();
+    if (goal_sccs.empty()) {
+        EquivalenceRelation<nbautils::state_t> empty_relation;
+        for (nbautils::state_t q : automaton.states())
+            empty_relation.AddConnection(q, q);
+        return empty_relation;
+    }
 
     std::set<nbautils::state_t> goal_sccs_merged_ids;
     for (const std::set<nbautils::state_t>& goal_scc : goal_sccs) {
         const nbautils::state_t merged_id = scc_representatives[goal_scc];
         goal_sccs_merged_ids.insert(merged_id);
     }
-    // TODO somehow merged_sccs is normalized here so the representatives dont match?
     nbautils::state_t final_scc = MergeStates(&merged_sccs, goal_sccs_merged_ids);
 
     // All state-pairs in SCCs from which "final_scc" is not reachable are pairs of almost-equivalent states.
@@ -48,8 +51,10 @@ EquivalenceRelation<nbautils::state_t> PriorityAlmostEquivalence(const nbautils:
     const std::vector<nbautils::state_t> equivalent_pairs_sccs = CannotReachState(merged_sccs, final_scc);
     std::vector<std::pair<nbautils::state_t, nbautils::state_t>> equivalent_pairs;
     for (nbautils::state_t scc_q : equivalent_pairs_sccs) {
-        for (nbautils::state_t q : representative_sccs[scc_q]) {
-            equivalent_pairs.push_back(ProdID2CompID(q, automaton.num_states()));
+        const std::set<nbautils::state_t>& scc = representative_sccs[scc_q];
+        for (nbautils::state_t q : scc) {
+            const std::pair<nbautils::state_t, nbautils::state_t> og_pair = ProdID2CompID(q, automaton.num_states());
+            equivalent_pairs.push_back(og_pair);
         }
     }
 

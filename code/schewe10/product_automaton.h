@@ -6,13 +6,9 @@
 
 // Conversion functions from the index of a state in the product automaton to the indices of its components, and back.
 // The second parameter is the number of states in the second automaton.
-std::pair<nbautils::state_t, nbautils::state_t> ProdID2CompID(nbautils::state_t q, unsigned int nstates2) {
-    return std::pair<nbautils::state_t, nbautils::state_t>(q / nstates2, q % nstates2);
-};
+std::pair<nbautils::state_t, nbautils::state_t> ProdID2CompID(nbautils::state_t q, unsigned int nstates2);
 
-nbautils::state_t CompID2ProdID(nbautils::state_t q1, nbautils::state_t q2, unsigned int nstates2) {
-    return q1 * nstates2 + q2;
-};
+nbautils::state_t CompID2ProdID(nbautils::state_t q1, nbautils::state_t q2, unsigned int nstates2);
 
 // Given two automata, creates a product automaton of the two, meaning that states are now pairs of states
 // and transitions are applied component-wise. The acceptance properties are left unset. A state is initial iff

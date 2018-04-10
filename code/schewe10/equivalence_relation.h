@@ -3,7 +3,7 @@
 
 
 #include <unordered_map>
-#include <unordered_set>
+#include <set>
 #include <vector>
 
 // Represents an equivalence relation on an arbitrary type, i.e. a binary relation that is reflexive, symmetric, and
@@ -11,7 +11,7 @@
 template<typename T>
 class EquivalenceRelation {
 public:
-    using EquivClass = std::unordered_set<T>;
+    using EquivClass = std::set<T>;
 
     // Creates a new empty relation.
     EquivalenceRelation() = default;
@@ -37,6 +37,9 @@ public:
 
     // Checks whether two elements are equivalent.
     bool IsEquiv(const T& x, const T& y) const;
+
+    // Returns the vector of classes.
+    const std::vector<EquivClass>& Classes() const;
 
 private:
     using RelationMap = std::unordered_map<T, typename std::vector<EquivClass>::size_type>;
@@ -131,4 +134,9 @@ template<typename T>
 bool EquivalenceRelation<T>::IsEquiv(const T& x, const T& y) const {
     const EquivClass& c = GetClass(x);
     return c.find(y) != c.end();
+}
+
+template<typename T>
+const std::vector<typename EquivalenceRelation<T>::EquivClass>& EquivalenceRelation<T>::Classes() const {
+    return classes;
 }
