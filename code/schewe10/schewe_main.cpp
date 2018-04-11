@@ -10,7 +10,7 @@
 //   -c  : Makes the automaton complete by introducing a new sink state.
 //   -mb : Minimizes the automaton as a Moore automaton before the construction.
 //   -ma : Minimizes the automaton as a Moore automaton after the construction.
-//   -A= : Path to the file in which the DPA is stored in HOA format.
+//   -A  : Path to the file in which the DPA is stored in HOA format.
 int main(int argc, char** argv);
 
 
@@ -56,18 +56,33 @@ Options ParseArgs(int argc, char** argv) {
     return options;
 }
 
+
+template<typename TagT>
+void MinimizePA(nbautils::SWA<TagT>* automaton) {
+    const std::function<std::vector<nbautils::state_t>(nbautils::state_t)> get_succs =
+            [automaton](nbautils::state_t q) {
+                return automaton->succ(q);
+            };
+    assert(automaton->get_init().size() == 1);
+    const nbautils::state_t initial = automaton->get_init()[0];
+    std::vector<nbautils::state_t> unreachable = nbautils::unreachable_states(automaton->states(), initial, get_succs);
+    std::sort(unreachable.begin(), unreachable.end());
+    automaton->remove_states(unreachable);
+    nbautils::minimize_pa(*automaton);
+}
+
 // Executes the process for one automaton.
 nbautils::SWA<std::string> PerformConstruction(nbautils::SWA<std::string> automaton, const Options& options) {
     if (options.make_complete)
         nbautils::make_complete(automaton);
 
     if (options.minimize_before)
-        nbautils::minimize_pa(automaton);
+        MinimizePA(&automaton);
 
     ScheweAutomaton(&automaton);
 
     if (options.minimize_after)
-        nbautils::minimize_pa(automaton);
+        MinimizePA(&automaton);
 
     return automaton;
 }

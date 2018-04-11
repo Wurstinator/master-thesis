@@ -66,6 +66,11 @@ target_link_libraries(schewe_main nbautils-lib)
 add_dependencies(schewe_main cpphoafparser)
 target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src)
 
+add_executable(schewe_statistics schewe10/schewe_statistics.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
+target_link_libraries(schewe_statistics nbautils-lib)
+add_dependencies(schewe_statistics cpphoafparser)
+target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src)
+
 add_library(schewe_automaton schewe10/schewe_automaton.h ${nbautils_HDRS} ${SCHEWE10_HDRS})
 target_link_libraries(schewe_automaton nbautils-lib)
 target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src)
