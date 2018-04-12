@@ -20,6 +20,8 @@
 //                                                          construction + min / min + constr + min
 int main(int argc, char** argv);
 
+const static size_t SIZE_LIMIT = 150;
+
 
 // Parses the command line options.
 struct Options {
@@ -27,6 +29,7 @@ struct Options {
     bool minimize;
     bool hopcroft;
     bool remove_unreachable;
+    bool no_size_limit;
     std::string input_file;
 };
 
@@ -41,6 +44,7 @@ Options ParseArgs(int argc, char** argv) {
                              {'m'});
     args::Flag hopcroft_flag(parser, "hopcroft", "Perform the Hopcroft algorithm for minimization.", {"hop"});
     args::Flag remove_unreachable_flag(parser, "remove_unreachable", "Remove unreachable states for minimization.", {"ru"});
+    args::Flag no_size_limit_flag(parser, "no_size_limit", "Do not cancel the process even if the automaton size exceeds a threshold.", {"no_size_limit"});
     args::ValueFlag<std::string> input_file_flag(parser, "input_file", "HOA file that contains the input DPA.",
                                                  {'A', "automaton"}, args::Options::Required);
 
@@ -66,6 +70,7 @@ Options ParseArgs(int argc, char** argv) {
     options.minimize = minimize_flag.Get();
     options.hopcroft = hopcroft_flag.Get();
     options.remove_unreachable = remove_unreachable_flag.Get();
+    options.no_size_limit = no_size_limit_flag.Get();
     options.input_file = input_file_flag.Get();
     return options;
 }
@@ -188,9 +193,14 @@ int main(int argc, char** argv) {
 
     std::vector<nbautils::SWA<std::string>::uptr> input_automata = nbautils::parse_hoa(options.input_file);
 
+
     std::vector<Statistics> stats;
 
     for (const nbautils::SWA<std::string>::uptr& aut : input_automata) {
+        if (!options.no_size_limit && aut->num_states() > SIZE_LIMIT) {
+            std::cerr << "Automaton of size " << aut->num_states() << " is too big." << std::endl;
+            continue;
+        }
         if (options.make_complete)
             nbautils::make_complete(*aut);
         const auto f = (options.minimize ? &PerformConstruction_Complete : &PerformConstruction_NoMinimizations);

@@ -50,10 +50,10 @@ def collect_data(args):
             automaton_seed) + ' > ' + generated_automaton_file.name)
         automaton_file = generated_automaton_file
 
-    elif args.generation == 'determinize_nbautils':
+    elif args.generation == 'determinize_nbautils': # TODO use subprocess to limit the time of the determinization https://stackoverflow.com/questions/3190825/saving-stdout-from-subprocess-popen-to-file-plus-writing-more-stuff-to-the-file
         generated_automaton_file = tempfile.NamedTemporaryFile()
         automaton_seed = random.randint(0, 100000)
-        state_num = random.randint(10, 200)
+        state_num = random.randint(5, 30)
         os.system('randaut ' + atomic_propositions + ' -Q ' + str(state_num) + ' -A Buchi --colored -S --seed=' + str(
             automaton_seed) + ' > ' + generated_automaton_file.name)
 
@@ -63,7 +63,7 @@ def collect_data(args):
             generated_automaton_file.name + ' > ' + determinized_file.name)
         automaton_file = determinized_file
 
-    elif args.generation == 'determinize_spot':
+    elif args.generation == 'determinize_spot': # TODO
         generated_automaton_file = tempfile.NamedTemporaryFile()
         automaton_seed = random.randint(0, 100000)
         state_num = random.randint(1, 100)
