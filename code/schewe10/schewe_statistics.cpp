@@ -20,7 +20,7 @@
 //                                                          construction + min / min + constr + min
 int main(int argc, char** argv);
 
-const static size_t SIZE_LIMIT = 150;
+const static size_t SIZE_LIMIT = 400;
 
 
 // Parses the command line options.
