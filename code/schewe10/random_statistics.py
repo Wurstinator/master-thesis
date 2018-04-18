@@ -6,6 +6,7 @@ import random
 import subprocess
 import multiprocessing
 import itertools
+import threading
 
 
 def main():
@@ -34,12 +35,36 @@ def main():
     args = parser.parse_args()
 
     pool = multiprocessing.Pool(os.cpu_count() - 1)
-    data = pool.map(collect_data, itertools.repeat(args, args.autnum))
-    for d in data:
-        if d is not None:
-            s = d.decode('utf-8')
+    data_queue = multiprocessing.Queue()
+    counter_lock = threading.Lock()
+    threads_finished = 0
+
+    def apply_finished(data):
+        nonlocal data_queue
+        data_queue.put(data)
+        nonlocal counter_lock
+        with counter_lock:
+            nonlocal threads_finished
+            threads_finished += 1
+
+    for i in range(args.autnum):
+        pool.apply_async(collect_data, (args,), callback=apply_finished)
+    pool.close()
+
+    while threads_finished < args.autnum or not data_queue.empty():
+        data = data_queue.get()
+        if data is not None:
+            s = data.decode('utf-8')
             sys.stdout.write(s)
-    sys.stdout.flush()
+            sys.stdout.flush()
+
+
+    #data = pool.map(collect_data, itertools.repeat(args, args.autnum))
+    #for d in data:
+    #    if d is not None:
+    #        s = d.decode('utf-8')
+    #        sys.stdout.write(s)
+    #sys.stdout.flush()
 
 
 # Runs "command" as a subprocess and returns the STDOUT as a string. If time is specified, it is interpreted as a number
@@ -78,11 +103,11 @@ def collect_data(args):
 
     elif args.generation == 'determinize_nbautils':
         min_states = 1
-        max_states = 100
+        max_states = 10
         determinization_timeout = 45
         automaton_seed = random.randint(0, 100000)
 
-        generate_cmd = 'randaut {} -Q{}..{} -A Buchi --colored -S --seed={}'.format(atomic_propositions, min_states,
+        generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions, min_states,
                                                                                     max_states, automaton_seed)
 
         generated_automaton_file = tempfile.NamedTemporaryFile()
@@ -97,21 +122,23 @@ def collect_data(args):
 
         automaton_file = determinized_file
 
-    elif args.generation == 'determinize_spot':  # TODO
-        min_states = 2
-        max_states = 50
+    elif args.generation == 'determinize_spot':
+        min_states = 1
+        max_states = 30
+        determinization_timeout = 45
         automaton_seed = random.randint(0, 100000)
 
-        generate_cmd = 'randaut {} -Q{}..{} -A Buchi --colored -S --seed={}'.format(atomic_propositions, min_states,
+        generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions, min_states,
                                                                                     max_states, automaton_seed)
 
         generated_automaton_file = tempfile.NamedTemporaryFile()
         run_process_for_time(generate_cmd, outfile=generated_automaton_file)
 
-        determinize_cmd = 'autfilt --parity=\'min even\' -S -D --low -C {}'.format(generated_automaton_file.name)
+        determinize_cmd = 'autfilt --colored-parity=\'min even\' --small --high -S -D -C {}'.format(generated_automaton_file.name)
 
         determinized_file = tempfile.NamedTemporaryFile()
-        run_process_for_time(determinize_cmd, outfile=determinized_file)
+        if run_process_for_time(determinize_cmd, outfile=determinized_file, timeout=determinization_timeout) is None:
+            return
 
         automaton_file = determinized_file
 

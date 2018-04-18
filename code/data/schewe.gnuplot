@@ -55,20 +55,20 @@ plot "schewe_detnbaut_ap1.csv" using 1:2 notitle
 
 
 set output "analysis/schewe_detnbaut_ap1_statereduction.pdf"
-set xlabel "Number of states in the original automaton"
+set xlabel "Number of states in the original automaton after Hopcroft reduction"
 set ylabel "Number of removed states"
 set title "Schewe10 state reduction on DPAs with |Σ|=2 that were created by nbautils from NBAs"
-stats "schewe_detnbaut_ap1.csv" using ($1-$9) nooutput
+stats "schewe_detnbaut_ap1.csv" using ($5-$9) nooutput
 set yrange [-0.2:STATS_max*1.1]
-plot "schewe_detnbaut_ap1.csv" using 1:($1-$9) notitle
+plot "schewe_detnbaut_ap1.csv" using 5:($5-$9) notitle
 
 
 set output "analysis/schewe_detnbaut_ap1_statereductionrelative.pdf"
-set xlabel "Number of states in the original automaton"
+set xlabel "Number of states in the original automaton after Hopcroft reduction"
 set ylabel "Relative number of removed states"
 set title "Schewe10 state reduction on DPAs with |Σ|=2 that were created by nbautils from NBAs"
 set autoscale y
-plot "schewe_detnbaut_ap1.csv" using 1:(($1-$9)/$1) notitle
+plot "schewe_detnbaut_ap1.csv" using 5:(($5-$9)/$5) notitle
 
 
 set ytics auto
@@ -80,13 +80,64 @@ plot "schewe_detnbaut_ap2.csv" using 1:2 notitle
 
 
 set output "analysis/schewe_detnbaut_ap2_statereduction.pdf"
-set xlabel "Number of states in the original automaton"
+set xlabel "Number of states in the original automaton after Hopcroft reduction"
 set ylabel "Number of removed states"
 set title "Schewe10 state reduction on DPAs with |Σ|=4 that were created by nbautils from NBAs"
-stats "schewe_detnbaut_ap2.csv" using ($1-$9) nooutput
+stats "schewe_detnbaut_ap2.csv" using ($5-$9) nooutput
 set yrange [-0.2:STATS_max*1.1]
 set ytics 1
-plot "schewe_detnbaut_ap2.csv" using 1:($1-$9) notitle
+plot "schewe_detnbaut_ap2.csv" using 5:($5-$9) notitle
+
+
+
+# detspot with optimizations
+
+set ytics auto
+set autoscale y
+set output "analysis/schewe_detspot_ap1_time.pdf"
+set xlabel "Number of states in the original automaton"
+set ylabel "Time taken in milliseconds"
+set title "Time for Schewe construction on a DPA with |Σ|=2 that was created by Spot from an NBA"
+plot "schewe_detspot_ap1.csv" using 1:2 notitle
+
+
+set output "analysis/schewe_detspot_ap1_statereduction.pdf"
+set xlabel "Number of states in the original automaton after Hopcroft reduction"
+set ylabel "Number of removed states"
+set title "Schewe10 state reduction on DPAs with |Σ|=2 that were created by Spot from NBAs"
+stats "schewe_detspot_ap1.csv" using ($5-$9) nooutput
+set yrange [-0.2:STATS_max*1.1]
+plot "schewe_detspot_ap1.csv" using 5:($5-$9) notitle
+
+
+set output "analysis/schewe_detspot_ap1_statereductionrelative.pdf"
+set xlabel "Number of states in the original automaton after Hopcroft reduction"
+set ylabel "Relative number of removed states"
+set title "Schewe10 state reduction on DPAs with |Σ|=2 that were created by Spot from NBAs"
+set autoscale y
+plot "schewe_detspot_ap1.csv" using 5:(($5-$9)/$5) notitle
+
+
+set ytics auto
+set autoscale y
+set output "analysis/schewe_detspot_ap2_time.pdf"
+set xlabel "Number of states in the original automaton"
+set ylabel "Time taken in milliseconds"
+set title "Time for Schewe construction on a DPA with |Σ|=4 that was created by Spot from an NBA"
+plot "schewe_detspot_ap2.csv" using 1:2 notitle
+
+
+set output "analysis/schewe_detspot_ap2_statereduction.pdf"
+set xlabel "Number of states in the original automaton after Hopcroft reduction"
+set ylabel "Number of removed states"
+set title "Schewe10 state reduction on DPAs with |Σ|=4 that were created by Spot from NBAs"
+stats "schewe_detspot_ap2.csv" using ($5-$9) nooutput
+set yrange [-0.2:STATS_max*1.1]
+plot "schewe_detspot_ap2.csv" using 5:($5-$9) notitle
+
+
+
+
 
 
 
