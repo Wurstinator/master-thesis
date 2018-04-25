@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
 #include "swa.hh"
-#include "product_automaton.h"
+#include "../product_automaton.h"
 
 nbautils::SWA<int> sven_example();
 

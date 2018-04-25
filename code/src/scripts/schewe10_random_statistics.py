@@ -5,9 +5,9 @@ import tempfile
 import random
 import subprocess
 import multiprocessing
-import itertools
 import threading
 
+statistics_exe = '../../bin/schewe_statistics'
 
 def main():
     random.seed()
@@ -27,8 +27,7 @@ def main():
                         default='generate_deterministic')
     parser.add_argument('--ap', help='Number of atomic propositions.', type=int, default=1)
 
-    exe = '../bin/schewe_statistics'
-    if not (os.path.isfile(exe) and os.access(exe, os.X_OK)):
+    if not (os.path.isfile(statistics_exe) and os.access(statistics_exe, os.X_OK)):
         print('Error. Compile schewe_statistics first.')
         sys.exit(1)
 
@@ -59,14 +58,6 @@ def main():
             sys.stdout.flush()
 
 
-    #data = pool.map(collect_data, itertools.repeat(args, args.autnum))
-    #for d in data:
-    #    if d is not None:
-    #        s = d.decode('utf-8')
-    #        sys.stdout.write(s)
-    #sys.stdout.flush()
-
-
 # Runs "command" as a subprocess and returns the STDOUT as a string. If time is specified, it is interpreted as a number
 # in seconds. If the subprocess does not terminate after that time, it is exited forcefully and None is returned.
 # If outfile is specified, the output is written to that file/stream instead.
@@ -83,8 +74,6 @@ def run_process_for_time(command, timeout=None, outfile=subprocess.PIPE):
 
 
 def collect_data(args):
-    exe = '../bin/schewe_statistics'
-
     atomic_propositions = ' '.join(['a' + str(i) for i in range(1, args.ap + 1)])
 
     if args.generation == 'generate_deterministic':
@@ -113,7 +102,7 @@ def collect_data(args):
         generated_automaton_file = tempfile.NamedTemporaryFile()
         run_process_for_time(generate_cmd, outfile=generated_automaton_file)
 
-        determinize_cmd = '../nbautils/build/bin/nbadet -d -s -n -a -b -c -t -p -m -u1 {}'.format(
+        determinize_cmd = '../../nbautils/build/bin/nbadet -d -s -n -a -b -c -t -p -m -u1 {}'.format(
             generated_automaton_file.name)
 
         determinized_file = tempfile.NamedTemporaryFile()
@@ -142,7 +131,7 @@ def collect_data(args):
 
         automaton_file = determinized_file
 
-    construction_cmd = exe
+    construction_cmd = statistics_exe
     if args.make_complete:
         construction_cmd += ' -c'
     if args.minimize:

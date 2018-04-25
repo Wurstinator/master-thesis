@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
 #include "swa.hh"
-#include "can_reach_state.h"
+#include "../can_reach_state.h"
 
 nbautils::SWA<int> sven_example();
 

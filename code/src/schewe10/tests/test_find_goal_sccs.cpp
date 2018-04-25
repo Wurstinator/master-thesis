@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
 #include "swa.hh"
-#include "find_goal_sccs.h"
+#include "../find_goal_sccs.h"
 
 nbautils::SWA<int> sven_example();
 

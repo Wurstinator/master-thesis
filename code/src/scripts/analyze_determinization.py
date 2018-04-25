@@ -55,7 +55,7 @@ def collect_data(args):
 
     # Determinize with nbautils.
     determinization_timeout_1 = 45
-    determinize_cmd_1 = 'nbautils/build/bin/nbadet -d -s -n -a -b -c -t -p -m -u1 {}'.format(generated_automaton_file.name)
+    determinize_cmd_1 = '../nbautils/build/bin/nbadet -d -s -n -a -b -c -t -p -m -u1 {}'.format(generated_automaton_file.name)
     determinized_file_1 = tempfile.NamedTemporaryFile()
     if run_process_for_time(determinize_cmd_1, outfile=determinized_file_1, timeout=determinization_timeout_1) is None:
         return

@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
 #include "swa.hh"
-#include "merge_sccs.h"
+#include "../merge_sccs.h"
 
 nbautils::SWA<int> sven_example();
 

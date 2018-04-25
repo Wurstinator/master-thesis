@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
 #include "swa.hh"
-#include "backwards_automaton.h"
+#include "../backwards_automaton.h"
 #include <map>
 #include <set>
 

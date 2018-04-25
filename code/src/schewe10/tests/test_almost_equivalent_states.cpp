@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
 #include "swa.hh"
-#include "almost_equivalent_states.h"
+#include "../almost_equivalent_states.h"
 
 nbautils::SWA<int> sven_example();
 
