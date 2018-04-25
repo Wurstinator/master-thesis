@@ -53,10 +53,16 @@ set(SCHEWE10_HDRS
         src/schewe10/product_automaton.cpp
         )
 
+set(AUTOMATON_HDRS
+        src/automaton/finite_automaton.h
+        src/automaton/deterministic_automaton.h
+        src/automaton/deterministic_automaton.cpp
+        )
+
 ExternalProject_Get_Property(cpphoafparser source_dir)
 include_directories(${source_dir}/include)
 
-add_executable(hello_world hello_world.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
+add_executable(hello_world src/hello_world.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS} ${AUTOMATON_HDRS})
 target_link_libraries(hello_world nbautils-lib)
 add_dependencies(hello_world cpphoafparser)
 target_include_directories(hello_world PRIVATE ${NBAUTILS_DIR}/src)
