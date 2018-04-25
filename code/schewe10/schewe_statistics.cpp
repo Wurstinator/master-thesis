@@ -78,6 +78,7 @@ Options ParseArgs(int argc, char** argv) {
 // Executes the process for one automaton.
 struct Statistics {
     size_t original_size;
+    size_t number_of_sccs;
 
     struct Efficiency {
         long milliseconds_taken;
@@ -118,9 +119,14 @@ void MinimizePA(nbautils::SWA<TagT>* automaton, const Options& options) {
         nbautils::minimize_pa(*automaton);
 }
 
+size_t CountSCCs(const nbautils::SWA<std::string>& automaton) {
+    return nbautils::get_sccs(automaton.states(), [&automaton](nbautils::state_t q) {return automaton.succ(q);})->sccs.size();
+}
+
 Statistics PerformConstruction_NoMinimizations(nbautils::SWA<std::string> automaton, const Options& options) {
     Statistics data{};
     data.original_size = automaton.num_states();
+    data.number_of_sccs = CountSCCs(automaton);
     TimePoint time_begin = TimeNow();
     ScheweAutomaton(&automaton);
     TimePoint time_end = TimeNow();
@@ -136,6 +142,7 @@ Statistics PerformConstruction_Complete(nbautils::SWA<std::string> automaton, co
 
     TimePoint time1 = TimeNow();
     MinimizePA(&minimized, options);
+    data.number_of_sccs = CountSCCs(minimized);
     TimePoint time2 = TimeNow();
     ScheweAutomaton(&automaton);
     TimePoint time3 = TimeNow();
@@ -163,6 +170,7 @@ Statistics PerformConstruction_Complete(nbautils::SWA<std::string> automaton, co
 void EvaluateStats(const std::vector<Statistics>& data, bool complete) {
     for (const Statistics& stat : data) {
         std::cout << stat.original_size << ','
+                  << stat.number_of_sccs << ','
                   << stat.only_schewe.milliseconds_taken << ','
                   << stat.only_schewe.new_size;
         if (complete) {
