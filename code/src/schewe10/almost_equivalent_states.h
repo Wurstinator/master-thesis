@@ -2,7 +2,7 @@
 #pragma once
 
 #include "swa.hh"
-#include "equivalence_relation.h"
+#include "../equivalence_relation.h"
 #include "product_automaton.h"
 #include "merge_sccs.h"
 #include "find_goal_sccs.h"

@@ -13,6 +13,7 @@ set(CATCH2_DIR ./Catch2)
 
 add_subdirectory(nbautils)
 add_subdirectory(Catch2)
+add_subdirectory(range-v3)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -43,7 +44,7 @@ set(SCHEWE10_HDRS
         src/schewe10/find_goal_sccs.h
         src/schewe10/find_goal_sccs.cpp
         src/schewe10/product_automaton.h
-        src/schewe10/equivalence_relation.h
+        src/equivalence_relation.h
         src/schewe10/almost_equivalent_states.h
         src/schewe10/merge_states.h
         src/schewe10/can_reach_state.h
@@ -53,10 +54,20 @@ set(SCHEWE10_HDRS
         src/schewe10/product_automaton.cpp
         )
 
+file(GLOB_RECURSE RANGE_V3_PUBLIC_HEADERS
+        RELATIVE range-v3/include
+        "range-v3/include/*.hpp")
+
 set(AUTOMATON_HDRS
         src/automaton/finite_automaton.h
+        src/automaton/transition_automaton.h
         src/automaton/deterministic_automaton.h
         src/automaton/deterministic_automaton.cpp
+        src/automaton/nondeterministic_automaton.h
+        src/automaton/nondeterministic_automaton.cpp
+        src/automaton/labelled_automaton.h
+        src/automaton/util.h
+        src/automaton/util.impl.h
         )
 
 ExternalProject_Get_Property(cpphoafparser source_dir)
@@ -66,6 +77,10 @@ add_executable(hello_world src/hello_world.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS}
 target_link_libraries(hello_world nbautils-lib)
 add_dependencies(hello_world cpphoafparser)
 target_include_directories(hello_world PRIVATE ${NBAUTILS_DIR}/src)
+
+add_library(automaton ${AUTOMATON_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS})
+target_link_libraries(automaton nbautils-lib)
+target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
 add_executable(schewe_main src/schewe10/schewe_main.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
 target_link_libraries(schewe_main nbautils-lib)

@@ -4,3 +4,6 @@
 [submodule "code/Catch2"]
 	path = code/Catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "code/range-v3"]
+	path = code/range-v3
+	url = https://github.com/ericniebler/range-v3.git

@@ -1,10 +1,12 @@
 
 #pragma once
 
-
 #include <unordered_map>
 #include <set>
 #include <vector>
+
+namespace tollk {
+
 
 // Represents an equivalence relation on an arbitrary type, i.e. a binary relation that is reflexive, symmetric, and
 // transitive.
@@ -17,7 +19,7 @@ public:
     EquivalenceRelation() = default;
 
     // Creates a new relation with the given equivalence classes.
-    EquivalenceRelation(std::vector<EquivClass> classes);
+    explicit EquivalenceRelation(std::vector<EquivClass> classes);
 
     // Adds a new connection between to elements to the relation. If neither of them is present already, a new class
     // is created. If only one of them is present already, the other one is added to its class. If both exist in the
@@ -140,3 +142,6 @@ template<typename T>
 const std::vector<typename EquivalenceRelation<T>::EquivClass>& EquivalenceRelation<T>::Classes() const {
     return classes;
 }
+
+
+}  // namespace tollk

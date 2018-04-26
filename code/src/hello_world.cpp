@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include "swa.hh"
-#include "schewe10/equivalence_relation.h"
+#include "equivalence_relation.h"
 #include "schewe10/almost_equivalent_states.h"
 #include "schewe10/schewe_automaton.h"
 #include <chrono>
