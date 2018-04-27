@@ -70,11 +70,11 @@ inline bool FiniteAutomaton::HasState(state_t q) const {
     return std::find(this->states.begin(), this->states.end(), q) != this->states.end();
 }
 
-state_t FiniteAutomaton::InitialState() const {
+inline state_t FiniteAutomaton::InitialState() const {
     return this->initial_state;
 }
 
-void FiniteAutomaton::SetInitialState(state_t q) {
+inline void FiniteAutomaton::SetInitialState(state_t q) {
     this->initial_state = q;
 }
 

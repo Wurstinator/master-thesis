@@ -43,6 +43,9 @@ public:
     // Returns the vector of classes.
     const std::vector<EquivClass>& Classes() const;
 
+    // Splits a class C at index i into two new classes: C \ X and C ∩ X. O(|C|) operation.
+    void SplitClass(typename std::vector<EquivClass>::size_type i, const EquivClass& X);
+
 private:
     using RelationMap = std::unordered_map<T, typename std::vector<EquivClass>::size_type>;
 
@@ -141,6 +144,20 @@ bool EquivalenceRelation<T>::IsEquiv(const T& x, const T& y) const {
 template<typename T>
 const std::vector<typename EquivalenceRelation<T>::EquivClass>& EquivalenceRelation<T>::Classes() const {
     return classes;
+}
+
+template<typename T>
+void EquivalenceRelation<T>::SplitClass(typename std::vector<EquivalenceRelation<T>::EquivClass>::size_type i, const EquivalenceRelation::EquivClass& X) {
+    EquivClass new_class;
+    for (const T& x : this->classes[i]) {
+        if (X.find(x) != X.end()) {
+            new_class.insert(x);
+            this->classes[i].erase(x);
+            this->relation[x] = this->classes.size();
+        }
+    }
+    if (!new_class.empty())
+        this->classes.push_back(std::move(new_class));
 }
 
 

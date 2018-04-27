@@ -44,7 +44,6 @@ set(SCHEWE10_HDRS
         src/schewe10/find_goal_sccs.h
         src/schewe10/find_goal_sccs.cpp
         src/schewe10/product_automaton.h
-        src/equivalence_relation.h
         src/schewe10/almost_equivalent_states.h
         src/schewe10/merge_states.h
         src/schewe10/can_reach_state.h
@@ -58,7 +57,7 @@ file(GLOB_RECURSE RANGE_V3_PUBLIC_HEADERS
         RELATIVE range-v3/include
         "range-v3/include/*.hpp")
 
-set(AUTOMATON_HDRS
+set(AUTOMATON_FILES
         src/automaton/finite_automaton.h
         src/automaton/transition_automaton.h
         src/automaton/deterministic_automaton.h
@@ -70,17 +69,21 @@ set(AUTOMATON_HDRS
         src/automaton/util.impl.h
         )
 
+
 ExternalProject_Get_Property(cpphoafparser source_dir)
 include_directories(${source_dir}/include)
 
-add_executable(hello_world src/hello_world.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS} ${AUTOMATON_HDRS})
-target_link_libraries(hello_world nbautils-lib)
-add_dependencies(hello_world cpphoafparser)
-target_include_directories(hello_world PRIVATE ${NBAUTILS_DIR}/src)
-
-add_library(automaton ${AUTOMATON_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS})
+add_library(automaton ${AUTOMATON_FILES} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
 target_link_libraries(automaton nbautils-lib)
 target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+
+set(AUTOMATON_TESTS
+        src/automaton/tests/test_automata.cpp)
+
+add_executable(automaton_tests src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
+target_link_libraries(automaton_tests nbautils-lib)
+target_include_directories(automaton_tests PRIVATE ${NBAUTILS_DIR}/src range-v3/include ${CATCH2_DIR}/single_include)
+
 
 add_executable(schewe_main src/schewe10/schewe_main.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
 target_link_libraries(schewe_main nbautils-lib)
