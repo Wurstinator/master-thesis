@@ -18,8 +18,11 @@ class LabelledAutomaton : public FiniteAutomaton {
  public:
     using Label = LabelT;
 
+    // Adds a state to the automaton. The caller has to make sure that it does not exist already. O(1) operation.
+    void AddState(state_t q) override;
+
     // Returns the label of a state.
-    const LabelT& GetLabel(state_t q) const;
+    const Label& GetLabel(state_t q) const;
 
     // Assigns the label of a state.
     void SetLabel(state_t q, Label label);
@@ -32,7 +35,13 @@ class LabelledAutomaton : public FiniteAutomaton {
 };
 
 template<typename LabelT>
-const LabelT& LabelledAutomaton<LabelT>::GetLabel(state_t q) const {
+void LabelledAutomaton<LabelT>::AddState(state_t q) {
+    FiniteAutomaton::AddState(q);
+    labels[q] = Label();
+}
+
+template<typename LabelT>
+const typename LabelledAutomaton<LabelT>::Label& LabelledAutomaton<LabelT>::GetLabel(state_t q) const {
     return this->labels.find(q)->second;
 }
 
@@ -56,7 +65,7 @@ EquivalenceRelation<state_t> LabelledAutomaton<LabelT>::LabelEquivalence() const
             result.AddConnection(q, q);
         } else {
             // ..otherwise simply add q to the existing equivalence class.
-            result.AddConnection(q, *iter);
+            result.AddConnection(q, iter->second);
         }
     }
     return result;

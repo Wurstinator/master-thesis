@@ -78,7 +78,8 @@ target_link_libraries(automaton nbautils-lib)
 target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
 set(AUTOMATON_TESTS
-        src/automaton/tests/test_automata.cpp)
+        src/automaton/tests/test_automata.cpp
+        src/automaton/tests/test_util.cpp)
 
 add_executable(automaton_tests src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
 target_link_libraries(automaton_tests nbautils-lib)

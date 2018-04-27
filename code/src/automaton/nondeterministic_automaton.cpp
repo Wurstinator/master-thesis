@@ -28,6 +28,17 @@ void NondeterministicAutomaton::AddState(state_t q) {
         this->transitions[q][s] = std::unordered_set<state_t>();
 }
 
+void NondeterministicAutomaton::DeleteTransitionsTo(state_t to) {
+    for (auto& kv_pair : this->transitions) {
+        for (auto& kv_pair2 : kv_pair.second) {
+            const auto iter = kv_pair2.second.find(to);
+            if (iter != kv_pair2.second.end()) {
+                kv_pair2.second.erase(iter);
+            }
+        }
+    }
+}
+
 void NondeterministicAutomaton::RedirectTransitions(state_t previous_target, state_t new_target) {
     for (auto& kv_pair : this->transitions) {
         for (auto& kv_pair2 : kv_pair.second) {

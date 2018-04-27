@@ -45,7 +45,7 @@ NondeterministicAutomaton MergeStates(const TransitionAutomaton<RT1, RT2>& autom
 // Right now it's an implementation of https://en.wikipedia.org/wiki/DFA_minimization.
 template<typename RT1, typename RT2>
 void RefineToCongruence(EquivalenceRelation<state_t>* relation, const TransitionAutomaton<RT1, RT2>& automaton) {
-    std::unordered_set<EquivalenceRelation<state_t>::EquivClass> W(relation->Classes().begin()+1, relation->Classes().end());
+    std::set<EquivalenceRelation<state_t>::EquivClass> W(relation->Classes().begin()+1, relation->Classes().end());
     while (!W.empty()) {
         EquivalenceRelation<state_t>::EquivClass A(std::move(*W.begin()));
         W.erase(W.begin());
@@ -78,7 +78,7 @@ void RefineToCongruence(EquivalenceRelation<state_t>* relation, const Transition
                     if (XY_diff.size() < XY_intersect.size())
                         W.insert(XY_diff);
                     else
-                        W:insert(XY_intersect);
+                        W.insert(XY_intersect);
                 }
             }
         }
