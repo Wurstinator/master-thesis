@@ -22,6 +22,10 @@ class NondeterministicAutomaton
  public:
     explicit NondeterministicAutomaton(unsigned char atomic_propositions) : TransitionAutomaton(atomic_propositions) {}
 
+    // Given an arbitrary TransitionAutomaton, constructs an equivalent NondeterministicAutomaton from it.
+    template <typename RT1, typename RT2>
+    static NondeterministicAutomaton FromTransitionAutomaton(const TransitionAutomaton<RT1, RT2>& automaton);
+
     // Return iterators describing a range of successors of a given state and symbol. O(|Δ|) operations.
     SuccRangeStateSym Successors(state_t q, symbol_t s) const override;
 
@@ -47,9 +51,14 @@ class NondeterministicAutomaton
     // transitions. O(1) operation.
     void RemoveState(state_t q) override;
 
+    // Merges a set of states into one. Outgoing transitions are unified and incoming transitions are redirected to the
+    // merged state. If the initial state is in the set, the merged state will be the initial state again.
+    // The ID of the new merged state will be *std::begin(range). O(|A|) operation.
+    template <typename SetT>
+    void MergeStates(const SetT& merge_states);
+
  protected:
     std::unordered_map<state_t, std::unordered_map<symbol_t, std::unordered_set<state_t>>> transitions{};
-
 
  private:
     // Returns the outgoing transitions of a given state / state-symbol combination.
@@ -58,6 +67,76 @@ class NondeterministicAutomaton
     const std::unordered_set<state_t>& StateSymbOut(state_t q, symbol_t s) const;
     std::unordered_set<state_t>& StateSymbOut(state_t q, symbol_t s);
 };
+
+
+
+// Implementation
+
+
+template <typename RT1, typename RT2>
+NondeterministicAutomaton NondeterministicAutomaton::FromTransitionAutomaton(const TransitionAutomaton<RT1, RT2>& automaton) {
+    NondeterministicAutomaton result(automaton.atomicPropositions);
+
+    // Copy the states to the new non-deterministic automaton.
+    for (state_t q : automaton.States())
+        result.AddState(q);
+
+    // Copy the transitions.
+    for (state_t p : automaton.States())
+        for (symbol_t s : automaton.Symbols())
+            for (state_t q : automaton.Successors(p, s))
+                result.AddSucc(p, s, q);
+
+    // Set the initial state.
+    result.SetInitialState(automaton.InitialState());
+
+    return result;
+}
+
+
+template <typename SetT>
+void NondeterministicAutomaton::MergeStates(const SetT& merge_states) {
+    const state_t representative = *merge_states.begin();
+
+    // Move the incoming transitions to the representative.
+    for (state_t q : States()) {
+        for (symbol_t s : Symbols()) {
+            std::unordered_set<state_t>& outgoing = StateSymbOut(q, s);
+            for (state_t merge : merge_states) {
+                if (merge != representative) {
+                    const auto iter = outgoing.find(merge);
+                    if (iter != outgoing.end()) {
+                        outgoing.erase(iter);
+                        outgoing.insert(representative);
+                    }
+                }
+            }
+        }
+    }
+
+    // Move the outgoing transitions to the representative.
+    for (state_t merge : merge_states) {
+        for (symbol_t s : Symbols()) {
+            std::unordered_set<state_t>& representative_out = StateSymbOut(representative, s);
+            for (state_t out : StateSymbOut(merge, s)) {
+                representative_out.insert(out);
+            }
+        }
+    }
+
+    // Erase the merged states.
+    for (state_t merge : merge_states) {
+        if (merge != representative) {
+            RemoveState(merge);
+        }
+    }
+
+    // Change the initial state, if necessary.
+    if (merge_states.find(InitialState()) != merge_states.end())
+        SetInitialState(representative);
+}
+
+
 
 }  // namespace automaton
 }  // namespace tollk

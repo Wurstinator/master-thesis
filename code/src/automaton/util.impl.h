@@ -1,4 +1,5 @@
 
+#include <range/v3/algorithm/any_of.hpp>
 
 namespace tollk {
 namespace automaton {
@@ -85,6 +86,8 @@ SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& a
 // Performs a simple DFS and collects the visited states.
 template<typename RT1, typename RT2>
 void _ReachableStates_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_t q, std::unordered_set<state_t>* visited) {
+    if (visited->find(q) != visited->end())
+        return;
     visited->insert(q);
     for (state_t p : automaton.Successors(q))
         _ReachableStates_DSF(automaton, p, visited);
@@ -101,34 +104,53 @@ std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>&
 
 template<typename RT1, typename RT2, typename SetT>
 NondeterministicAutomaton MergeStates(const TransitionAutomaton<RT1, RT2>& automaton, const SetT& merge_states) {
-    NondeterministicAutomaton result(automaton.atomicPropositions);
-    const state_t representative = *merge_states.begin();
+    NondeterministicAutomaton result = NondeterministicAutomaton::FromTransitionAutomaton(automaton);
+    result.MergeStates(merge_states);
+    return result;
+}
 
-    // Copy the states to the new non-deterministic automaton.
-    for (state_t p : automaton.States())
-        if (merge_states.find(p) != merge_states.end())
-            result.AddState(p);
-    result.AddState(representative);
 
-    // Copy the transitions.
-    for (state_t p : automaton.States()) {
+
+template<typename RT1, typename RT2>
+void RefineToCongruence(EquivalenceRelation<state_t>* relation, const TransitionAutomaton<RT1, RT2>& automaton) {
+    std::set<EquivalenceRelation<state_t>::EquivClass> W(relation->Classes().begin()+1, relation->Classes().end());
+    while (!W.empty()) {
+        EquivalenceRelation<state_t>::EquivClass A(std::move(*W.begin()));
+        W.erase(W.begin());
+
         for (symbol_t s : automaton.Symbols()) {
-            for (state_t q : automaton.Successors(p, s)) {
-                const state_t merge_p = (merge_states.find(p) != merge_states.end() ? representative : p);
-                const state_t merge_q = (merge_states.find(q) != merge_states.end() ? representative : q);
-                result.AddSucc(merge_p, s, merge_q);
+            std::set<state_t> X;
+            for (state_t q : automaton.States()) {
+                if (ranges::v3::any_of(automaton.Successors(q, s), [&A](state_t q) {
+                    return A.find(q) != A.end();
+                }))
+                    X.insert(q);
+            }
+
+            const std::vector<EquivalenceRelation<state_t>::EquivClass> classes = relation->Classes();
+            for (unsigned int i = 0; i < classes.size(); ++i) {
+                const EquivalenceRelation<state_t>::EquivClass& Y = classes[i];
+                EquivalenceRelation<state_t>::EquivClass XY_diff;
+                std::set_difference(Y.begin(), Y.end(), X.begin(), X.end(), std::inserter(XY_diff, XY_diff.begin()));
+                if (XY_diff.size() == Y.size() || XY_diff.empty())
+                    continue;
+                EquivalenceRelation<state_t>::EquivClass XY_intersect;
+                std::set_intersection(Y.begin(), Y.end(), X.begin(), X.end(), std::inserter(XY_intersect, XY_intersect.begin()));
+
+                relation->SplitClass(i, X);
+                if (W.find(Y) != W.end()) {
+                    W.erase(W.find(Y));
+                    W.insert(XY_diff);
+                    W.insert(XY_intersect);
+                } else {
+                    if (XY_diff.size() < XY_intersect.size())
+                        W.insert(XY_diff);
+                    else
+                        W.insert(XY_intersect);
+                }
             }
         }
     }
-
-    // Set the initial state.
-    if (merge_states.find(automaton.InitialState()) != merge_states.end()) {
-        result.SetInitialState(representative);
-    } else {
-        result.SetInitialState(automaton.InitialState());
-    }
-
-    return result;
 }
 
 

@@ -5,6 +5,7 @@
 #include "transition_automaton.h"
 #include "range/v3/core.hpp"
 #include "range/v3/view/single.hpp"
+#include "range/v3/distance.hpp"
 
 namespace tollk {
 namespace automaton {
@@ -19,6 +20,11 @@ class DeterministicAutomaton :
         > {
  public:
     explicit DeterministicAutomaton(unsigned char atomic_propositions) : TransitionAutomaton(atomic_propositions) {}
+
+    // Given an arbitrary TransitionAutomaton, tries to construct an equivalent DeterministicAutomaton from it.
+    // If any state-symbol combination does not have a unique successor, an exception is thrown.
+    template <typename RT1, typename RT2>
+    static DeterministicAutomaton FromTransitionAutomaton(const TransitionAutomaton<RT1, RT2>& automaton);
 
     // Return the successor of a given state and symbol. O(log n) operation.
     state_t Succ(state_t q, symbol_t s) const;
@@ -48,6 +54,9 @@ class DeterministicAutomaton :
 };
 
 
+// Implementation
+
+
 inline state_t DeterministicAutomaton::Succ(state_t q, symbol_t s) const {
     return this->transitions.find(q)->second[s];
 }
@@ -55,6 +64,31 @@ inline state_t DeterministicAutomaton::Succ(state_t q, symbol_t s) const {
 inline void
 DeterministicAutomaton::SetSucc(state_t q, symbol_t s, state_t succ) {
     this->transitions.find(q)->second[s] = succ;
+}
+
+template<typename RT1, typename RT2>
+DeterministicAutomaton DeterministicAutomaton::FromTransitionAutomaton(const TransitionAutomaton<RT1, RT2>& automaton) {
+    DeterministicAutomaton result(automaton.atomicPropositions);
+
+    // Copy the states to the new non-deterministic automaton.
+    for (state_t q : automaton.States())
+        result.AddState(q);
+
+    // Copy the transitions.
+    for (state_t p : automaton.States()) {
+        for (symbol_t s : automaton.Symbols()) {
+            if (ranges::v3::distance(automaton.Successors(p, s)) != 1) {
+                throw "DeterministicAutomaton::FromTransitionAutomaton : Given automaton is not deterministic.";
+            }
+            const state_t q = *(automaton.Successors(p, s).begin());
+            result.SetSucc(p, s, q);
+        }
+    }
+
+    // Set the initial state.
+    result.SetInitialState(automaton.InitialState());
+
+    return result;
 }
 
 }  // namespace automaton

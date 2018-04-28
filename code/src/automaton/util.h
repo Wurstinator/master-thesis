@@ -44,47 +44,13 @@ NondeterministicAutomaton MergeStates(const TransitionAutomaton<RT1, RT2>& autom
 // TODO This algorithm can be optimized using a partition refinement structure, if necessary.
 // Right now it's an implementation of https://en.wikipedia.org/wiki/DFA_minimization.
 template<typename RT1, typename RT2>
-void RefineToCongruence(EquivalenceRelation<state_t>* relation, const TransitionAutomaton<RT1, RT2>& automaton) {
-    std::set<EquivalenceRelation<state_t>::EquivClass> W(relation->Classes().begin()+1, relation->Classes().end());
-    while (!W.empty()) {
-        EquivalenceRelation<state_t>::EquivClass A(std::move(*W.begin()));
-        W.erase(W.begin());
+void RefineToCongruence(EquivalenceRelation<state_t>* relation, const TransitionAutomaton<RT1, RT2>& automaton);
 
-        for (symbol_t s : automaton.Symbols()) {
-            std::set<state_t> X;
-            for (state_t q : automaton.States()) {
-                if (std::any_of(automaton.Successors(q, s).begin(), automaton.Successors(q, s).end(), [&A](state_t q) {
-                        return A.find(q) != A.end();
-                    }))
-                    X.insert(q);
-            }
-
-            const std::vector<EquivalenceRelation<state_t>::EquivClass> classes = relation->Classes();
-            for (unsigned int i = 0; i < classes.size(); ++i) {
-                const EquivalenceRelation<state_t>::EquivClass& Y = classes[i];
-                EquivalenceRelation<state_t>::EquivClass XY_diff;
-                std::set_difference(Y.begin(), Y.end(), X.begin(), X.end(), std::inserter(XY_diff, XY_diff.begin()));
-                if (XY_diff.size() == Y.size() || XY_diff.empty())
-                    continue;
-                EquivalenceRelation<state_t>::EquivClass XY_intersect;
-                std::set_intersection(Y.begin(), Y.end(), X.begin(), X.end(), std::inserter(XY_intersect, XY_intersect.begin()));
-
-                relation->SplitClass(i, X);
-                if (W.find(Y) != W.end()) {
-                    W.erase(W.find(Y));
-                    W.insert(XY_diff);
-                    W.insert(XY_intersect);
-                } else {
-                    if (XY_diff.size() < XY_intersect.size())
-                        W.insert(XY_diff);
-                    else
-                        W.insert(XY_intersect);
-                }
-            }
-        }
-    }
-};
-
+// Merges all states in each SCC into one state, resulting in a DAG. This is performed in-place on a nondeterministic
+// automaton. For general transition automata, use NondeterministicAutomaton::FromTransitionAutomaton first.
+// If the second argument is not NULL, then it is set to the computed SCCCollection, as this has to be done internally
+// anyway. O(|A|^2) operation.
+void MergeSCCs(NondeterministicAutomaton* automaton, SCCCollection* sccs = nullptr);
 
 
 }  // namespace automaton

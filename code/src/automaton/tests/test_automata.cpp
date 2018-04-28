@@ -1,9 +1,7 @@
 
 #include "catch.hpp"
 
-#include <range/v3/to_container.hpp>
-#include <range/v3/action/sort.hpp>
-#include <range/v3/action/unique.hpp>
+#include "helper_functions.h"
 
 #include "../finite_automaton.h"
 #include "../transition_automaton.h"
@@ -13,6 +11,10 @@
 
 using namespace tollk;
 using namespace automaton;
+
+NondeterministicAutomaton TestAutomaton1();
+DeterministicAutomaton TestAutomaton2();
+
 
 TEST_CASE("Test functionality of FiniteAutomaton class.") {
     FiniteAutomaton automaton;
@@ -95,15 +97,6 @@ TEST_CASE("Test functionality of TransitionAutomaton class.") {
     CHECK(symvec2 == std::vector<symbol_t> {0, 1, 2, 3, 4, 5, 6, 7});
 }
 
-template <typename Rng1, typename Rng2>
-bool CheckEquivalence(Rng1 range1, Rng2 range2) {
-    const std::vector<state_t> vec1 = ranges::v3::to_vector(range1);
-    const std::set<state_t> set1(vec1.begin(), vec1.end());
-    const std::vector<state_t> vec2 = ranges::v3::to_vector(range2);
-    const std::set<state_t> set2(vec2.begin(), vec2.end());
-    return set1 == set2;
-};
-
 TEST_CASE("Test functionality of DeterministicAutomaton class.") {
     DeterministicAutomaton automaton(1);
     automaton.AddState(0);
@@ -129,19 +122,19 @@ TEST_CASE("Test functionality of DeterministicAutomaton class.") {
     CHECK(automaton.Succ(3, 0) == 3);
     CHECK(automaton.Succ(3, 1) == 2);
 
-    CHECK(CheckEquivalence(automaton.Successors(0, 0), std::set<state_t> {1}));
-    CHECK(CheckEquivalence(automaton.Successors(0, 1), std::set<state_t> {2}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 0), std::set<state_t> {0}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 1), std::set<state_t> {3}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 0), std::set<state_t> {2}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 1), std::set<state_t> {2}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 0), std::set<state_t> {3}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 1), std::set<state_t> {2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::set<state_t>{1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::set<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 0), std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 1), std::set<state_t>{2}));
 
-    CHECK(CheckEquivalence(automaton.Successors(0), std::set<state_t> {1, 2}));
-    CHECK(CheckEquivalence(automaton.Successors(1), std::set<state_t> {0, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(2), std::set<state_t> {2}));
-    CHECK(CheckEquivalence(automaton.Successors(3), std::set<state_t> {2, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0), std::set<state_t>{1, 2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1), std::set<state_t>{0, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3), std::set<state_t>{2, 3}));
 
     automaton.RedirectTransitions(2, 0);
 
@@ -154,19 +147,23 @@ TEST_CASE("Test functionality of DeterministicAutomaton class.") {
     CHECK(automaton.Succ(3, 0) == 3);
     CHECK(automaton.Succ(3, 1) == 0);
 
-    CHECK(CheckEquivalence(automaton.Successors(0, 0), std::set<state_t> {1}));
-    CHECK(CheckEquivalence(automaton.Successors(0, 1), std::set<state_t> {0}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 0), std::set<state_t> {0}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 1), std::set<state_t> {3}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 0), std::set<state_t> {0}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 1), std::set<state_t> {0}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 0), std::set<state_t> {3}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 1), std::set<state_t> {0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::set<state_t>{1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::set<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::set<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::set<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::set<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 0), std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 1), std::set<state_t>{0}));
 
-    CHECK(CheckEquivalence(automaton.Successors(0), std::set<state_t> {0, 1}));
-    CHECK(CheckEquivalence(automaton.Successors(1), std::set<state_t> {0, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(2), std::set<state_t> {0}));
-    CHECK(CheckEquivalence(automaton.Successors(3), std::set<state_t> {0, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0), std::set<state_t>{0, 1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1), std::set<state_t>{0, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2), std::set<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3), std::set<state_t>{0, 3}));
+}
+
+TEST_CASE("Test DeterministicAutomaton::FromTransitionAutomaton.") {
+    //TODO
 }
 
 TEST_CASE("Test functionality of NondeterministicAutomaton class.") {
@@ -185,34 +182,62 @@ TEST_CASE("Test functionality of NondeterministicAutomaton class.") {
     automaton.AddSucc(3, 0, 1);
     automaton.AddSucc(3, 0, 3);
 
-    CHECK(CheckEquivalence(automaton.Successors(0, 0), std::set<state_t> {0, 1}));
-    CHECK(CheckEquivalence(automaton.Successors(0, 1), std::set<state_t> {}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 0), std::set<state_t> {2}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 1), std::set<state_t> {2}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 0), std::set<state_t> {1}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 1), std::set<state_t> {3}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 0), std::set<state_t> {1, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 1), std::set<state_t> {}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::set<state_t>{0, 1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::set<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::set<state_t>{1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 0), std::set<state_t>{1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 1), std::set<state_t>{}));
 
-    CHECK(CheckEquivalence(automaton.Successors(0), std::set<state_t> {0, 1}));
-    CHECK(CheckEquivalence(automaton.Successors(1), std::set<state_t> {2}));
-    CHECK(CheckEquivalence(automaton.Successors(2), std::set<state_t> {1, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(3), std::set<state_t> {1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0), std::set<state_t>{0, 1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2), std::set<state_t>{1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3), std::set<state_t>{1, 3}));
 
     automaton.RedirectTransitions(0, 3);
     automaton.DeleteTransitionsTo(2);
 
-    CHECK(CheckEquivalence(automaton.Successors(0, 0), std::set<state_t> {1, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(0, 1), std::set<state_t> {}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 0), std::set<state_t> {}));
-    CHECK(CheckEquivalence(automaton.Successors(1, 1), std::set<state_t> {}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 0), std::set<state_t> {1}));
-    CHECK(CheckEquivalence(automaton.Successors(2, 1), std::set<state_t> {3}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 0), std::set<state_t> {1, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(3, 1), std::set<state_t> {}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::set<state_t>{1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::set<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::set<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::set<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::set<state_t>{1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 0), std::set<state_t>{1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 1), std::set<state_t>{}));
 
-    CHECK(CheckEquivalence(automaton.Successors(0), std::set<state_t> {1, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(1), std::set<state_t> {}));
-    CHECK(CheckEquivalence(automaton.Successors(2), std::set<state_t> {1, 3}));
-    CHECK(CheckEquivalence(automaton.Successors(3), std::set<state_t> {1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0), std::set<state_t>{1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1), std::set<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2), std::set<state_t>{1, 3}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(3), std::set<state_t>{1, 3}));
+}
+
+TEST_CASE("Test NondeterministicAutomaton::FromTransitionAutomaton.") {
+    const NondeterministicAutomaton automaton = NondeterministicAutomaton::FromTransitionAutomaton(TestAutomaton2());
+    //TODO
+}
+
+TEST_CASE("Test NondeterministicAutomaton::MergeStates.") {
+    NondeterministicAutomaton automaton = TestAutomaton1();
+    automaton.SetInitialState(3);
+    automaton.MergeStates(std::set<state_t> {2,3});
+    CHECK(automaton.States().size() == 3);
+    CHECK(automaton.HasState(0));
+    CHECK(automaton.HasState(1));
+    CHECK(automaton.HasState(2));
+    CHECK(!automaton.HasState(3));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::set<state_t>{0, 1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::set<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::set<state_t>{1, 2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::set<state_t>{2}));
+    CHECK(automaton.InitialState() == 2);
+}
+
+
+TEST_CASE("Test functionality of ParityAutomaton class.") {
+    //TODO
 }

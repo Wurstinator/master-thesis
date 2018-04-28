@@ -1,6 +1,6 @@
 
 cmake_minimum_required (VERSION 2.6)
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG -g")
@@ -67,7 +67,10 @@ set(AUTOMATON_FILES
         src/automaton/labelled_automaton.h
         src/automaton/util.h
         src/automaton/util.impl.h
-        )
+        src/automaton/util.cpp
+        src/automaton/parity.cpp
+        src/automaton/parity.h
+        src/automaton/nbautils_bridge.h)
 
 
 ExternalProject_Get_Property(cpphoafparser source_dir)
@@ -79,7 +82,8 @@ target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/includ
 
 set(AUTOMATON_TESTS
         src/automaton/tests/test_automata.cpp
-        src/automaton/tests/test_util.cpp)
+        src/automaton/tests/test_util.cpp
+        src/automaton/tests/helper_functions.h src/automaton/tests/test_nbautils_bridge.cpp)
 
 add_executable(automaton_tests src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
 target_link_libraries(automaton_tests nbautils-lib)
