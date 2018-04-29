@@ -1,8 +1,11 @@
 
 #pragma once
 
-#include <range/v3/view/iota.hpp>
 #include "finite_automaton.h"
+#include <set>
+#include <range/v3/view/bounded.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/set_algorithm.hpp>
 
 namespace tollk {
 namespace automaton {
@@ -14,7 +17,7 @@ using symbol_t = unsigned char;
  * Abstract extension for the base automaton class which provides basic functionality for transitions.
  */
 template<typename SuccRangeT1, typename SuccRangeT2>
-class TransitionAutomaton : public FiniteAutomaton {
+class TransitionAutomaton : public virtual FiniteAutomaton {
  public:
     // Iterator type used for successors.
     using SuccRangeStateSym = SuccRangeT1;
@@ -43,8 +46,66 @@ class TransitionAutomaton : public FiniteAutomaton {
         return ranges::v3::view::ints(symbol_t(0), SymbolsNum());
     }
 
+    // Returns whether every state-symbol combination has exactly one successor.
+    virtual bool IsDeterministic() const;
+
     const unsigned char atomicPropositions;
 };
+
+// Compares if two automata are equal, i.e. they contain the same states and same transitions.
+// Note that these operations are quite expensive.
+template <typename RT1, typename RT2, typename RT3, typename RT4>
+bool operator==(const TransitionAutomaton<RT1, RT2>& lhs, const TransitionAutomaton<RT3, RT4>& rhs);
+template <typename RT1, typename RT2, typename RT3, typename RT4>
+bool operator!=(const TransitionAutomaton<RT1, RT2>& lhs, const TransitionAutomaton<RT3, RT4>& rhs);
+
+
+
+// Implementation
+
+template <typename RT1, typename RT2>
+bool TransitionAutomaton<RT1, RT2>::IsDeterministic() const {
+    for (state_t q : States()) {
+        for (symbol_t s : Symbols()) {
+            if (ranges::v3::distance(Successors(q, s)) != 1) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+template <typename RT1, typename RT2, typename RT3, typename RT4>
+bool operator==(const TransitionAutomaton<RT1, RT2>& lhs, const TransitionAutomaton<RT3, RT4>& rhs) {
+    if (lhs.InitialState() != rhs.InitialState() || lhs.atomicPropositions != rhs.atomicPropositions)
+        return false;
+
+    const std::set<state_t> lhs_states_set(lhs.States().begin(), lhs.States().end());
+    const std::set<state_t> rhs_states_set(rhs.States().begin(), rhs.States().end());
+    if (lhs_states_set != rhs_states_set)
+        return false;
+
+    for (state_t q : lhs.States()) {
+        for (symbol_t s : lhs.Symbols()) {
+            const auto lhs_out = ranges::v3::view::bounded(lhs.Successors(q, s));
+            const auto rhs_out = ranges::v3::view::bounded(rhs.Successors(q, s));
+            const std::set<state_t> lhs_out_set(lhs_out.begin(), lhs_out.end());
+            const std::set<state_t> rhs_out_set(rhs_out.begin(), rhs_out.end());
+            const auto successor_diff = ranges::v3::view::set_symmetric_difference(lhs_out_set, rhs_out_set);
+            if (!ranges::v3::empty(successor_diff))
+                return false;
+        }
+    }
+
+    return true;
+}
+
+template <typename RT1, typename RT2, typename RT3, typename RT4>
+bool operator!=(const TransitionAutomaton<RT1, RT2>& lhs, const TransitionAutomaton<RT3, RT4>& rhs) {
+    return !(lhs == rhs);
+}
+
 
 }  // namespace automaton
 }  // namespace tollk

@@ -28,7 +28,6 @@ void DeterministicAutomaton::RedirectTransitions(state_t previous_target, state_
     }
 }
 
-
 void DeterministicAutomaton::RemoveState(state_t q) {
     FiniteAutomaton::RemoveState(q);
     const auto iter = this->transitions.find(q);

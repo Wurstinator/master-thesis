@@ -8,12 +8,14 @@
 #include "../labelled_automaton.h"
 #include "../deterministic_automaton.h"
 #include "../nondeterministic_automaton.h"
+#include "../parity.h"
 
 using namespace tollk;
 using namespace automaton;
 
 NondeterministicAutomaton TestAutomaton1();
 DeterministicAutomaton TestAutomaton2();
+DeterministicAutomaton TestAutomaton3();
 
 
 TEST_CASE("Test functionality of FiniteAutomaton class.") {
@@ -93,8 +95,75 @@ TEST_CASE("Test functionality of TransitionAutomaton class.") {
     const std::vector<symbol_t> symvec1(std::begin(symbols1), std::end(symbols1));
     const auto symbols2 = automaton2.Symbols();
     const std::vector<symbol_t> symvec2(std::begin(symbols2), std::end(symbols2));
-    CHECK(symvec1 == std::vector<symbol_t> {0, 1});
-    CHECK(symvec2 == std::vector<symbol_t> {0, 1, 2, 3, 4, 5, 6, 7});
+    CHECK(symvec1 == std::vector<symbol_t>{0, 1});
+    CHECK(symvec2 == std::vector<symbol_t>{0, 1, 2, 3, 4, 5, 6, 7});
+}
+
+TEST_CASE("Test TransitionAutomaton::IsDeterministic.") {
+    CHECK(!TestAutomaton1().IsDeterministic());
+    CHECK(TestAutomaton2().IsDeterministic());
+    CHECK(TestAutomaton3().IsDeterministic());
+}
+
+
+TEST_CASE("Test TransitionAutomaton::operator==.") {
+    DeterministicAutomaton aut1(1), aut2(1), aut3(1), aut4(1), aut5(2);
+    aut1.AddState(0);
+    aut1.AddState(1);
+    aut2.AddState(0);
+    aut2.AddState(1);
+    aut3.AddState(0);
+    aut4.AddState(1);
+    aut4.AddState(2);
+    aut5.AddState(0);
+    aut2.AddState(1);
+    aut2.SetInitialState(1);
+    aut1.SetInitialState(0);
+    CHECK(aut1 != aut2);
+    CHECK(aut1 != aut3);
+    CHECK(aut1 != aut4);
+    CHECK(aut1 != aut5);
+
+    DeterministicAutomaton aut6(0), aut7(0), aut8(0), aut9(1);
+    aut6.AddState(0);
+    aut6.AddState(1);
+    aut7.AddState(0);
+    aut7.AddState(1);
+    aut8.AddState(1);
+    aut8.AddState(0);
+    aut9.AddState(0);
+    aut9.AddState(1);
+    aut6.SetSucc(0, 0, 1);
+    aut6.SetSucc(1, 0, 1);
+    aut7.SetSucc(0, 0, 0);
+    aut7.SetSucc(1, 0, 1);
+    aut8.SetSucc(0, 0, 1);
+    aut8.SetSucc(1, 0, 1);
+    aut9.SetSucc(0, 0, 1);
+    aut9.SetSucc(1, 0, 1);
+    CHECK(aut6 != aut7);
+    CHECK(aut6 == aut8);
+    CHECK(aut6 != aut9);
+
+    NondeterministicAutomaton aut10(0), aut11(0), aut12(0), aut13(0);
+    aut10.AddState(0);
+    aut10.AddState(1);
+    aut11.AddState(0);
+    aut11.AddState(1);
+    aut12.AddState(0);
+    aut12.AddState(1);
+    aut13.AddState(0);
+    aut13.AddState(1);
+    aut10.AddSucc(0, 0, 1);
+    aut12.AddSucc(0, 0, 0);
+    aut13.AddSucc(0, 0, 1);
+    CHECK(aut10 != aut11);
+    CHECK(aut10 != aut12);
+    CHECK(aut10 == aut13);
+
+    aut10.AddSucc(1, 0, 1);
+    CHECK(aut6 == aut10);
+    CHECK(aut6 != aut11);
 }
 
 TEST_CASE("Test functionality of DeterministicAutomaton class.") {
@@ -162,8 +231,10 @@ TEST_CASE("Test functionality of DeterministicAutomaton class.") {
     CHECK(CheckStateRangeEquivalence(automaton.Successors(3), std::set<state_t>{0, 3}));
 }
 
+
 TEST_CASE("Test DeterministicAutomaton::FromTransitionAutomaton.") {
-    //TODO
+    CHECK(DeterministicAutomaton::FromTransitionAutomaton(TestAutomaton2()) == TestAutomaton2());
+    CHECK_THROWS(DeterministicAutomaton::FromTransitionAutomaton(TestAutomaton1()));
 }
 
 TEST_CASE("Test functionality of NondeterministicAutomaton class.") {
@@ -215,14 +286,13 @@ TEST_CASE("Test functionality of NondeterministicAutomaton class.") {
 }
 
 TEST_CASE("Test NondeterministicAutomaton::FromTransitionAutomaton.") {
-    const NondeterministicAutomaton automaton = NondeterministicAutomaton::FromTransitionAutomaton(TestAutomaton2());
-    //TODO
+    CHECK(NondeterministicAutomaton::FromTransitionAutomaton(TestAutomaton2()) == TestAutomaton2());
 }
 
 TEST_CASE("Test NondeterministicAutomaton::MergeStates.") {
     NondeterministicAutomaton automaton = TestAutomaton1();
     automaton.SetInitialState(3);
-    automaton.MergeStates(std::set<state_t> {2,3});
+    automaton.MergeStates(std::set<state_t>{2, 3});
     CHECK(automaton.States().size() == 3);
     CHECK(automaton.HasState(0));
     CHECK(automaton.HasState(1));
@@ -239,5 +309,15 @@ TEST_CASE("Test NondeterministicAutomaton::MergeStates.") {
 
 
 TEST_CASE("Test functionality of ParityAutomaton class.") {
-    //TODO
+    ParityAutomaton aut1, aut2;
+    aut1.AddState(0);
+    aut1.AddState(1);
+    aut2.AddState(0);
+    aut2.AddState(1);
+    aut1.SetLabel(0, 0);
+    aut1.SetLabel(1, 1);
+    aut2.SetLabel(0, 0);
+    aut2.SetLabel(1, 2);
+    CHECK(aut1.IsBuchi());
+    CHECK(!aut2.IsBuchi());
 }

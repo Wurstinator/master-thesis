@@ -70,7 +70,7 @@ set(AUTOMATON_FILES
         src/automaton/util.cpp
         src/automaton/parity.cpp
         src/automaton/parity.h
-        src/automaton/nbautils_bridge.h)
+        src/automaton/nbautils_bridge.h src/automaton/nbautils_bridge.impl.h src/automaton/is_specialization_base_of.h)
 
 
 ExternalProject_Get_Property(cpphoafparser source_dir)

@@ -12,7 +12,7 @@ namespace automaton {
  * An extension of the base automaton class which adds labels to the states.
  */
 template <typename LabelT>
-class LabelledAutomaton : public FiniteAutomaton {
+class LabelledAutomaton : public virtual FiniteAutomaton {
     static_assert(std::is_default_constructible<LabelT>::value);
 
  public:

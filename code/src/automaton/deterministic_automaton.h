@@ -6,6 +6,7 @@
 #include "range/v3/core.hpp"
 #include "range/v3/view/single.hpp"
 #include "range/v3/distance.hpp"
+#include "range/v3/action/sort.hpp"
 
 namespace tollk {
 namespace automaton {
@@ -49,25 +50,23 @@ class DeterministicAutomaton :
     // transitions. O(1) operation.
     void RemoveState(state_t q) override;
 
+    // Returns true.
+    bool IsDeterministic() const override;
+
  protected:
     std::unordered_map<state_t, std::vector<state_t>> transitions{};
 };
 
 
+
 // Implementation
 
 
-inline state_t DeterministicAutomaton::Succ(state_t q, symbol_t s) const {
-    return this->transitions.find(q)->second[s];
-}
-
-inline void
-DeterministicAutomaton::SetSucc(state_t q, symbol_t s, state_t succ) {
-    this->transitions.find(q)->second[s] = succ;
-}
-
 template<typename RT1, typename RT2>
 DeterministicAutomaton DeterministicAutomaton::FromTransitionAutomaton(const TransitionAutomaton<RT1, RT2>& automaton) {
+    if (!automaton.IsDeterministic())
+        throw "DeterministicAutomaton::FromTransitionAutomaton : Given automaton is not deterministic.";
+
     DeterministicAutomaton result(automaton.atomicPropositions);
 
     // Copy the states to the new non-deterministic automaton.
@@ -75,21 +74,28 @@ DeterministicAutomaton DeterministicAutomaton::FromTransitionAutomaton(const Tra
         result.AddState(q);
 
     // Copy the transitions.
-    for (state_t p : automaton.States()) {
-        for (symbol_t s : automaton.Symbols()) {
-            if (ranges::v3::distance(automaton.Successors(p, s)) != 1) {
-                throw "DeterministicAutomaton::FromTransitionAutomaton : Given automaton is not deterministic.";
-            }
-            const state_t q = *(automaton.Successors(p, s).begin());
-            result.SetSucc(p, s, q);
-        }
-    }
+    for (state_t q : automaton.States())
+        for (symbol_t s : automaton.Symbols())
+            result.SetSucc(q, s, *(automaton.Successors(q, s).begin()));
 
     // Set the initial state.
     result.SetInitialState(automaton.InitialState());
 
     return result;
 }
+
+inline state_t DeterministicAutomaton::Succ(state_t q, symbol_t s) const {
+    return this->transitions.find(q)->second[s];
+}
+
+inline void DeterministicAutomaton::SetSucc(state_t q, symbol_t s, state_t succ) {
+    this->transitions.find(q)->second[s] = succ;
+}
+
+inline bool DeterministicAutomaton::IsDeterministic() const {
+    return true;
+}
+
 
 }  // namespace automaton
 }  // namespace tollk
