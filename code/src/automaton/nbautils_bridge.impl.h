@@ -8,27 +8,41 @@ namespace automaton {
 // values, only consider the "most dominant".
 template <typename T,template <typename... Args> class S>
 parity_label_t ConvertFromSWAParity(const nbautils::SWA<T, S>& swa, const std::vector<nbautils::acc_t>& acceptance) {
-    if (swa.get_acceptance() == nbautils::Acceptance::BUCHI) {
+    if (swa.get_acceptance() == nbautils::Acceptance::BUCHI)
         return acceptance.empty() ? 1 : 0;
-    } else if (swa.get_acceptance() == nbautils::Acceptance::PARITY) {
-        nbautils::acc_t even_parity;
+    if (swa.get_acceptance() != nbautils::Acceptance::PARITY)
+        throw "ConvertFromSWAParity : swa uses imcompatible acceptance";
+
+    // Parity automaton.
+    if (acceptance.empty()) {
+        // If the acceptance set is empty, simply select the least dominant priority that occurs in the automaton.
         if (swa.get_patype() == nbautils::PAType::MIN_EVEN || swa.get_patype() == nbautils::PAType::MIN_ODD) {
-            even_parity = *std::min_element(acceptance.begin(), acceptance.end());
-        } else {
-            const nbautils::acc_t dominant_acc = *std::max_element(acceptance.begin(), acceptance.end());
-            nbautils::acc_t max_acc = dominant_acc;
+            nbautils::acc_t* max_acc = nullptr;
             for (nbautils::state_t q : swa.states())
                 for (nbautils::acc_t acc : swa.get_accs(q))
-                    max_acc = (acc > max_acc ? acc : max_acc);
-            even_parity = max_acc - dominant_acc;
+                    max_acc = (max_acc == nullptr || acc > *max_acc ? &acc : max_acc);
+            return max_acc == nullptr ? 0 : *max_acc;
+        } else {
+            return 0;
         }
+    }
 
-        if (swa.get_patype() == nbautils::PAType::MAX_ODD || swa.get_patype() == nbautils::PAType::MIN_ODD)
-            return even_parity + 1;
-        else
-            return even_parity;
-    } else
-        throw "ConvertFromSWAParity : swa uses imcompatible acceptance";
+    nbautils::acc_t even_parity;
+    if (swa.get_patype() == nbautils::PAType::MIN_EVEN || swa.get_patype() == nbautils::PAType::MIN_ODD) {
+        even_parity = *std::min_element(acceptance.begin(), acceptance.end());
+    } else {
+        const nbautils::acc_t dominant_acc = *std::max_element(acceptance.begin(), acceptance.end());
+        nbautils::acc_t max_acc = dominant_acc;
+        for (nbautils::state_t q : swa.states())
+            for (nbautils::acc_t acc : swa.get_accs(q))
+                max_acc = (acc > max_acc ? acc : max_acc);
+        even_parity = max_acc - dominant_acc;
+    }
+
+    if (swa.get_patype() == nbautils::PAType::MAX_ODD || swa.get_patype() == nbautils::PAType::MIN_ODD)
+        return even_parity + 1;
+    else
+        return even_parity;
 }
 
 

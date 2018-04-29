@@ -8,6 +8,7 @@
 #include "transition_automaton.h"
 #include "nondeterministic_automaton.h"
 #include "../equivalence_relation.h"
+#include "deterministic_automaton.h"
 
 namespace tollk {
 namespace automaton {
@@ -51,6 +52,15 @@ void RefineToCongruence(EquivalenceRelation<state_t>* relation, const Transition
 // If the second argument is not NULL, then it is set to the computed SCCCollection, as this has to be done internally
 // anyway. O(|A|^2) operation.
 void MergeSCCs(NondeterministicAutomaton* automaton, SCCCollection* sccs = nullptr);
+
+// Constructs a product automaton, i.e. an automaton that uses pairs as states and performs transitions pair-wise.
+template <typename RT1, typename RT2, typename RT3, typename RT4>
+NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& automaton1, const TransitionAutomaton<RT3, RT4>& automaton2) {
+    //TODO
+}
+
+// Similar to the other ProductAutomaton call but a specialized case for deterministic automata.
+DeterministicAutomaton ProductAutomaton(const DeterministicAutomaton& automaton1, const DeterministicAutomaton& automaton2);
 
 
 }  // namespace automaton

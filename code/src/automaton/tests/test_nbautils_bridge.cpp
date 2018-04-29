@@ -4,20 +4,23 @@
 #include "../nondeterministic_automaton.h"
 #include "../nbautils_bridge.h"
 #include <swa.hh>
+#include "helper_functions.h"
+#include <range/v3/empty.hpp>
+#include <range/v3/view/all.hpp>
 
 using namespace tollk;
 using namespace automaton;
 
-NPA TestAutomaton1();
+//TODO these tests should probably be more exhaustive
+
+NondeterministicAutomaton TestAutomaton1();
 
 TEST_CASE("Test FromNbautils.") {
-    nbautils::SWA<void*> swa;
-    swa.set_aps(std::vector<std::string>{"a"});
+    nbautils::SWA<void*> swa(nbautils::Acceptance::PARITY, "", std::vector<std::string>{"a"}, std::vector<nbautils::state_t> {0});
     swa.add_state(0);
     swa.add_state(1);
     swa.add_state(2);
     swa.add_state(3);
-    swa.set_init(std::vector<state_t>{0});
     swa.set_succs(0, 0, std::vector<state_t>{0, 1});
     swa.set_succs(1, 0, std::vector<state_t>{2});
     swa.set_succs(1, 1, std::vector<state_t>{2});
@@ -44,6 +47,14 @@ TEST_CASE("Test ToNbautils.") {
     CHECK(swa.succ(3, 1) == std::vector<state_t>{});
 }
 
-TEST_CASE("Test ToNbautils on a more complex input.") {
-    //TODO
+TEST_CASE("Test FromNbautils on a more complex input.") {
+    nbautils::SWA<void*> swa(nbautils::Acceptance::PARITY, "", std::vector<std::string>{"a"}, std::vector<nbautils::state_t> {0, 1});
+    swa.add_state(0);
+    swa.add_state(1);
+    const NPA automaton = FromNbautils(swa);
+    CHECK(automaton.States().size() == 3);
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(automaton.InitialState(), 0), std::vector<state_t>{0,1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(automaton.InitialState(), 1), std::vector<state_t>{0,1}));
 }

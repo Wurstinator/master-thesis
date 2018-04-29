@@ -26,32 +26,32 @@ struct is_specialization_base_of {
 };
 
 
+template<template<typename...> class TT, class T>
+struct specialization_base_of {
 
+    template<typename... Args>
+    static constexpr TT<Args...>  checkVal(TT<Args...> const&);
 
+    static constexpr void checkVal(...);
 
+    template<typename... Args>
+    static constexpr TT<Args...>&  checkRef(TT<Args...> const&);
 
-/*
+    static constexpr void checkRef(...);
 
+    template<typename... Args>
+    static constexpr TT<Args...> const& checkCref(TT<Args...> const&);
 
+    static constexpr void checkCref(...);
 
+    template<typename... Args>
+    static constexpr TT<Args...>*  checkPtr(TT<Args...> const&);
 
+    static constexpr void checkPtr(...);
 
-class A {};
-template <typename T, typename S> class B : public virtual A {};
-template <typename T> class C : public virtual A {};
-class D : public B<int, int> {};
-class E : public C<int> {};
-class F : public D, E {};
+    using value_type = decltype(checkVal(std::declval<T>()));
+    using ref_type = decltype(checkRef(std::declval<T>()));
+    using cref_type = decltype(checkCref(std::declval<T>()));
+    using ptr_type = decltype(checkPtr(std::declval<T>()));
+};
 
-template <typename T>
-void foo() {
-    using transition_t = typename is_specialization_base_of<B, T>::base_type;
-
-    static_assert(is_specialization_base_of<B, T>::value);
-    static_assert(std::is_same<transition_t, void>::value);
-    //static_assert(std::is_same<transition_t, B<int>>::value);
-}
-
-void bar() {
-    foo<F>;
-}*/

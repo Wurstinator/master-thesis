@@ -12,3 +12,10 @@ void tollk::automaton::MergeSCCs(NondeterministicAutomaton* automaton, SCCCollec
     if (sccs != nullptr)
         *sccs = std::move(sccs_);
 }
+
+
+DeterministicAutomaton ProductAutomaton(const DeterministicAutomaton& automaton1, const DeterministicAutomaton& automaton2) {
+    assert(automaton1.atomicPropositions == automaton2.atomicPropositions);
+
+    DeterministicAutomaton product(automaton1.atomicPropositions);
+}
