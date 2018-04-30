@@ -63,3 +63,15 @@ DeterministicAutomaton TestAutomaton3() {
     automaton.SetSucc(4, 1, 3);
     return automaton;
 }
+
+DeterministicAutomaton TestAutomaton4() {
+    DeterministicAutomaton automaton(1);
+    automaton.AddState(2);
+    automaton.AddState(1);
+    automaton.SetInitialState(1);
+    automaton.SetSucc(2, 0, 2);
+    automaton.SetSucc(2, 1, 1);
+    automaton.SetSucc(1, 0, 2);
+    automaton.SetSucc(1, 1, 1);
+    return automaton;
+}

@@ -10,6 +10,7 @@ using namespace automaton;
 NondeterministicAutomaton TestAutomaton1();
 DeterministicAutomaton TestAutomaton2();
 DeterministicAutomaton TestAutomaton3();
+DeterministicAutomaton TestAutomaton4();
 
 TEST_CASE("Test TransposeAutomaton.") {
     const NondeterministicAutomaton automaton = TransposeAutomaton(TestAutomaton1());
@@ -131,4 +132,112 @@ TEST_CASE("Test MergeSCCs.") {
     CHECK(CheckStateRangeEquivalence(automaton.Successors(rep2, 1), automaton2.Successors(rep2, 1)));
     CHECK(sccs.sccs == sccs2.sccs);
     CHECK(sccs.scc_indices == sccs2.scc_indices);
+}
+
+TEST_CASE("Test ProductAutomaton.") {
+    boost::bimap<state_t, std::pair<state_t, state_t>> pair_indices;
+    const NondeterministicAutomaton automaton = TestAutomaton1();
+    const NondeterministicAutomaton product = ProductAutomaton(automaton, automaton, &pair_indices);
+
+    REQUIRE(product.States().size() == 16);
+    REQUIRE(product.atomicPropositions == 1);
+
+    const state_t q00 = pair_indices.right.at(std::make_pair(0, 0));
+    const state_t q01 = pair_indices.right.at(std::make_pair(0, 1));
+    const state_t q02 = pair_indices.right.at(std::make_pair(0, 2));
+    const state_t q03 = pair_indices.right.at(std::make_pair(0, 3));
+    const state_t q10 = pair_indices.right.at(std::make_pair(1, 0));
+    const state_t q11 = pair_indices.right.at(std::make_pair(1, 1));
+    const state_t q12 = pair_indices.right.at(std::make_pair(1, 2));
+    const state_t q13 = pair_indices.right.at(std::make_pair(1, 3));
+    const state_t q20 = pair_indices.right.at(std::make_pair(2, 0));
+    const state_t q21 = pair_indices.right.at(std::make_pair(2, 1));
+    const state_t q22 = pair_indices.right.at(std::make_pair(2, 2));
+    const state_t q23 = pair_indices.right.at(std::make_pair(2, 3));
+    const state_t q30 = pair_indices.right.at(std::make_pair(3, 0));
+    const state_t q31 = pair_indices.right.at(std::make_pair(3, 1));
+    const state_t q32 = pair_indices.right.at(std::make_pair(3, 2));
+    const state_t q33 = pair_indices.right.at(std::make_pair(3, 3));
+
+    CHECK(product.InitialState() == q00);
+
+    CHECK(CheckStateRangeEquivalence(product.Successors(q00, 0), std::vector<state_t>{q00, q01, q10, q11}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q00, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q01, 0), std::vector<state_t>{q02, q12}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q01, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q02, 0), std::vector<state_t>{q01, q11}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q02, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q03, 0), std::vector<state_t>{q03, q13}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q03, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q10, 0), std::vector<state_t>{q20, q21}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q10, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q11, 0), std::vector<state_t>{q22}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q11, 1), std::vector<state_t>{q22}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q12, 0), std::vector<state_t>{q21}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q12, 1), std::vector<state_t>{q23}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q13, 0), std::vector<state_t>{q23}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q13, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q20, 0), std::vector<state_t>{q10, q11}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q20, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q21, 0), std::vector<state_t>{q12}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q21, 1), std::vector<state_t>{q32}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q22, 0), std::vector<state_t>{q11}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q22, 1), std::vector<state_t>{q33}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q23, 0), std::vector<state_t>{q13}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q23, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q30, 0), std::vector<state_t>{q30, q31}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q30, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q31, 0), std::vector<state_t>{q32}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q31, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q32, 0), std::vector<state_t>{q31}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q32, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q33, 0), std::vector<state_t>{q33}));
+    CHECK(CheckStateRangeEquivalence(product.Successors(q33, 1), std::vector<state_t>{}));
+
+    CHECK(product == ProductAutomaton(automaton, automaton));
+}
+
+TEST_CASE("Test ProductAutomaton. (deterministic)") {
+    boost::bimap<state_t, std::pair<state_t, state_t>> pair_indices;
+    const DeterministicAutomaton automaton1 = TestAutomaton4();
+    const DeterministicAutomaton automaton2 = TestAutomaton3();
+    const DeterministicAutomaton product = ProductAutomaton(automaton1, automaton2, &pair_indices);
+
+    REQUIRE(product.States().size() == 10);
+    REQUIRE(product.atomicPropositions == 1);
+
+    const state_t q10 = pair_indices.right.at(std::make_pair(1, 0));
+    const state_t q11 = pair_indices.right.at(std::make_pair(1, 1));
+    const state_t q12 = pair_indices.right.at(std::make_pair(1, 2));
+    const state_t q13 = pair_indices.right.at(std::make_pair(1, 3));
+    const state_t q14 = pair_indices.right.at(std::make_pair(1, 4));
+    const state_t q20 = pair_indices.right.at(std::make_pair(2, 0));
+    const state_t q21 = pair_indices.right.at(std::make_pair(2, 1));
+    const state_t q22 = pair_indices.right.at(std::make_pair(2, 2));
+    const state_t q23 = pair_indices.right.at(std::make_pair(2, 3));
+    const state_t q24 = pair_indices.right.at(std::make_pair(2, 4));
+    CHECK(product.InitialState() == q10);
+
+    CHECK(product.Succ(q10, 0) == q21);
+    CHECK(product.Succ(q10, 1) == q12);
+    CHECK(product.Succ(q11, 0) == q20);
+    CHECK(product.Succ(q11, 1) == q14);
+    CHECK(product.Succ(q12, 0) == q23);
+    CHECK(product.Succ(q12, 1) == q13);
+    CHECK(product.Succ(q13, 0) == q22);
+    CHECK(product.Succ(q13, 1) == q14);
+    CHECK(product.Succ(q14, 0) == q23);
+    CHECK(product.Succ(q14, 1) == q13);
+    CHECK(product.Succ(q20, 0) == q21);
+    CHECK(product.Succ(q20, 1) == q12);
+    CHECK(product.Succ(q21, 0) == q20);
+    CHECK(product.Succ(q21, 1) == q14);
+    CHECK(product.Succ(q22, 0) == q23);
+    CHECK(product.Succ(q22, 1) == q13);
+    CHECK(product.Succ(q23, 0) == q22);
+    CHECK(product.Succ(q23, 1) == q14);
+    CHECK(product.Succ(q24, 0) == q23);
+    CHECK(product.Succ(q24, 1) == q13);
+
+    CHECK(product == ProductAutomaton(automaton1, automaton2));
 }
