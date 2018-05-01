@@ -22,6 +22,10 @@ class NondeterministicAutomaton
  public:
     explicit NondeterministicAutomaton(unsigned char atomic_propositions) : TransitionAutomaton(atomic_propositions) {}
 
+    // Copy constructors and assignment operators.
+    NondeterministicAutomaton(const NondeterministicAutomaton& other);
+    NondeterministicAutomaton(NondeterministicAutomaton&& other);
+
     // Given an arbitrary TransitionAutomaton, constructs an equivalent NondeterministicAutomaton from it.
     template <typename RT1, typename RT2>
     static NondeterministicAutomaton FromTransitionAutomaton(const TransitionAutomaton<RT1, RT2>& automaton);

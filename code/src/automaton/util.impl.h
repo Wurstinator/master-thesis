@@ -39,6 +39,9 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
                 std::unordered_map<state_t, _SCCTarjan_Struct>* visit_indices,
                 std::stack<state_t>* stack,
                 SCCCollection* sccs) {
+    if (sccs->scc_indices.find(node) != sccs->scc_indices.end())
+        return;
+
     // Add the node to the "visited" set.
     (*visit_indices)[node] = _SCCTarjan_Struct {*depth, *depth, true};
     stack->push(node);
@@ -74,11 +77,13 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
 
 template<typename RT1, typename RT2>
 SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& automaton) {
-    std::unordered_map<state_t, _SCCTarjan_Struct> visit_indices;
-    std::stack<state_t> stack;
     SCCCollection result;
-    unsigned int depth = 0;
-    _SCCTarjan(automaton, automaton.InitialState(), &depth, &visit_indices, &stack, &result);
+    for (state_t q : automaton.States()) {
+        std::unordered_map<state_t, _SCCTarjan_Struct> visit_indices;
+        std::stack<state_t> stack;
+        unsigned int depth = 0;
+        _SCCTarjan(automaton, q, &depth, &visit_indices, &stack, &result);
+    }
     return result;
 }
 
@@ -98,6 +103,18 @@ template<typename RT1, typename RT2>
 std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>& automaton, state_t q) {
     std::unordered_set<state_t> result;
     _ReachableStates_DSF(automaton, q, &result);
+    return result;
+}
+
+template <typename RT1, typename RT2, typename Rng>
+std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng) {
+    const NondeterministicAutomaton transposed_automaton = TransposeAutomaton(automaton);
+    std::unordered_set<state_t> result;
+    for (state_t q : rng) {
+        for (state_t reach : ReachableStates(transposed_automaton, q)) {
+            result.insert(reach);
+        }
+    }
     return result;
 }
 

@@ -38,6 +38,8 @@ class NPA : public ParityAutomaton, public NondeterministicAutomaton {
     void AddState(state_t q) {
         NondeterministicAutomaton::AddState(q);
     }
+
+    NPA(NondeterministicAutomaton&& automaton) : NondeterministicAutomaton(std::move(automaton)) {}
 };
 
 

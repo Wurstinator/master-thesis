@@ -14,6 +14,5 @@ bool ParityAutomaton::IsBuchi() const {
 }
 
 
-
 }
 }

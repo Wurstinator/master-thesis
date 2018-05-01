@@ -36,6 +36,10 @@ SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& a
 template<typename RT1, typename RT2>
 std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>& automaton, state_t q);
 
+// Computes states that can reach a collection of given states.
+template <typename RT1, typename RT2, typename Rng>
+std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng);
+
 // Merges a set of states into one. Outgoing transitions are unified and incoming transitions are redirected to the
 // merged state. If the initial state is in the set, the merged state will be the initial state again.
 // The ID of the new merged state will be *std::begin(range). O(|A|) operation.

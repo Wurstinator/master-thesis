@@ -2,12 +2,12 @@
 #include "catch.hpp"
 #include "swa.hh"
 #include "../almost_equivalent_states.h"
+#include "../../automaton/parity.h"
 
-nbautils::SWA<int> sven_example();
+tollk::automaton::DPA sven_example();
 
 TEST_CASE("Compute alm.eq. states of an example automaton provided by Sven Schewe") {
-    const nbautils::SWA<int> swa = sven_example();
-    const EquivalenceRelation<nbautils::state_t> relation = PriorityAlmostEquivalence(swa);
+    const tollk::EquivalenceRelation<tollk::automaton::state_t> relation = tollk::PriorityAlmostEquivalence(sven_example());
     REQUIRE(relation.Classes().size() == 3);
     CHECK(relation.IsEquiv(0, 0));
     CHECK(relation.IsEquiv(0, 1));
