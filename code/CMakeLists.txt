@@ -67,7 +67,9 @@ set(AUTOMATON_FILES
         src/automaton/nbautils_bridge.impl.h
         src/automaton/is_specialization_base_of.h)
 
-add_library(automaton ${AUTOMATON_FILES} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
+set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
+
+add_library(automaton ${AUTOMATON_INCLUDE})
 target_link_libraries(automaton nbautils-lib)
 target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
@@ -87,31 +89,32 @@ set(SCHEWE10_HDRS
         src/schewe10/topological_ordering.h
         src/schewe10/topological_ordering.impl.h
         src/schewe10/almost_equivalent_states.h
-        src/schewe10/almost_equivalent_states.impl.h)
+        src/schewe10/almost_equivalent_states.impl.h
+        src/schewe10/schewe_automaton.h src/schewe10/schewe_automaton.cpp)
 
-add_library(schewe_automaton src/schewe10/schewe_automaton.h src/equivalence_relation.h ${nbautils_HDRS} ${SCHEWE10_HDRS} ${RANGE_V3_PUBLIC_HEADERS} ${AUTOMATON_FILES})
+set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h ${nbautils_HDRS})
+
+add_library(schewe_automaton ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_automaton nbautils-lib automaton)
 target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
 
 
-
-
-add_executable(schewe_main src/schewe10/schewe_main.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
+add_executable(schewe_main src/schewe10/schewe_main.cpp ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_main nbautils-lib)
 add_dependencies(schewe_main cpphoafparser)
-target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src)
+target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
-add_executable(schewe_statistics src/schewe10/schewe_statistics.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
+add_executable(schewe_statistics src/schewe10/schewe_statistics.cpp ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_statistics nbautils-lib)
 add_dependencies(schewe_statistics cpphoafparser)
-target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src)
+target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
 
 set(SCHEWE10_TESTS
         src/schewe10/tests/test_almost_equivalent_states.cpp
         src/schewe10/tests/test_topological_ordering.cpp)
 
-add_executable(test_schewe10 src/schewe10/tests/test_main.cpp ${SCHEWE10_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS} ${RANGE_V3_PUBLIC_HEADERS} ${AUTOMATON_FILES})
+add_executable(test_schewe10 src/schewe10/tests/test_main.cpp ${SCHEWE10_TESTS} ${Catch2_HDRS} ${SCHEWE10_INCLUDE})
 target_link_libraries(test_schewe10 nbautils-lib)
 target_include_directories(test_schewe10 PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include range-v3/include)

@@ -1,9 +1,9 @@
 
 #include <iostream>
 #include <args.hxx>
-#include "pa.hh"
-#include "io.hh"
+#include <io.hh>
 #include "schewe_automaton.h"
+#include "../automaton/nbautils_bridge.h"
 
 // Given an det. parity automaton, performs the Schewe construction and outputs the result in the HOA format.
 // Arguments:
@@ -26,7 +26,6 @@ Options ParseArgs(int argc, char** argv) {
     args::ArgumentParser parser("Performs the Schewe construction on a given DPA.");
     args::CompletionFlag completion(parser, {"complete"});
     args::HelpFlag help_flag(parser, "help", "Display this h elp menu.", {'h', "help"});
-    args::Flag make_complete_flag(parser, "make_complete", "Make the automaton complete by introducing a sink state.", {'c'});
     args::Flag minimize_before_flag(parser, "minimize_before", "Minimize the automaton with Hopcraft before applying the construction.", {"mb"});
     args::Flag minimize_after_flag(parser, "minimize_after", "Minimize the automaton with Hopcraft after applying the construction.", {"ma"});
     args::ValueFlag<std::string> input_file_flag(parser, "input_file", "HOA file that contains the input DPA.", {'A', "automaton"}, args::Options::Required);
@@ -49,14 +48,13 @@ Options ParseArgs(int argc, char** argv) {
     }
 
     Options options;
-    options.make_complete = make_complete_flag.Get();
     options.minimize_before = minimize_before_flag.Get();
     options.minimize_after = minimize_after_flag.Get();
     options.input_file = input_file_flag.Get();
     return options;
 }
 
-
+/*
 template<typename TagT>
 void MinimizePA(nbautils::SWA<TagT>* automaton) {
     const std::function<std::vector<nbautils::state_t>(nbautils::state_t)> get_succs =
@@ -69,22 +67,27 @@ void MinimizePA(nbautils::SWA<TagT>* automaton) {
     std::sort(unreachable.begin(), unreachable.end());
     automaton->remove_states(unreachable);
     nbautils::minimize_pa(*automaton);
-}
+}*/
 
 // Executes the process for one automaton.
-nbautils::SWA<std::string> PerformConstruction(nbautils::SWA<std::string> automaton, const Options& options) {
-    if (options.make_complete)
-        nbautils::make_complete(automaton);
+tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA automaton, const Options& options) {
 
-    if (options.minimize_before)
-        MinimizePA(&automaton);
+    //if (options.minimize_before)
+    //    MinimizePA(&automaton);
 
-    ScheweAutomaton(&automaton);
+    tollk::ScheweAutomaton(&automaton);
 
-    if (options.minimize_after)
-        MinimizePA(&automaton);
+    //if (options.minimize_after)
+    //    MinimizePA(&automaton);
 
     return automaton;
+}
+
+
+tollk::automaton::NPA NPAFromHoa(const std::string& filename) {
+    const std::vector<nbautils::SWA<std::string>::uptr> input_automata = nbautils::parse_hoa(filename);
+    assert(input_automaton.size() == 1);
+    return tollk::automaton::FromNbautils(*input_automata[0]);
 }
 
 
@@ -97,13 +100,11 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    std::vector<nbautils::SWA<std::string>::uptr> input_automata = nbautils::parse_hoa(options.input_file);
-
-    for (const nbautils::SWA<std::string>::uptr& aut : input_automata) {
-        const nbautils::SWA<std::string> out = PerformConstruction(*aut, options);
-        nbautils::print_hoa(out, std::cout);
-        std::cout << std::flush;
-    }
+    const tollk::automaton::NPA npa = NPAFromHoa(options.input_file);
+    const tollk::automaton::DPA dpa = tollk::automaton::DPA::FromNPA(npa);
+    const tollk::automaton::DPA out = PerformConstruction(dpa, options);
+    nbautils::print_hoa(tollk::automaton::ToNbautils(out), std::cout);
+    std::cout << std::flush;
 
     return 0;
 }

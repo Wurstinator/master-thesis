@@ -4,6 +4,17 @@
 namespace tollk {
 namespace automaton {
 
+
+DeterministicAutomaton::DeterministicAutomaton(const DeterministicAutomaton& other) : TransitionAutomaton(other.atomicPropositions) {
+    this->states = other.states;
+    this->transitions = other.transitions;
+}
+
+DeterministicAutomaton::DeterministicAutomaton(DeterministicAutomaton&& other)  : TransitionAutomaton(other.atomicPropositions)  {
+    this->states = std::move(other.states);
+    this->transitions = std::move(other.transitions);
+}
+
 DeterministicAutomaton::SuccRangeStateSym
 DeterministicAutomaton::Successors(state_t q, symbol_t s) const {
     return ranges::v3::view::single(Succ(q, s));

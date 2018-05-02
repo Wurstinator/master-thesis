@@ -97,8 +97,11 @@ nbautils::SWA<TagT> ToNbautils(const AutomatonT& automaton) {
     // If the given automaton is a transition automaton, get its atomic propositions.
     std::vector<std::string> swa_aps;
     if constexpr (is_transition_automaton) {
-        for (unsigned int i = 0; i < automaton.atomicPropositions; ++i)
-            swa_aps.emplace_back('a', i);
+        for (unsigned int i = 0; i < automaton.atomicPropositions; ++i) {
+            std::stringstream ss;
+            ss << 'a' << i+1;
+            swa_aps.push_back(ss.str());
+        }
     }
 
     nbautils::SWA<TagT> result(nbautils::Acceptance::PARITY, "", swa_aps, std::vector<nbautils::state_t> {automaton.InitialState()});
@@ -116,8 +119,7 @@ nbautils::SWA<TagT> ToNbautils(const AutomatonT& automaton) {
     if constexpr (is_transition_automaton) {
         for (state_t p : automaton.States()) {
             for (symbol_t s : automaton.Symbols()) {
-                using succ_range_state_sym = typename std::remove_reference<typename specialization_base_of<TransitionAutomaton, AutomatonT>::ref_type>::type::SuccRangeStateSym;
-                const succ_range_state_sym successors = automaton.Successors(p, s);
+                const auto successors = ranges::v3::view::bounded(automaton.Successors(p, s));
                 result.set_succs(p, s, std::vector<nbautils::state_t>(successors.begin(), successors.end()));
             }
         }
