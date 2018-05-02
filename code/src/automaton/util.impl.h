@@ -171,5 +171,40 @@ void RefineToCongruence(EquivalenceRelation<state_t>* relation, const Transition
 }
 
 
+template <typename RT1, typename RT2, typename RT3, typename RT4>
+NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& automaton1, const TransitionAutomaton<RT3, RT4>& automaton2, boost::bimap<state_t, std::pair<state_t, state_t>>* pair_indices) {
+    assert(automaton1.atomicPropositions == automaton2.atomicPropositions);
+
+    // Fill the map of state pairs.
+    boost::bimap<state_t, std::pair<state_t, state_t>> pair_indices_;
+    for (state_t p : automaton1.States())
+        for (state_t q : automaton2.States())
+            pair_indices_.left.insert(std::make_pair(pair_indices_.size(), std::make_pair(p, q)));
+
+    // Create the product automaton.
+    NondeterministicAutomaton product(automaton1.atomicPropositions);
+    for (const auto& kv_pair : pair_indices_.left)
+        product.AddState(kv_pair.first);
+    product.SetInitialState(pair_indices_.right.at(std::make_pair(automaton1.InitialState(), automaton2.InitialState())));
+
+    // Set the transitions.
+    for (state_t p : automaton1.States()) {
+        for (state_t q : automaton2.States()) {
+            for (symbol_t s : product.Symbols()) {
+                for (state_t succ1 : automaton1.Successors(p, s)) {
+                    for (state_t succ2 : automaton2.Successors(q, s)) {
+                        product.AddSucc(pair_indices_.right.at(std::make_pair(p, q)), s, pair_indices_.right.at(std::make_pair(succ1, succ2)));
+                    }
+                }
+            }
+        }
+    }
+
+    if (pair_indices != nullptr)
+        *pair_indices = std::move(pair_indices_);
+    return product;
+}
+
+
 }  // namespace automaton
 }  // namespace tollk

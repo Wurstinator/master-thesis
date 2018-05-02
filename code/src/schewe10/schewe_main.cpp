@@ -4,6 +4,7 @@
 #include <io.hh>
 #include "schewe_automaton.h"
 #include "../automaton/nbautils_bridge.h"
+#include "../automaton/util.h"
 
 // Given an det. parity automaton, performs the Schewe construction and outputs the result in the HOA format.
 // Arguments:
@@ -54,31 +55,21 @@ Options ParseArgs(int argc, char** argv) {
     return options;
 }
 
-/*
-template<typename TagT>
-void MinimizePA(nbautils::SWA<TagT>* automaton) {
-    const std::function<std::vector<nbautils::state_t>(nbautils::state_t)> get_succs =
-            [automaton](nbautils::state_t q) {
-                return automaton->succ(q);
-            };
-    assert(automaton->get_init().size() == 1);
-    const nbautils::state_t initial = automaton->get_init()[0];
-    std::vector<nbautils::state_t> unreachable = nbautils::unreachable_states(automaton->states(), initial, get_succs);
-    std::sort(unreachable.begin(), unreachable.end());
-    automaton->remove_states(unreachable);
-    nbautils::minimize_pa(*automaton);
-}*/
 
 // Executes the process for one automaton.
 tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA automaton, const Options& options) {
 
-    //if (options.minimize_before)
-    //    MinimizePA(&automaton);
+    std::cerr << automaton.States().size() << std::endl;
+
+    if (options.minimize_before)
+        tollk::automaton::Hopcroft(&automaton);
 
     tollk::ScheweAutomaton(&automaton);
 
-    //if (options.minimize_after)
-    //    MinimizePA(&automaton);
+    if (options.minimize_after)
+        tollk::automaton::Hopcroft(&automaton);
+
+    std::cerr << automaton.States().size() << std::endl;
 
     return automaton;
 }

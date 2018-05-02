@@ -20,7 +20,7 @@ for ((i=1; i<=n; i++)); do
     schewe_aut=$(mktemp)
 
     randseed="$(shuf -i 0-100000 -n 1)";
-    randaut a1 -Q5..20 -D -A 'parity min even 5' --colored -S --seed=${randseed} > ${gen_aut}
+    randaut a1 -Q5..20 -D -A 'parity min even 2' --colored -S --seed=${randseed} > ${gen_aut}
 
     ../../../bin/schewe_main "${@:2}" --automaton=${gen_aut} > ${schewe_aut}
 
