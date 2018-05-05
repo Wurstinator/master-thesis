@@ -1,4 +1,5 @@
 
+\section{Schewe}
 
 \subsection{Schewe Automaton}
 
@@ -28,18 +29,22 @@
 Note that the choice of $\preceq$ and the representatives allow some degree of freedom when construction the automaton, so in general there are multiple Schewe automata for each DPA. The relevant properties that we consider hold for all of them, so we just fix an arbitrary choice of all Schewe automata and call this \textbf{the} Schewe automaton.
 
 \begin{lem}
+\label{lem:schewe:schewe_aut_linear_time}
 	For a given $\mathcal{A}$ and $\sim$, the Schewe automaton $\mathcal{S}$ can be computed in $\mathcal{O}(|\mathcal{A}|)$.
 \end{lem}
 
 \begin{proof}
-	%TODO
+	The only interesting part is the computation of the total preorder $\preceq$. Once that is given, we use one loop over all states to find a $\preceq$-maximal representative for each $\sim$-class and another loop over all transitions to redirect target states to their representative.
+
+	Using e.g. Kosaraju's algorithm \ref{}, the SCCs of $\mathcal{A}$ can be computed in linear time. We can now build a DAG from $\mathcal{A}$ by merging all states in an SCC into a single state; iterate over all transitions $(p, a, q)$ and add an $a$-transition from the merged representative of $p$ to that of $q$. Assuming efficient data structures for the computed SCCs, this DAG can be computed in $O(|\mathcal{A}|)$ time.
+	
+	To finish the computation of $\preceq$, we look for a topological order on that DAG. This is a total preorder on the SCCs that is compatible with reachability. All that is left to be done is to extend that order to all states.
 \end{proof}
 
 
 
 
-
-\newpage
+\vspace{1cm}
 
 \subsection{Schewe automaton structure}
 
@@ -59,6 +64,7 @@ Note that the choice of $\preceq$ and the representatives allow some degree of f
 \end{proof}
 
 \begin{lem}
+\label{lem:schewe:equiv_same_scc}
 	Let $\mathcal{A}$ be a DPA and $\sim$ be a congruence relation. Let $p$ and $q$ be two reachable states in $\mathcal{S}(\mathcal{A}, \sim)$. If $p \sim q$, then $p$ and $q$ lie in the same SCC. 
 \end{lem}
 
@@ -95,8 +101,7 @@ Note that the choice of $\preceq$ and the representatives allow some degree of f
 \end{proof}
 
 
-\newpage
-
+\vspace{1cm}
 
 \subsection{Special cases of the Schewe automaton}
 \begin{defn}
@@ -146,7 +151,7 @@ Note that the choice of $\preceq$ and the representatives allow some degree of f
 	
 	We define $f$ as a function that maps every $\sim$-equivalence class in $\mathcal{S}'$ to its respective class in $\mathcal{B}$. $\mathcal{B}$ has at least as many $\sim$-equivalence classes but less states than $\mathcal{S}'$, so there is a class $\mathfrak{c}$ in $\mathcal{S}'$ such that $f(\mathfrak{c})$ contains less elements than $\mathfrak{c}$.
 	
-	By Lemma \ref{}, there is a unique SCC $C$ in $\mathcal{S}'$ in which all states in $\mathfrak{c}$ are contained. The same must be true for some SCC $D$ in $\mathcal{B}$ for the states in $f(\mathfrak{c})$. Otherwise we could apply the Schewe automaton construction to $\mathcal{B}$ which does not increase the number of states, is priority almost-equivalent to $\mathcal{B}$, and has this property.
+	By Lemma \ref{lem:schewe:equiv_same_scc}, there is a unique SCC $C$ in $\mathcal{S}'$ in which all states in $\mathfrak{c}$ are contained. The same must be true for some SCC $D$ in $\mathcal{B}$ for the states in $f(\mathfrak{c})$. Otherwise we could apply the Schewe automaton construction to $\mathcal{B}$ which does not increase the number of states, is priority almost-equivalent to $\mathcal{B}$, and has this property.
 	
 	$C$ and $D$ must be non-trivial SCCs. If $C$ would be trivial, then $\mathfrak{c}$ would only contain one element and $f(\mathfrak{c})$ would be empty. Hence, one can force multiple visits to a state in $\mathfrak{c}$ in $\mathcal{S}'$. If $D$ would be trivial, this would not be possible and we could again find a seperating witness of the two automata.
 	
@@ -169,7 +174,8 @@ Note that the choice of $\preceq$ and the representatives allow some degree of f
 \end{defn}
 
 \begin{lem}
-	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. $\mathcal{A}$ and $\mathcal{B}$ are priority almost-equivalent iff $L(\mathcal{A} \intercal \mathcal{B}) = \emptyset$.
+\label{lem:schewe:equiv_intercal}
+	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. $\mathcal{A}$ and $\mathcal{B}$ are priority almost-equivalent iff $L(\mathcal{A} \intercal \mathcal{B}) = \emptyset$. 
 \end{lem}
 
 \begin{proof}
@@ -182,11 +188,47 @@ Note that the choice of $\preceq$ and the representatives allow some degree of f
 	The priority almost-equivalence of a DPA $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|^2)$.
 \end{lem}
 
-\begin{proof}
-	The definition of $\mathcal{A} \intercal \mathcal{A}$ is a straightforward construction and can be done in quadratic time. By Lemma \ref{}, we know that $p$ and $q$ are priority almost-equivalent iff the language of $(\mathcal{A} \intercal \mathcal{A})_{(p,q)}$ is empty. 
 
-	Using e.g. Kosaraju's algorithm \ref{}, the SCCs %TODO
+\begin{proof}
+	The definition of $\mathcal{A} \intercal \mathcal{A}$ is a straightforward construction and can be done in quadratic time. By Lemma \ref{lem:schewe:equiv_intercal}, we know that $p$ and $q$ are priority almost-equivalent iff the language of $(\mathcal{A} \intercal \mathcal{A})_{(p,q)}$ is empty. 
+
+	The product automaton $\mathcal{A} \intercal \mathcal{A}$ itself can be computed in quadratic time. The SCCs of $\mathcal{A} \intercal \mathcal{A}$ can be computed in linear time in said automaton, i.e. in $\mathcal{O}(|\mathcal{A}|^2)$.
+	
+	The language from a given starting state is non-empty iff a goal SCC is reachable, i.e. an SCC that contains an accepting state and is non-trivial. It is a rather simple procedure to collect these SCCs and as described in the proof of Lemma \ref{lem:schewe:schewe_aut_linear_time}, we can merge all of them into a single state $\hat{q}$ in $\mathcal{O}(|\mathcal{A}^2|)$.
+	
+	All that remains to be done is to find all states from which $\hat{q}$ is unreachable. This is easily done by using the transposed automaton of $\mathcal{A} \intercal \mathcal{A}$, which has all transition edges inverted, and performing a DFS starting in $\hat{q}$. States which are \textbf{not} found here correspond to priority almost-equivalent pairs.
 \end{proof}
+
+
+\newpage
+
+
+
+%TODO reference all the libraries / git repos / ...
+\subsection{Efficiency}
+So far we used this section to define the Schewe construction and to establish its theoretical properties, namely that the new automaton is minimal in a certain way and that it can be computed in quadratic time. The rest of this section is used to present and analyze results of experiments done on the construction. 
+
+The algorithm was implemented in C++ and executed for different inputs, which were determined by the following properties:
+\begin{enumerate}
+	\item Source of the automaton, which is one of three.
+	\begin{itemize}
+		\item Use the \textit{Spot} library to generate a random DPA.
+		\item Use the \textit{Spot} library to generate a random NBA and \textit{Spot} again to determinize it to a DPA.
+		\item Use the \textit{Spot} library to generate a random NBA and use \textit{nbautils} library to determinize it.
+	\end{itemize}
+	\item Number of states.
+	\item Number of priorities.
+	\item Size of the input alphabet $\Sigma$; since the tools described work with vectors of atomic propositions as alphabets, this value always is a power of 2.
+	\item Number of SCCs.
+\end{enumerate}
+
+Afterwards, the efficiency was analyzed in the form of (relative or absolute) number of states that were removed. Note that this analysis always includes a Moore-minimization after performing the Schewe construction, as the construction itself does not remove any states.
+
+%TODO insert analysis / data
+
+
+
+
 
 
 \newpage
@@ -197,8 +239,7 @@ Note that the choice of $\preceq$ and the representatives allow some degree of f
 
 
 
-
-	
+%TODO	
 
 
 \begin{defn}
