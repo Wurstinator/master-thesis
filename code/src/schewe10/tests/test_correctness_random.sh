@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Tests the correct behaviour of the Schewe construction on a random DPA.
-if [ ! -x ../../bin/schewe_main ]
+if [ ! -x ../../../bin/schewe_main ]
 then
     echo "Error. Compile schewe_main first.";
     exit 1;
@@ -20,9 +20,9 @@ for ((i=1; i<=n; i++)); do
     schewe_aut=$(mktemp)
 
     randseed="$(shuf -i 0-100000 -n 1)";
-    randaut a -D -A 'parity min even 5' --colored -S --seed=${randseed} > ${gen_aut}
+    randaut a1 -Q5..20 -D -A 'parity min even 2' --colored -S --seed=${randseed} > ${gen_aut}
 
-    ../../bin/schewe_main "${@:2}" --automaton=${gen_aut} > ${schewe_aut}
+    ../../../bin/schewe_main "${@:2}" --automaton=${gen_aut} > ${schewe_aut}
 
     filtered=$(autfilt --equivalent-to=${gen_aut} ${schewe_aut})
 

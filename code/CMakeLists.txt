@@ -40,22 +40,15 @@ set(nbautils_HDRS
 set(Catch2_HDRS
     ${CATCH2_DIR}/single_include/catch.hpp)
 
-set(SCHEWE10_HDRS
-        src/schewe10/find_goal_sccs.h
-        src/schewe10/find_goal_sccs.cpp
-        src/schewe10/product_automaton.h
-        src/schewe10/almost_equivalent_states.h
-        src/schewe10/merge_states.h
-        src/schewe10/can_reach_state.h
-        src/schewe10/merge_sccs.h
-        src/schewe10/backwards_automaton.h
-        src/schewe10/topological_ordering.h
-        src/schewe10/product_automaton.cpp
-        )
-
 file(GLOB_RECURSE RANGE_V3_PUBLIC_HEADERS
         RELATIVE range-v3/include
         "range-v3/include/*.hpp")
+
+
+ExternalProject_Get_Property(cpphoafparser source_dir)
+include_directories(${source_dir}/include)
+
+# automaton module
 
 set(AUTOMATON_FILES
         src/automaton/finite_automaton.h
@@ -74,47 +67,54 @@ set(AUTOMATON_FILES
         src/automaton/nbautils_bridge.impl.h
         src/automaton/is_specialization_base_of.h)
 
+set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
 
-ExternalProject_Get_Property(cpphoafparser source_dir)
-include_directories(${source_dir}/include)
-
-add_library(automaton ${AUTOMATON_FILES} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
+add_library(automaton ${AUTOMATON_INCLUDE})
 target_link_libraries(automaton nbautils-lib)
 target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
 set(AUTOMATON_TESTS
         src/automaton/tests/test_automata.cpp
         src/automaton/tests/test_util.cpp
-        src/automaton/tests/helper_functions.h src/automaton/tests/test_nbautils_bridge.cpp)
+        src/automaton/tests/helper_functions.h
+        src/automaton/tests/test_nbautils_bridge.cpp)
 
 add_executable(automaton_tests src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
 target_link_libraries(automaton_tests nbautils-lib)
 target_include_directories(automaton_tests PRIVATE ${NBAUTILS_DIR}/src range-v3/include ${CATCH2_DIR}/single_include)
 
+# Schewe10
 
-add_executable(schewe_main src/schewe10/schewe_main.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
+set(SCHEWE10_HDRS
+        src/schewe10/topological_ordering.h
+        src/schewe10/topological_ordering.impl.h
+        src/schewe10/almost_equivalent_states.h
+        src/schewe10/almost_equivalent_states.impl.h
+        src/schewe10/schewe_automaton.h src/schewe10/schewe_automaton.cpp)
+
+set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h ${nbautils_HDRS})
+
+add_library(schewe_automaton ${SCHEWE10_INCLUDE})
+target_link_libraries(schewe_automaton nbautils-lib automaton)
+target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+
+
+
+add_executable(schewe_main src/schewe10/schewe_main.cpp ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_main nbautils-lib)
 add_dependencies(schewe_main cpphoafparser)
-target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src)
+target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
-add_executable(schewe_statistics src/schewe10/schewe_statistics.cpp ${nbautils_HDRS} ${SCHEWE10_HDRS})
+add_executable(schewe_statistics src/schewe10/schewe_statistics.cpp ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_statistics nbautils-lib)
 add_dependencies(schewe_statistics cpphoafparser)
-target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src)
+target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
-add_library(schewe_automaton src/schewe10/schewe_automaton.h ${nbautils_HDRS} ${SCHEWE10_HDRS})
-target_link_libraries(schewe_automaton nbautils-lib)
-target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src)
 
 set(SCHEWE10_TESTS
         src/schewe10/tests/test_almost_equivalent_states.cpp
-        src/schewe10/tests/test_backwards_automaton.cpp
-        src/schewe10/tests/test_can_reach_state.cpp
-        src/schewe10/tests/test_find_goal_sccs.cpp
-        src/schewe10/tests/test_merge_sccs.cpp
-        src/schewe10/tests/test_merge_states.cpp
-        src/schewe10/tests/test_product_automaton.cpp)
+        src/schewe10/tests/test_topological_ordering.cpp)
 
-add_executable(test_schewe10 src/schewe10/tests/test_schewe10.cpp ${SCHEWE10_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${SCHEWE10_HDRS})
+add_executable(test_schewe10 src/schewe10/tests/test_main.cpp ${SCHEWE10_TESTS} ${Catch2_HDRS} ${SCHEWE10_INCLUDE})
 target_link_libraries(test_schewe10 nbautils-lib)
-target_include_directories(test_schewe10 PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include)
+target_include_directories(test_schewe10 PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include range-v3/include)

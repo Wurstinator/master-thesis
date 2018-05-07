@@ -88,6 +88,46 @@ NPA FromNbautils(const nbautils::SWA<T, S>& swa) {
     return result;
 }
 
+template <typename AutomatonT, typename TagT=void*>
+nbautils::SWA<TagT> ToNbautils(const AutomatonT& automaton) {
+    static_assert(std::is_base_of<FiniteAutomaton, AutomatonT>::value);
+    constexpr bool is_transition_automaton = is_specialization_base_of<TransitionAutomaton, AutomatonT>::value;
+    constexpr bool is_labelled_automaton = std::is_base_of<LabelledAutomaton<parity_label_t>, AutomatonT>::value;
+
+    // If the given automaton is a transition automaton, get its atomic propositions.
+    std::vector<std::string> swa_aps;
+    if constexpr (is_transition_automaton) {
+        for (unsigned int i = 0; i < automaton.atomicPropositions; ++i) {
+            std::stringstream ss;
+            ss << 'a' << i+1;
+            swa_aps.push_back(ss.str());
+        }
+    }
+
+    nbautils::SWA<TagT> result(nbautils::Acceptance::PARITY, "", swa_aps, std::vector<nbautils::state_t> {automaton.InitialState()});
+    result.set_patype(nbautils::PAType::MIN_EVEN);
+
+    // Add states.
+    for (state_t q : automaton.States()) {
+        result.add_state(q);
+        if constexpr (is_labelled_automaton) {
+            result.set_accs(q, std::vector<nbautils::acc_t>{automaton.GetLabel(q)});
+        }
+    }
+
+    // Add transitions.
+    if constexpr (is_transition_automaton) {
+        for (state_t p : automaton.States()) {
+            for (symbol_t s : automaton.Symbols()) {
+                const auto successors = ranges::v3::view::bounded(automaton.Successors(p, s));
+                result.set_succs(p, s, std::vector<nbautils::state_t>(successors.begin(), successors.end()));
+            }
+        }
+    }
+
+    return result;
+}
+
 
 }
 }

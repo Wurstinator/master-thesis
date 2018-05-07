@@ -21,23 +21,31 @@ class ParityAutomaton : public LabelledAutomaton<parity_label_t> {
 };
 
 
-class DPA : public ParityAutomaton, public DeterministicAutomaton {
- public:
-    using DeterministicAutomaton::DeterministicAutomaton;
-
-    void AddState(state_t q) {
-        DeterministicAutomaton::AddState(q);
-    }
-};
-
-
 class NPA : public ParityAutomaton, public NondeterministicAutomaton {
  public:
     using NondeterministicAutomaton::NondeterministicAutomaton;
 
     void AddState(state_t q) {
         NondeterministicAutomaton::AddState(q);
+        this->labels[q] = Label();
     }
+
+    NPA(NondeterministicAutomaton&& automaton) : NondeterministicAutomaton(std::move(automaton)) {}
+};
+
+
+class DPA : public ParityAutomaton, public DeterministicAutomaton {
+ public:
+    using DeterministicAutomaton::DeterministicAutomaton;
+
+    static DPA FromNPA(const NPA& npa);
+
+    void AddState(state_t q) {
+        DeterministicAutomaton::AddState(q);
+        this->labels[q] = Label();
+    }
+
+    DPA(DeterministicAutomaton&& automaton) : DeterministicAutomaton(std::move(automaton)) {}
 };
 
 

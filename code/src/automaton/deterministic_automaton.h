@@ -22,6 +22,10 @@ class DeterministicAutomaton :
  public:
     explicit DeterministicAutomaton(unsigned char atomic_propositions) : TransitionAutomaton(atomic_propositions) {}
 
+    // Copy constructors.
+    DeterministicAutomaton(const DeterministicAutomaton& other);
+    DeterministicAutomaton(DeterministicAutomaton&& other);
+
     // Given an arbitrary TransitionAutomaton, tries to construct an equivalent DeterministicAutomaton from it.
     // If any state-symbol combination does not have a unique successor, an exception is thrown.
     template <typename RT1, typename RT2>

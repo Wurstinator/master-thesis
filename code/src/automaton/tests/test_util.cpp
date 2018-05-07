@@ -105,6 +105,23 @@ TEST_CASE("Test RefineToCongruence.") {
 }
 
 
+TEST_CASE("Test Hopcroft.") {
+    DPA dpa(1);
+    dpa.AddState(0);
+    dpa.AddState(1);
+    dpa.SetInitialState(0);
+    dpa.SetSucc(0, 0, 1);
+    dpa.SetSucc(0, 1, 1);
+    dpa.SetSucc(1, 0, 1);
+    dpa.SetSucc(1, 1, 1);
+    Hopcroft(&dpa);
+    CHECK(dpa.States().size() == 1);
+    CHECK(dpa.HasState(0));
+    CHECK(dpa.Succ(0, 0) == 0);
+    CHECK(dpa.Succ(0, 1) == 0);
+}
+
+
 TEST_CASE("Test MergeSCCs.") {
     NondeterministicAutomaton automaton = NondeterministicAutomaton::FromTransitionAutomaton(TestAutomaton3());
 

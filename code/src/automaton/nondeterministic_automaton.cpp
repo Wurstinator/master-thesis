@@ -4,6 +4,17 @@
 namespace tollk {
 namespace automaton {
 
+
+NondeterministicAutomaton::NondeterministicAutomaton(const NondeterministicAutomaton& other) : TransitionAutomaton(other.atomicPropositions) {
+    this->states = other.states;
+    this->transitions = other.transitions;
+}
+
+NondeterministicAutomaton::NondeterministicAutomaton(NondeterministicAutomaton&& other)  : TransitionAutomaton(other.atomicPropositions)  {
+    this->states = std::move(other.states);
+    this->transitions = std::move(other.transitions);
+}
+
 NondeterministicAutomaton::SuccRangeStateSym NondeterministicAutomaton::Successors(state_t q, symbol_t s) const {
     return StateSymbOut(q, s);
 }

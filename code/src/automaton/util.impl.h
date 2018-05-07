@@ -39,6 +39,9 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
                 std::unordered_map<state_t, _SCCTarjan_Struct>* visit_indices,
                 std::stack<state_t>* stack,
                 SCCCollection* sccs) {
+    if (sccs->scc_indices.find(node) != sccs->scc_indices.end())
+        return;
+
     // Add the node to the "visited" set.
     (*visit_indices)[node] = _SCCTarjan_Struct {*depth, *depth, true};
     stack->push(node);
@@ -74,11 +77,13 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
 
 template<typename RT1, typename RT2>
 SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& automaton) {
-    std::unordered_map<state_t, _SCCTarjan_Struct> visit_indices;
-    std::stack<state_t> stack;
     SCCCollection result;
-    unsigned int depth = 0;
-    _SCCTarjan(automaton, automaton.InitialState(), &depth, &visit_indices, &stack, &result);
+    for (state_t q : automaton.States()) {
+        std::unordered_map<state_t, _SCCTarjan_Struct> visit_indices;
+        std::stack<state_t> stack;
+        unsigned int depth = 0;
+        _SCCTarjan(automaton, q, &depth, &visit_indices, &stack, &result);
+    }
     return result;
 }
 
@@ -98,6 +103,18 @@ template<typename RT1, typename RT2>
 std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>& automaton, state_t q) {
     std::unordered_set<state_t> result;
     _ReachableStates_DSF(automaton, q, &result);
+    return result;
+}
+
+template <typename RT1, typename RT2, typename Rng>
+std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng) {
+    const NondeterministicAutomaton transposed_automaton = TransposeAutomaton(automaton);
+    std::unordered_set<state_t> result;
+    for (state_t q : rng) {
+        for (state_t reach : ReachableStates(transposed_automaton, q)) {
+            result.insert(reach);
+        }
+    }
     return result;
 }
 
@@ -151,6 +168,41 @@ void RefineToCongruence(EquivalenceRelation<state_t>* relation, const Transition
             }
         }
     }
+}
+
+
+template <typename RT1, typename RT2, typename RT3, typename RT4>
+NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& automaton1, const TransitionAutomaton<RT3, RT4>& automaton2, boost::bimap<state_t, std::pair<state_t, state_t>>* pair_indices) {
+    assert(automaton1.atomicPropositions == automaton2.atomicPropositions);
+
+    // Fill the map of state pairs.
+    boost::bimap<state_t, std::pair<state_t, state_t>> pair_indices_;
+    for (state_t p : automaton1.States())
+        for (state_t q : automaton2.States())
+            pair_indices_.left.insert(std::make_pair(pair_indices_.size(), std::make_pair(p, q)));
+
+    // Create the product automaton.
+    NondeterministicAutomaton product(automaton1.atomicPropositions);
+    for (const auto& kv_pair : pair_indices_.left)
+        product.AddState(kv_pair.first);
+    product.SetInitialState(pair_indices_.right.at(std::make_pair(automaton1.InitialState(), automaton2.InitialState())));
+
+    // Set the transitions.
+    for (state_t p : automaton1.States()) {
+        for (state_t q : automaton2.States()) {
+            for (symbol_t s : product.Symbols()) {
+                for (state_t succ1 : automaton1.Successors(p, s)) {
+                    for (state_t succ2 : automaton2.Successors(q, s)) {
+                        product.AddSucc(pair_indices_.right.at(std::make_pair(p, q)), s, pair_indices_.right.at(std::make_pair(succ1, succ2)));
+                    }
+                }
+            }
+        }
+    }
+
+    if (pair_indices != nullptr)
+        *pair_indices = std::move(pair_indices_);
+    return product;
 }
 
 
