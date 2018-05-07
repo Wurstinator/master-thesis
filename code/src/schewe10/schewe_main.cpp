@@ -58,9 +58,6 @@ Options ParseArgs(int argc, char** argv) {
 
 // Executes the process for one automaton.
 tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA automaton, const Options& options) {
-
-    std::cerr << automaton.States().size() << std::endl;
-
     if (options.minimize_before)
         tollk::automaton::Hopcroft(&automaton);
 
@@ -68,8 +65,6 @@ tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA automaton, const
 
     if (options.minimize_after)
         tollk::automaton::Hopcroft(&automaton);
-
-    std::cerr << automaton.States().size() << std::endl;
 
     return automaton;
 }
