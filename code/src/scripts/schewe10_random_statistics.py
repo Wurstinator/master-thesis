@@ -9,19 +9,12 @@ import threading
 
 statistics_exe = '../../bin/schewe_statistics'
 
+
 def main():
     random.seed()
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', default=1, dest='autnum', help='Number of automata to generate and test.', type=int)
-    parser.add_argument('-c', action='store_true', dest='make_complete',
-                        help='Make the automaton complete by introducing a sink state.')
-    parser.add_argument('-m', action='store_true', dest='minimize',
-                        help='Minimize the automaton before and/or after applying the construction.')
-    parser.add_argument('--hop', action='store_true', dest='hopcroft',
-                        help='Perform the Hopcroft algorithm for minimization.')
-    parser.add_argument('--ru', action='store_true', dest='remove_unreachable',
-                        help='Remove unreachable states for minimization.')
     parser.add_argument('-g', '--generation', dest='generation', help='Defines the technique to generate the DPAs.',
                         choices=['generate_deterministic', 'determinize_nbautils', 'determinize_spot'],
                         default='generate_deterministic')
@@ -50,12 +43,14 @@ def main():
         pool.apply_async(collect_data, (args,), callback=apply_finished)
     pool.close()
 
+    sys.stdout.write("[\n")
     while threads_finished < args.autnum or not data_queue.empty():
         data = data_queue.get()
         if data is not None:
             s = data.decode('utf-8')
             sys.stdout.write(s)
             sys.stdout.flush()
+    sys.stdout.write("]")
 
 
 # Runs "command" as a subprocess and returns the STDOUT as a string. If time is specified, it is interpreted as a number
@@ -132,15 +127,7 @@ def collect_data(args):
         automaton_file = determinized_file
 
     construction_cmd = statistics_exe
-    if args.make_complete:
-        construction_cmd += ' -c'
-    if args.minimize:
-        construction_cmd += ' -m'
-    if args.hopcroft:
-        construction_cmd += ' --hop'
-    if args.remove_unreachable:
-        construction_cmd += ' --ru'
-    construction_cmd += ' --automaton=' + automaton_file.name
+    construction_cmd += ' --output=json --automaton=' + automaton_file.name
     return run_process_for_time(construction_cmd)
 
 
