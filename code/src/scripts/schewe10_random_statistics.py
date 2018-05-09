@@ -6,6 +6,8 @@ import random
 import subprocess
 import multiprocessing
 import threading
+import signal
+import queue
 
 statistics_exe = '../../bin/schewe_statistics'
 
@@ -13,44 +15,57 @@ statistics_exe = '../../bin/schewe_statistics'
 def main():
     random.seed()
 
+    if not (os.path.isfile(statistics_exe) and os.access(statistics_exe, os.X_OK)):
+        print('Error. Compile schewe_statistics first.')
+        sys.exit(1)
+
+    args = parse_args()
+    run_experiments(args)
+
+
+# Parses the command line arguments.
+def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', default=1, dest='autnum', help='Number of automata to generate and test.', type=int)
     parser.add_argument('-g', '--generation', dest='generation', help='Defines the technique to generate the DPAs.',
                         choices=['generate_deterministic', 'determinize_nbautils', 'determinize_spot'],
                         default='generate_deterministic')
     parser.add_argument('--ap', help='Number of atomic propositions.', type=int, default=1)
+    return parser.parse_args()
 
-    if not (os.path.isfile(statistics_exe) and os.access(statistics_exe, os.X_OK)):
-        print('Error. Compile schewe_statistics first.')
-        sys.exit(1)
 
-    args = parser.parse_args()
-
+# Run the specified experiments in parallel.
+def run_experiments(args):
+    # Initialize the worker pool and necessary variables.
     pool = multiprocessing.Pool(os.cpu_count() - 1)
     data_queue = multiprocessing.Queue()
     counter_lock = threading.Lock()
-    threads_finished = 0
+    threads_todo = args.autnum
 
+    # This function is executed after each successful experiment.
     def apply_finished(data):
-        nonlocal data_queue
+        if data is None:
+            return
         data_queue.put(data)
-        nonlocal counter_lock
         with counter_lock:
-            nonlocal threads_finished
-            threads_finished += 1
+            nonlocal threads_todo
+            threads_todo -= 1
 
+    # Start the pool.
     for i in range(args.autnum):
         pool.apply_async(collect_data, (args,), callback=apply_finished)
     pool.close()
 
-    sys.stdout.write("[\n")
-    while threads_finished < args.autnum or not data_queue.empty():
-        data = data_queue.get()
+    # Write the data to stdout until all workers terminate or a SIGINT is received.
+    while threads_todo > 0 or not data_queue.empty():
+        try:
+            data = data_queue.get(True, 1)
+        except queue.Empty:
+            data = None
         if data is not None:
             s = data.decode('utf-8')
             sys.stdout.write(s)
             sys.stdout.flush()
-    sys.stdout.write("]")
 
 
 # Runs "command" as a subprocess and returns the STDOUT as a string. If time is specified, it is interpreted as a number
@@ -92,7 +107,7 @@ def collect_data(args):
         automaton_seed = random.randint(0, 100000)
 
         generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions, min_states,
-                                                                                    max_states, automaton_seed)
+                                                                          max_states, automaton_seed)
 
         generated_automaton_file = tempfile.NamedTemporaryFile()
         run_process_for_time(generate_cmd, outfile=generated_automaton_file)
@@ -113,12 +128,13 @@ def collect_data(args):
         automaton_seed = random.randint(0, 100000)
 
         generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions, min_states,
-                                                                                    max_states, automaton_seed)
+                                                                          max_states, automaton_seed)
 
         generated_automaton_file = tempfile.NamedTemporaryFile()
         run_process_for_time(generate_cmd, outfile=generated_automaton_file)
 
-        determinize_cmd = 'autfilt --colored-parity=\'min even\' --small --high -S -D -C {}'.format(generated_automaton_file.name)
+        determinize_cmd = 'autfilt --colored-parity=\'min even\' --small --high -S -D -C {}'.format(
+            generated_automaton_file.name)
 
         determinized_file = tempfile.NamedTemporaryFile()
         if run_process_for_time(determinize_cmd, outfile=determinized_file, timeout=determinization_timeout) is None:
