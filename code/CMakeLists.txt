@@ -8,45 +8,58 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 project (hello_world)
 
-set(NBAUTILS_DIR ./nbautils)
-set(CATCH2_DIR ./Catch2)
-
-add_subdirectory(nbautils)
-add_subdirectory(Catch2)
-add_subdirectory(range-v3)
-
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-set(nbautils_HDRS
-  ${NBAUTILS_DIR}/src/dev/memusage.h
-  ${NBAUTILS_DIR}/src/dev/bench.hh
-  ${NBAUTILS_DIR}/src/common/util.hh
-  ${NBAUTILS_DIR}/src/common/relorder.hh
-  ${NBAUTILS_DIR}/src/common/triebimap.hh
-  ${NBAUTILS_DIR}/src/common/bimap.hh
-  ${NBAUTILS_DIR}/src/common/algo.hh
-  ${NBAUTILS_DIR}/src/common/graph.hh
-  ${NBAUTILS_DIR}/src/common/scc.hh
-  ${NBAUTILS_DIR}/src/swa.hh
-  ${NBAUTILS_DIR}/src/ba.hh
-  ${NBAUTILS_DIR}/src/io.hh
-  ${NBAUTILS_DIR}/src/pa.hh
-  ${NBAUTILS_DIR}/src/ps.hh
-  ${NBAUTILS_DIR}/src/level.hh
-  ${NBAUTILS_DIR}/src/det.hh)
+# nbautils
 
-set(Catch2_HDRS
-    ${CATCH2_DIR}/single_include/catch.hpp)
+set(NBAUTILS_DIR ./nbautils)
+add_subdirectory(${NBAUTILS_DIR})
 
-file(GLOB_RECURSE RANGE_V3_PUBLIC_HEADERS
-        RELATIVE range-v3/include
-        "range-v3/include/*.hpp")
-
+set(NBAUTILS_INCLUDE
+        ${NBAUTILS_DIR}/src/dev/memusage.h
+        ${NBAUTILS_DIR}/src/dev/bench.hh
+        ${NBAUTILS_DIR}/src/common/util.hh
+        ${NBAUTILS_DIR}/src/common/relorder.hh
+        ${NBAUTILS_DIR}/src/common/triebimap.hh
+        ${NBAUTILS_DIR}/src/common/bimap.hh
+        ${NBAUTILS_DIR}/src/common/algo.hh
+        ${NBAUTILS_DIR}/src/common/graph.hh
+        ${NBAUTILS_DIR}/src/common/scc.hh
+        ${NBAUTILS_DIR}/src/swa.hh
+        ${NBAUTILS_DIR}/src/ba.hh
+        ${NBAUTILS_DIR}/src/io.hh
+        ${NBAUTILS_DIR}/src/pa.hh
+        ${NBAUTILS_DIR}/src/ps.hh
+        ${NBAUTILS_DIR}/src/level.hh
+        ${NBAUTILS_DIR}/src/det.hh)
 
 ExternalProject_Get_Property(cpphoafparser source_dir)
 include_directories(${source_dir}/include)
+
+# Catch2
+
+set(CATCH2_DIR ./Catch2)
+add_subdirectory(${CATCH2_DIR})
+
+set(Catch2_HDRS
+        ${CATCH2_DIR}/single_include/catch.hpp)
+
+# range v3
+
+set(RANGEV3_DIR ./range-v3)
+add_subdirectory(${RANGEV3_DIR})
+
+file(GLOB_RECURSE RANGE_V3_PUBLIC_HEADERS
+        RELATIVE ${RANGEV3_DIR}/include
+        "${RANGEV3_DIR}/include/*.hpp")
+
+# json
+
+set(JSON_DIR ./json)
+add_subdirectory(${JSON_DIR})
+
 
 # automaton module
 
@@ -67,11 +80,11 @@ set(AUTOMATON_FILES
         src/automaton/nbautils_bridge.impl.h
         src/automaton/is_specialization_base_of.h)
 
-set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
+set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${NBAUTILS_INCLUDE} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
 
 add_library(automaton ${AUTOMATON_INCLUDE})
 target_link_libraries(automaton nbautils-lib)
-target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
 
 set(AUTOMATON_TESTS
         src/automaton/tests/test_automata.cpp
@@ -93,23 +106,21 @@ set(SCHEWE10_HDRS
         src/schewe10/schewe_automaton.h
         src/schewe10/schewe_automaton.cpp)
 
-set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h ${nbautils_HDRS})
+set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h ${NBAUTILS_INCLUDE})
 
 add_library(schewe_automaton ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_automaton nbautils-lib automaton)
-target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
-
-
+target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
 
 add_executable(schewe_main src/schewe10/schewe_main.cpp ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_main nbautils-lib)
 add_dependencies(schewe_main cpphoafparser)
-target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
 
 add_executable(schewe_statistics src/schewe10/schewe_statistics.cpp ${SCHEWE10_INCLUDE})
 target_link_libraries(schewe_statistics nbautils-lib)
 add_dependencies(schewe_statistics cpphoafparser)
-target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
 
 
 set(SCHEWE10_TESTS

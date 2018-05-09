@@ -7,3 +7,6 @@
 [submodule "code/range-v3"]
 	path = code/range-v3
 	url = https://github.com/ericniebler/range-v3.git
+[submodule "code/json"]
+	path = code/json
+	url = https://github.com/nlohmann/json
