@@ -79,9 +79,9 @@ set(AUTOMATON_TESTS
         src/automaton/tests/helper_functions.h
         src/automaton/tests/test_nbautils_bridge.cpp)
 
-add_executable(automaton_tests src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
-target_link_libraries(automaton_tests nbautils-lib)
-target_include_directories(automaton_tests PRIVATE ${NBAUTILS_DIR}/src range-v3/include ${CATCH2_DIR}/single_include)
+add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
+target_link_libraries(test_automaton nbautils-lib)
+target_include_directories(test_automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include ${CATCH2_DIR}/single_include)
 
 # Schewe10
 
@@ -90,7 +90,8 @@ set(SCHEWE10_HDRS
         src/schewe10/topological_ordering.impl.h
         src/schewe10/almost_equivalent_states.h
         src/schewe10/almost_equivalent_states.impl.h
-        src/schewe10/schewe_automaton.h src/schewe10/schewe_automaton.cpp)
+        src/schewe10/schewe_automaton.h
+        src/schewe10/schewe_automaton.cpp)
 
 set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h ${nbautils_HDRS})
 
@@ -113,8 +114,38 @@ target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src range-v
 
 set(SCHEWE10_TESTS
         src/schewe10/tests/test_almost_equivalent_states.cpp
-        src/schewe10/tests/test_topological_ordering.cpp)
+        src/schewe10/tests/test_topological_ordering.cpp
+        src/schewe10/tests/test_main.cpp)
 
-add_executable(test_schewe10 src/schewe10/tests/test_main.cpp ${SCHEWE10_TESTS} ${Catch2_HDRS} ${SCHEWE10_INCLUDE})
+add_executable(test_schewe10 ${SCHEWE10_TESTS} ${Catch2_HDRS} ${SCHEWE10_INCLUDE})
 target_link_libraries(test_schewe10 nbautils-lib)
 target_include_directories(test_schewe10 PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include range-v3/include)
+
+
+# FritzWilke06
+
+set(FRITZWILKE06_HDRS
+        src/fritzwilke06/delayed_simulation.h
+        src/fritzwilke06/delayed_simulation.cpp
+        src/fritzwilke06/delayed_simulation_automaton.cpp
+        src/fritzwilke06/delayed_simulation_automaton.h
+        src/fritzwilke06/gamma.cpp
+        src/fritzwilke06/gamma.h)
+
+set(FRITZWILKE06_INCLUDE ${FRITZWILKE06_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
+
+add_library(delayed_simulation ${FRITZWILKE06_INCLUDE})
+target_include_directories(delayed_simulation PRIVATE range-v3/include)
+
+add_executable(fritzwilke_main src/fritzwilke06/fritzwilke_main.cpp ${FRITZWILKE06_INCLUDE})
+target_link_libraries(fritzwilke_main nbautils-lib automaton)
+add_dependencies(fritzwilke_main cpphoafparser)
+target_include_directories(fritzwilke_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+
+set(FRITZWILKE06_TESTS
+        src/fritzwilke06/tests/test_delayed_simulation.cpp
+        src/fritzwilke06/tests/test_delayed_simulation_automaton.cpp
+        src/fritzwilke06/tests/test_main.cpp)
+
+add_executable(test_fritzwilke06 ${FRITZWILKE06_INCLUDE} ${FRITZWILKE06_TESTS})
+target_include_directories(test_fritzwilke06 PRIVATE ${CATCH2_DIR}/single_include range-v3/include)

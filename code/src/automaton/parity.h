@@ -20,10 +20,14 @@ class ParityAutomaton : public LabelledAutomaton<parity_label_t> {
     bool IsBuchi() const;
 };
 
+class NPA;
+class DPA;
 
 class NPA : public ParityAutomaton, public NondeterministicAutomaton {
  public:
     using NondeterministicAutomaton::NondeterministicAutomaton;
+
+    static NPA FromDPA(const DPA& dpa);
 
     void AddState(state_t q) {
         NondeterministicAutomaton::AddState(q);

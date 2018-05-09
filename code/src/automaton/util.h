@@ -71,6 +71,18 @@ NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& 
 // Similar to the other ProductAutomaton call but a specialized case for deterministic automata.
 DeterministicAutomaton ProductAutomaton(const DeterministicAutomaton& automaton1, const DeterministicAutomaton& automaton2, boost::bimap<state_t, std::pair<state_t, state_t>>* pair_indices = nullptr);
 
+// Given a Büchi automaton, returns a set of those states from which no word can be accepted.
+template <typename AutomatonT>
+std::unordered_set<state_t> BuchiEmptyStates(const AutomatonT& automaton);
+
+// Merges all states that are equivalent in a given relation into one.
+void QuotientAutomaton(NondeterministicAutomaton* automaton, const EquivalenceRelation<state_t>& relation);
+
+// Merges all states that are equivalent in a given relation into one. For each merged set, the "merge_labels"
+// function is called and the label of the merged state is set to the return value.
+template <typename AutomatonT>
+void QuotientAutomaton(AutomatonT* automaton, const EquivalenceRelation<state_t>& relation, const std::function<parity_label_t(const EquivalenceRelation<state_t>::EquivClass&)>& merge_labels);
+
 
 }  // namespace automaton
 }  // namespace tollk

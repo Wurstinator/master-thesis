@@ -71,6 +71,11 @@ DeterministicAutomaton ProductAutomaton(const DeterministicAutomaton& automaton1
 }
 
 
+void QuotientAutomaton(NondeterministicAutomaton* automaton, const EquivalenceRelation<state_t>& relation) {
+    for (EquivalenceRelation<state_t>::EquivClass c : relation.Classes())
+        automaton->MergeStates(c);
+}
+
 
 }
 }

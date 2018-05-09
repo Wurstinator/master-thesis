@@ -14,6 +14,15 @@ bool ParityAutomaton::IsBuchi() const {
 }
 
 
+NPA NPA::FromDPA(const DPA& dpa) {
+    NPA npa(NondeterministicAutomaton::FromTransitionAutomaton(dpa));
+    for (state_t q : npa.States())
+        npa.SetLabel(q, dpa.GetLabel(q));
+    return npa;
+}
+
+
+
 DPA DPA::FromNPA(const NPA& npa) {
     DPA dpa(DeterministicAutomaton::FromTransitionAutomaton(npa));
     for (state_t q : dpa.States())

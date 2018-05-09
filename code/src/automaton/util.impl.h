@@ -1,5 +1,7 @@
 
 #include <range/v3/algorithm/any_of.hpp>
+#include "is_specialization_base_of.h"
+#include <range/v3/algorithm/find.hpp>
 
 namespace tollk {
 namespace automaton {
@@ -36,7 +38,7 @@ template<typename RT1, typename RT2>
 void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
                 state_t node,
                 unsigned int* depth,
-                std::unordered_map<state_t, _SCCTarjan_Struct>* visit_indices,
+                std::map<state_t, _SCCTarjan_Struct>* visit_indices,
                 std::stack<state_t>* stack,
                 SCCCollection* sccs) {
     if (sccs->scc_indices.find(node) != sccs->scc_indices.end())
@@ -52,7 +54,7 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
         if (visit_indices->find(neighbour) == visit_indices->end()) {
             // The node still has to be visited.
             _SCCTarjan(automaton, neighbour, depth, visit_indices, stack, sccs);
-            if ((*visit_indices)[node].min_reach > (*visit_indices)[neighbour].min_reach)
+            if ((visit_indices->find(neighbour) != visit_indices->end()) && (*visit_indices)[node].min_reach > (*visit_indices)[neighbour].min_reach)
                 (*visit_indices)[node].min_reach = (*visit_indices)[neighbour].min_reach;
         } else if ((*visit_indices)[neighbour].in_stack) {
             // The node has been visited but has not been assigned to an SCC yet.
@@ -68,18 +70,19 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
         do {
             popped_node = stack->top();
             stack->pop();
+            (*visit_indices)[popped_node].in_stack = false;
             sccs->sccs.back().insert(popped_node);
             sccs->scc_indices[popped_node] = sccs->sccs.size() - 1;
         } while (popped_node != node);
     }
-};
+}
 
 
 template<typename RT1, typename RT2>
 SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& automaton) {
     SCCCollection result;
     for (state_t q : automaton.States()) {
-        std::unordered_map<state_t, _SCCTarjan_Struct> visit_indices;
+        std::map<state_t, _SCCTarjan_Struct> visit_indices;
         std::stack<state_t> stack;
         unsigned int depth = 0;
         _SCCTarjan(automaton, q, &depth, &visit_indices, &stack, &result);
@@ -204,6 +207,71 @@ NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& 
         *pair_indices = std::move(pair_indices_);
     return product;
 }
+
+
+template <typename AutomatonT>
+std::unordered_set<state_t> BuchiEmptyStates(const AutomatonT& automaton) {
+    static_assert(std::is_base_of<ParityAutomaton, AutomatonT>::value);
+    assert(automaton.IsBuchi());
+    static_assert(is_specialization_base_of<TransitionAutomaton, AutomatonT>::value);
+
+    // Merge all SCCs in the automaton.
+    NPA merged_sccs(NondeterministicAutomaton::FromTransitionAutomaton(automaton));
+    SCCCollection sccs;
+    MergeSCCs(&merged_sccs, &sccs);
+
+    // Build a list of SCCs that are goals, i.e. they are non-trivial and contain an accepting state.
+    std::vector<state_t> goal_sccs_representatives;
+    for (const SCCCollection::SCC& scc : sccs.sccs) {
+        // Check if the SCC is trivial.
+        if (scc.size() == 1) {
+            //const typename NPA::SuccRangeState successors = product.Successors(*scc.begin());
+            ranges::v3::any_view<state_t> successors = automaton.Successors(*scc.begin());
+            if (ranges::v3::find(successors.begin(), successors.end(), *scc.begin()) == successors.end())
+                continue;
+        }
+
+        // Check if the SCC contains a final state.
+        bool contains_final = false;
+        for (state_t q : scc)
+            contains_final = contains_final || automaton.GetLabel(q) == 0;
+        if (!contains_final)
+            continue;
+
+        // Add SCC to the list.
+        goal_sccs_representatives.push_back(*scc.begin());
+    }
+
+    // Check which SCCs can / cannot reach the goal SCCs.
+    std::unordered_set<state_t> cannot_reach_goal_scc(merged_sccs.States().begin(), merged_sccs.States().end());
+    for (state_t q : ReachingStates(merged_sccs, goal_sccs_representatives))
+        cannot_reach_goal_scc.erase(q);
+
+    // For each of those SCCs, return all its states.
+    std::unordered_set<state_t> result;
+    for (state_t scc_representative : cannot_reach_goal_scc) {
+        const SCCCollection::SCC& scc = sccs.sccs[sccs.scc_indices[scc_representative]];
+        for (state_t q : scc)
+            result.insert(q);
+    }
+
+    return result;
+}
+
+
+
+template <typename AutomatonT>
+void QuotientAutomaton(AutomatonT* automaton, const EquivalenceRelation<state_t>& relation, const std::function<parity_label_t(const EquivalenceRelation<state_t>::EquivClass&)>& merge_labels) {
+    static_assert(is_specialization_base_of<LabelledAutomaton, AutomatonT>::value);
+    static_assert(std::is_base_of<NondeterministicAutomaton, AutomatonT>::value);
+
+    for (const EquivalenceRelation<state_t>::EquivClass& c : relation.Classes()) {
+        automaton->MergeStates(c);
+        automaton->SetLabel(*c.begin(), merge_labels(c));
+    }
+}
+
+
 
 
 }  // namespace automaton
