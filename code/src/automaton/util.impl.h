@@ -90,6 +90,27 @@ SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& a
     return result;
 }
 
+// Performs a simple DFS and collects the visited states. Returns true if a goal state was found.
+template<typename RT1, typename RT2, typename Rng>
+bool _CanReach_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_t q, Rng&& goal, std::unordered_set<state_t>* visited) {
+    if (ranges::v3::find(goal, q) != goal.end())
+        return true;
+    if (visited->find(q) != visited->end())
+        return false;
+    visited->insert(q);
+    for (state_t p : automaton.Successors(q))
+        if (_CanReach_DSF(automaton, p, goal, visited))
+            return true;
+    return false;
+};
+
+
+template<typename RT1, typename RT2, typename Rng>
+bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&& goal) {
+    std::unordered_set<state_t> visited;
+    return _CanReach_DSF(automaton, from, goal, &visited);
+}
+
 
 // Performs a simple DFS and collects the visited states.
 template<typename RT1, typename RT2>

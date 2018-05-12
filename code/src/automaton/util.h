@@ -33,6 +33,10 @@ struct SCCCollection {
 template<typename RT1, typename RT2>
 SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& automaton);
 
+// Checks whether from some state, one can reach a given collection of states. O(n) operation.
+template<typename RT1, typename RT2, typename Rng>
+bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&& goal);
+
 // Computes reachable states of a given one. O(n) operation.
 template<typename RT1, typename RT2>
 std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>& automaton, state_t q);

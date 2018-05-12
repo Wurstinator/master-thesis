@@ -29,6 +29,21 @@ TEST_CASE("Test TransposeAutomaton.") {
     CHECK(CheckStateRangeEquivalence(automaton.Successors(3, 1), std::set<state_t>{2}));
 }
 
+TEST_CASE("Test CanReach.") {
+    CHECK(CanReach(TestAutomaton1(), 0, std::set<state_t>{0}));
+    CHECK(CanReach(TestAutomaton1(), 0, std::set<state_t>{2, 3}));
+    CHECK(!CanReach(TestAutomaton1(), 0, std::set<state_t>{}));
+    CHECK(CanReach(TestAutomaton1(), 1, std::set<state_t>{2}));
+    CHECK(CanReach(TestAutomaton1(), 1, std::set<state_t>{0, 1}));
+    CHECK(!CanReach(TestAutomaton1(), 1, std::set<state_t>{0}));
+    CHECK(CanReach(TestAutomaton1(), 2, std::set<state_t>{3}));
+    CHECK(CanReach(TestAutomaton1(), 2, std::set<state_t>{0, 1, 2, 3}));
+    CHECK(!CanReach(TestAutomaton1(), 2, std::set<state_t>{0}));
+    CHECK(CanReach(TestAutomaton1(), 3, std::set<state_t>{0, 3}));
+    CHECK(CanReach(TestAutomaton1(), 3, std::set<state_t>{0, 1, 2, 3}));
+    CHECK(!CanReach(TestAutomaton1(), 3, std::set<state_t>{1, 2}));
+}
+
 TEST_CASE("Test ReachableStates.") {
     const std::unordered_set<state_t> reachable0 = ReachableStates(TestAutomaton1(), 0);
     const std::unordered_set<state_t> reachable1 = ReachableStates(TestAutomaton1(), 1);
