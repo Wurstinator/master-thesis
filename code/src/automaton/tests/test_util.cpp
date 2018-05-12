@@ -8,9 +8,14 @@ using namespace tollk;
 using namespace automaton;
 
 NondeterministicAutomaton TestAutomaton1();
+
 DeterministicAutomaton TestAutomaton2();
+
 DeterministicAutomaton TestAutomaton3();
+
 DeterministicAutomaton TestAutomaton4();
+
+DPA TestAutomaton5();
 
 TEST_CASE("Test TransposeAutomaton.") {
     const NondeterministicAutomaton automaton = TransposeAutomaton(TestAutomaton1());
@@ -29,9 +34,9 @@ TEST_CASE("Test ReachableStates.") {
     const std::unordered_set<state_t> reachable1 = ReachableStates(TestAutomaton1(), 1);
     const std::unordered_set<state_t> reachable2 = ReachableStates(TestAutomaton1(), 2);
     const std::unordered_set<state_t> reachable3 = ReachableStates(TestAutomaton1(), 3);
-    CHECK(CheckStateRangeEquivalence(reachable0, std::set<state_t>{0,1,2,3}));
-    CHECK(CheckStateRangeEquivalence(reachable1, std::set<state_t>{1,2,3}));
-    CHECK(CheckStateRangeEquivalence(reachable2, std::set<state_t>{1,2,3}));
+    CHECK(CheckStateRangeEquivalence(reachable0, std::set<state_t>{0, 1, 2, 3}));
+    CHECK(CheckStateRangeEquivalence(reachable1, std::set<state_t>{1, 2, 3}));
+    CHECK(CheckStateRangeEquivalence(reachable2, std::set<state_t>{1, 2, 3}));
     CHECK(CheckStateRangeEquivalence(reachable3, std::set<state_t>{3}));
 
     NondeterministicAutomaton test_automaton2(0);
@@ -39,6 +44,38 @@ TEST_CASE("Test ReachableStates.") {
     test_automaton2.AddState(1);
     CHECK(CheckStateRangeEquivalence(ReachableStates(test_automaton2, 0), std::set<state_t>{0}));
     CHECK(CheckStateRangeEquivalence(ReachableStates(test_automaton2, 1), std::set<state_t>{1}));
+}
+
+TEST_CASE("Test ReachingStates.") {
+    const std::unordered_set<state_t> reach0 = ReachingStates(TestAutomaton1(), std::set<state_t>{0});
+    const std::unordered_set<state_t> reach1 = ReachingStates(TestAutomaton1(), std::set<state_t>{1});
+    const std::unordered_set<state_t> reach2 = ReachingStates(TestAutomaton1(), std::set<state_t>{2});
+    const std::unordered_set<state_t> reach3 = ReachingStates(TestAutomaton1(), std::set<state_t>{3});
+    CHECK(CheckStateRangeEquivalence(reach0, std::set<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(reach1, std::set<state_t>{0, 1, 2}));
+    CHECK(CheckStateRangeEquivalence(reach2, std::set<state_t>{0, 1, 2}));
+    CHECK(CheckStateRangeEquivalence(reach3, std::set<state_t>{0, 1, 2, 3}));
+
+    NondeterministicAutomaton test_automaton2(0);
+    test_automaton2.AddState(0);
+    test_automaton2.AddState(1);
+    CHECK(CheckStateRangeEquivalence(ReachingStates(test_automaton2, std::set<state_t>{0, 1}), std::set<state_t>{0, 1}));
+}
+
+TEST_CASE("Test NotReachingStates.") {
+    const std::unordered_set<state_t> reach0 = NotReachingStates(TestAutomaton1(), std::set<state_t>{0});
+    const std::unordered_set<state_t> reach1 = NotReachingStates(TestAutomaton1(), std::set<state_t>{1});
+    const std::unordered_set<state_t> reach2 = NotReachingStates(TestAutomaton1(), std::set<state_t>{2});
+    const std::unordered_set<state_t> reach3 = NotReachingStates(TestAutomaton1(), std::set<state_t>{3});
+    CHECK(CheckStateRangeEquivalence(reach0, std::set<state_t>{1, 2, 3}));
+    CHECK(CheckStateRangeEquivalence(reach1, std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(reach2, std::set<state_t>{3}));
+    CHECK(CheckStateRangeEquivalence(reach3, std::set<state_t>{}));
+
+    NondeterministicAutomaton test_automaton2(0);
+    test_automaton2.AddState(0);
+    test_automaton2.AddState(1);
+    CHECK(CheckStateRangeEquivalence(NotReachingStates(test_automaton2, std::set<state_t>{0, 1}), std::set<state_t>{}));
 }
 
 TEST_CASE("Test StronglyConnectedComponents.") {
@@ -96,7 +133,7 @@ TEST_CASE("Test StronglyConnectedComponents #2.") {
 }
 
 TEST_CASE("Test MergeStates.") {
-    const NondeterministicAutomaton automaton = MergeStates(TestAutomaton1(), std::set<state_t> {2,3});
+    const NondeterministicAutomaton automaton = MergeStates(TestAutomaton1(), std::set<state_t>{2, 3});
     CHECK(automaton.States().size() == 3);
     CHECK(automaton.HasState(0));
     CHECK(automaton.HasState(1));
@@ -164,10 +201,10 @@ TEST_CASE("Test MergeSCCs.") {
     const state_t rep2 = *(sccs.sccs.at(sccs.scc_indices.at(2)).begin());
     CHECK(CheckStateRangeEquivalence(automaton.States(), std::set<state_t>{rep1, rep2}));
     CHECK(automaton.InitialState() == rep1);
-    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep1, 0), std::set<state_t> {rep1}));
-    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep1, 1), std::set<state_t> {rep2}));
-    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep2, 0), std::set<state_t> {rep2}));
-    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep2, 1), std::set<state_t> {rep2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep1, 0), std::set<state_t>{rep1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep1, 1), std::set<state_t>{rep2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep2, 0), std::set<state_t>{rep2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(rep2, 1), std::set<state_t>{rep2}));
 
     SCCCollection sccs2;
     NondeterministicAutomaton automaton2 = NondeterministicAutomaton::FromTransitionAutomaton(TestAutomaton3());
@@ -291,9 +328,35 @@ TEST_CASE("Test ProductAutomaton. (deterministic)") {
 }
 
 TEST_CASE("Test BuchiEmptyStates.") {
-    //TODO
+    const DPA automaton = TestAutomaton5();
+    const std::unordered_set<state_t> empty_states = BuchiEmptyStates(automaton);
+    CHECK(empty_states.size() == 3);
+    CHECK(empty_states.find(0) == empty_states.end());
+    CHECK(empty_states.find(1) != empty_states.end());
+    CHECK(empty_states.find(2) == empty_states.end());
+    CHECK(empty_states.find(3) == empty_states.end());
+    CHECK(empty_states.find(4) != empty_states.end());
+    CHECK(empty_states.find(5) != empty_states.end());
 }
 
 TEST_CASE("Test QuotientAutomaton.") {
-    //TODO
+    NondeterministicAutomaton automaton = TestAutomaton1();
+    automaton.AddSucc(3, 1, 0);
+    EquivalenceRelation<state_t> quotient;
+    quotient.AddConnection(0, 3);
+    quotient.AddConnection(1, 1);
+    quotient.AddConnection(2, 2);
+    QuotientAutomaton(&automaton, quotient);
+
+    CHECK(automaton.InitialState() == 0);
+    CHECK(automaton.HasState(0));
+    CHECK(automaton.HasState(1));
+    CHECK(automaton.HasState(2));
+    CHECK(!automaton.HasState(3));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::vector<state_t>{0, 1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::vector<state_t>{0}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::vector<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::vector<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::vector<state_t>{1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::vector<state_t>{0}));
 }

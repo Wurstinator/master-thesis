@@ -41,6 +41,10 @@ std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>&
 template <typename RT1, typename RT2, typename Rng>
 std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng);
 
+// Computes states that cannot reach any state in a given collection.
+template <typename RT1, typename RT2, typename Rng>
+std::unordered_set<state_t> NotReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng);
+
 // Merges a set of states into one. Outgoing transitions are unified and incoming transitions are redirected to the
 // merged state. If the initial state is in the set, the merged state will be the initial state again.
 // The ID of the new merged state will be *std::begin(range). O(|A|) operation.
@@ -75,7 +79,8 @@ DeterministicAutomaton ProductAutomaton(const DeterministicAutomaton& automaton1
 template <typename AutomatonT>
 std::unordered_set<state_t> BuchiEmptyStates(const AutomatonT& automaton);
 
-// Merges all states that are equivalent in a given relation into one.
+// Merges all states that are equivalent in a given relation into one. "MergeStates" is used, so the new representative
+// is the "first" element in each equivalence class.
 void QuotientAutomaton(NondeterministicAutomaton* automaton, const EquivalenceRelation<state_t>& relation);
 
 // Merges all states that are equivalent in a given relation into one. For each merged set, the "merge_labels"

@@ -121,6 +121,18 @@ std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& 
     return result;
 }
 
+template <typename RT1, typename RT2, typename Rng>
+std::unordered_set<state_t> NotReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng) {
+    const NondeterministicAutomaton transposed_automaton = TransposeAutomaton(automaton);
+    std::unordered_set<state_t> result(automaton.States().begin(), automaton.States().end());
+    for (state_t q : rng) {
+        for (state_t reach : ReachableStates(transposed_automaton, q)) {
+            result.erase(reach);
+        }
+    }
+    return result;
+}
+
 
 template<typename RT1, typename RT2, typename SetT>
 NondeterministicAutomaton MergeStates(const TransitionAutomaton<RT1, RT2>& automaton, const SetT& merge_states) {
