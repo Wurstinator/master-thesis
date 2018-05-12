@@ -1,67 +1,64 @@
-import argparse
-import os
+
+# Provides functionality that is shared by all "random_statistics" scripts.
+
+
 import sys
 import subprocess
 import multiprocessing
 import threading
+import os
 import queue
 import glob
-
-statistics_exe = '../../bin/schewe_statistics'
-
-
-def main():
-    if not (os.path.isfile(statistics_exe) and os.access(statistics_exe, os.X_OK)):
-        print('Error. Compile schewe_statistics first.')
-        sys.exit(1)
-
-    args = parse_args()
-    run_experiments(args)
+import progressbar
 
 
-# Parses the command line arguments.
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input', help='One or multiple file paths to HOA files.', nargs='+')
-    parser.add_argument('-t', dest='timeout', help='Time limit in seconds for each analysis.')
-    return parser.parse_args()
-
-
-# Run the specified experiments in parallel.
-def run_experiments(args):
+# Run the specified experiments in parallel. 'callable' is the test runner. It is called with for each input file with
+# the filename as an argument. It needs to be multiprocessing-compatible, i.e. no lambdas.
+def run_experiments(args, callable):
     # Initialize the worker pool and necessary variables.
     pool = multiprocessing.Pool(os.cpu_count() - 1)
     data_queue = multiprocessing.Queue()
-    counter_lock = threading.Lock()
+    counter_lock = threading.Lock()  # lock for "threads_todo"
     threads_todo = 0
 
     # This function is executed after each successful experiment.
     def apply_finished(data):
-        if data is None:
-            return
-        data_queue.put(data)
+        if data is not None:
+            data_queue.put(data)
         with counter_lock:
             nonlocal threads_todo
             threads_todo -= 1
+            # Only use a progress bar if the output is to a file.
+            if args.output is not None:
+                progress_bar.update(threads_todo_max - threads_todo)
 
     # Start the pool.
     with counter_lock:
         for path in args.input:
             for filename in glob.glob(path):
-                pool.apply_async(collect_data, (filename, args.timeout), callback=apply_finished)
+                pool.apply_async(callable, (filename,), callback=apply_finished)
                 threads_todo += 1
+        # Only use a progress bar if the output is to a file.
+        if args.output is not None:
+            threads_todo_max = threads_todo
+            progress_bar = progressbar.ProgressBar(max_value=threads_todo_max)
+            progress_bar.update(0)
     pool.close()
 
     # Write the data to stdout until all workers terminate or a SIGINT is received.
+    if args.output is not None:
+        outfile = open(args.output, 'w')
     while threads_todo > 0 or not data_queue.empty():
         try:
             data = data_queue.get(True, 1)
         except queue.Empty:
             data = None
         if data is not None:
-            s = data.decode('utf-8')
-            sys.stdout.write(s)
-            sys.stdout.flush()
+            outstream = sys.stdout if args.output is None else outfile
+            outstream.write(data.decode('utf-8'))
+            outstream.flush()
+    if args.output is not None:
+        outfile.close()
 
 
 # Runs "command" as a subprocess and returns the STDOUT as a string. If time is specified, it is interpreted as a number
@@ -77,12 +74,3 @@ def run_process_for_time(command, timeout=None, outfile=subprocess.PIPE):
     except subprocess.TimeoutExpired:
         print('Process exceeded timeout and is cancelled.', file=sys.stderr)
         return None
-
-
-def collect_data(filename, timeout):
-    construction_cmd = statistics_exe
-    construction_cmd += ' --output=json --automaton=' + filename
-    return run_process_for_time(construction_cmd, timeout=timeout)
-
-
-main()

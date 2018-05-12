@@ -10,9 +10,6 @@
 
 // Given an det. parity automaton, performs the Schewe construction and outputs the result in the HOA format.
 // Arguments:
-//   -c  : Makes the automaton complete by introducing a new sink state.
-//   -mb : Minimizes the automaton as a Moore automaton before the construction.
-//   -ma : Minimizes the automaton as a Moore automaton after the construction.
 //   -A  : Path to the file in which the DPA is stored in HOA format.
 int main(int argc, char** argv);
 
@@ -25,7 +22,7 @@ struct Options {
 Options ParseArgs(int argc, char** argv) {
     args::ArgumentParser parser("Performs the Schewe construction on a given DPA.");
     args::CompletionFlag completion(parser, {"complete"});
-    args::HelpFlag help_flag(parser, "help", "Display this h elp menu.", {'h', "help"});
+    args::HelpFlag help_flag(parser, "help", "Display this help menu.", {'h', "help"});
     args::ValueFlag<std::string> input_file_flag(parser, "input_file", "HOA file that contains the input DPA.", {'A', "automaton"}, args::Options::Required);
 
     try {

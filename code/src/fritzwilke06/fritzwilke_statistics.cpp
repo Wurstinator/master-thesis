@@ -4,7 +4,7 @@
 #include <args.hxx>
 #include "pa.hh"
 #include "io.hh"
-#include "schewe_automaton.h"
+#include "delayed_simulation.h"
 #include "../automaton/nbautils_bridge.h"
 #include "../automaton/util.h"
 #include "../../json/single_include/nlohmann/json.hpp"
@@ -34,7 +34,7 @@ struct Options {
 };
 
 Options ParseArgs(int argc, char** argv) {
-    args::ArgumentParser parser("Performs the Schewe construction on a given DPA.");
+    args::ArgumentParser parser("Performs the FritzWilke reduction on a given DPA.");
     args::CompletionFlag completion(parser, {"complete"});
     args::HelpFlag help_flag(parser, "help", "Display this help menu.", {'h', "help"});
     args::ValueFlag<unsigned int> size_limit_flag(parser, "size_limit", "Cancel the process if the input automaton exeeds a certain size.", {"size_limit"});
@@ -99,27 +99,27 @@ size_t CountSCCs(const DPA& automaton) {
     return StronglyConnectedComponents(automaton).sccs.size();
 }
 
-void RemoveUnreachableStates(tollk::automaton::DPA* automaton) {
-    std::unordered_set<state_t> unreachable_states(automaton->States().begin(), automaton->States().end());
-    for (state_t q : ReachableStates(*automaton, automaton->InitialState()))
-        unreachable_states.erase(q);
-
-    for (state_t q : unreachable_states)
-        automaton->RemoveState(q);
+// Given a parity automaton and a range of states, returns the smallest priority among them.
+template <typename Rng>
+tollk::automaton::parity_label_t MinParity(const tollk::automaton::ParityAutomaton& automaton, const Rng& range) {
+    const auto get_label = [&automaton](tollk::automaton::state_t q) {return automaton.GetLabel(q);};
+    return ranges::v3::min(ranges::v3::view::transform(range, get_label));
 }
 
-
-Statistics PerformConstruction(tollk::automaton::DPA automaton) {
+Statistics PerformConstruction(tollk::automaton::DPA dpa) {
     Statistics data{};
-    data.original_size = automaton.States().size();
-    data.number_of_sccs = CountSCCs(automaton);
-
+    data.original_size = dpa.States().size();
+    data.number_of_sccs = CountSCCs(dpa);
     TimePoint time = TimeNow();
-    tollk::ScheweAutomaton(&automaton);
-    RemoveUnreachableStates(&automaton);
-    data.milliseconds_taken = TimeDiffMS(time, TimeNow());
-    data.new_size = automaton.States().size();
 
+    const tollk::EquivalenceRelation<tollk::automaton::state_t> desim_relation = tollk::DelayedSimulationEquivalence(dpa);
+    tollk::automaton::NPA npa = tollk::automaton::NPA::FromDPA(dpa);
+    const std::function<tollk::automaton::parity_label_t(const tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass&)> f = std::bind(&MinParity<tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass>, npa, std::placeholders::_1);
+    tollk::automaton::QuotientAutomaton(&npa, desim_relation, f);
+    const tollk::automaton::DPA final_dpa = tollk::automaton::DPA::FromNPA(npa);
+
+    data.milliseconds_taken = TimeDiffMS(time, TimeNow());
+    data.new_size = final_dpa.States().size();
     return data;
 }
 

@@ -153,6 +153,11 @@ target_link_libraries(fritzwilke_main nbautils-lib automaton)
 add_dependencies(fritzwilke_main cpphoafparser)
 target_include_directories(fritzwilke_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
+add_executable(fritzwilke_statistics src/fritzwilke06/fritzwilke_statistics.cpp ${FRITZWILKE06_INCLUDE})
+target_link_libraries(fritzwilke_statistics nbautils-lib automaton)
+add_dependencies(fritzwilke_statistics cpphoafparser)
+target_include_directories(fritzwilke_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+
 set(FRITZWILKE06_TESTS
         src/fritzwilke06/tests/test_delayed_simulation.cpp
         src/fritzwilke06/tests/test_delayed_simulation_automaton.cpp
