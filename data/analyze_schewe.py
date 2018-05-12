@@ -11,13 +11,13 @@ def fitting_function_1(xs, a, b, c):
     return [numpy.asscalar(a*numpy.square(x) + b*numpy.log(x)*x + c*x) for x in xs]
 
 def main():
-    gendet_ap1 = filelines_to_json('schewe_gendet_ap1.json')
-    gendet_ap2 = filelines_to_json('schewe_gendet_ap2.json')
-    gendet_ap3 = filelines_to_json('schewe_gendet_ap3.json')
-    detnbaut_ap1 = filelines_to_json('schewe_detnbaut_ap1.json')
-    detnbaut_ap2 = filelines_to_json('schewe_detnbaut_ap2.json')
-    detspot_ap1 = filelines_to_json('schewe_detspot_ap1.json')
-    detspot_ap2 = filelines_to_json('schewe_detspot_ap2.json')
+    gendet_ap1 = filelines_to_json('raw/schewe_gendet_ap1.json')
+    gendet_ap2 = filelines_to_json('raw/schewe_gendet_ap2.json')
+    gendet_ap3 = filelines_to_json('raw/schewe_gendet_ap3.json')
+    detnbaut_ap1 = filelines_to_json('raw/schewe_detnbaut_ap1.json')
+    detnbaut_ap2 = filelines_to_json('raw/schewe_detnbaut_ap2.json')
+    detspot_ap1 = filelines_to_json('raw/schewe_detspot_ap1.json')
+    detspot_ap2 = filelines_to_json('raw/schewe_detspot_ap2.json')
 
     # Plot gendet ap1
     title = 'Schewe10 state reduction on random DPAs with three colors and |Σ|=2.'

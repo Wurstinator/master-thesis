@@ -1,0 +1,120 @@
+HOA: v1
+States: 37
+Start: 0
+AP: 1 "a1"
+acc-name: parity min even 6
+Acceptance: 6 Inf(0) | (Fin(1) & (Inf(2) | (Fin(3) & (Inf(4) | Fin(5)))))
+properties: trans-labels explicit-labels state-acc colored complete
+properties: deterministic
+--BODY--
+State: 0 {2}
+[0] 1
+[!0] 2
+State: 1 {2}
+[0] 2
+[!0] 3
+State: 2 {5}
+[t] 2
+State: 3 {2}
+[!0] 4
+[0] 5
+State: 4 {5}
+[0] 0
+[!0] 13
+State: 5 {5}
+[!0] 6
+[0] 7
+State: 6 {5}
+[!0] 4
+[0] 8
+State: 7 {5}
+[0] 0
+[!0] 3
+State: 8 {5}
+[0] 9
+[!0] 10
+State: 9 {3}
+[0] 0
+[!0] 3
+State: 10 {2}
+[!0] 4
+[0] 11
+State: 11 {2}
+[0] 7
+[!0] 12
+State: 12 {2}
+[!0] 4
+[0] 11
+State: 13 {5}
+[!0] 14
+[0] 15
+State: 14 {5}
+[!0] 18
+[0] 19
+State: 15 {5}
+[!0] 10
+[0] 16
+State: 16 {3}
+[!0] 3
+[0] 17
+State: 17 {2}
+[0] 1
+[!0] 3
+State: 18 {5}
+[!0] 20
+[0] 21
+State: 19 {2}
+[!0] 6
+[0] 7
+State: 20 {5}
+[!0] 25
+[0] 26
+State: 21 {5}
+[!0] 22
+[0] 23
+State: 22 {2}
+[!0] 4
+[0] 11
+State: 23 {4}
+[!0] 3
+[0] 24
+State: 24 {2}
+[0] 1
+[!0] 3
+State: 25 {5}
+[!0] 28
+[0] 29
+State: 26 {2}
+[!0] 6
+[0] 27
+State: 27 {5}
+[!0] 3
+[0] 17
+State: 28 {2}
+[!0] 32
+[0] 33
+State: 29 {5}
+[!0] 30
+[0] 31
+State: 30 {2}
+[!0] 4
+[0] 8
+State: 31 {2}
+[!0] 3
+[0] 17
+State: 32 {5}
+[!0] 25
+[0] 35
+State: 33 {5}
+[!0] 10
+[0] 34
+State: 34 {3}
+[!0] 3
+[0] 24
+State: 35 {5}
+[!0] 30
+[0] 36
+State: 36 {2}
+[!0] 3
+[0] 17
+--END--
