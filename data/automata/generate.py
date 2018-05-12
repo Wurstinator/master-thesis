@@ -119,9 +119,6 @@ def run_process_for_time(command, timeout=None, outfile=subprocess.PIPE):
 # the specified file. The generation process is adapted to hopefully generate
 # an automaton with 'goal_num_of_states' states or similar.
 def generate_one_automaton(filename, args):
-    atomic_propositions = ' '.join(['a' + str(i) for i in range(1, args.ap + 1)])
-    seed = random.randint(0, 1000000)
-
     if args.generate_random:
         cmd = 'randaut {} -Q{}..{} -D -A \'parity min even {}\' --colored -S --seed={}'
         cmd = cmd.format(atomic_propositions(args.ap), args.min_states, args.max_states, GENDET_PRIORITIES, random.randint(0, 1000000))

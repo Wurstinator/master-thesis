@@ -1,20 +1,16 @@
 import argparse
 import os
 import sys
-import tempfile
-import random
 import subprocess
 import multiprocessing
 import threading
-import signal
 import queue
+import glob
 
 statistics_exe = '../../bin/schewe_statistics'
 
 
 def main():
-    random.seed()
-
     if not (os.path.isfile(statistics_exe) and os.access(statistics_exe, os.X_OK)):
         print('Error. Compile schewe_statistics first.')
         sys.exit(1)
@@ -26,11 +22,8 @@ def main():
 # Parses the command line arguments.
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', default=1, dest='autnum', help='Number of automata to generate and test.', type=int)
-    parser.add_argument('-g', '--generation', dest='generation', help='Defines the technique to generate the DPAs.',
-                        choices=['generate_deterministic', 'determinize_nbautils', 'determinize_spot'],
-                        default='generate_deterministic')
-    parser.add_argument('--ap', help='Number of atomic propositions.', type=int, default=1)
+    parser.add_argument('input', help='One or multiple file paths to HOA files.', nargs='+')
+    parser.add_argument('-t', dest='timeout', help='Time limit in seconds for each analysis.')
     return parser.parse_args()
 
 
@@ -40,7 +33,7 @@ def run_experiments(args):
     pool = multiprocessing.Pool(os.cpu_count() - 1)
     data_queue = multiprocessing.Queue()
     counter_lock = threading.Lock()
-    threads_todo = args.autnum
+    threads_todo = 0
 
     # This function is executed after each successful experiment.
     def apply_finished(data):
@@ -52,8 +45,11 @@ def run_experiments(args):
             threads_todo -= 1
 
     # Start the pool.
-    for i in range(args.autnum):
-        pool.apply_async(collect_data, (args,), callback=apply_finished)
+    with counter_lock:
+        for path in args.input:
+            for filename in glob.glob(path):
+                pool.apply_async(collect_data, (filename, args.timeout), callback=apply_finished)
+                threads_todo += 1
     pool.close()
 
     # Write the data to stdout until all workers terminate or a SIGINT is received.
@@ -83,68 +79,10 @@ def run_process_for_time(command, timeout=None, outfile=subprocess.PIPE):
         return None
 
 
-def collect_data(args):
-    atomic_propositions = ' '.join(['a' + str(i) for i in range(1, args.ap + 1)])
-
-    if args.generation == 'generate_deterministic':
-        min_states = 2
-        max_states = 150
-        colors = 3
-        automaton_seed = random.randint(0, 100000)
-
-        cmd = 'randaut {} -Q{}..{} -D -A \'parity min even {}\' --colored -S --seed={}'.format(atomic_propositions,
-                                                                                               min_states, max_states,
-                                                                                               colors, automaton_seed)
-        generated_automaton_file = tempfile.NamedTemporaryFile()
-        run_process_for_time(cmd, outfile=generated_automaton_file)
-
-        automaton_file = generated_automaton_file
-
-    elif args.generation == 'determinize_nbautils':
-        min_states = 1
-        max_states = 10
-        determinization_timeout = 45
-        automaton_seed = random.randint(0, 100000)
-
-        generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions, min_states,
-                                                                          max_states, automaton_seed)
-
-        generated_automaton_file = tempfile.NamedTemporaryFile()
-        run_process_for_time(generate_cmd, outfile=generated_automaton_file)
-
-        determinize_cmd = '../../nbautils/build/bin/nbadet -d -s -n -a -b -c -t -p -m -u1 {}'.format(
-            generated_automaton_file.name)
-
-        determinized_file = tempfile.NamedTemporaryFile()
-        if run_process_for_time(determinize_cmd, outfile=determinized_file, timeout=determinization_timeout) is None:
-            return
-
-        automaton_file = determinized_file
-
-    elif args.generation == 'determinize_spot':
-        min_states = 1
-        max_states = 30
-        determinization_timeout = 45
-        automaton_seed = random.randint(0, 100000)
-
-        generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions, min_states,
-                                                                          max_states, automaton_seed)
-
-        generated_automaton_file = tempfile.NamedTemporaryFile()
-        run_process_for_time(generate_cmd, outfile=generated_automaton_file)
-
-        determinize_cmd = 'autfilt --colored-parity=\'min even\' --small --high -S -D -C {}'.format(
-            generated_automaton_file.name)
-
-        determinized_file = tempfile.NamedTemporaryFile()
-        if run_process_for_time(determinize_cmd, outfile=determinized_file, timeout=determinization_timeout) is None:
-            return
-
-        automaton_file = determinized_file
-
+def collect_data(filename, timeout):
     construction_cmd = statistics_exe
-    construction_cmd += ' --output=json --automaton=' + automaton_file.name
-    return run_process_for_time(construction_cmd)
+    construction_cmd += ' --output=json --automaton=' + filename
+    return run_process_for_time(construction_cmd, timeout=timeout)
 
 
 main()
