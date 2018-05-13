@@ -11,59 +11,59 @@ def fitting_function_1(xs, a, b, c):
     return [numpy.asscalar(a*numpy.square(x) + b*numpy.log(x)*x + c*x) for x in xs]
 
 def main():
-    gendet_ap1 = filelines_to_json('raw/schewe_gendet_ap1.json')
-    gendet_ap2 = filelines_to_json('raw/schewe_gendet_ap2.json')
-    gendet_ap3 = filelines_to_json('raw/schewe_gendet_ap3.json')
-    detnbaut_ap1 = filelines_to_json('raw/schewe_detnbaut_ap1.json')
-    detnbaut_ap2 = filelines_to_json('raw/schewe_detnbaut_ap2.json')
-    detspot_ap1 = filelines_to_json('raw/schewe_detspot_ap1.json')
-    detspot_ap2 = filelines_to_json('raw/schewe_detspot_ap2.json')
+    gendet_ap1 = filelines_to_json('raw/fritzwilke_gendet_ap1.json')
+    gendet_ap2 = filelines_to_json('raw/fritzwilke_gendet_ap2.json')
+    gendet_ap3 = filelines_to_json('raw/fritzwilke_gendet_ap3.json')
+    detnbaut_ap1 = filelines_to_json('raw/fritzwilke_detnbaut_ap1.json')
+    detnbaut_ap2 = filelines_to_json('raw/fritzwilke_detnbaut_ap2.json')
+    detspot_ap1 = filelines_to_json('raw/fritzwilke_detspot_ap1.json')
+    detspot_ap2 = filelines_to_json('raw/fritzwilke_detspot_ap2.json')
 
     # Plot gendet ap1
-    title = 'Schewe10 state reduction on random DPAs with three colors and |Σ|=2.'
-    plot_statenum_time(gendet_ap1, 'analysis/schewe_gendet_ap1_time.pdf', title, fitting_function_1)
-    plot_statenum_statereduction(gendet_ap1, 'analysis/schewe_gendet_ap1_statereduction.pdf', title)
-    plot_sccnum_statereduction(gendet_ap1, 'analysis/schewe_gendet_ap1_sccreduction.pdf', title)
+    title = 'Fritz-Wilke state reduction on random DPAs with three colors and |Σ|=2.'
+    plot_statenum_time(gendet_ap1, 'analysis/fritzwilke_gendet_ap1_time.pdf', title)#, fitting_function_1)
+    plot_statenum_statereduction(gendet_ap1, 'analysis/fritzwilke_gendet_ap1_statereduction.pdf', title)
+    plot_sccnum_statereduction(gendet_ap1, 'analysis/fritzwilke_gendet_ap1_sccreduction.pdf', title)
 
     # Plot gendet: Time comparison for different ap.
     f = pyplot.figure()
     x = [point['original_size'] for point in gendet_ap1]
-    y = [point['milliseconds'] / 1000 for point in gendet_ap1]
+    y = [point['milliseconds']/1000 for point in gendet_ap1]
     pyplot.plot(x, y, 'b.')
     x = [point['original_size'] for point in gendet_ap2]
-    y = [point['milliseconds'] / 1000 for point in gendet_ap2]
+    y = [point['milliseconds']/1000 for point in gendet_ap2]
     pyplot.plot(x, y, 'g.')
     x = [point['original_size'] for point in gendet_ap3]
-    y = [point['milliseconds'] / 1000 for point in gendet_ap3]
+    y = [point['milliseconds']/1000 for point in gendet_ap3]
     pyplot.plot(x, y, 'r.')
     pyplot.xlabel('Number of states in the original automaton')
     pyplot.ylabel('Time taken in seconds')
-    pyplot.title('Time for Schewe construction on a random DPA with 3 priorities and different alphabets.', fontsize=TITLE_FONTSIZE)
-    f.savefig('analysis/schewe_gendet_ap_compare_time.pdf')
+    pyplot.title('Time for Fritz-Wilke construction on a random DPA with 3 priorities and different alphabets.', fontsize=TITLE_FONTSIZE)
+    f.savefig('analysis/fritzwilke_gendet_ap_compare_time.pdf')
 
     # Plot detnbaut ap1
-    title = 'Schewe10 state reduction on a DPA with |Σ|=2 that was created by nbautils from an NBA.'
-    plot_statenum_time(detnbaut_ap1, 'analysis/schewe_detnbaut_ap1_time.pdf', title)
-    plot_statenum_statereduction(detnbaut_ap1, 'analysis/schewe_detnbaut_ap1_statereduction.pdf', title)
-    plot_statenum_statereductionrel(detnbaut_ap1, 'analysis/schewe_detnbaut_ap1_statereductionrelative.pdf', title)
-    plot_sccnum_statereduction(detnbaut_ap1, 'analysis/schewe_detnbaut_ap1_sccreduction.pdf', title)
+    title = 'Fritz-Wilke state reduction on a DPA with |Σ|=2 that was created by nbautils from an NBA.'
+    plot_statenum_time(detnbaut_ap1, 'analysis/fritzwilke_detnbaut_ap1_time.pdf', title)
+    plot_statenum_statereduction(detnbaut_ap1, 'analysis/fritzwilke_detnbaut_ap1_statereduction.pdf', title)
+    plot_statenum_statereductionrel(detnbaut_ap1, 'analysis/fritzwilke_detnbaut_ap1_statereductionrelative.pdf', title)
+    plot_sccnum_statereduction(detnbaut_ap1, 'analysis/fritzwilke_detnbaut_ap1_sccreduction.pdf', title)
 
     # Plot detnbaut ap2
-    title = 'Schewe10 state reduction on a DPA with |Σ|=4 that was created by nbautils from an NBA.'
-    plot_statenum_time(detnbaut_ap2, 'analysis/schewe_detnbaut_ap2_time.pdf', title)
-    plot_statenum_statereduction(detnbaut_ap2, 'analysis/schewe_detnbaut_ap2_statereduction.pdf', title)
+    title = 'Fritz-Wilke state reduction on a DPA with |Σ|=4 that was created by nbautils from an NBA.'
+    plot_statenum_time(detnbaut_ap2, 'analysis/fritzwilke_detnbaut_ap2_time.pdf', title)
+    plot_statenum_statereduction(detnbaut_ap2, 'analysis/fritzwilke_detnbaut_ap2_statereduction.pdf', title)
 
     # Plot detspot ap1
-    title = 'Schewe10 state reduction on a DPA with |Σ|=2 that was created by Spot from an NBA.'
-    plot_statenum_time(detspot_ap1, 'analysis/schewe_detspot_ap1_time.pdf', title)
-    plot_statenum_statereduction(detspot_ap1, 'analysis/schewe_detspot_ap1_statereduction.pdf', title)
-    plot_statenum_statereductionrel(detspot_ap1, 'analysis/schewe_detspot_ap1_statereductionrelative.pdf', title)
-    plot_sccnum_statereduction(detspot_ap1, 'analysis/schewe_detspot_ap1_sccreduction.pdf', title)
+    title = 'Fritz-Wilke state reduction on a DPA with |Σ|=2 that was created by Spot from an NBA.'
+    plot_statenum_time(detspot_ap1, 'analysis/fritzwilke_detspot_ap1_time.pdf', title)
+    plot_statenum_statereduction(detspot_ap1, 'analysis/fritzwilke_detspot_ap1_statereduction.pdf', title)
+    plot_statenum_statereductionrel(detspot_ap1, 'analysis/fritzwilke_detspot_ap1_statereductionrelative.pdf', title)
+    plot_sccnum_statereduction(detspot_ap1, 'analysis/fritzwilke_detspot_ap1_sccreduction.pdf', title)
 
     # Plot detspot ap2
-    title = 'Schewe10 state reduction on a DPA with |Σ|=4 that was created by Spot from an NBA.'
-    plot_statenum_time(detspot_ap2, 'analysis/schewe_detspot_ap2_time.pdf', title)
-    plot_statenum_statereduction(detspot_ap2, 'analysis/schewe_detspot_ap2_statereduction.pdf', title)
+    title = 'Fritz-Wilke state reduction on a DPA with |Σ|=4 that was created by Spot from an NBA.'
+    plot_statenum_time(detspot_ap2, 'analysis/fritzwilke_detspot_ap2_time.pdf', title)
+    plot_statenum_statereduction(detspot_ap2, 'analysis/fritzwilke_detspot_ap2_statereduction.pdf', title)
 
 
 
@@ -73,7 +73,7 @@ def filelines_to_json(filename):
         return [json.loads(line) for line in file.readlines()]
 
 # Plots time used as a function of the number of states.
-def plot_statenum_time(data, filename, title, fit_func=None):
+def plot_statenum_time(data, filename, title, unit='ms', fit_func=None):
     f = pyplot.figure()
     x = [point['original_size'] for point in data]
     y = [point['milliseconds'] / 1000 for point in data]

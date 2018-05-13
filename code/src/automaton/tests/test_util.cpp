@@ -37,11 +37,16 @@ TEST_CASE("Test CanReach.") {
     CHECK(CanReach(TestAutomaton1(), 1, std::set<state_t>{0, 1}));
     CHECK(!CanReach(TestAutomaton1(), 1, std::set<state_t>{0}));
     CHECK(CanReach(TestAutomaton1(), 2, std::set<state_t>{3}));
-    CHECK(CanReach(TestAutomaton1(), 2, std::set<state_t>{0, 1, 2, 3}));
+    CHECK(CanReach(TestAutomaton1(), 2, std::set<state_t>{2}, false));
     CHECK(!CanReach(TestAutomaton1(), 2, std::set<state_t>{0}));
     CHECK(CanReach(TestAutomaton1(), 3, std::set<state_t>{0, 3}));
     CHECK(CanReach(TestAutomaton1(), 3, std::set<state_t>{0, 1, 2, 3}));
-    CHECK(!CanReach(TestAutomaton1(), 3, std::set<state_t>{1, 2}));
+    CHECK(CanReach(TestAutomaton1(), 3, std::set<state_t>{3}, false));
+
+    NondeterministicAutomaton test_automaton2(0);
+    test_automaton2.AddState(0);
+    CHECK(CanReach(test_automaton2, 0, std::set<state_t>{0}));
+    CHECK(!CanReach(test_automaton2, 0, std::set<state_t>{0}, false));
 }
 
 TEST_CASE("Test ReachableStates.") {

@@ -106,9 +106,17 @@ bool _CanReach_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_t q, Rn
 
 
 template<typename RT1, typename RT2, typename Rng>
-bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&& goal) {
+bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&& goal, bool allow_trivial) {
     std::unordered_set<state_t> visited;
-    return _CanReach_DSF(automaton, from, goal, &visited);
+    if (allow_trivial) {
+        return _CanReach_DSF(automaton, from, goal, &visited);
+    } else {
+        for (state_t neighbour : automaton.Successors(from)) {
+            if (_CanReach_DSF(automaton, neighbour, goal, &visited))
+                return true;
+        }
+        return false;
+    }
 }
 
 
@@ -248,47 +256,15 @@ std::unordered_set<state_t> BuchiEmptyStates(const AutomatonT& automaton) {
     assert(automaton.IsBuchi());
     static_assert(is_specialization_base_of<TransitionAutomaton, AutomatonT>::value);
 
-    // Merge all SCCs in the automaton.
-    NPA merged_sccs(NondeterministicAutomaton::FromTransitionAutomaton(automaton));
-    SCCCollection sccs;
-    MergeSCCs(&merged_sccs, &sccs);
-
-    // Build a list of SCCs that are goals, i.e. they are non-trivial and contain an accepting state.
-    std::vector<state_t> goal_sccs_representatives;
-    for (const SCCCollection::SCC& scc : sccs.sccs) {
-        // Check if the SCC is trivial.
-        if (scc.size() == 1) {
-            //const typename NPA::SuccRangeState successors = product.Successors(*scc.begin());
-            ranges::v3::any_view<state_t> successors = automaton.Successors(*scc.begin());
-            if (ranges::v3::find(successors.begin(), successors.end(), *scc.begin()) == successors.end())
-                continue;
-        }
-
-        // Check if the SCC contains a final state.
-        bool contains_final = false;
-        for (state_t q : scc)
-            contains_final = contains_final || automaton.GetLabel(q) == 0;
-        if (!contains_final)
-            continue;
-
-        // Add SCC to the list.
-        goal_sccs_representatives.push_back(*scc.begin());
+    // Find "goal" states, which are accepting states that can reach themselves.
+    std::unordered_set<state_t> goal_states;
+    for (state_t q : automaton.States()) {
+        if (automaton.GetLabel(q) == 0 && CanReach(automaton, q, ranges::v3::view::single(q), false))
+            goal_states.insert(q);
     }
 
-    // Check which SCCs can / cannot reach the goal SCCs.
-    std::unordered_set<state_t> cannot_reach_goal_scc(merged_sccs.States().begin(), merged_sccs.States().end());
-    for (state_t q : ReachingStates(merged_sccs, goal_sccs_representatives))
-        cannot_reach_goal_scc.erase(q);
-
-    // For each of those SCCs, return all its states.
-    std::unordered_set<state_t> result;
-    for (state_t scc_representative : cannot_reach_goal_scc) {
-        const SCCCollection::SCC& scc = sccs.sccs[sccs.scc_indices[scc_representative]];
-        for (state_t q : scc)
-            result.insert(q);
-    }
-
-    return result;
+    // Find all states that can reach no goal state.
+    return NotReachingStates(automaton, goal_states);
 }
 
 

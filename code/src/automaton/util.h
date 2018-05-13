@@ -33,9 +33,11 @@ struct SCCCollection {
 template<typename RT1, typename RT2>
 SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& automaton);
 
-// Checks whether from some state, one can reach a given collection of states. O(n) operation.
+// Checks whether from some state, one can reach a given collection of states. "allow_trivial" considers the fact that
+// "from" is an element of "goal". If "allow_trivial" is true, CanReach returns true. Otherwise there has to be an
+// explicit path from "from" to itself. O(n) operation.
 template<typename RT1, typename RT2, typename Rng>
-bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&& goal);
+bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&& goal, bool allow_trivial=true);
 
 // Computes reachable states of a given one. O(n) operation.
 template<typename RT1, typename RT2>
