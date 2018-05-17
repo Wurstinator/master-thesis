@@ -5,6 +5,17 @@
 In this section we consider delayed simulation games and variants thereof on DPAs. This approach is based on the paper \cite{} which considered the games for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
 
 \begin{defn}
+	We define $\leq_\checkmark \subseteq (\mathbb{N} \cup \{\checkmark\}) \times (\mathbb{N} \cup \{\checkmark\})$ as follows:
+	\begin{itemize}
+		\item For $i, j \in \mathbb{N}$, we set $i \leq_\checkmark j$ iff $i \leq j$.
+		\item For all $i \in \mathbb{N}$, we have $i \leq_\checkmark \checkmark$ and $\checkmark \not\leq_\checkmark i$.
+		\item $\checkmark \leq_\checkmark \checkmark$.
+	\end{itemize}
+	
+	Further, we define an order of \enquote{goodness} on parity priorities as $\preceq_\text{p} \subseteq \mathbb{N} \times \mathbb{N}$ as $0 \preceq_\text{p} 2 \preceq_\text{p} 4 \preceq_\text{p} \dots \preceq_\text{p} 5 \preceq_\text{p} 3 \preceq_\text{p} 1$.
+\end{defn}
+
+\begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. We define the \emph{delayed simulation automaton} $\mathcal{A}_\text{de}(p, q) = (Q_\text{de}, \Sigma, (p, q, \checkmark), \delta_\text{de}, F_\text{de})$, which is a deterministic Büchi automaton, as follows.
 	
 	\begin{itemize}
@@ -16,18 +27,10 @@ In this section we consider delayed simulation games and variants thereof on DPA
 	\end{itemize}
 	
 	$\gamma : \mathbb{N} \times \mathbb{N} \times (\mathbb{N} \cup \{\checkmark\}) \rightarrow \mathbb{N} \cup \{\checkmark\}$ is the update function of the third component and defines the \enquote{obligations} as they are called in \cite{}. It is defined as 
-	$$ \gamma(i, j, \checkmark) = \begin{cases}
-		\checkmark & \text{if } i \text{ and } j \text{ are odd and } i \leq j \\
-		\checkmark & \text{if } i \text{ and } j \text{ are even and } j \leq i \\
-		\checkmark & \text{if } i \text{ is odd and } j \text{ is even} \\
-		\min \{ i,j \} & \text{else}
-	\end{cases} $$	
-	
 	$$ \gamma(i, j, k) = \begin{cases}
-		\checkmark & \text{if } i \text{ and } j \text{ are odd and } i \leq k \text{ and } i \leq j \\
-		\checkmark & \text{if } i \text{ and } j \text{ are even and } j \leq k \text{ and } j \leq i \\
-		\checkmark & \text{if } i \text{ is odd and } j \text{ is even and } (i \leq k \text{ or } j \leq k) \\
-		\min \{ i,j,k \} & \text{else}
+		\checkmark & \text{if } i \text{ is odd and } i \leq_\checkmark k \text{ and } j \preceq_\text{p} i \\
+		\checkmark & \text{if } j \text{ is even and } j \leq_\checkmark k \text{ and } j \preceq_\text{p} i \\
+		\min_{\leq_\checkmark} \{ i,j,k \} & \text{else}
 	\end{cases} $$
 \end{defn}
 
@@ -35,3 +38,60 @@ In this section we consider delayed simulation games and variants thereof on DPA
 \begin{defn}
 	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}_\text{de}$ be the delayed simulation automaton of $\mathcal{A}$. We say that a state $p$ $de$-simulates a state $q$ if $L(\mathcal{A}_\text{de}(p, q)) = \Sigma^\omega$. In that case we write $p \leq_\text{de} q$. If also $q \leq_\text{de} p$ holds, we write $p \equiv_\text{de} q$.
 \end{defn}
+
+\begin{lem}
+	$\gamma$ is monotonous in the third component, i.e. if $k \leq_\checkmark k'$, then $\gamma(i, j, k) \leq_\checkmark \gamma(i, j, k')$ for all $i, j \in \mathbb{N}$.
+\end{lem}
+
+\begin{proof}
+	We consider each case in the definition of $\gamma$. If $i$ is odd, $i \leq_\checkmark k$ and $j \preceq_\text{p} i$, then also $i \leq_\checkmark k'$ and $\gamma(i, j, k) = \gamma(i, j, k') = \checkmark$.
+	
+	If $j$ is even, $j \leq_\checkmark k$ and $j \preceq_\text{p} i$, then also $j \leq_\checkmark k'$ and $\gamma(i, j, k) = \gamma(i, j, k') = \checkmark$.
+	
+	Otherwise, $\gamma(i, j, k) = \min \{i, j, k\}$ and $\gamma(i, j, k') = \min \{i, j, k'\}$. Since $k \leq_\checkmark k'$, $\gamma(i, j, k) \leq_\checkmark \gamma(i, j, k')$.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $p, q \in Q$, $k \in \mathbb{N} \cup \{\checkmark\}$. If the run of $\mathcal{A}_\text{de}$ starting at $(p, q, k)$ on some $\alpha \in \Sigma^\omega$ is accepting, then for all $k \leq_\checkmark k'$ also the run of $\mathcal{A}_\text{de}$ starting at $(p, q, k')$ on $\alpha$ is accepting.
+\end{lem}
+
+\begin{proof}
+	Let $\rho$ be the run starting at $(p, q, k)$ and let $\rho'$ be the run starting at $(p, q, k')$. Further, let $p_i$, $q_i$, $k_i$, and $k'_i$ be the components of the states of those runs in the $i$-th step. Via induction we show that $k_i \leq_\checkmark k'_i$ for all $i$. Since $k_i$ is $\checkmark$ infinitely often, the same must be true for $k'_i$ and $\rho'$ is accepting.
+	
+	For $i = 0$, we have $k_0 = k \leq_\checkmark k' = k'_0$. Otherwise, we have $k_{i+1} = \gamma(c(p_{i+1}), c(q_{i+1}), k_i)$ and $k'_{i+1}$ analogously. The rest follows from Lemma \ref{}.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA. Then $\leq_\text{de}$ is reflexive and transitive.
+\end{lem}
+
+\begin{proof}
+	For reflexivitiy, we need to show that $q \leq_\text{de} q$ for all states $q$. This is rather easy to see. For a word $\alpha \in \Sigma^\omega$, the third component of states in the run of $\mathcal{A}_\text{de}(q, q)$ on $\alpha$ is always $\checkmark$, as $\gamma(i, i, \checkmark) = \checkmark$.
+	
+	For transitivity, let $q_1 \leq_\text{de} q_2$ and $q_2 \leq_\text{de} q_3$. Our goal is to prove $q_1 \leq_\text{de} q_3$. %TODO
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA. Then $\equiv_\text{de}$ is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	The three properties that are required for $\equiv_\text{de}$ to be a equivalence relation are rather easy to see. Reflexivity and transitivity have been shown for $\leq_\text{de}$ already and symmetry follows from the definition. Congruence requires more elaboration.
+
+	Let $p \equiv_\text{de} q$ be two equivalent states. Let $a \in \Sigma$ and $p' = \delta(p, a)$ and $q' = \delta(q, a)$. We have to show that also $p' \equiv_\text{de} q'$. Towards a contradiction, assume that $p' \not\leq_\text{de} q'$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p', q'))$. Let $(p', q', k) = \delta_\text{de}((p, q, \checkmark), a)$. By Lemma \ref{}, the run of $\mathcal{A}_\text{de}$ on $\alpha$ from $(p', q', k)$ cannot be accepting; otherwise, the run of $\mathcal{A}_\text{de}$ from $(p', q', \checkmark)$ would be accepting and $\alpha \in L(\mathcal{A}_\text{de}(p', q'))$. Hence, $a \alpha \notin L(\mathcal{A}_\text{de}(p, q))$, which means that $p \not\equiv_\text{de} q$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
