@@ -16,13 +16,13 @@ In this section we consider delayed simulation games and variants thereof on DPA
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. We define the \emph{delayed simulation automaton} $\mathcal{A}_\text{de}(p, q) = (Q_\text{de}, \Sigma, (p, q, \checkmark), \delta_\text{de}, F_\text{de})$, which is a deterministic Büchi automaton, as follows.
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. We define the \emph{delayed simulation automaton} $\mathcal{A}_\text{de}(p, q) = (Q_\text{de}, \Sigma, (p, q, \gamma(c(p), c(q), \checkmark)), \delta_\text{de}, F_\text{de})$, which is a deterministic Büchi automaton, as follows.
 	
 	\begin{itemize}
 		\item $Q_\text{de} = Q \times Q \times (\text{img}(c) \cup \{ \checkmark \})$, i.e. the states are given as triples in which the first two components are states from $\mathcal{A}$ and the third component is either a priority from $\mathcal{A}$ or $\checkmark$.
 		\item The alphabet remains $\Sigma$.
-		\item The starting state is a triple $(p, q, \checkmark)$, where $p, q \in Q$ are parameters given to the automaton.
-		\item $\delta_\text{de}( (p, q, i), a ) = ( p', q', \gamma(i, c(p'), c(q'))$, where $p' = \delta(p, a)$, $q' = \delta(q, a)$, and $\gamma$ is defined in detail below. The first two components behave like a regular product automaton.
+		\item The starting state is a triple $(p, q, \gamma(c(p), c(q), \checkmark))$, where $p, q \in Q$ are parameters given to the automaton, and $\gamma$ is defined below.
+		\item $\delta_\text{de}( (p, q, i), a ) = ( p', q', \gamma(i, c(p'), c(q'))$, where $p' = \delta(p, a)$, $q' = \delta(q, a)$, and $\gamma$ is the same function as used in the initial state. The first two components behave like a regular product automaton.
 		\item $F_\text{de} = Q \times Q \times \{ \checkmark \}$.
 	\end{itemize}
 	
@@ -38,6 +38,11 @@ In this section we consider delayed simulation games and variants thereof on DPA
 \begin{defn}
 	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}_\text{de}$ be the delayed simulation automaton of $\mathcal{A}$. We say that a state $p$ $de$-simulates a state $q$ if $L(\mathcal{A}_\text{de}(p, q)) = \Sigma^\omega$. In that case we write $p \leq_\text{de} q$. If also $q \leq_\text{de} p$ holds, we write $p \equiv_\text{de} q$.
 \end{defn}
+
+
+
+\subsubsection*{$\boldsymbol{\equiv_\text{de}}$ is a congruence relation.}
+Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of our original DPA. The first step towards this goal is to show that the result is actually a well-defined DPA, by proving that the relation is a congruence.
 
 \begin{lem}
 	$\gamma$ is monotonous in the third component, i.e. if $k \leq_\checkmark k'$, then $\gamma(i, j, k) \leq_\checkmark \gamma(i, j, k')$ for all $i, j \in \mathbb{N}$.
@@ -62,13 +67,50 @@ In this section we consider delayed simulation games and variants thereof on DPA
 \end{proof}
 
 \begin{lem}
+	Let $\mathcal{A}$ be a DPA and $\rho \in Q_\text{de}^\omega$ be a run of $\mathcal{A}_\text{de}$ on some word, where the third component is $k \in (\mathbb{N} \cup \{\checkmark\})^\omega$. For all $i$, $k(i+1) \leq_\checkmark k(i)$ or $k(i+1) = \checkmark$.
+\end{lem}
+
+\begin{proof}
+	Follows directly from the definition of $\gamma$.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and $\rho$ be a run of $\mathcal{A}_\text{de}$ on some word $\alpha$ with $\rho(i) = (p(i), q(i), k(i))$. Let $m < n$ be two distinct positions such that $k(m) = k(n) = \checkmark$ and at no positition inbetween does $k$ become $\checkmark$. Then for all $m < i \leq n$, $c(q(n)) \preceq_p c(p(i))$ and $c(q(n)) \preceq_p c(q(i))$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+\begin{lem}
 	Let $\mathcal{A}$ be a DPA. Then $\leq_\text{de}$ is reflexive and transitive.
 \end{lem}
 
 \begin{proof}
 	For reflexivitiy, we need to show that $q \leq_\text{de} q$ for all states $q$. This is rather easy to see. For a word $\alpha \in \Sigma^\omega$, the third component of states in the run of $\mathcal{A}_\text{de}(q, q)$ on $\alpha$ is always $\checkmark$, as $\gamma(i, i, \checkmark) = \checkmark$.
 	
-	For transitivity, let $q_1 \leq_\text{de} q_2$ and $q_2 \leq_\text{de} q_3$. Our goal is to prove $q_1 \leq_\text{de} q_3$. %TODO
+	For transitivity, let $q_1 \leq_\text{de} q_2$ and $q_2 \leq_\text{de} q_3$. Assume towards a contradiction that $q_1 \not\leq_\text{de} q_3$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(q_1, q_3))$. We consider the three runs $\rho_{12}$, $\rho_{23}$, and $\rho_{13}$ of $\mathcal{A}_\text{de}(q_1, q_2)$, $\mathcal{A}_\text{de}(q_2, q_3)$, anbd $\mathcal{A}_\text{de}(q_1, q_3)$ respectively on $\alpha$. Then $\rho_{12}$ and $\rho_{23}$ are accepting, whereas $\rho_{13}$ is not. 
+	
+	Moreover, we use the notation $q_1(i), q_2(i), q_3(i)$ for the states of the run and $k_{12}(i), k_{23}(i), k_{13}(i)$ for the obligations. More specifically for a run $\rho_{ij}$, it is true that $\rho_{ij}(n) = (q_i(n), q_j(n), k_{ij}(n))$.
+	
+	As $\rho_{13}$ is not accepting, $k_{13}$ becomes $\checkmark$ only finitely often. By Lemma \ref{}, that means $k_{13}$ only grows smaller from some point on and reaches a minimum eventually. Let $n_0 \in \mathbb{N}$ be such a position from which on $k_{13}$ does not change anymore. We split the rest of the proof into two cases, depending on which priority from the following two states caused the change to $k_{13}(n_0)$.
+	
+	\paragraph{Case 1: $k_{13}(n_0) = c(q_1(n_0))$.} We know $c(q_1(n_0)) < c(q_3(n_0))$ and $c(q_1(n_0)) \prec_p c(q_3(n_0))$, so $c(q_1(n_0))$ must be even. Let $n_1 \geq n_0$ be the smallest position such that $k_{12}(n_1) = \checkmark$. By Lemma \ref{}, $c(q_2(n_1)) \preceq_p c(q_1(n_0))$. 
+	
+	Let $n_2 \geq n_1$ be the smallest position such that $k_{23} = \checkmark$. Again by lemma \ref{}, $c(q_3(n_2)) \preceq_p c(q_2(n_1)) \preceq_p c(q_1(n_0))$. As $c(q_1(n_0))$ is even, so must be $c(q_3(n_2))$. From these facts and the definition of $\gamma$ we can deduce 
+	
+	\begin{align*}
+		& k_{13}(n_2) \\
+		&= \gamma(c(q_1(n_2), c(q_3(n_2)), k_{13}(n_0)) \\
+		&= \begin{cases}
+		\checkmark & \text{if } c(q_3(n_2)) \leq_\checkmark k_{13}(n_0) \\
+		\min_{\leq_\checkmark} \{c(q_1(n_2), c(q_3(n_2)), k_{13}(n_0)\} & \text{else}
+	\end{cases}
+	\end{align*}
+	
+	Finally, $k_{13}(n_0)$ is the same as $c(q_1(n_0))$, so $c(q_3(n_2)) \leq_\checkmark k_{13}(n_0)$ as both values are even. Thus, $k_{13}(n_2) = \checkmark$ and $n_2 \geq n_0$ which contradicts our choice of $n_0$.
+	
+	\paragraph{Case 2: $k_{13}(n_0) = c(q_3(n_0))$.} We know $c(q_3(n_0)) < c(q_1(n_0))$ and $c(q_1(n_0)) \prec_p c(q_3(n_0))$, so $c(q_3(n_0))$ is odd. %TODO
 \end{proof}
 
 \begin{lem}
@@ -81,7 +123,12 @@ In this section we consider delayed simulation games and variants thereof on DPA
 	Let $p \equiv_\text{de} q$ be two equivalent states. Let $a \in \Sigma$ and $p' = \delta(p, a)$ and $q' = \delta(q, a)$. We have to show that also $p' \equiv_\text{de} q'$. Towards a contradiction, assume that $p' \not\leq_\text{de} q'$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p', q'))$. Let $(p', q', k) = \delta_\text{de}((p, q, \checkmark), a)$. By Lemma \ref{}, the run of $\mathcal{A}_\text{de}$ on $\alpha$ from $(p', q', k)$ cannot be accepting; otherwise, the run of $\mathcal{A}_\text{de}$ from $(p', q', \checkmark)$ would be accepting and $\alpha \in L(\mathcal{A}_\text{de}(p', q'))$. Hence, $a \alpha \notin L(\mathcal{A}_\text{de}(p, q))$, which means that $p \not\equiv_\text{de} q$.
 \end{proof}
 
+\begin{cor}
+	Let $\mathcal{A}$ be a DPA and $\equiv_\text{de}$ the corresponding delayed simulation-relation. The quotient automaton $\bigslant{\mathcal{A}}{\equiv_\text{de}}$ is well-defined and deterministic.
+\end{cor}
 
+\subsubsection*{Correctness of the quotient}
+%TODO
 
 
 
