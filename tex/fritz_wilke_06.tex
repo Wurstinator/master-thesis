@@ -41,10 +41,12 @@ In this section we consider delayed simulation games and variants thereof on DPA
 
 
 
+\vspace{1cm}
 \subsubsection*{$\boldsymbol{\equiv_\text{de}}$ is a congruence relation.}
 Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of our original DPA. The first step towards this goal is to show that the result is actually a well-defined DPA, by proving that the relation is a congruence.
 
 \begin{lem}
+\label{lem:fritzwilke:gamma_mono}
 	$\gamma$ is monotonous in the third component, i.e. if $k \leq_\checkmark k'$, then $\gamma(i, j, k) \leq_\checkmark \gamma(i, j, k')$ for all $i, j \in \mathbb{N}$.
 \end{lem}
 
@@ -57,16 +59,18 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 \end{proof}
 
 \begin{lem}
+\label{lem:fritzwilke:gamma_mono_ext}
 	Let $\mathcal{A}$ be a DPA and let $p, q \in Q$, $k \in \mathbb{N} \cup \{\checkmark\}$. If the run of $\mathcal{A}_\text{de}$ starting at $(p, q, k)$ on some $\alpha \in \Sigma^\omega$ is accepting, then for all $k \leq_\checkmark k'$ also the run of $\mathcal{A}_\text{de}$ starting at $(p, q, k')$ on $\alpha$ is accepting.
 \end{lem}
 
 \begin{proof}
 	Let $\rho$ be the run starting at $(p, q, k)$ and let $\rho'$ be the run starting at $(p, q, k')$. Further, let $p_i$, $q_i$, $k_i$, and $k'_i$ be the components of the states of those runs in the $i$-th step. Via induction we show that $k_i \leq_\checkmark k'_i$ for all $i$. Since $k_i$ is $\checkmark$ infinitely often, the same must be true for $k'_i$ and $\rho'$ is accepting.
 	
-	For $i = 0$, we have $k_0 = k \leq_\checkmark k' = k'_0$. Otherwise, we have $k_{i+1} = \gamma(c(p_{i+1}), c(q_{i+1}), k_i)$ and $k'_{i+1}$ analogously. The rest follows from Lemma \ref{}.
+	For $i = 0$, we have $k_0 = k \leq_\checkmark k' = k'_0$. Otherwise, we have $k_{i+1} = \gamma(c(p_{i+1}), c(q_{i+1}), k_i)$ and $k'_{i+1}$ analogously. The rest follows from Lemma \ref{lem:fritzwilke:gamma_mono}.
 \end{proof}
 
 \begin{lem}
+\label{lem:fritzwilke:k_shrink}
 	Let $\mathcal{A}$ be a DPA and $\rho \in Q_\text{de}^\omega$ be a run of $\mathcal{A}_\text{de}$ on some word, where the third component is $k \in (\mathbb{N} \cup \{\checkmark\})^\omega$. For all $i$, $k(i+1) \leq_\checkmark k(i)$ or $k(i+1) = \checkmark$.
 \end{lem}
 
@@ -75,14 +79,7 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 \end{proof}
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA and $\rho$ be a run of $\mathcal{A}_\text{de}$ on some word $\alpha$ with $\rho(i) = (p(i), q(i), k(i))$. Let $m < n$ be two distinct positions such that $k(m) = k(n) = \checkmark$ and at no positition inbetween does $k$ become $\checkmark$. Then for all $m < i \leq n$, $c(q(n)) \preceq_p c(p(i))$ and $c(q(n)) \preceq_p c(q(i))$.
-\end{lem}
-
-\begin{proof}
-	%TODO
-\end{proof}
-
-\begin{lem}
+\label{lem:fritzwilke:de_order_reftran}
 	Let $\mathcal{A}$ be a DPA. Then $\leq_\text{de}$ is reflexive and transitive.
 \end{lem}
 
@@ -93,24 +90,28 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 	
 	Moreover, we use the notation $q_1(i), q_2(i), q_3(i)$ for the states of the run and $k_{12}(i), k_{23}(i), k_{13}(i)$ for the obligations. More specifically for a run $\rho_{ij}$, it is true that $\rho_{ij}(n) = (q_i(n), q_j(n), k_{ij}(n))$.
 	
-	As $\rho_{13}$ is not accepting, $k_{13}$ becomes $\checkmark$ only finitely often. By Lemma \ref{}, that means $k_{13}$ only grows smaller from some point on and reaches a minimum eventually. Let $n_0 \in \mathbb{N}$ be such a position from which on $k_{13}$ does not change anymore. We split the rest of the proof into two cases, depending on which priority from the following two states caused the change to $k_{13}(n_0)$.
+	As $\rho_{13}$ is not accepting, $k_{13}$ becomes $\checkmark$ only finitely often. By Lemma \ref{lem:fritzwilke:k_shrink}, that means $k_{13}$ only grows smaller from some point on and reaches a minimum eventually. Let $n_0 \in \mathbb{N}$ be such a position from which on $k_{13}$ does not change anymore. Let $l_j = \min \{ c(q_j(i)) \mid i \geq n_0 \}$ be the lowest priority that $q_j$ reaches after $n_0$.
 	
-	\paragraph{Case 1: $k_{13}(n_0) = c(q_1(n_0))$.} We know $c(q_1(n_0)) < c(q_3(n_0))$ and $c(q_1(n_0)) \prec_p c(q_3(n_0))$, so $c(q_1(n_0))$ must be even. Let $n_1 \geq n_0$ be the smallest position such that $k_{12}(n_1) = \checkmark$. By Lemma \ref{}, $c(q_2(n_1)) \preceq_p c(q_1(n_0))$. 
+	Below we prove that $l_3 \preceq_p l_1$. If we take this as a fact, we can conclude the proof by seperating cases depending on $k_{13}(n_0)$, the final value of $k_{13}$ that does not change anymore.
 	
-	Let $n_2 \geq n_1$ be the smallest position such that $k_{23} = \checkmark$. Again by lemma \ref{}, $c(q_3(n_2)) \preceq_p c(q_2(n_1)) \preceq_p c(q_1(n_0))$. As $c(q_1(n_0))$ is even, so must be $c(q_3(n_2))$. From these facts and the definition of $\gamma$ we can deduce 
+	If $k_{13}(n_0) = l_3$, let $m \geq n_0$ be a position with $c(q_3(m)) = l_3$. Then $$k_{13}(m) = l_3 = \gamma(c(q_1(m)), l_3, k_{13}(m-1)).$$
+	We know that $k_{13}(m-1) \leq k_{13}(m) = l_3$; if $m = n_0$, this follows from Lemma \ref{lem:fritzwilke:k_shrink}. The definition of $\gamma$ thus sets $k_{13}(m) = \checkmark$, which is a contradiction to the choice of $n_0$.
 	
-	\begin{align*}
-		& k_{13}(n_2) \\
-		&= \gamma(c(q_1(n_2), c(q_3(n_2)), k_{13}(n_0)) \\
-		&= \begin{cases}
-		\checkmark & \text{if } c(q_3(n_2)) \leq_\checkmark k_{13}(n_0) \\
-		\min_{\leq_\checkmark} \{c(q_1(n_2), c(q_3(n_2)), k_{13}(n_0)\} & \text{else}
-	\end{cases}
-	\end{align*}
+	We finish the argumentation by showing $l_3 \preceq_p l_1$ in two different cases.
 	
-	Finally, $k_{13}(n_0)$ is the same as $c(q_1(n_0))$, so $c(q_3(n_2)) \leq_\checkmark k_{13}(n_0)$ as both values are even. Thus, $k_{13}(n_2) = \checkmark$ and $n_2 \geq n_0$ which contradicts our choice of $n_0$.
+	\paragraph{Case 1: $l_2$ is even.} We claim that $l_3$ is even and $l_3 \leq l_2$. 
 	
-	\paragraph{Case 2: $k_{13}(n_0) = c(q_3(n_0))$.} We know $c(q_3(n_0)) < c(q_1(n_0))$ and $c(q_1(n_0)) \prec_p c(q_3(n_0))$, so $c(q_3(n_0))$ is odd. %TODO
+	First, to show $l_3 \leq l_2$, let $m \geq n_0$ be a position with $c(q_2(m)) = l_2$ and let $n \geq m$ be the minimal position with $k_{23}(n) = \checkmark$. If $m = n$, then $c(q_3(n)) \preceq_p c(q_2(n)) = l_2$ and therefore $c(q_3(n)) \leq l_2$. Otherwise, from $m$ to $n-1$, $k_{23}$ only grows smaller and is at most $l_2$. As the priority of $q_2$ never becomes an odd number smaller than $l_2$, the only way for $k_{23}(m)$ to be $\checkmark$ is that $c(q_3(m))$ is even and $c(q_3(m)) \leq k_{23}(m-1) \leq l_2$.
+	
+	Second, assume that $l_3$ is odd and let $m$ be a position with $c(q_3(m)) = l_3$. As $l_2$ is even, we have $k_{23}(m) \leq l_3 < l_2$. At no future position can $c(q_3)$ both be even and smaller than $k_{23}$, so $k_{23}$ never becomes $\checkmark$ again. Thus, $\rho_{23}$ is not accepting.
+	
+	We claim that $l_1$ is odd or $l_1 \geq l_2$.
+	
+	Towards a contradiction assume the opposite, so $l_1 < l_2$ and $l_1$ is even. Let $m \geq n_0$ be a position with $c(q_1(m)) = l_1$. Then $c(q_2(m)) \not\preceq_p c(q_1(m))$ and therefore $k_{12}(m) = l_1$. At no position after $m$ can it happen that the conditions for $k_{12}$ to become $\checkmark$ again are satisfied. Thus, $\rho_{12}$ would not be accepting.
+	
+	If $l_1$ is odd and $l_3$ is even, $l_3 \preceq_p l_1$ follows. For the other case, $l_1$ and $l_3$ both being even with $l_3 \leq l_2 \leq l_1$, that also holds.
+	
+	\paragraph{Case 2: $l_2$ is odd.} We skip the details of this case as it works symmetrically to case 1. In particular, we first show that $l_1$ is odd and $l_1 \leq l_2$. We continue with $l_3$ being even or $l_3 \geq l_2$. From these two statements, $l_3 \preceq_p l_1$ again follows.
 \end{proof}
 
 \begin{lem}
@@ -120,13 +121,15 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 \begin{proof}
 	The three properties that are required for $\equiv_\text{de}$ to be a equivalence relation are rather easy to see. Reflexivity and transitivity have been shown for $\leq_\text{de}$ already and symmetry follows from the definition. Congruence requires more elaboration.
 
-	Let $p \equiv_\text{de} q$ be two equivalent states. Let $a \in \Sigma$ and $p' = \delta(p, a)$ and $q' = \delta(q, a)$. We have to show that also $p' \equiv_\text{de} q'$. Towards a contradiction, assume that $p' \not\leq_\text{de} q'$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p', q'))$. Let $(p', q', k) = \delta_\text{de}((p, q, \checkmark), a)$. By Lemma \ref{}, the run of $\mathcal{A}_\text{de}$ on $\alpha$ from $(p', q', k)$ cannot be accepting; otherwise, the run of $\mathcal{A}_\text{de}$ from $(p', q', \checkmark)$ would be accepting and $\alpha \in L(\mathcal{A}_\text{de}(p', q'))$. Hence, $a \alpha \notin L(\mathcal{A}_\text{de}(p, q))$, which means that $p \not\equiv_\text{de} q$.
+	Let $p \equiv_\text{de} q$ be two equivalent states. Let $a \in \Sigma$ and $p' = \delta(p, a)$ and $q' = \delta(q, a)$. We have to show that also $p' \equiv_\text{de} q'$. Towards a contradiction, assume that $p' \not\leq_\text{de} q'$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p', q'))$. Let $(p', q', k) = \delta_\text{de}((p, q, \checkmark), a)$. By Lemma \ref{lem:fritzwilke:gamma_mono_ext}, the run of $\mathcal{A}_\text{de}$ on $\alpha$ from $(p', q', k)$ cannot be accepting; otherwise, the run of $\mathcal{A}_\text{de}$ from $(p', q', \checkmark)$ would be accepting and $\alpha \in L(\mathcal{A}_\text{de}(p', q'))$. Hence, $a \alpha \notin L(\mathcal{A}_\text{de}(p, q))$, which means that $p \not\equiv_\text{de} q$.
 \end{proof}
 
 \begin{cor}
 	Let $\mathcal{A}$ be a DPA and $\equiv_\text{de}$ the corresponding delayed simulation-relation. The quotient automaton $\bigslant{\mathcal{A}}{\equiv_\text{de}}$ is well-defined and deterministic.
 \end{cor}
 
+
+\vspace{1cm}
 \subsubsection*{Correctness of the quotient}
 %TODO
 
