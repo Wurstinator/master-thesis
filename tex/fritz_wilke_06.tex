@@ -131,10 +131,50 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 
 \vspace{1cm}
 \subsubsection*{Correctness of the quotient}
-%TODO
+The quotient automaton itself is used \enquote{only} for state space reduction. The main point of delayed simulation is that the priorities of equivalent states can be made equivalent. 
 
+\begin{theorem}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. Let $\sim \subseteq Q \times Q$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Then $L(\mathcal{A}) = L(\bigslant{\mathcal{A}}{\sim})$.
+\end{theorem}
 
+\begin{proof}
+	Since $\mathcal{A}$ is deterministic and $\sim$ is a congruence relation, $\bigslant{\mathcal{A}}{\sim} = (Q_\sim, \Sigma, [q_0]_\sim, \delta_\sim, c_\sim)$ is deterministic as well. Let $\alpha \in \Sigma^\omega$ be a word and let $\pi$ and $\rho$ be the runs of $\mathcal{A}$ and $\bigslant{\mathcal{A}}{\sim}$. 
+		
+	For each $i \in \mathbb{N}$, we have $\rho(i) = [\pi(i)]_\sim$ and $c_\sim(\rho(i)) = c(\pi(i))$. Thus, $\text{Inf}(c(\pi)) = \text{Inf}(c(\rho))$ and $\pi$ is accepting iff $\rho$ is accepting.
+\end{proof}
 
+\begin{lem}
+\label{lem:fritzwilke:equiv_states_same_minpri}
+	Let $\mathcal{A}$ be a DPA and let $\pi$ and $\rho$ be runs of $\mathcal{A}$ on the same word but starting at different states. If $\pi(0) \equiv_\text{de} \rho(0)$, then $\min \text{Occ}(c(\pi)) = \min \text{Occ}(c(\rho))$.
+\end{lem}
+
+\begin{proof}
+	We do a prove by contradiction. Let $k = \min \text{Occ}(c(\pi))$ and $l = \min \text{Occ}(c(\rho))$. Assume without loss of generality that $k < l$. Let $\alpha$ be the word that is read by the two runs.
+	
+	If $k$ is even, let $\sigma$ be the run of $\mathcal{A}_\text{de}(\pi(0), \rho(0))$ on $\alpha$. Let $n$ be a position at which $c(\pi(0)) = k$. We claim that for all $i \geq n$, the third component of $\sigma(i)$ is $k$.
+	
+	At $\sigma(n)$, this must be true because $k < l \leq c(\rho(n))$ and thus $c(\rho(n)) \not\preceq_p c(\pi(n))$. At all positions after $n$, it can never occur that $c(\rho(i))$ is at most $k$ or that $c(\pi(i))$ is odd and smaller than $k$. The rest follows from the definition of $\gamma$.
+	
+	If $k$ is odd, we can argue similarly on the run of $\mathcal{A}_\text{de}(\rho(0), \pi(0))$. As soon as $c(\pi)$ reaches its minimum, the third component of the run will never change again.
+\end{proof}
+
+\begin{theorem}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $p, q \in Q$ with $p \equiv_\text{de} q$ and $c(p) < c(q)$. Define $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(s) = \begin{cases} \min c(p) & \text{if } s = q \\ c(s) & \text{else} \end{cases}$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
+\end{theorem}
+
+\begin{proof}
+	First, consider the case that $c(p)$ is an even number. The parity of each state is at least as good in $\mathcal{A}'$ as it is in $\mathcal{A}$, so $L(\mathcal{A}) \subseteq L(\mathcal{A}')$. For the other direction, assume there is a $\alpha \in L(\mathcal{A}') \setminus L(\mathcal{A})$, so the respective run $\rho \in Q^\omega$ is accepting in $\mathcal{A}'$ but not in $\mathcal{A}$. 
+	
+	For this to be true, $\rho$ must visit $q$ infinitely often and $c'(q)$ must be the lowest priority that occurs infinitely often; otherwise, the run would have the same acceptance in both automata. Thus, there is a finite word $w \in \Sigma^*$ such that from $q$, $\mathcal{A}$ reaches again $q$ via $w$ and inbetween only priorities greater than $c'(q)$ are seen.
+	
+	Now consider the word $w^\omega$ and the run $\pi_q$ of $\mathcal{A}$ on said word starting in $q$. With the argument above, we know that the minimal priority occuring in $c(\pi)$ is greater than $c'(q)$. If we take the run $\pi_p$ on $w^\omega$ starting at $p$ though, we find that this run sees priority $c(p) = c'(q)$ at the very beginning. This contradicts Lemma \ref{lem:fritzwilke:equiv_states_same_minpri}, as $p \equiv_\text{de} q$. Thus, the described $\alpha$ cannot exist. 
+	
+	If $c(p)$ is an odd number, a very similar argumentation can be applied with the roles of $\mathcal{A}$ and $\mathcal{A}'$ reversed. We omit this repetition.
+\end{proof}
+
+\begin{cor}
+	For a DPA $\mathcal{A}$, the quotient automaton $\bigslant{\mathcal{A}}{\equiv_\text{de}}$ is a DPA that recognizes the same language.
+\end{cor}
 
 
 
