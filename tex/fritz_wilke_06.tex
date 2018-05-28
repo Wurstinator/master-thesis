@@ -2,17 +2,12 @@
 \section{Fritz \& Wilke}
 
 \subsection{Delayed Simulation Game}
-In this section we consider delayed simulation games and variants thereof on DPAs. This approach is based on the paper \cite{} which considered the games for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
+In this section we consider delayed simulation games and variants thereof on DPAs. This approach is based on the paper \cite{}, which considered the games for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
 
 \begin{defn}
-	We define $\leq_\checkmark \subseteq (\mathbb{N} \cup \{\checkmark\}) \times (\mathbb{N} \cup \{\checkmark\})$ as follows:
-	\begin{itemize}
-		\item For $i, j \in \mathbb{N}$, we set $i \leq_\checkmark j$ iff $i \leq j$.
-		\item For all $i \in \mathbb{N}$, we have $i \leq_\checkmark \checkmark$ and $\checkmark \not\leq_\checkmark i$.
-		\item $\checkmark \leq_\checkmark \checkmark$.
-	\end{itemize}
+	For convenience, we define two orders for this chapter. First, we introduce $\checkmark$ as an \enquote{infinity} to the natural numbers and define the \textbf{obligation order} $\leq_\checkmark \subseteq (\mathbb{N} \cup \{\checkmark\}) \times (\mathbb{N} \cup \{\checkmark\})$ as $0 \leq_\checkmark 1 \leq_\checkmark 2 \leq_\checkmark \dots \leq_\checkmark \checkmark$.
 	
-	Further, we define an order of \enquote{goodness} on parity priorities as $\preceq_\text{p} \subseteq \mathbb{N} \times \mathbb{N}$ as $0 \preceq_\text{p} 2 \preceq_\text{p} 4 \preceq_\text{p} \dots \preceq_\text{p} 5 \preceq_\text{p} 3 \preceq_\text{p} 1$.
+	Second, we define an order of \enquote{goodness} on parity priorities $\preceq_\text{p} \subseteq \mathbb{N} \times \mathbb{N}$ as $0 \preceq_\text{p} 2 \preceq_\text{p} 4 \preceq_\text{p} \dots \preceq_\text{p} 5 \preceq_\text{p} 3 \preceq_\text{p} 1$.
 \end{defn}
 
 \begin{defn}
@@ -22,7 +17,7 @@ In this section we consider delayed simulation games and variants thereof on DPA
 		\item $Q_\text{de} = Q \times Q \times (\text{img}(c) \cup \{ \checkmark \})$, i.e. the states are given as triples in which the first two components are states from $\mathcal{A}$ and the third component is either a priority from $\mathcal{A}$ or $\checkmark$.
 		\item The alphabet remains $\Sigma$.
 		\item The starting state is a triple $(p, q, \gamma(c(p), c(q), \checkmark))$, where $p, q \in Q$ are parameters given to the automaton, and $\gamma$ is defined below.
-		\item $\delta_\text{de}( (p, q, i), a ) = ( p', q', \gamma(i, c(p'), c(q'))$, where $p' = \delta(p, a)$, $q' = \delta(q, a)$, and $\gamma$ is the same function as used in the initial state. The first two components behave like a regular product automaton.
+		\item $\delta_\text{de}( (p, q, k), a ) = ( p', q', \gamma(c(p'), c(q'), k)$, where $p' = \delta(p, a)$, $q' = \delta(q, a)$, and $\gamma$ is the same function as used in the initial state. The first two components behave like a regular product automaton.
 		\item $F_\text{de} = Q \times Q \times \{ \checkmark \}$.
 	\end{itemize}
 	
@@ -71,11 +66,20 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 
 \begin{lem}
 \label{lem:fritzwilke:k_shrink}
-	Let $\mathcal{A}$ be a DPA and $\rho \in Q_\text{de}^\omega$ be a run of $\mathcal{A}_\text{de}$ on some word, where the third component is $k \in (\mathbb{N} \cup \{\checkmark\})^\omega$. For all $i$, $k(i+1) \leq_\checkmark k(i)$ or $k(i+1) = \checkmark$.
+	Let $\mathcal{A}$ be a DPA and $\rho \in Q_\text{de}^\omega$ be a run of $\mathcal{A}_\text{de}$ on some word. Let $k \in (\mathbb{N} \cup \{\checkmark\})^\omega$ be the third component during $\rho$. For all $i$, $k(i+1) \leq_\checkmark k(i)$ or $k(i+1) = \checkmark$.
 \end{lem}
 
 \begin{proof}
 	Follows directly from the definition of $\gamma$.
+\end{proof}
+
+\begin{lem}
+\label{lem:fritzwilke:run_goodness_implies_de}
+	Let $\mathcal{A}$ be a DPA with two states $p, q \in Q$. Let $\alpha \in \Sigma^\omega$ be an $\omega$-word and let $\rho_p$ and $\rho_q$ be the respective runs of $\mathcal{A}$ on $\alpha$ starting in $p$ and $q$. If $\min \text{Inf}(c(\rho_q)) \preceq_p \min \text{Inf}(c(\rho_p))$, then $\alpha \in L(\mathcal{A}_\text{de}(p, q))$.
+\end{lem}
+
+\begin{proof}
+	%TODO
 \end{proof}
 
 \begin{lem}
@@ -86,18 +90,17 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 \begin{proof}
 	For reflexivitiy, we need to show that $q \leq_\text{de} q$ for all states $q$. This is rather easy to see. For a word $\alpha \in \Sigma^\omega$, the third component of states in the run of $\mathcal{A}_\text{de}(q, q)$ on $\alpha$ is always $\checkmark$, as $\gamma(i, i, \checkmark) = \checkmark$.
 	
-	For transitivity, let $q_1 \leq_\text{de} q_2$ and $q_2 \leq_\text{de} q_3$. Assume towards a contradiction that $q_1 \not\leq_\text{de} q_3$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(q_1, q_3))$. We consider the three runs $\rho_{12}$, $\rho_{23}$, and $\rho_{13}$ of $\mathcal{A}_\text{de}(q_1, q_2)$, $\mathcal{A}_\text{de}(q_2, q_3)$, anbd $\mathcal{A}_\text{de}(q_1, q_3)$ respectively on $\alpha$. Then $\rho_{12}$ and $\rho_{23}$ are accepting, whereas $\rho_{13}$ is not. 
+	For transitivity, let $q_1 \leq_\text{de} q_2$ and $q_2 \leq_\text{de} q_3$. Assume towards a contradiction that $q_1 \not\leq_\text{de} q_3$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(q_1, q_3))$. We consider the three runs $\rho_{12}$, $\rho_{23}$, and $\rho_{13}$ of $\mathcal{A}_\text{de}(q_1, q_2)$, $\mathcal{A}_\text{de}(q_2, q_3)$, and $\mathcal{A}_\text{de}(q_1, q_3)$ respectively on $\alpha$. Then $\rho_{12}$ and $\rho_{23}$ are accepting, whereas $\rho_{13}$ is not. 
 	
 	Moreover, we use the notation $q_1(i), q_2(i), q_3(i)$ for the states of the run and $k_{12}(i), k_{23}(i), k_{13}(i)$ for the obligations. More specifically for a run $\rho_{ij}$, it is true that $\rho_{ij}(n) = (q_i(n), q_j(n), k_{ij}(n))$.
 	
-	As $\rho_{13}$ is not accepting, $k_{13}$ becomes $\checkmark$ only finitely often. By Lemma \ref{lem:fritzwilke:k_shrink}, that means $k_{13}$ only grows smaller from some point on and reaches a minimum eventually. Let $n_0 \in \mathbb{N}$ be such a position from which on $k_{13}$ does not change anymore. Let $l_j = \min \{ c(q_j(i)) \mid i \geq n_0 \}$ be the lowest priority that $q_j$ reaches after $n_0$.
+	As $\rho_{13}$ is not accepting, $k_{13}$ becomes $\checkmark$ only finitely often. By Lemma \ref{lem:fritzwilke:k_shrink}, that means $k_{13}$ only grows smaller from some point on and reaches a minimum eventually. Let $n_0 \in \mathbb{N}$ be a position such that two requirements are satisfied:
+	\begin{itemize}
+		\item $k_{13}$ does not change anymore after $n_0$, i.e. $i,j \geq n_0$ imply $k_{13}(i) = k_{13}(j)$.
+		\item For all three states $q_1$, $q_2$, and $q_3$, from $n_0$ on only priorities are seen that occur infinitely often for that respective state.
+	\end{itemize}
 	
-	Below we prove that $l_3 \preceq_p l_1$. If we take this as a fact, we can conclude the proof by seperating cases depending on $k_{13}(n_0)$, the final value of $k_{13}$ that does not change anymore.
-	
-	If $k_{13}(n_0) = l_3$, let $m \geq n_0$ be a position with $c(q_3(m)) = l_3$. Then $$k_{13}(m) = l_3 = \gamma(c(q_1(m)), l_3, k_{13}(m-1)).$$
-	We know that $k_{13}(m-1) \leq k_{13}(m) = l_3$; if $m = n_0$, this follows from Lemma \ref{lem:fritzwilke:k_shrink}. The definition of $\gamma$ thus sets $k_{13}(m) = \checkmark$, which is a contradiction to the choice of $n_0$.
-	
-	We finish the argumentation by showing $l_3 \preceq_p l_1$ in two different cases.
+	Let $l_j = \min \{ c(q_j(i)) \mid i \geq n_0 \}$ be the lowest priority that $q_j$ reaches after $n_0$.	This is equivalent to $l_j = \min \text{Inf}(\{ c(q_j(i)) \mid i \in \mathbb{N}\})$. We now show that $l_3 \preceq_p l_1$. By Lemma \ref{lem:fritzwilke:run_goodness_implies_de} this gives us $\alpha \in L(\mathcal{A}_\text{de}(q_1, q_3))$, letting us conclude in a contradiction.
 	
 	\paragraph{Case 1: $l_2$ is even.} We claim that $l_3$ is even and $l_3 \leq l_2$. 
 	
@@ -114,9 +117,9 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 	\paragraph{Case 2: $l_2$ is odd.} We skip the details of this case as it works symmetrically to case 1. In particular, we first show that $l_1$ is odd and $l_1 \leq l_2$. We continue with $l_3$ being even or $l_3 \geq l_2$. From these two statements, $l_3 \preceq_p l_1$ again follows.
 \end{proof}
 
-\begin{lem}
+\begin{theorem}
 	Let $\mathcal{A}$ be a DPA. Then $\equiv_\text{de}$ is a congruence relation.
-\end{lem}
+\end{theorem}
 
 \begin{proof}
 	The three properties that are required for $\equiv_\text{de}$ to be a equivalence relation are rather easy to see. Reflexivity and transitivity have been shown for $\leq_\text{de}$ already and symmetry follows from the definition. Congruence requires more elaboration.
@@ -124,9 +127,12 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 	Let $p \equiv_\text{de} q$ be two equivalent states. Let $a \in \Sigma$ and $p' = \delta(p, a)$ and $q' = \delta(q, a)$. We have to show that also $p' \equiv_\text{de} q'$. Towards a contradiction, assume that $p' \not\leq_\text{de} q'$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p', q'))$. Let $(p', q', k) = \delta_\text{de}((p, q, \checkmark), a)$. By Lemma \ref{lem:fritzwilke:gamma_mono_ext}, the run of $\mathcal{A}_\text{de}$ on $\alpha$ from $(p', q', k)$ cannot be accepting; otherwise, the run of $\mathcal{A}_\text{de}$ from $(p', q', \checkmark)$ would be accepting and $\alpha \in L(\mathcal{A}_\text{de}(p', q'))$. Hence, $a \alpha \notin L(\mathcal{A}_\text{de}(p, q))$, which means that $p \not\equiv_\text{de} q$.
 \end{proof}
 
+We want to mention here that $\equiv_\text{de}$ is actually an equivalence relation on APAs as well, as was shown in the original paper. However, congruence is the key point at which deterministic automata diverge. Congruence requires something to be true for \emph{all} successors of a state; delayed simulation only requires there to be \emph{one} equivalent pair of successors. Only in deterministic automata is it that these two coincide.
+
 \begin{cor}
 	Let $\mathcal{A}$ be a DPA and $\equiv_\text{de}$ the corresponding delayed simulation-relation. The quotient automaton $\bigslant{\mathcal{A}}{\equiv_\text{de}}$ is well-defined and deterministic.
 \end{cor}
+
 
 
 \vspace{1cm}
@@ -176,6 +182,9 @@ The quotient automaton itself is used \enquote{only} for state space reduction. 
 	For a DPA $\mathcal{A}$, the quotient automaton $\bigslant{\mathcal{A}}{\equiv_\text{de}}$ is a DPA that recognizes the same language.
 \end{cor}
 
+
+\subsection{Using delayed simulation for APAs}
+%TODO
 
 
 
