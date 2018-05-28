@@ -11,9 +11,13 @@
 
 namespace tollk {
 
+// Compares two elements from ('natural numbers' union 'checkmark').
+bool lte_checkmark(const std::optional<automaton::parity_label_t>& lhs, const std::optional<automaton::parity_label_t>& rhs);
+bool lt_checkmark(const std::optional<automaton::parity_label_t>& lhs, const std::optional<automaton::parity_label_t>& rhs);
+
 
 // Normal "delayed simulation" gamma function.
-std::optional<automaton::parity_label_t> Gamma_de(automaton::parity_label_t i, automaton::parity_label_t j, std::optional<automaton::parity_label_t> k_or_not);
+std::optional<automaton::parity_label_t> Gamma_de(automaton::parity_label_t i, automaton::parity_label_t j, const std::optional<automaton::parity_label_t>& k_or_not);
 
 
 
