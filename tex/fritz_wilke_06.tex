@@ -74,12 +74,36 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 \end{proof}
 
 \begin{lem}
+\label{lem:fritzwilke:n0_exists}
+	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. For a word $\alpha \in \Sigma^\omega$, let $\rho : i \mapsto (p_i, q_i, k_i)$ be the run of $\mathcal{A}_\text{de}(p, q)$ on $\alpha$. If $\rho$ is not accepting, there is a position $n$ such that
+	\begin{itemize}
+		\item $\text{Occ}(\{p_i \mid i \geq n\}) = \text{Inf}(\{p_i \mid i \in \mathbb{N}\})$,
+		\item $\text{Occ}(\{q_i \mid i \geq n\}) = \text{Inf}(\{q_i \mid i \in \mathbb{N}\})$,
+		\item For all $i \geq j \geq n$, $k_i = k_j$.
+	\end{itemize}
+	
+	In other words, from $n$ on, $p$ and $q$ only see states that are seen infinitely often, and the obligations of $\rho$ do not change anymore.
+\end{lem}
+
+\begin{proof}
+	The first two requirements are clear. Since states not in $\text{Inf}(\{p_i \mid i \in \mathbb{N}\})$ only occur finitely often, there must be positions $n_p$ and $n_q$ from which on they do not occur anymore at all.
+	
+	For the third requirement, we know that from some point on, the obligations $k$ never become $\checkmark$ anymore, as the run would be accepting otherwise. By Lemma \ref{lem:fritzwilke:k_shrink}, $k$ can only become lower from there on. As $\leq_\checkmark$ is a well-ordering, a minimum must be reached at some point $n_k$.
+	
+	The position $n_0 = \max \{n_p, n_q, n_k\}$ satisfies the statement.
+\end{proof}
+
+\begin{lem}
 \label{lem:fritzwilke:run_goodness_implies_de}
 	Let $\mathcal{A}$ be a DPA with two states $p, q \in Q$. Let $\alpha \in \Sigma^\omega$ be an $\omega$-word and let $\rho_p$ and $\rho_q$ be the respective runs of $\mathcal{A}$ on $\alpha$ starting in $p$ and $q$. If $\min \text{Inf}(c(\rho_q)) \preceq_p \min \text{Inf}(c(\rho_p))$, then $\alpha \in L(\mathcal{A}_\text{de}(p, q))$.
 \end{lem}
 
 \begin{proof}
-	%TODO
+	We write $l_q = \min \text{Inf}(c(\rho_q))$ and $l_p = \min \text{Inf}(c(\rho_p))$. Assume that the Lemma is false, so $l_q \preceq_p l_p$ but $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$. Let $k_{13} \in (\mathbb{N} \cup \{\checkmark\})^\omega$ be the third component of the run of $\mathcal{A}_\text{de}(p, q)$ on $\alpha$. Let $n_0$ be a position as described in Lemma \ref{lem:fritzwilke:n0_exists} (for $\rho$). 
+	
+	\paragraph{Case 1: $l_q$ is even and $l_q \leq l_p$} We know $k_{13}(n_0) = l_q$, as that is the smaller value. Let $m > n_0$ be a position with $c(\rho_q(m)) = l_q$. Then $c(\rho_q(m))$ is even and $c(\rho_q(m)) = l_q \leq l_p \leq c(\rho_p(m))$, so $c(\rho_q(m)) \preceq_p c(\rho_p(m))$. Also we have $c(\rho_q(m)) \leq k_{13}(m-1) = l_q$ and therefore $k_{13}(m) = \checkmark$, which contradicts the choice of $n_0$.
+	
+	\paragraph{Case 2: $l_p$ is odd and $l_q \geq l_p$} We know $k_{13}(n_0) = l_p$. Let $m > n_0$ be a position with $c(\rho_p(m)) = l_p$. Then $c(\rho_p(m))$ is odd and $c(\rho_p(m)) = l_p \leq l_q \leq c(\rho_q(m))$, so $c(\rho_q(m)) \preceq_p c(\rho_p(m))$. By the same argumentation as above, we deduce $k_{13}(m) = \checkmark$.
 \end{proof}
 
 \begin{lem}
@@ -94,17 +118,11 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 	
 	Moreover, we use the notation $q_1(i), q_2(i), q_3(i)$ for the states of the run and $k_{12}(i), k_{23}(i), k_{13}(i)$ for the obligations. More specifically for a run $\rho_{ij}$, it is true that $\rho_{ij}(n) = (q_i(n), q_j(n), k_{ij}(n))$.
 	
-	As $\rho_{13}$ is not accepting, $k_{13}$ becomes $\checkmark$ only finitely often. By Lemma \ref{lem:fritzwilke:k_shrink}, that means $k_{13}$ only grows smaller from some point on and reaches a minimum eventually. Let $n_0 \in \mathbb{N}$ be a position such that two requirements are satisfied:
-	\begin{itemize}
-		\item $k_{13}$ does not change anymore after $n_0$, i.e. $i,j \geq n_0$ imply $k_{13}(i) = k_{13}(j)$.
-		\item For all three states $q_1$, $q_2$, and $q_3$, from $n_0$ on only priorities are seen that occur infinitely often for that respective state.
-	\end{itemize}
-	
-	Let $l_j = \min \{ c(q_j(i)) \mid i \geq n_0 \}$ be the lowest priority that $q_j$ reaches after $n_0$.	This is equivalent to $l_j = \min \text{Inf}(\{ c(q_j(i)) \mid i \in \mathbb{N}\})$. We now show that $l_3 \preceq_p l_1$. By Lemma \ref{lem:fritzwilke:run_goodness_implies_de} this gives us $\alpha \in L(\mathcal{A}_\text{de}(q_1, q_3))$, letting us conclude in a contradiction.
+	Let $n_0$ be a position as described in Lemma \ref{lem:fritzwilke:n0_exists} (for $\rho_{13}$) and let $l_j = \min \{ c(q_j(i)) \mid i \geq n_0 \}$ be the lowest priority that $q_j$ reaches after $n_0$.	This is equivalent to $l_j = \min \text{Inf}(\{ c(q_j(i)) \mid i \in \mathbb{N}\})$. We now show that $l_3 \preceq_p l_1$. By Lemma \ref{lem:fritzwilke:run_goodness_implies_de} this gives us $\alpha \in L(\mathcal{A}_\text{de}(q_1, q_3))$, letting us conclude in a contradiction.
 	
 	\paragraph{Case 1: $l_2$ is even.} We claim that $l_3$ is even and $l_3 \leq l_2$. 
 	
-	First, to show $l_3 \leq l_2$, let $m \geq n_0$ be a position with $c(q_2(m)) = l_2$ and let $n \geq m$ be the minimal position with $k_{23}(n) = \checkmark$. If $m = n$, then $c(q_3(n)) \preceq_p c(q_2(n)) = l_2$ and therefore $c(q_3(n)) \leq l_2$. Otherwise, from $m$ to $n-1$, $k_{23}$ only grows smaller and is at most $l_2$. As the priority of $q_2$ never becomes an odd number smaller than $l_2$, the only way for $k_{23}(m)$ to be $\checkmark$ is that $c(q_3(m))$ is even and $c(q_3(m)) \leq k_{23}(m-1) \leq l_2$.
+	First, to show $l_3 \leq l_2$, let $m \geq n_0$ be a position with $c(q_2(m)) = l_2$ and let $n \geq m$ be the minimal position with $k_{23}(n) = \checkmark$. If $m = n$, then $c(q_3(n)) \preceq_p c(q_2(n)) = l_2$ and therefore $c(q_3(n)) \leq l_2$. Otherwise, from $m$ to $n-1$, $k_{23}$ only grows smaller and is at most $l_2$ (Lemma \ref{lem:fritzwilke:k_shrink}). As the priority of $q_2$ never becomes an odd number smaller than $l_2$, the only way for $k_{23}(m)$ to be $\checkmark$ is that $c(q_3(m))$ is even and $c(q_3(m)) \leq k_{23}(m-1) \leq l_2$.
 	
 	Second, assume that $l_3$ is odd and let $m$ be a position with $c(q_3(m)) = l_3$. As $l_2$ is even, we have $k_{23}(m) \leq l_3 < l_2$. At no future position can $c(q_3)$ both be even and smaller than $k_{23}$, so $k_{23}$ never becomes $\checkmark$ again. Thus, $\rho_{23}$ is not accepting.
 	
@@ -155,17 +173,17 @@ The quotient automaton itself is used \enquote{only} for state space reduction. 
 \end{lem}
 
 \begin{proof}
-	We do a prove by contradiction. Let $k = \min \text{Occ}(c(\pi))$ and $l = \min \text{Occ}(c(\rho))$. Assume without loss of generality that $k < l$. Let $\alpha$ be the word that is read by the two runs.
+	Let $k = \min \text{Occ}(c(\pi))$ and $l = \min \text{Occ}(c(\rho))$. Assume towards a contradiction without loss of generality that $k < l$. Let $\alpha$ be the word that is read by the two runs.
 	
-	If $k$ is even, let $\sigma$ be the run of $\mathcal{A}_\text{de}(\pi(0), \rho(0))$ on $\alpha$. Let $n$ be a position at which $c(\pi(0)) = k$. We claim that for all $i \geq n$, the third component of $\sigma(i)$ is $k$.
+	If $k$ is even, let $\sigma$ be the run of $\mathcal{A}_\text{de}(\pi(0), \rho(0))$ on $\alpha$. Let $n$ be a position at which $c(\pi(n)) = k$. We claim that for all $i \geq n$, the third component of $\sigma(i)$ is $k$.
 	
-	At $\sigma(n)$, this must be true because $k < l \leq c(\rho(n))$ and thus $c(\rho(n)) \not\preceq_p c(\pi(n))$. At all positions after $n$, it can never occur that $c(\rho(i))$ is at most $k$ or that $c(\pi(i))$ is odd and smaller than $k$. The rest follows from the definition of $\gamma$.
+	At $\sigma(n)$, this must be true because $k < l \leq c(\rho(n))$ and thus $c(\rho(n)) \not\preceq_p c(\pi(n))$. At all positions after $n$, it can never occur that $c(\rho(i)) \leq k$ or that $c(\pi(i))$ is odd and smaller than $k$. The rest follows from the definition of $\gamma$.
 	
 	If $k$ is odd, we can argue similarly on the run of $\mathcal{A}_\text{de}(\rho(0), \pi(0))$. As soon as $c(\pi)$ reaches its minimum, the third component of the run will never change again.
 \end{proof}
 
 \begin{theorem}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $p, q \in Q$ with $p \equiv_\text{de} q$ and $c(p) < c(q)$. Define $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(s) = \begin{cases} \min c(p) & \text{if } s = q \\ c(s) & \text{else} \end{cases}$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $p, q \in Q$ with $p \equiv_\text{de} q$ and $c(p) < c(q)$. Define $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(s) = \begin{cases} c(p) & \text{if } s = q \\ c(s) & \text{else} \end{cases}$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
 \end{theorem}
 
 \begin{proof}
