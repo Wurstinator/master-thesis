@@ -1,0 +1,93 @@
+
+\subsection{Alternative computation}
+As we have seen, using delayed simulation to build a quotient automaton delivers good results in the number of removed states. The downside is the computation time which is much higher than that of our approach in section \ref{}. The question that we therefore deal with in the upcoming part is whether we can change the definition of $\equiv_\text{de}$ to something that cannot be used for APAs anymore but is more efficient to compute.
+
+
+\begin{lem}
+\label{lem:fwe:preceq_alternative}
+	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \preceq_\text{de} q$ if and only if the following property holds for all $w \in \Sigma^*$: 
+	
+	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. If $c(p')$ is even and $c(p') < c(q')$, then every path from $q'$ eventually reaches a priority at most $c(p')$. On the other hand, if $c(q')$ is odd and $c(q') < c(p')$, then every path from $p'$ eventually reaches a priority at most $c(q')$.
+\end{lem}
+
+\begin{proof}
+	\textbf{If} We show the contrapositive. Let $p \not\preceq_\text{de} q$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$ with the run of $\mathcal{A}_\text{de}(p, q)$ being $(p_0, q_0, k_0) (p_1, q_1, k_1) \dots$. By Lemma \ref{lem:fritzwilke:n0_exists}, there is a position $n$ such that $k_i$ does not change anymore for $i \geq n$. We define $w = \alpha[0, n_0]$ and $\beta = \alpha[n_0+1, ]$ (so $\alpha = w\beta$) and claim that $w$ is a valid counterexample for the right-side property.
+	
+	The first case is: $c(p') < c(q')$ and $c(p')$ is even. \\
+	Reading $\beta$ from $q'$ induces a run that never visits a priority less or equal to $c(p')$: Let $u \sqsubset \beta$ and assume that $c(\delta^*(q', u)) \leq c(p')$. By choice of $n$, we know that $k_{|wu|} = k_{|wu|+1} \neq \checkmark$. This can only happen if the \enquote{else} case of $\gamma$ is hit, meaning that $k_{|wu|+1} = \min \{ k_{|wu|}, c(\delta^*(p', u)), c(\delta^*(q', u)) \}$. Specifically, $c(\delta^*(q', u)) \geq k_{|wu|}$. By choice of $w$ we also have $k_{|wu|} = k_{|w|} \leq c(p')$, so $c(\delta^*(q', u)) = c(p')$.
+	
+	This, however, means that $c(\delta^*(q', u))$ is even, $c(\delta^*(q', u)) \leq_\checkmark k_{|wu|}$, and $c(\delta^*(q', u)) \preceq_p c(p')$ and thus $k_{|wu|+1} = \checkmark$ which is a contradiction.
+	
+	The second case, $c(q') < c(p')$ and $c(q')$ is odd, works almost identically so we omit the proof here.
+	
+	\paragraph{Only If} Again we show the contrapositive: There is a $w \in \Sigma^*$ such that the right-side property is violated. Let this $w$ now be chosen among all these words such that $\min \{ c(p'), c(q') \}$ becomes minimal. We now show that $p \not\preceq_\text{de} q$. 
+	
+	The first case is: $c(p') < c(q')$ and $c(p')$ is even. \\
+	Let $\beta \in \Sigma^\omega$ be a word such that the respective run from $q'$ only sees priorities strictly greater than $c(p')$. Let $(p_0, q_0, k_0) (p_1, q_1, k_1) \dots$ be the run of $\mathcal{A}_\text{de}(p, q)$ on $\alpha = w \beta$. We claim that $k_i \neq \checkmark$ for all $i > |w|$. If that is true, then the run is rejecting and $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$.
+	
+	Assume towards a contradiction that $k_i$ does become $\checkmark$ again at some point. Let $j \geq |w|$ be the minimal position with $k_{j+1} = \checkmark$. Then by definition of $\gamma$, $c(q_{j+1}) \leq k_j$ is even or $c(p_{j+1}) \leq k_j$ is odd. In the former case, we would have a contradiction to the choice of $\beta$. In the latter case, we would have a contradiction to the choice of $w$ as a word with minimal priority at $c(p')$: since $c(p')$ is even, $c(p_{j+1}) < c(p')$ and from $q_{j+1}$ there is a run that never reaches a smaller priority. Hence, $w \cdot \beta[0, j-|w|]$ would have been our choice for $w$ instead.
+	
+	The second case, $c(q') < c(p')$ and $c(q')$ is odd, works almost identically so we omit the proof here.
+\end{proof}
+
+While this characterization of $\preceq_\text{de}$ seems arbitrary, it allows for an easier definition of $\equiv_\text{de}$ as is seen in the following statement.
+
+\begin{cor}
+\label{cor:fwe:equivde_alternative}
+	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \equiv_\text{de} q$ if and only if the following holds for all words $w \in \Sigma^*$:
+	
+	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. Every run that starts in $p'$ or $q'$ eventually sees a priority less than or equal to $\min \{c(p'), c(q')\}$.
+\end{cor}
+
+This intermediate result now easily gives us the following relation of delayed simulation and Moore-equivalence.
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, q_0, c)$ be a parity automaton. We call $c$ \emph{normalized} if for every state $q \in Q$ that does not lie in a trivial SCC and all priorities $k \leq c(q)$, there is a path from $q$ to $q$ such that the lowest priority visited is $k$.
+\end{defn}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA with a normalized priority function and let $p$ and $q$ be states that do not lie in trivial SCCs. Then $p \equiv_\text{de} q$ if and only if $p \sim_M q$.
+\end{lem}
+
+\begin{proof}
+	The \enquote{if}-implication was shown in \ref{}. For the other direction, let $p \not\sim_M q$, so there is a word $w \in \Sigma^*$ such that $c(p') \neq c(q')$, where $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. Without loss of generality, assume $c(p') < c(q')$.
+	
+	As $c$ is normalized, there is a word $u$ such that $q'$ reaches again $q'$ via $u$ and sees only priorities greater or equal to $c(q')$. That means that on the path that is obtained from $q'$ by reading $u^\omega$, the priority $c(p')$ is never visited. By corollary \ref{cor:fwe:equivde_alternative}, that means $p \not\equiv_\text{de} q$.
+\end{proof}
+
+%TODO
+If we can assure that our priority function is normalized, Moore-equivalence is a nice approximation of delayed simulation-equivalence. In fact, we can normalize the priority function and compute $\sim_M$-classes in $\mathcal{O}(n^2 k + n \log n)$ \cite{}.
+
+An interesting question is whether there is an algorithm which uses this knowledge to compute exactly $\equiv_\text{de}$ with the improved quadratic time. Figure \ref{fig:fwe:deM_diff} shows an example automaton with normalized $c$ in which there are states (in trivial SCCs) that are delayed simulation-equivalent but not Moore-equivalent. In fact, all states are $\equiv_\text{de}$-equivalent but none are $\sim_M$-equivalent.
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,thick,initial text={}]
+\node[initial,state] (0) {$q_0$};
+\node[state] (1) [right of=0] {$q_1$};
+\node[state] (2) [right of=1] {$q_2$};
+\path (0) edge node {a} (1)
+      (1) edge node {a} (2)
+      (2) edge [loop right] node {a} (2);
+\end{tikzpicture}
+\caption{Example automaton in which $\sim_M$ and $\equiv_\text{de}$ are not the same. $c(q_0) = 0, c(q_1) = 1, c(q_2) = 0$}
+\label{fig:fwe:deM_diff}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
