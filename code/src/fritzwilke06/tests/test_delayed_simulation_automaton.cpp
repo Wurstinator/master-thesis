@@ -16,7 +16,7 @@ TEST_CASE("Test DelayedSimulationAutomaton.") {
     automaton.SetLabel(1, 1);
 
     boost::bimap<state_t, DelayedSimulationAutomatonState> state_indices;
-    const DPA desim_automaton = DelayedSimulationAutomaton(automaton, &Gamma_de, &state_indices);
+    const DPA desim_automaton = DelayedSimulationAutomaton(automaton, &Gamma_de, false, &state_indices);
 
     REQUIRE(desim_automaton.States().size() == 12);
 

@@ -10,10 +10,10 @@ namespace tollk {
 
 
 
-EquivalenceRelation<automaton::state_t> DelayedSimulationEquivalence(const automaton::DPA& dpa) {
+EquivalenceRelation<automaton::state_t> DelayedSimulationEquivalence(const automaton::DPA& dpa, bool resetAtSCCs) {
     // Create the delayed simulation Büchi automaton.
     boost::bimap<automaton::state_t, DelayedSimulationAutomatonState> state_indices;
-    automaton::DPA delayed_simulation_automaton = DelayedSimulationAutomaton(dpa, &Gamma_de, &state_indices);
+    automaton::DPA delayed_simulation_automaton = DelayedSimulationAutomaton(dpa, &Gamma_de, resetAtSCCs, &state_indices);
 
     // Invert the final states.
     for (automaton::state_t q : delayed_simulation_automaton.States())

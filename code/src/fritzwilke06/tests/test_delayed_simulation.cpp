@@ -21,7 +21,7 @@ TEST_CASE("Test DelayedSimulationEquivalence.") {
     dpa.SetLabel(1, 2);
     dpa.SetLabel(2, 1);
 
-    const EquivalenceRelation<state_t> desim_relation = DelayedSimulationEquivalence(dpa);
+    const EquivalenceRelation<state_t> desim_relation = DelayedSimulationEquivalence(dpa, false);
 
     CHECK(desim_relation.Classes().size() == 2);
     CHECK(desim_relation.IsEquiv(0, 0));

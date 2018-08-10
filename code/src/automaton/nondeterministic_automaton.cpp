@@ -6,11 +6,13 @@ namespace automaton {
 
 
 NondeterministicAutomaton::NondeterministicAutomaton(const NondeterministicAutomaton& other) : TransitionAutomaton(other.atomicPropositions) {
+    this->initial_state = other.initial_state;
     this->states = other.states;
     this->transitions = other.transitions;
 }
 
 NondeterministicAutomaton::NondeterministicAutomaton(NondeterministicAutomaton&& other)  : TransitionAutomaton(other.atomicPropositions)  {
+    this->initial_state = other.initial_state;
     this->states = std::move(other.states);
     this->transitions = std::move(other.transitions);
 }

@@ -31,6 +31,7 @@ struct Options {
     std::optional<unsigned int> size_limit;
     std::string input_file;
     OUTPUT_TYPE output_type = JSON;
+    bool reset_at_sccs = false;
 };
 
 Options ParseArgs(int argc, char** argv) {
@@ -41,6 +42,7 @@ Options ParseArgs(int argc, char** argv) {
     args::ValueFlag<std::string> output_flag(parser, "output", "Define the output format.", {'o', "output"});
     args::ValueFlag<std::string> input_file_flag(parser, "input_file", "HOA file that contains the input DPA.",
                                                  {'A', "automaton"}, args::Options::Required);
+    args::Flag reset_at_sccs_flag(parser, "reset_at_sccs", "Optimization that resets de.sim. obligations at every SCC change.", {"reset_opt"});
 
     try {
         parser.ParseCLI(argc, argv);
@@ -72,8 +74,9 @@ Options ParseArgs(int argc, char** argv) {
             std::cerr << "Invalid output format specified. Allowed are 'json' or 'csv'." << std::endl;
             std::exit(EXIT_FAILURE);
         }
-
     }
+    if (reset_at_sccs_flag)
+        options.reset_at_sccs = reset_at_sccs_flag.Get();
     return options;
 }
 
@@ -106,13 +109,13 @@ tollk::automaton::parity_label_t MinParity(const tollk::automaton::ParityAutomat
     return ranges::v3::min(ranges::v3::view::transform(range, get_label));
 }
 
-Statistics PerformConstruction(tollk::automaton::DPA dpa) {
+Statistics PerformConstruction(tollk::automaton::DPA dpa, const Options& options) {
     Statistics data{};
     data.original_size = dpa.States().size();
     data.number_of_sccs = CountSCCs(dpa);
     TimePoint time = TimeNow();
 
-    const tollk::EquivalenceRelation<tollk::automaton::state_t> desim_relation = tollk::DelayedSimulationEquivalence(dpa);
+    const tollk::EquivalenceRelation<tollk::automaton::state_t> desim_relation = tollk::DelayedSimulationEquivalence(dpa, options.reset_at_sccs);
     tollk::automaton::NPA npa = tollk::automaton::NPA::FromDPA(dpa);
     const std::function<tollk::automaton::parity_label_t(const tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass&)> f = std::bind(&MinParity<tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass>, npa, std::placeholders::_1);
     tollk::automaton::QuotientAutomaton(&npa, desim_relation, f);
@@ -163,7 +166,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    const Statistics stats = PerformConstruction(dpa);
+    const Statistics stats = PerformConstruction(dpa, options);
     switch (options.output_type) {
         case JSON:
             PrintJSON(stats);

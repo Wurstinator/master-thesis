@@ -24,7 +24,7 @@ NPA NPA::FromDPA(const DPA& dpa) {
 
 
 DPA DPA::FromNPA(const NPA& npa) {
-    DPA dpa(DeterministicAutomaton::FromTransitionAutomaton(npa));
+    DPA dpa = DeterministicAutomaton::FromTransitionAutomaton(npa);
     for (state_t q : dpa.States())
         dpa.SetLabel(q, npa.GetLabel(q));
     return dpa;

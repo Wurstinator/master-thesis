@@ -21,7 +21,7 @@ using Desim_Gamma = std::function<std::optional<automaton::parity_label_t>(autom
 // Given a DPA, returns the delayed simulation automaton. If the bimap state_indices is not NULL, it is updated with
 // the internal IDs of the given state triples. gamma defines the transitions of the third component. See "gamma.h"
 // for more detail.
-automaton::DPA DelayedSimulationAutomaton(const automaton::DPA& automaton, const Desim_Gamma& gamma, boost::bimap<automaton::state_t, DelayedSimulationAutomatonState>* state_indices = nullptr);
+automaton::DPA DelayedSimulationAutomaton(const automaton::DPA& automaton, const Desim_Gamma& gamma, bool resetAtSCCs, boost::bimap<automaton::state_t, DelayedSimulationAutomatonState>* state_indices = nullptr);
 
 
 }

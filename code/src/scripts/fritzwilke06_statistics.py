@@ -8,7 +8,7 @@ from run_statistics import run_experiments, run_process_for_time
 executable = '../../bin/fritzwilke_statistics'
 
 
-class ExecSchewe:
+class ExecFritzWilke:
     def __init__(self, timeout):
         self.timeout = timeout
 
@@ -23,7 +23,7 @@ def main():
         sys.exit(1)
 
     args = parse_args()
-    run_experiments(args, ExecSchewe(args.timeout))
+    run_experiments(args, ExecFritzWilke(args.timeout))
 
 
 # Parses the command line arguments.

@@ -10,11 +10,13 @@ import os
 import queue
 import glob
 import progressbar
+from functools import partial
 
 
 # Run the specified experiments in parallel. 'callable' is the test runner. It is called with for each input file with
 # the filename as an argument. It needs to be multiprocessing-compatible, i.e. no lambdas.
-def run_experiments(args, callable):
+# The formatter is called with every generated output from the callable and should return a new output that is printed.
+def run_experiments(args, callable, formatter = (lambda x, y: y)):
     # Initialize the worker pool and necessary variables.
     pool = multiprocessing.Pool(os.cpu_count() - 1)
     data_queue = multiprocessing.Queue()
@@ -22,9 +24,9 @@ def run_experiments(args, callable):
     threads_todo = 0
 
     # This function is executed after each successful experiment.
-    def apply_finished(data):
-        if data is not None:
-            data_queue.put(data)
+    def apply_finished(input_filename, output_data):
+        if output_data is not None:
+            data_queue.put((input_filename, output_data))
         with counter_lock:
             nonlocal threads_todo
             threads_todo -= 1
@@ -36,7 +38,7 @@ def run_experiments(args, callable):
     with counter_lock:
         for path in args.input:
             for filename in glob.glob(path):
-                pool.apply_async(callable, (filename,), callback=apply_finished)
+                pool.apply_async(callable, (filename,), callback=partial(apply_finished, filename))
                 threads_todo += 1
         # Only use a progress bar if the output is to a file.
         if args.output is not None:
@@ -50,12 +52,12 @@ def run_experiments(args, callable):
         outfile = open(args.output, 'w')
     while threads_todo > 0 or not data_queue.empty():
         try:
-            data = data_queue.get(True, 1)
+            filename, data = data_queue.get(True, 1)
         except queue.Empty:
             data = None
         if data is not None:
             outstream = sys.stdout if args.output is None else outfile
-            outstream.write(data.decode('utf-8'))
+            outstream.write(formatter(filename, data.decode('utf-8')))
             outstream.flush()
     if args.output is not None:
         outfile.close()
@@ -72,5 +74,5 @@ def run_process_for_time(command, timeout=None, outfile=subprocess.PIPE):
         else:
             return True
     except subprocess.TimeoutExpired:
-        print('Process exceeded timeout and is cancelled.', file=sys.stderr)
+        print('Process exceeded timeout and is cancelled. ' + command, file=sys.stderr)
         return None

@@ -17,6 +17,7 @@ int main(int argc, char** argv);
 // Parses the command line options.
 struct Options {
     std::string input_file;
+    bool reset_at_sccs = false;
 };
 
 Options ParseArgs(int argc, char** argv) {
@@ -24,6 +25,7 @@ Options ParseArgs(int argc, char** argv) {
     args::CompletionFlag completion(parser, {"complete"});
     args::HelpFlag help_flag(parser, "help", "Display this help menu.", {'h', "help"});
     args::ValueFlag<std::string> input_file_flag(parser, "input_file", "HOA file that contains the input DPA.", {'A', "automaton"}, args::Options::Required);
+    args::Flag reset_at_sccs_flag(parser, "reset_at_sccs", "Optimization that resets de.sim. obligations at every SCC change.", {"reset_opt"});
 
     try {
         parser.ParseCLI(argc, argv);
@@ -44,6 +46,8 @@ Options ParseArgs(int argc, char** argv) {
 
     Options options;
     options.input_file = input_file_flag.Get();
+    if (reset_at_sccs_flag)
+        options.reset_at_sccs = reset_at_sccs_flag.Get();
     return options;
 }
 
@@ -58,7 +62,7 @@ tollk::automaton::parity_label_t MinParity(const tollk::automaton::ParityAutomat
 
 // Executes the process for one automaton.
 tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA dpa, const Options& options) {
-    const tollk::EquivalenceRelation<tollk::automaton::state_t> desim_relation = tollk::DelayedSimulationEquivalence(dpa);
+    const tollk::EquivalenceRelation<tollk::automaton::state_t> desim_relation = tollk::DelayedSimulationEquivalence(dpa, options.reset_at_sccs);
     tollk::automaton::NPA npa = tollk::automaton::NPA::FromDPA(dpa);
     const std::function<tollk::automaton::parity_label_t(const tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass&)> f = std::bind(&MinParity<tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass>, npa, std::placeholders::_1);
     tollk::automaton::QuotientAutomaton(&npa, desim_relation, f);
@@ -84,6 +88,7 @@ int main(int argc, char** argv) {
 
     const tollk::automaton::DPA in_dpa = tollk::automaton::DPA::FromNPA(NPAFromHoa(options.input_file));
     const tollk::automaton::DPA out_dpa = PerformConstruction(in_dpa, options);
+
     nbautils::print_hoa(tollk::automaton::ToNbautils(out_dpa), std::cout);
     std::cout << std::flush;
 

@@ -1,6 +1,7 @@
 
 #include "delayed_simulation_automaton.h"
 #include "gamma.h"
+#include "../automaton/util.h"
 
 namespace tollk {
 
@@ -15,7 +16,7 @@ int operator<(const DelayedSimulationAutomatonState& lhs, const DelayedSimulatio
     return lhs.obligation < rhs.obligation;
 }
 
-DPA DelayedSimulationAutomaton(const DPA& automaton, const Desim_Gamma& gamma, boost::bimap<state_t, DelayedSimulationAutomatonState>* state_indices) {
+DPA DelayedSimulationAutomaton(const DPA& automaton, const Desim_Gamma& gamma, bool resetAtSCCs, boost::bimap<state_t, DelayedSimulationAutomatonState>* state_indices) {
     // Collect all priorities that occur in "automaton".
     std::set<parity_label_t> automaton_priorities;
     for (state_t q : automaton.States())
@@ -36,6 +37,9 @@ DPA DelayedSimulationAutomaton(const DPA& automaton, const Desim_Gamma& gamma, b
         }
     }
 
+    // Compute SCCs of the automaton. This is only required if the "resetAtSCCs" optimization is activated.
+    SCCCollection automaton_sccs = StronglyConnectedComponents(automaton);
+
     // Create the product automaton. Initial state does not matter.
     DPA product(automaton.atomicPropositions);
     for (const auto& kv_pair : state_indices_.left)
@@ -51,6 +55,14 @@ DPA DelayedSimulationAutomaton(const DPA& automaton, const Desim_Gamma& gamma, b
                 succ_state.p = automaton.Succ(p, s);
                 succ_state.q = automaton.Succ(q, s);
                 succ_state.obligation = gamma(automaton.GetLabel(p), automaton.GetLabel(q), state.obligation);
+
+                // If "resetAtSCCs" optimization is used: whenever either component moves to a new SCC, all obligations
+                // are reset.
+                if (resetAtSCCs)
+                    if (automaton_sccs.scc_indices[state.p] != automaton_sccs.scc_indices[succ_state.p]
+                        || automaton_sccs.scc_indices[state.q] != automaton_sccs.scc_indices[succ_state.q])
+                        succ_state.obligation = gamma(automaton.GetLabel(p), automaton.GetLabel(q), std::nullopt);
+
                 product.SetSucc(state_indices_.right.at(state), s, state_indices_.right.at(succ_state));
                 for (parity_label_t priority : automaton_priorities) {
                     state.obligation = priority;
