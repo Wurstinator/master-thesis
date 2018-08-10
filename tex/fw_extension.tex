@@ -1,6 +1,65 @@
 
 \subsection{Alternative computation}
-As we have seen, using delayed simulation to build a quotient automaton delivers good results in the number of removed states. The downside is the computation time which is much higher than that of our approach in section \ref{}. The question that we therefore deal with in the upcoming part is whether we can change the definition of $\equiv_\text{de}$ to something that cannot be used for APAs anymore but is more efficient to compute.
+As we have seen, using delayed simulation to build a quotient automaton delivers good results in the number of removed states. The downside is the computation time which is much higher than that of our approach in section \ref{}. In the following we will consider alternations to the delayed simulation algorithm with the goal to increase the number of removed states or to reduce computation time.
+
+\subsubsection{Resetting obligations}
+In the delayed simulation automaton, \enquote{obligations} correspond to good priorities that the first state has accumulated or bad priorities that the second state has accumulated and the need for the respective other state to compensate in some way. The intuitive idea behind this concept is that an obligation that cannot be compensated, stands for an infinite run in which the acceptance differs between the two states that are being compared. The issue with the original definition is that obligations carry over, even if they can only be caused finitely often. This is demonstrated in figure \ref{fig:fwe:reset_oblig_example}; the two states could be merged into one, but they are not $\equiv_\text{de}$-equivalent as can be seen in the delayed simulation automaton in figure \ref{fig:fwe:reset_oblig_example_dea}.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state,initial]   (0)                {0};
+  \node[state]           (1) [right=of 0] {1};
+  \path[->] (0) edge node [above] {a} (1)
+            (1) edge [loop right] node {a} (1);
+\end{tikzpicture}
+\caption{Example automaton in which the states could be merged but delayed simulation separates them.}
+\label{fig:fwe:reset_oblig_example}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]   (0)                {$0,1,0$};
+  \node[state]   (1) [right=of 0] {$1,1,0$};
+  \path[->] (0) edge node [above] {a} (1)
+            (1) edge [loop right] node {a} (1);
+\end{tikzpicture}
+\caption{Example automaton in which the states could be merged but delayed simulation separates them.}
+\label{fig:fwe:reset_oblig_example_dea}
+\end{figure}
+
+As a solution to this, we propose a simple change to the definition of the automaton which resets the obligations every time, either state moves to a new SCC. 
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. We define the \emph{delayed simulation automaton with SCC resets} $\mathcal{A}_\text{deR}(p, q) = (Q_\text{de}, \Sigma, (p, q, \gamma(c(p), c(q), \checkmark), \delta_\text{deR}, F_\text{de})$ with $\delta_\text{deR}((p, q, k), a) = \delta_\text{de}((p, q, \text{reset}(p, q, k, a)), a)$. Except for the addition of the reset function, this automaton is the same as $\mathcal{A}_\text{de}$.
+	
+	If $p$ and $\delta(p, a)$ lie in the same SCC, as well as $q$ and $\delta(q, a)$, then we simply set $\text{reset}(p, q, k, a) =~k$. Otherwise, i.e. if any state changes its SCC, the reset comes into play and we set $\text{reset}(p, q, k, a) =~\checkmark$.
+	
+	We write $p \leq_\text{deR} q$ if $L(\mathcal{A}_\text{deR}(p, q)) = \Sigma^\omega$. If also $q \leq_\text{deR} p$ holds, we write $p \equiv_\text{deR} q$.
+\end{defn}
+
+As the definition is so similar to the original delayed simulation, most results that we have already proven translate directly to the new relation.
+
+\begin{theorem}
+	$\equiv_\text{deR}$ is a congruence relation.
+\end{theorem}
+%TODO
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA with two states $p$ and $q$. If $p \leq_\text{de} q$, then $p \leq_\text{deR} q$.
+\end{lem}
+%TODO
+
+The real difference comes up when looking at theorem \ref{thm:fritzwilke:combine_priorities}. If we consider again the example given in figure \ref{fig:fwe:reset_oblig_example}, if that theorem would hold the same for $\equiv_\text{deR}$ we could assign both states the priority $0$, which would then make the automaton accept every word. This is obviously not the same as the original automaton, so this statement deserves some additional inspection.
+%TODO
+
+
+
+
+
+
+
 
 
 \begin{lem}
@@ -55,25 +114,113 @@ This intermediate result now easily gives us the following relation of delayed s
 	As $c$ is normalized, there is a word $u$ such that $q'$ reaches again $q'$ via $u$ and sees only priorities greater or equal to $c(q')$. That means that on the path that is obtained from $q'$ by reading $u^\omega$, the priority $c(p')$ is never visited. By corollary \ref{cor:fwe:equivde_alternative}, that means $p \not\equiv_\text{de} q$.
 \end{proof}
 
-%TODO
-If we can assure that our priority function is normalized, Moore-equivalence is a nice approximation of delayed simulation-equivalence. In fact, we can normalize the priority function and compute $\sim_M$-classes in $\mathcal{O}(n^2 k + n \log n)$ \cite{}.
+\subsubsection{Computing a normalized priority function}
+If we can assure that our priority function is normalized, Moore-equivalence is a nice approximation of delayed simulation-equivalence. In fact, \cite{} provides an algorithm that is suited for these needs. We will briefly reiterate that algorithm here, as the original paper puts the focus on a different aspect.
 
-An interesting question is whether there is an algorithm which uses this knowledge to compute exactly $\equiv_\text{de}$ with the improved quadratic time. Figure \ref{fig:fwe:deM_diff} shows an example automaton with normalized $c$ in which there are states (in trivial SCCs) that are delayed simulation-equivalent but not Moore-equivalent. In fact, all states are $\equiv_\text{de}$-equivalent but none are $\sim_M$-equivalent.
+\begin{algorithm}
+  \caption{Normalizing the priority function of a DPA.}
+  \label{alg:fwe:normalize_c}
+  \begin{algorithmic}[1]
+    \Function{Normalize}{$\mathcal{A}$}
+  	  \Ensure{$c_N$ is normalized in $\mathcal{A}$.}
+      \State $c_D \gets $\Call{MakeDense}{$\mathcal{A}$}
+      \State $c_N : Q \rightarrow \mathbb{N}, q \mapsto c_D(q)$
+      \State $Q' \gets Q$
+      \State $k \gets 0$
+      \While{$Q' \neq \emptyset$}
+        \State $Q' \gets Q' \setminus c_D^{-1}(k)$
+        \State $S \gets $ Trivial SCCs of $\mathcal{A}\upharpoonright_{Q'}$
+        \For{$q \in S$}
+          \State $c_N(q) \gets k$
+        \EndFor
+        \State $Q' \gets Q' \setminus S$
+        \State $k \gets k+1$
+      \EndWhile
+      \State \Return{$c_N$}
+    \EndFunction
+    \Statex
+    \Function{MakeDense}{$\mathcal{A}$}
+      \Ensure{For all $0 \leq i \leq \max c(Q)$, $c_D^{-1}(i) \neq \emptyset$}.
+      \State $c_D : Q \rightarrow \mathbb{N}, q \mapsto c(q)$
+      \For{$i \gets 0 \textrm{ to } \max c(Q)$}
+        \While{$c_D^{-1}(i+1) = \emptyset$}
+          \For{$q \in Q : c_D(q) > i$}
+            \State $c_D(q) \gets c_D(q) - 2$
+          \EndFor
+        \EndWhile
+      \EndFor
+      \State \Return{$c_D$}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{lem}
+	The \textsc{Normalize} function in algorithm \ref{alg:fwe:normalize_c} returns a normalized priority function for $\mathcal{A}$ that does not change the language.
+\end{lem}
+
+\begin{proof}
+	The fact that the language does not change after running \textsc{Normalize} is part of the original paper.
+	
+	To see that $c_N$ is normalized, assume towards a contradiction that it is not. Let $c$
+\end{proof}
 
 
-\begin{figure}
-\centering
-\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,thick,initial text={}]
-\node[initial,state] (0) {$q_0$};
-\node[state] (1) [right of=0] {$q_1$};
-\node[state] (2) [right of=1] {$q_2$};
-\path (0) edge node {a} (1)
-      (1) edge node {a} (2)
-      (2) edge [loop right] node {a} (2);
-\end{tikzpicture}
-\caption{Example automaton in which $\sim_M$ and $\equiv_\text{de}$ are not the same. $c(q_0) = 0, c(q_1) = 1, c(q_2) = 0$}
-\label{fig:fwe:deM_diff}
-\end{figure}
+\begin{lem}
+	The \textsc{Normalize} function in algorithm \ref{alg:fwe:normalize_c} runs in $\mathcal{O}(nk)$, where $n$ is the number of states and $k$ is the number of priorities.
+\end{lem}
+
+
+
+\subsubsection{Alternative delayed simulation}
+
+\begin{algorithm}
+  \caption{Compute $\equiv_\text{de}$ of a DPA $\mathcal{A}$.}
+  \label{alg:fwe:equiv_de_alt}
+  \begin{algorithmic}[1]
+    \Function{DelayedSimulation}{$\mathcal{A}$}
+      \State $\mathcal{S} \gets$ compute SCCs of $\mathcal{A}$
+      \State $\mathcal{B} \gets (\emptyset, \Sigma, 0, \emptyset, \emptyset)$
+      \While{$\mathcal{S} \neq \emptyset$}
+        \State $s \in \mathcal{S}$ s.t. $s$ can reach no other SCC in $\mathcal{S}$
+        \State $\mathcal{B} \gets$ \Call{AddSCC}{$\mathcal{A}$, $\mathcal{B}$, $s$}
+        \State $\mathcal{S} \gets \mathcal{S} \setminus s$
+      \EndWhile
+      \State \Return{$c_\mathcal{B}$}
+    \EndFunction
+    \Statex
+    \Function{AddSCC}{$\mathcal{A}$, $\mathcal{B}$, $s$}
+      \State $q_0 \in s$ arbitrary
+      \State Add $s$ to $\mathcal{B}$: $\mathcal{B} \gets (Q \cup s, \Sigma, q_0, \delta_\mathcal{B} \cup \delta_\mathcal{A}\upharpoonright_{s \times \Sigma}, c_\mathcal{B} \cup c_\mathcal{A}\upharpoonright_s)$
+      \State $\sim_M \; \gets$ Moore-equivalence of $\mathcal{B}$
+      \State $\mathcal{C} \gets \bigslant{\mathcal{B}}{\sim_M}$
+      \If{$q_0$ is a trivial SCC in $\mathcal{A}$ and is not $\sim_M$-equivalent to any other states}
+        \If{There is a state $p \in \mathcal{C}$ such that $\forall a: \delta_\mathcal{B}(q_0, a) = \delta_\mathcal{B}(p, a)$}
+          \State $c_\mathcal{B}(q_0) \gets c_\mathcal{C}(p)$
+        \EndIf
+      \EndIf
+      \State \Return{$\mathcal{B}$}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{theorem}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA s.t. $c$ is normalized and $\mathcal{A}$ contains no unreachable states. Let $c' = \textsc{DelayedSimulation}(\mathcal{A})$. Then The delayed simulation-equivalence of $\mathcal{A}$ is the same as the Moore-equivalence of $(Q, \Sigma, q_0, \delta, c')$.
+\end{theorem}
+
+\begin{proof}
+	Let $s_0, \dots, s_m$ be the sequence of SCCs as they are chosen in line 5 of the algorithm and let $\mathcal{B}_0, \dots, \mathcal{B}_{m+1}$ be the sequence of automata that are set in lines 3 and 6. The computation of $\equiv_\text{de}$ and $\sim_M$ is independent of the initial state of an automaton and the state set and transition function of $\mathcal{A}$ and $\mathcal{B}_{m+1}$ are the same. It thus suffices to show that for every $0 \leq i \leq m+1$, the Moore-equivalence of $\mathcal{B}_i$ is the same as the delayed-simulation equivalence of $\mathcal{A} \upharpoonright_{Q(\mathcal{B}_i)}$.
+	
+	For $i = 0$, this is clear, as $Q(\mathcal{B}_0) = \emptyset$.
+\end{proof}
+
+
+
+
+
+
+
+
 
 
 

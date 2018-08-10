@@ -183,6 +183,7 @@ The quotient automaton itself is used \enquote{only} for state space reduction. 
 \end{proof}
 
 \begin{theorem}
+\label{thm:fritzwilke:combine_priorities}
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $p, q \in Q$ with $p \equiv_\text{de} q$ and $c(p) < c(q)$. Define $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(s) = \begin{cases} c(p) & \text{if } s = q \\ c(s) & \text{else} \end{cases}$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
 \end{theorem}
 
@@ -203,6 +204,8 @@ The quotient automaton itself is used \enquote{only} for state space reduction. 
 
 \subsection{Using delayed simulation for APAs}
 %TODO
+
+
 
 
 
