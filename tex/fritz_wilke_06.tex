@@ -154,10 +154,53 @@ We want to mention here that $\equiv_\text{de}$ is actually an equivalence relat
 
 
 \vspace{1cm}
+\subsubsection*{Alternative characterization}
+Having described several properties of $\leq_\text{de}$ and $\equiv_\text{de}$ in the previous part, we briefly want to give an alternative description in corollary \ref{cor:fwe:equivde_alternative} of what it means for two states to be de-simulation equivalent. The intention is to give a more intuitive understanding as well as provide a framework to make future proofs more comfortable.
+
+\begin{lem}
+\label{lem:fwe:preceq_alternative}
+	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \preceq_\text{de} q$ if and only if the following property holds for all $w \in \Sigma^*$: 
+	
+	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. If $c(p')$ is even and $c(p') < c(q')$, then every path from $q'$ eventually reaches a priority at most $c(p')$. On the other hand, if $c(q')$ is odd and $c(q') < c(p')$, then every path from $p'$ eventually reaches a priority at most $c(q')$.
+\end{lem}
+
+\begin{proof}
+	\textbf{If} We show the contrapositive. Let $p \not\preceq_\text{de} q$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$ with the run of $\mathcal{A}_\text{de}(p, q)$ being $(p_0, q_0, k_0) (p_1, q_1, k_1) \dots$. By Lemma \ref{lem:fritzwilke:n0_exists}, there is a position $n$ such that $k_i$ does not change anymore for $i \geq n$. We define $w = \alpha[0, n_0]$ and $\beta = \alpha[n_0+1, ]$ (so $\alpha = w\beta$) and claim that $w$ is a valid counterexample for the right-side property.
+	
+	The first case is: $c(p') < c(q')$ and $c(p')$ is even. \\
+	Reading $\beta$ from $q'$ induces a run that never visits a priority less or equal to $c(p')$: Let $u \sqsubset \beta$ and assume that $c(\delta^*(q', u)) \leq c(p')$. By choice of $n$, we know that $k_{|wu|} = k_{|wu|+1} \neq \checkmark$. This can only happen if the \enquote{else} case of $\gamma$ is hit, meaning that $k_{|wu|+1} = \min \{ k_{|wu|}, c(\delta^*(p', u)), c(\delta^*(q', u)) \}$. Specifically, $c(\delta^*(q', u)) \geq k_{|wu|}$. By choice of $w$ we also have $k_{|wu|} = k_{|w|} \leq c(p')$, so $c(\delta^*(q', u)) = c(p')$.
+	
+	This, however, means that $c(\delta^*(q', u))$ is even, $c(\delta^*(q', u)) \leq_\checkmark k_{|wu|}$, and $c(\delta^*(q', u)) \preceq_p c(p')$ and thus $k_{|wu|+1} = \checkmark$ which is a contradiction.
+	
+	The second case, $c(q') < c(p')$ and $c(q')$ is odd, works almost identically so we omit the proof here.
+	
+	\paragraph{Only If} Again we show the contrapositive: There is a $w \in \Sigma^*$ such that the right-side property is violated. Let this $w$ now be chosen among all these words such that $\min \{ c(p'), c(q') \}$ becomes minimal. We now show that $p \not\preceq_\text{de} q$. 
+	
+	The first case is: $c(p') < c(q')$ and $c(p')$ is even. \\
+	Let $\beta \in \Sigma^\omega$ be a word such that the respective run from $q'$ only sees priorities strictly greater than $c(p')$. Let $(p_0, q_0, k_0) (p_1, q_1, k_1) \dots$ be the run of $\mathcal{A}_\text{de}(p, q)$ on $\alpha = w \beta$. We claim that $k_i \neq \checkmark$ for all $i > |w|$. If that is true, then the run is rejecting and $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$.
+	
+	Assume towards a contradiction that $k_i$ does become $\checkmark$ again at some point. Let $j \geq |w|$ be the minimal position with $k_{j+1} = \checkmark$. Then by definition of $\gamma$, $c(q_{j+1}) \leq k_j$ is even or $c(p_{j+1}) \leq k_j$ is odd. In the former case, we would have a contradiction to the choice of $\beta$. In the latter case, we would have a contradiction to the choice of $w$ as a word with minimal priority at $c(p')$: since $c(p')$ is even, $c(p_{j+1}) < c(p')$ and from $q_{j+1}$ there is a run that never reaches a smaller priority. Hence, $w \cdot \beta[0, j-|w|]$ would have been our choice for $w$ instead.
+	
+	The second case, $c(q') < c(p')$ and $c(q')$ is odd, works almost identically so we omit the proof here.
+\end{proof}
+
+While this characterization of $\preceq_\text{de}$ seems arbitrary, it allows for an easier definition of $\equiv_\text{de}$ as is seen in the following statement.
+
+\begin{cor}
+\label{cor:fwe:equivde_alternative}
+	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \equiv_\text{de} q$ if and only if the following holds for all words $w \in \Sigma^*$:
+	
+	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. Every run that starts in $p'$ or $q'$ eventually sees a priority less than or equal to $\min \{c(p'), c(q')\}$.
+\end{cor}
+
+
+
+\vspace{1cm}
 \subsubsection*{Correctness of the quotient}
 The quotient automaton itself is used \enquote{only} for state space reduction. The main point of delayed simulation is that the priorities of equivalent states can be made equivalent. 
 
 \begin{theorem}
+\label{thm:fritzwilke:congrel_prio_implies_quotient_equal}
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. Let $\sim \subseteq Q \times Q$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Then $L(\mathcal{A}) = L(\bigslant{\mathcal{A}}{\sim})$.
 \end{theorem}
 
@@ -192,7 +235,7 @@ The quotient automaton itself is used \enquote{only} for state space reduction. 
 	
 	For this to be true, $\rho$ must visit $q$ infinitely often and $c'(q)$ must be the lowest priority that occurs infinitely often; otherwise, the run would have the same acceptance in both automata. Thus, there is a finite word $w \in \Sigma^*$ such that from $q$, $\mathcal{A}$ reaches again $q$ via $w$ and inbetween only priorities greater than $c'(q)$ are seen.
 	
-	Now consider the word $w^\omega$ and the run $\pi_q$ of $\mathcal{A}$ on said word starting in $q$. With the argument above, we know that the minimal priority occuring in $c(\pi)$ is greater than $c'(q)$. If we take the run $\pi_p$ on $w^\omega$ starting at $p$ though, we find that this run sees priority $c(p) = c'(q)$ at the very beginning. This contradicts Lemma \ref{lem:fritzwilke:equiv_states_same_minpri}, as $p \equiv_\text{de} q$. Thus, the described $\alpha$ cannot exist. 
+	Now consider the word $w^\omega$ and the run $\pi_q$ of $\mathcal{A}$ on said word starting in $q$. With the argument above, we know that the minimal priority occuring in $c(\pi_q)$ is greater than $c'(q)$. If we take the run $\pi_p$ on $w^\omega$ starting at $p$ though, we find that this run sees priority $c(p) = c'(q)$ at the very beginning. This contradicts Lemma \ref{lem:fritzwilke:equiv_states_same_minpri}, as $p \equiv_\text{de} q$. Thus, the described $\alpha$ cannot exist. 
 	
 	If $c(p)$ is an odd number, a very similar argumentation can be applied with the roles of $\mathcal{A}$ and $\mathcal{A}'$ reversed. We omit this repetition.
 \end{proof}

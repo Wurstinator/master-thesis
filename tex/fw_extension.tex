@@ -39,71 +39,74 @@ As a solution to this, we propose a simple change to the definition of the autom
 	We write $p \leq_\text{deR} q$ if $L(\mathcal{A}_\text{deR}(p, q)) = \Sigma^\omega$. If also $q \leq_\text{deR} p$ holds, we write $p \equiv_\text{deR} q$.
 \end{defn}
 
-As the definition is so similar to the original delayed simulation, most results that we have already proven translate directly to the new relation.
+As the definition is so similar to the original delayed simulation, most results that we have already proven translate directly to the new relation. 
 
 \begin{theorem}
 	$\equiv_\text{deR}$ is a congruence relation.
 \end{theorem}
-%TODO
 
 \begin{lem}
 	Let $\mathcal{A}$ be a DPA with two states $p$ and $q$. If $p \leq_\text{de} q$, then $p \leq_\text{deR} q$.
 \end{lem}
-%TODO
+
+\begin{proof}
+	Consider the two simulation automata $\mathcal{A}_\text{de}(p, q)$ and $\mathcal{A}_\text{deR}(p, q)$ and let $\alpha \in \Sigma^\omega$ be an arbitrary word. Let $(p_i, q_i, k_i)_{i \in \mathbb{N}}$ and $(p_i, q_i, l_i)_{i \in \mathbb{N}}$ be the runs of these two automata on $\alpha$. We claim that $k_i \leq_\checkmark l_i$ at every position. Then, since $L(\mathcal{A}_\text{de}(p, q)) = \Sigma^\omega$, both runs must be accepting.
+	
+	We know $k_0 = l_0$ by definition. For the sake of induction, we look at position $i+1$. If neither $p_i$ nor $q_i$ change their SCC in this step, the statement follows from lemma \ref{lem:fritzwilke:gamma_mono}. Otherwise, $l_{i+1} = \checkmark \geq_\checkmark k_{i+1}$.
+\end{proof}
 
 The real difference comes up when looking at theorem \ref{thm:fritzwilke:combine_priorities}. If we consider again the example given in figure \ref{fig:fwe:reset_oblig_example}, if that theorem would hold the same for $\equiv_\text{deR}$ we could assign both states the priority $0$, which would then make the automaton accept every word. This is obviously not the same as the original automaton, so this statement deserves some additional inspection.
-%TODO
-
-
-
-
-
-
-
-
 
 \begin{lem}
-\label{lem:fwe:preceq_alternative}
-	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \preceq_\text{de} q$ if and only if the following property holds for all $w \in \Sigma^*$: 
-	
-	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. If $c(p')$ is even and $c(p') < c(q')$, then every path from $q'$ eventually reaches a priority at most $c(p')$. On the other hand, if $c(q')$ is odd and $c(q') < c(p')$, then every path from $p'$ eventually reaches a priority at most $c(q')$.
+\label{lem:fwe:deR_equiv_states_same_minpri}
+	Let $\mathcal{A}$ be a DPA and let $\pi$ and $\rho$ be runs of $\mathcal{A}$ on the same word but starting at different states.
+	Let $\text{off}_\pi$ and $\text{off}_\rho$ be the positions after which $\pi$ and $\rho$ respectively only stay in one single SCC. Let $\text{off} = \max \{\text{off}_\pi, \text{off}_\rho\}$. If $\pi(0) \equiv_\text{deR} \rho(0)$, then $\min \text{Occ}(c(\pi[\text{off},\omega])) = \min \text{Occ}(c(\rho[\text{off},\omega]))$.
 \end{lem}
 
 \begin{proof}
-	\textbf{If} We show the contrapositive. Let $p \not\preceq_\text{de} q$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$ with the run of $\mathcal{A}_\text{de}(p, q)$ being $(p_0, q_0, k_0) (p_1, q_1, k_1) \dots$. By Lemma \ref{lem:fritzwilke:n0_exists}, there is a position $n$ such that $k_i$ does not change anymore for $i \geq n$. We define $w = \alpha[0, n_0]$ and $\beta = \alpha[n_0+1, ]$ (so $\alpha = w\beta$) and claim that $w$ is a valid counterexample for the right-side property.
+	Let $k = \min \text{Occ}(c(\pi[\text{off},\omega]))$ and $l = \min \text{Occ}(c(\rho[\text{off},\omega]))$. Assume towards a contradiction without loss of generality that $k < l$. Let $\alpha$ be the word that is read by the two runs.
 	
-	The first case is: $c(p') < c(q')$ and $c(p')$ is even. \\
-	Reading $\beta$ from $q'$ induces a run that never visits a priority less or equal to $c(p')$: Let $u \sqsubset \beta$ and assume that $c(\delta^*(q', u)) \leq c(p')$. By choice of $n$, we know that $k_{|wu|} = k_{|wu|+1} \neq \checkmark$. This can only happen if the \enquote{else} case of $\gamma$ is hit, meaning that $k_{|wu|+1} = \min \{ k_{|wu|}, c(\delta^*(p', u)), c(\delta^*(q', u)) \}$. Specifically, $c(\delta^*(q', u)) \geq k_{|wu|}$. By choice of $w$ we also have $k_{|wu|} = k_{|w|} \leq c(p')$, so $c(\delta^*(q', u)) = c(p')$.
+	If $k$ is even, let $\sigma$ be the run of $\mathcal{A}_\text{de}(\pi(0), \rho(0))$ on $\alpha$. Let $n \geq \text{off}$ be a position at which $c(\pi(n)) = k$. We claim that for all $i \geq n$, the third component of $\sigma(i)$ is $k$.
 	
-	This, however, means that $c(\delta^*(q', u))$ is even, $c(\delta^*(q', u)) \leq_\checkmark k_{|wu|}$, and $c(\delta^*(q', u)) \preceq_p c(p')$ and thus $k_{|wu|+1} = \checkmark$ which is a contradiction.
+	At $\sigma(n)$, this must be true because $k < l \leq c(\rho(n))$ and thus $c(\rho(n)) \not\preceq_p c(\pi(n))$. At all positions after $n$, it can never occur that $c(\rho(i)) \leq k$ or that $c(\pi(i))$ is odd and smaller than $k$. There is also never a change in SCCs anymore, by choice of $n$. The rest follows from the definition of $\gamma$.
 	
-	The second case, $c(q') < c(p')$ and $c(q')$ is odd, works almost identically so we omit the proof here.
-	
-	\paragraph{Only If} Again we show the contrapositive: There is a $w \in \Sigma^*$ such that the right-side property is violated. Let this $w$ now be chosen among all these words such that $\min \{ c(p'), c(q') \}$ becomes minimal. We now show that $p \not\preceq_\text{de} q$. 
-	
-	The first case is: $c(p') < c(q')$ and $c(p')$ is even. \\
-	Let $\beta \in \Sigma^\omega$ be a word such that the respective run from $q'$ only sees priorities strictly greater than $c(p')$. Let $(p_0, q_0, k_0) (p_1, q_1, k_1) \dots$ be the run of $\mathcal{A}_\text{de}(p, q)$ on $\alpha = w \beta$. We claim that $k_i \neq \checkmark$ for all $i > |w|$. If that is true, then the run is rejecting and $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$.
-	
-	Assume towards a contradiction that $k_i$ does become $\checkmark$ again at some point. Let $j \geq |w|$ be the minimal position with $k_{j+1} = \checkmark$. Then by definition of $\gamma$, $c(q_{j+1}) \leq k_j$ is even or $c(p_{j+1}) \leq k_j$ is odd. In the former case, we would have a contradiction to the choice of $\beta$. In the latter case, we would have a contradiction to the choice of $w$ as a word with minimal priority at $c(p')$: since $c(p')$ is even, $c(p_{j+1}) < c(p')$ and from $q_{j+1}$ there is a run that never reaches a smaller priority. Hence, $w \cdot \beta[0, j-|w|]$ would have been our choice for $w$ instead.
-	
-	The second case, $c(q') < c(p')$ and $c(q')$ is odd, works almost identically so we omit the proof here.
+	If $k$ is odd, we can argue similarly on the run of $\mathcal{A}_\text{de}(\rho(0), \pi(0))$. As soon as $c(\pi)$ reaches its minimum, the third component of the run will never change again.
 \end{proof}
 
-While this characterization of $\preceq_\text{de}$ seems arbitrary, it allows for an easier definition of $\equiv_\text{de}$ as is seen in the following statement.
+\begin{theorem} %TODO
+\label{thm:fwe:deR_combine_priorities}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $p, q \in Q$ with $p \equiv_\text{de} q$ and $c(p) < c(q)$. Define $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(s) = \begin{cases} c(p) & \text{if } s = q \\ c(s) & \text{else} \end{cases}$. If $\{p\}$ is not a trivial SCC in $\mathcal{A}$, then $L(\mathcal{A}) = L(\mathcal{A}')$.
+\end{theorem}
+
+\begin{proof}
+	First, consider the case that $c(p)$ is an even number. The parity of each state is at least as good in $\mathcal{A}'$ as it is in $\mathcal{A}$, so $L(\mathcal{A}) \subseteq L(\mathcal{A}')$. For the other direction, assume there is a $\alpha \in L(\mathcal{A}') \setminus L(\mathcal{A})$, so the respective run $\rho \in Q^\omega$ is accepting in $\mathcal{A}'$ but not in $\mathcal{A}$. 
+	
+	For this to be true, $\rho$ must visit $q$ infinitely often and $c'(q)$ must be the lowest priority that occurs infinitely often; otherwise, the run would have the same acceptance in both automata. Thus, there is a finite word $w \in \Sigma^*$ such that from $q$, $\mathcal{A}$ reaches again $q$ via $w$ and inbetween only priorities greater than $c'(q)$ are seen.
+	
+	Now consider the word $w^\omega$ and the run $\pi_q$ of $\mathcal{A}$ on said word starting in $q$. With the argument above, we know that the minimal priority occuring in $c(\pi)$ is greater than $c'(q)$. If we take the run $\pi_p$ on $w^\omega$ starting at $p$ though, we find that this run sees priority $c(p) = c'(q)$ at the very beginning. This contradicts Lemma \ref{lem:fritzwilke:equiv_states_same_minpri}, as $p \equiv_\text{de} q$. Thus, the described $\alpha$ cannot exist. 
+	
+	If $c(p)$ is an odd number, a very similar argumentation can be applied with the roles of $\mathcal{A}$ and $\mathcal{A}'$ reversed. We omit this repetition.
+\end{proof}
 
 \begin{cor}
-\label{cor:fwe:equivde_alternative}
-	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \equiv_\text{de} q$ if and only if the following holds for all words $w \in \Sigma^*$:
-	
-	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. Every run that starts in $p'$ or $q'$ eventually sees a priority less than or equal to $\min \{c(p'), c(q')\}$.
+	For a DPA $\mathcal{A}$, the quotient automaton $\bigslant{\mathcal{A}}{\equiv_\text{de}}$ is a DPA that recognizes the same language.
 \end{cor}
 
-This intermediate result now easily gives us the following relation of delayed simulation and Moore-equivalence.
+
+
+
+
+\subsubsection{Delayed simulation with normalized priorities}
+Additional properties of delayed simulation can be found if we look at only a subclass of all DPAs. In particular, we use automata with normalized priorities here. 
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, q_0, c)$ be a parity automaton. We call $c$ \emph{normalized} if for every state $q \in Q$ that does not lie in a trivial SCC and all priorities $k \leq c(q)$, there is a path from $q$ to $q$ such that the lowest priority visited is $k$.
 \end{defn}
 
+\cite{} provides an algorithm that produces a normalized priority function when adapted slightly; see \ref{} for details. 
+
+
+%TODO
 \begin{lem}
 	Let $\mathcal{A}$ be a DPA with a normalized priority function and let $p$ and $q$ be states that do not lie in trivial SCCs. Then $p \equiv_\text{de} q$ if and only if $p \sim_M q$.
 \end{lem}
@@ -113,6 +116,108 @@ This intermediate result now easily gives us the following relation of delayed s
 	
 	As $c$ is normalized, there is a word $u$ such that $q'$ reaches again $q'$ via $u$ and sees only priorities greater or equal to $c(q')$. That means that on the path that is obtained from $q'$ by reading $u^\omega$, the priority $c(p')$ is never visited. By corollary \ref{cor:fwe:equivde_alternative}, that means $p \not\equiv_\text{de} q$.
 \end{proof}
+
+
+\subsubsection{Iterated Moore equivalence}
+Our next approach differs greatly in its computation from the delayed simulation (or rather, it is not related at all to the delayed simulation automaton anymore) but will yield a result that is at least as good. As before, we focus on normalized DPAs here.
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ and $\mathcal{B} = (P, \Sigma, p_0, \varepsilon, d)$ be DPAs and $S \subseteq Q$. We say that \emph{$\mathcal{A}$ prepends $S$ to $\mathcal{B}$} if 
+	\begin{itemize}
+		\item $q_0 \in S$
+		\item $Q = P \,\dot{\cup}\, S$
+		\item $\delta\upharpoonright_{P \times \Sigma} = \varepsilon$
+		\item $c\upharpoonright_P = d$
+	\end{itemize}
+	
+	We assume $S$ to be an SCC in these use cases, i.e. from every $s \in S$, every other $s' \in S$ is reachable in $\mathcal{A}$.
+\end{defn} 
+
+\begin{defn}
+\label{def:fwe:itmoore}
+	Let $\mathcal{A}$ be a DPA with SCCs $\mathcal{S} \subseteq 2^Q$. Let $\preceq \in \mathcal{S} \times \mathcal{S}$ be a total preorder such that $S \preceq S'$ implies that $S'$ is reachable from $S$. For the $i$-th element w.r.t. this order, we write $S_i$, i.e. $S_0 \prec S_1 \prec \dots \prec S_{|\mathcal{S}|}$.
+	
+	We inductively define a sequence of automata $(\mathcal{B}_i)_{0 \leq i \leq |\mathcal{S}|}$ and a sequence of relations $(R_i)_{0 \leq i \leq |\mathcal{S}|}$. 
+	
+	\begin{itemize}
+		\item The base case is $\mathcal{B}_{|\mathcal{S}|} = \mathcal{A}\upharpoonright_{S_{|\mathcal{S}|}}$ and $R_{|\mathcal{S}|} = \{ (p, q) \in S_{|\mathcal{S}|} \mid \forall w: c(\delta^*(p, w)) = c(\delta^*(q, w))\}$, which is the Moore equivalence of $\mathcal{A}\upharpoonright_{S_{|\mathcal{S}|}}$.
+		\item $\mathcal{B}_i$ prepends $S_i$ to $\mathcal{B}_{i+1}$. We write $Q_i = \bigcup_{j=i}^{|\mathcal{S}|}$ for the state set of $\mathcal{B}_i$.
+		\item Let $R'_{i+1}$ be the transitive closure of $R_{i+1} \cup \{ (p, q) \in Q_i \mid c(p) = c(q)\}$. Let $R''_{i+1}$ be the congruence refinement of $R'_{i+1}$ in $\mathcal{B}_i$. If $S_i$ is a non-trivial SCC, then $R_i := R''_{i+1}$. Otherwise $S_i = \{q\}$. If $q$ is not $R''_{i+1}$-equivalent to any other state but there is a $p \in Q_{i+1}$ such that for all $a \in \Sigma$, $(\delta(q, a), \delta(p, a)) \in R''_{i+1}$, then $R_i$ is the transitive closure of $R''_{i+1} \cup \{(q, p), (p, q)\}$. Otherwise, $R_i := R''_{i+1}$.
+	\end{itemize} 
+	
+	We call $R_0$ the \emph{iterated Moore equivalence}, $\sim_{IM}$, of $\mathcal{A}$.
+\end{defn}
+
+At first, this definition might seem complex and confusing when written down formally like this. %TODO example
+More casually explained, we continuously add the SCCs of $\mathcal{A}$ starting from the \enquote{back}. In addition to computing the usual Moore equivalence on our automaton, we also take trivial SCCs into special consideration; as their priority cannot appear infinitely often on any run, its value is effectively arbitrary. We can therefore perform extra steps to more liberally merge it with other states.
+
+In the upcoming statements we prove the important properties of iterated Moore equivalence.
+
+\begin{lem}
+\label{lem:fwe:cong_refin_subset}
+	Let $\mathcal{A}$ be a DPA and let $\sim$ and $\sim'$ be equivalence relations. Let $\approx$ and $\approx'$ be the congruence refinements of $\sim$ and $\sim'$. If $\sim \,\subseteq\, \sim'$, then also $\approx \,\subseteq\, \approx'$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+\begin{lem}
+	Let variables be defined as in definition \ref{def:fwe:itmoore} and let $\sim_M$ be the Moore equivalence of $\mathcal{A}$. Every $R_i$ is a congruence relation on $Q_i$ and if $(p, q) \in R_i$, then $p \sim_M q$.
+\end{lem}
+
+\begin{proof}
+	In addition to the statement of the lemma, we also show that every $R'_i$ is an equivalence relation on $Q_i$, $(p, q) \in R'_i$ implies $c(p) = c(q)$, every $R''_i$ is a congruence relation on $Q_i$, and $(p, q) \in R''_i$ also implies $p \sim_M q$.
+	
+	By definition, $R_{|\mathcal{S}|}$ is the Moore equivalence of $\mathcal{B}_{|\mathcal{S}|}$ and therefore it is a congruence that implies Moore equivalence.
+	\vspace*{8pt}
+	
+	Now for the general case, assume that $R_{i+1}$ was shown to be a congruence that implies Moore equivalence. $R'_{i+1}$ is reflexive, as $R_{i+1}$ is, and $c(q) = c(q)$ for every state $q \in S_i$. For the same reason, $R'_{i+1}$ is symmetric and it is transitive by definition. Therefore, $R'_{i+1}$ is an equivalence relation. The implication of priority equality by $R'_{i+1}$ is clear from the definition.
+	\vspace*{8pt}
+	
+	$R''_{i+1}$ is a congruence relation by definition. We know that $(p, q) \in R'_{i+1}$ implies $c(p) = c(q)$, so from lemma \ref{lem:fwe:cong_refin_subset}, the implication of Moore equivalence by $R''_{i+1}$ follows.
+	\vspace*{8pt}
+	
+	If $R_i = R''_{i+1}$, the properties translate of course, so the only case left to consider is that $R_i$ is transitive closure of $R''_{i+1} \cup \{(q_0, p_0), (p_0, q_0)\}$. The fact that $R_i$ is an equivalence relation should be clear again, as well as the fact that $(p, q) \in R_i$ implies $p \sim q$, since $\sim_M \subseteq R''_{i+1} \subseteq R_i$.
+	
+	Let $(p, q) \in R_i$ and $p' = \delta(p, a), q' = \delta(q, a)$ for some $a \in \Sigma$. We have to show that also $(p', q') \in R_i$. Since $q_0$ was not equivalent to any other states in $R''_{i+1}$, we either have $(p, q) \in R''_{i+1}$, or $q = q_0$ and $(p, p_0) \in R''_{i+1}$ (or the symmetric case). If $(p, q) \in R''_{i+1}$, then also $(p', q') \in R''_{i+1} \subseteq R_i$, as $q_0$ is not reachable from any state in $Q_{i+1}$ by choice of $\preceq$. 
+	
+	Otherwise $q = q_0$ and $(p, p_0) \in R''_{i+1}$. Then $(\delta(p, a), \delta(p_0, a)) \in R''_{i+1}$ because it is a congruence relation and $(\delta(q_0, a), \delta(p_0, a)) \in R''_{i+1}$ by choice of $p_0$. Therefore, $(q', p') \in R''_{i+1} \subseteq R_i$.
+\end{proof}
+
+\begin{lem}
+	Let variables be defined as in definition \ref{def:fwe:itmoore}. For every $i$, $L(\bigslant{\mathcal{B}_i}{R_i}) = L(\mathcal{B})_i$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+As $\mathcal{B}_0 = \mathcal{A}$ is a valid choice for the last automaton in the sequence, the corollary follows directly.
+
+\begin{cor}
+	For a DPA $\mathcal{A}$, $\bigslant{\mathcal{A}}{\sim_{IM}}$ is also a DPA with $L(\bigslant{\mathcal{A}}{\sim_{IM}}) = L(\mathcal{A})$.
+\end{cor}
+
+\vspace{0.6cm}
+Another nice and maybe surprising result is the relation of iterated Moore equivalence to delayed simulation.
+
+\begin{theorem}
+	Let $\mathcal{A}$ be a DPA. Then $\equiv_\text{de} \,\subseteq\, \sim_{IM}$.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+
+
+\newpage
+
+
+
+
+
 
 \subsubsection{Computing a normalized priority function}
 If we can assure that our priority function is normalized, Moore-equivalence is a nice approximation of delayed simulation-equivalence. In fact, \cite{} provides an algorithm that is suited for these needs. We will briefly reiterate that algorithm here, as the original paper puts the focus on a different aspect.
