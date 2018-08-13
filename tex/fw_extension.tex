@@ -88,11 +88,6 @@ The real difference comes up when looking at theorem \ref{thm:fritzwilke:combine
 	If $c(p)$ is an odd number, a very similar argumentation can be applied with the roles of $\mathcal{A}$ and $\mathcal{A}'$ reversed. We omit this repetition.
 \end{proof}
 
-\begin{cor}
-	For a DPA $\mathcal{A}$, the quotient automaton $\bigslant{\mathcal{A}}{\equiv_\text{de}}$ is a DPA that recognizes the same language.
-\end{cor}
-
-
 
 
 
@@ -103,7 +98,44 @@ Additional properties of delayed simulation can be found if we look at only a su
 	Let $\mathcal{A} = (Q, \Sigma, \delta, q_0, c)$ be a parity automaton. We call $c$ \emph{normalized} if for every state $q \in Q$ that does not lie in a trivial SCC and all priorities $k \leq c(q)$, there is a path from $q$ to $q$ such that the lowest priority visited is $k$.
 \end{defn}
 
-\cite{} provides an algorithm that produces a normalized priority function when adapted slightly; see \ref{} for details. 
+Algorithm \ref{alg:fwe:normalize_c} shows how an equivalent normalized priority function can be computed in $\mathcal{O}(nk)$, where $n$ and $k$ are the number of states and priorities respectively. The algorithm is a slight adaption of that presented in \cite{}, which is why we will not go into further details here and just refer to the original source.
+
+\begin{algorithm}
+  \caption{Normalizing the priority function of a DPA.}
+  \label{alg:fwe:normalize_c}
+  \begin{algorithmic}[1]
+    \Function{Normalize}{$\mathcal{A}$}
+  	  \Ensure{$c_N$ is normalized in $\mathcal{A}$.}
+      \State $c_D \gets $\Call{MakeDense}{$\mathcal{A}$}
+      \State $c_N : Q \rightarrow \mathbb{N}, q \mapsto c_D(q)$
+      \State $Q' \gets Q$
+      \State $k \gets 0$
+      \While{$Q' \neq \emptyset$}
+        \State $Q' \gets Q' \setminus c_D^{-1}(k)$
+        \State $S \gets $ Trivial SCCs of $\mathcal{A}\upharpoonright_{Q'}$
+        \For{$q \in S$}
+          \State $c_N(q) \gets k$
+        \EndFor
+        \State $Q' \gets Q' \setminus S$
+        \State $k \gets k+1$
+      \EndWhile
+      \State \Return{$c_N$}
+    \EndFunction
+    \Statex
+    \Function{MakeDense}{$\mathcal{A}$}
+      \Ensure{For all $0 \leq i \leq \max c(Q)$, $c_D^{-1}(i) \neq \emptyset$}.
+      \State $c_D : Q \rightarrow \mathbb{N}, q \mapsto c(q)$
+      \For{$i \gets 0 \textrm{ to } \max c(Q)$}
+        \While{$c_D^{-1}(i+1) = \emptyset$}
+          \For{$q \in Q : c_D(q) > i$}
+            \State $c_D(q) \gets c_D(q) - 2$
+          \EndFor
+        \EndWhile
+      \EndFor
+      \State \Return{$c_D$}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
 
 %TODO
@@ -209,126 +241,6 @@ Another nice and maybe surprising result is the relation of iterated Moore equiv
 \begin{proof}
 	%TODO
 \end{proof}
-
-
-
-\newpage
-
-
-
-
-
-
-\subsubsection{Computing a normalized priority function}
-If we can assure that our priority function is normalized, Moore-equivalence is a nice approximation of delayed simulation-equivalence. In fact, \cite{} provides an algorithm that is suited for these needs. We will briefly reiterate that algorithm here, as the original paper puts the focus on a different aspect.
-
-\begin{algorithm}
-  \caption{Normalizing the priority function of a DPA.}
-  \label{alg:fwe:normalize_c}
-  \begin{algorithmic}[1]
-    \Function{Normalize}{$\mathcal{A}$}
-  	  \Ensure{$c_N$ is normalized in $\mathcal{A}$.}
-      \State $c_D \gets $\Call{MakeDense}{$\mathcal{A}$}
-      \State $c_N : Q \rightarrow \mathbb{N}, q \mapsto c_D(q)$
-      \State $Q' \gets Q$
-      \State $k \gets 0$
-      \While{$Q' \neq \emptyset$}
-        \State $Q' \gets Q' \setminus c_D^{-1}(k)$
-        \State $S \gets $ Trivial SCCs of $\mathcal{A}\upharpoonright_{Q'}$
-        \For{$q \in S$}
-          \State $c_N(q) \gets k$
-        \EndFor
-        \State $Q' \gets Q' \setminus S$
-        \State $k \gets k+1$
-      \EndWhile
-      \State \Return{$c_N$}
-    \EndFunction
-    \Statex
-    \Function{MakeDense}{$\mathcal{A}$}
-      \Ensure{For all $0 \leq i \leq \max c(Q)$, $c_D^{-1}(i) \neq \emptyset$}.
-      \State $c_D : Q \rightarrow \mathbb{N}, q \mapsto c(q)$
-      \For{$i \gets 0 \textrm{ to } \max c(Q)$}
-        \While{$c_D^{-1}(i+1) = \emptyset$}
-          \For{$q \in Q : c_D(q) > i$}
-            \State $c_D(q) \gets c_D(q) - 2$
-          \EndFor
-        \EndWhile
-      \EndFor
-      \State \Return{$c_D$}
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{lem}
-	The \textsc{Normalize} function in algorithm \ref{alg:fwe:normalize_c} returns a normalized priority function for $\mathcal{A}$ that does not change the language.
-\end{lem}
-
-\begin{proof}
-	The fact that the language does not change after running \textsc{Normalize} is part of the original paper.
-	
-	To see that $c_N$ is normalized, assume towards a contradiction that it is not. Let $c$
-\end{proof}
-
-
-\begin{lem}
-	The \textsc{Normalize} function in algorithm \ref{alg:fwe:normalize_c} runs in $\mathcal{O}(nk)$, where $n$ is the number of states and $k$ is the number of priorities.
-\end{lem}
-
-
-
-\subsubsection{Alternative delayed simulation}
-
-\begin{algorithm}
-  \caption{Compute $\equiv_\text{de}$ of a DPA $\mathcal{A}$.}
-  \label{alg:fwe:equiv_de_alt}
-  \begin{algorithmic}[1]
-    \Function{DelayedSimulation}{$\mathcal{A}$}
-      \State $\mathcal{S} \gets$ compute SCCs of $\mathcal{A}$
-      \State $\mathcal{B} \gets (\emptyset, \Sigma, 0, \emptyset, \emptyset)$
-      \While{$\mathcal{S} \neq \emptyset$}
-        \State $s \in \mathcal{S}$ s.t. $s$ can reach no other SCC in $\mathcal{S}$
-        \State $\mathcal{B} \gets$ \Call{AddSCC}{$\mathcal{A}$, $\mathcal{B}$, $s$}
-        \State $\mathcal{S} \gets \mathcal{S} \setminus s$
-      \EndWhile
-      \State \Return{$c_\mathcal{B}$}
-    \EndFunction
-    \Statex
-    \Function{AddSCC}{$\mathcal{A}$, $\mathcal{B}$, $s$}
-      \State $q_0 \in s$ arbitrary
-      \State Add $s$ to $\mathcal{B}$: $\mathcal{B} \gets (Q \cup s, \Sigma, q_0, \delta_\mathcal{B} \cup \delta_\mathcal{A}\upharpoonright_{s \times \Sigma}, c_\mathcal{B} \cup c_\mathcal{A}\upharpoonright_s)$
-      \State $\sim_M \; \gets$ Moore-equivalence of $\mathcal{B}$
-      \State $\mathcal{C} \gets \bigslant{\mathcal{B}}{\sim_M}$
-      \If{$q_0$ is a trivial SCC in $\mathcal{A}$ and is not $\sim_M$-equivalent to any other states}
-        \If{There is a state $p \in \mathcal{C}$ such that $\forall a: \delta_\mathcal{B}(q_0, a) = \delta_\mathcal{B}(p, a)$}
-          \State $c_\mathcal{B}(q_0) \gets c_\mathcal{C}(p)$
-        \EndIf
-      \EndIf
-      \State \Return{$\mathcal{B}$}
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-
-\begin{theorem}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA s.t. $c$ is normalized and $\mathcal{A}$ contains no unreachable states. Let $c' = \textsc{DelayedSimulation}(\mathcal{A})$. Then The delayed simulation-equivalence of $\mathcal{A}$ is the same as the Moore-equivalence of $(Q, \Sigma, q_0, \delta, c')$.
-\end{theorem}
-
-\begin{proof}
-	Let $s_0, \dots, s_m$ be the sequence of SCCs as they are chosen in line 5 of the algorithm and let $\mathcal{B}_0, \dots, \mathcal{B}_{m+1}$ be the sequence of automata that are set in lines 3 and 6. The computation of $\equiv_\text{de}$ and $\sim_M$ is independent of the initial state of an automaton and the state set and transition function of $\mathcal{A}$ and $\mathcal{B}_{m+1}$ are the same. It thus suffices to show that for every $0 \leq i \leq m+1$, the Moore-equivalence of $\mathcal{B}_i$ is the same as the delayed-simulation equivalence of $\mathcal{A} \upharpoonright_{Q(\mathcal{B}_i)}$.
-	
-	For $i = 0$, this is clear, as $Q(\mathcal{B}_0) = \emptyset$.
-\end{proof}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
