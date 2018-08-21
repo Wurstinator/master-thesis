@@ -90,6 +90,18 @@ SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& a
     return result;
 }
 
+
+template<typename RT1, typename RT2, typename SCCRangeT>
+bool SCCIsTrivial(const TransitionAutomaton<RT1, RT2>& automaton, SCCRangeT&& scc) {
+    if (scc.size() > 1)
+        return false;
+    const state_t q = *scc.begin();
+    for (state_t succ : automaton.Successors(q))
+        if (q == succ)
+            return false;
+    return true;
+}
+
 // Performs a simple DFS and collects the visited states. Returns true if a goal state was found.
 template<typename RT1, typename RT2, typename Rng>
 bool _CanReach_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_t q, Rng&& goal, std::unordered_set<state_t>* visited) {
@@ -278,6 +290,31 @@ void QuotientAutomaton(AutomatonT* automaton, const EquivalenceRelation<state_t>
         automaton->MergeStates(c);
         automaton->SetLabel(*c.begin(), merge_labels(c));
     }
+}
+
+
+
+// Helper function for "TopologicalSorting".
+template <typename RT1, typename RT2>
+void _TopologicalSorting_Visit(const TransitionAutomaton<RT1, RT2>& automaton, std::vector<state_t>* sorting, std::unordered_set<state_t>* to_visit, const state_t& node) {
+    if (to_visit->find(node) == to_visit->end())
+        return;
+    for (const state_t& succ : automaton.Successors(node))
+        if (succ != node)
+            _TopologicalSorting_Visit(automaton, sorting, to_visit, succ);
+    to_visit->erase(node);
+    sorting->push_back(node);
+}
+
+
+template <typename RT1, typename RT2>
+std::vector<state_t> TopologicalSorting(const TransitionAutomaton<RT1, RT2>& automaton) {
+    std::vector<state_t> sorting;
+    std::unordered_set<state_t> to_visit(automaton.States().begin(), automaton.States().end());
+    while (!to_visit.empty())
+        _TopologicalSorting_Visit(automaton, &sorting, &to_visit, *to_visit.begin());
+    std::reverse(sorting.begin(), sorting.end());
+    return sorting;
 }
 
 

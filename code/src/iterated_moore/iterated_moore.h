@@ -1,8 +1,12 @@
-//
-// Created by wurst on 21.08.18.
-//
 
-#ifndef HELLO_WORLD_ITERATED_MOORE_H
-#define HELLO_WORLD_ITERATED_MOORE_H
+#pragma once
 
-#endif //HELLO_WORLD_ITERATED_MOORE_H
+#include "../automaton/util.h"
+
+namespace tollk {
+
+// Computes the "iterated Moore equivalence" of a given DPA and returns it as a relation. No states are merged
+// at this point.
+EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const automaton::DPA& automaton);
+
+}

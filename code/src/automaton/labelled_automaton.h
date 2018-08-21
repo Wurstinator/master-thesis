@@ -2,6 +2,7 @@
 #pragma once
 
 #include <map>
+#include <unordered_set>
 #include "finite_automaton.h"
 #include "../equivalence_relation.h"
 
@@ -29,6 +30,9 @@ class LabelledAutomaton : public virtual FiniteAutomaton {
 
     // Returns an equivalence relation object that considers two states equivalent iff they have the same label.
     EquivalenceRelation<state_t> LabelEquivalence() const;
+
+    // Returns a list of all labels that exist in the automaton.
+    std::unordered_set<Label> AllLabels() const;
 
  protected:
     std::unordered_map<state_t, Label> labels;
@@ -68,6 +72,15 @@ EquivalenceRelation<state_t> LabelledAutomaton<LabelT>::LabelEquivalence() const
             result.AddConnection(q, iter->second);
         }
     }
+    return result;
+}
+
+
+template<typename LabelT>
+std::unordered_set<typename LabelledAutomaton<LabelT>::Label> LabelledAutomaton<LabelT>::AllLabels() const {
+    std::unordered_set<typename LabelledAutomaton<LabelT>::Label> result;
+    for (const std::pair<const state_t, Label>& kv_pair : this->labels)
+        result.insert(kv_pair.second);
     return result;
 }
 

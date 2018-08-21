@@ -2,7 +2,7 @@
 #include "schewe_automaton.h"
 
 #include "almost_equivalent_states.h"
-#include "topological_ordering.h"
+#include "../automaton/util.h"
 #include <set>
 #include <unordered_set>
 #include <map>

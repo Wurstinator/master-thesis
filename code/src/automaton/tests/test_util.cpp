@@ -152,6 +152,22 @@ TEST_CASE("Test StronglyConnectedComponents #2.") {
     CHECK(scc3.find(3) != scc3.end());
 }
 
+TEST_CASE("Test SCCIsTrivial.") {
+    DeterministicAutomaton automaton(0);
+    automaton.AddState(0);
+    automaton.AddState(1);
+    automaton.AddState(2);
+    automaton.AddState(3);
+    automaton.SetSucc(0, 0, 1);
+    automaton.SetSucc(1, 0, 2);
+    automaton.SetSucc(2, 0, 1);
+    automaton.SetSucc(3, 0, 3);
+
+    CHECK(SCCIsTrivial(automaton, std::vector<state_t> {0}));
+    CHECK(!SCCIsTrivial(automaton, std::vector<state_t> {1, 2}));
+    CHECK(!SCCIsTrivial(automaton, std::vector<state_t> {3}));
+}
+
 TEST_CASE("Test MergeStates.") {
     const NondeterministicAutomaton automaton = MergeStates(TestAutomaton1(), std::set<state_t>{2, 3});
     CHECK(automaton.States().size() == 3);
@@ -379,4 +395,9 @@ TEST_CASE("Test QuotientAutomaton.") {
     CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::vector<state_t>{2}));
     CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::vector<state_t>{1}));
     CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::vector<state_t>{0}));
+}
+
+
+TEST_CASE("Test TopologicalSorting.") {
+    //TODO
 }

@@ -33,6 +33,10 @@ struct SCCCollection {
 template<typename RT1, typename RT2>
 SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& automaton);
 
+// Checks whether a given SCC is trivial in an automaton.
+template<typename RT1, typename RT2, typename SCCRangeT>
+bool SCCIsTrivial(const TransitionAutomaton<RT1, RT2>& automaton, SCCRangeT&& scc);
+
 // Checks whether from some state, one can reach a given collection of states. "allow_trivial" considers the fact that
 // "from" is an element of "goal". If "allow_trivial" is true, CanReach returns true. Otherwise there has to be an
 // explicit path from "from" to itself. O(n) operation.
@@ -53,7 +57,7 @@ std::unordered_set<state_t> NotReachingStates(const TransitionAutomaton<RT1, RT2
 
 // Merges a set of states into one. Outgoing transitions are unified and incoming transitions are redirected to the
 // merged state. If the initial state is in the set, the merged state will be the initial state again.
-// The ID of the new merged state will be *std::begin(range). O(|A|) operation.
+// The ID of the new merged state will be *std::begin(merge_states). O(|A|) operation.
 template<typename RT1, typename RT2, typename SetT>
 NondeterministicAutomaton MergeStates(const TransitionAutomaton<RT1, RT2>& automaton, const SetT& merge_states);
 
@@ -93,6 +97,14 @@ void QuotientAutomaton(NondeterministicAutomaton* automaton, const EquivalenceRe
 // function is called and the label of the merged state is set to the return value.
 template <typename AutomatonT>
 void QuotientAutomaton(AutomatonT* automaton, const EquivalenceRelation<state_t>& relation, const std::function<parity_label_t(const EquivalenceRelation<state_t>::EquivClass&)>& merge_labels);
+
+// Given a directed graph, computes a topological sorting on the states.
+// The algorithm assumes that the graph is acyclic. Behaviour for cyclic graphs is undefined.
+// based on DFS algorithm from [Tarjan1976].
+// The first node is one from which no other node is reachable.
+template<typename RT1, typename RT2>
+std::vector<state_t>
+TopologicalSorting(const TransitionAutomaton<RT1, RT2>& automaton);
 
 
 }  // namespace automaton

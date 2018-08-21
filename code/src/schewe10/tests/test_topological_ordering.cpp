@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
 #include "swa.hh"
-#include "../topological_ordering.h"
+#include "../../automaton/util.h"
 #include "../../automaton/nondeterministic_automaton.h"
 
 

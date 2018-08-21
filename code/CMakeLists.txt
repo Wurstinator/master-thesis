@@ -78,7 +78,8 @@ set(AUTOMATON_FILES
         src/automaton/parity.h
         src/automaton/nbautils_bridge.h
         src/automaton/nbautils_bridge.impl.h
-        src/automaton/is_specialization_base_of.h)
+        src/automaton/is_specialization_base_of.h
+        )
 
 set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${NBAUTILS_INCLUDE} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
 
@@ -99,8 +100,6 @@ target_include_directories(test_automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/i
 # Schewe10
 
 set(SCHEWE10_HDRS
-        src/schewe10/topological_ordering.h
-        src/schewe10/topological_ordering.impl.h
         src/schewe10/almost_equivalent_states.h
         src/schewe10/almost_equivalent_states.impl.h
         src/schewe10/schewe_automaton.h
@@ -163,7 +162,7 @@ set(FRITZWILKE06_TESTS
         src/fritzwilke06/tests/test_delayed_simulation_automaton.cpp
         src/fritzwilke06/tests/test_main.cpp)
 
-add_executable(test_fritzwilke06 ${FRITZWILKE06_INCLUDE} ${FRITZWILKE06_TESTS})
+add_executable(test_fritzwilke06 ${FRITZWILKE06_INCLUDE} ${FRITZWILKE06_TESTS} ${Catch2_HDRS})
 target_include_directories(test_fritzwilke06 PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
 
 
@@ -190,7 +189,8 @@ add_dependencies(iterated_moore_statistics cpphoafparser)
 target_include_directories(iterated_moore_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
 
 set(ITERATEDMOORE_TESTS
+        src/iterated_moore/tests/test_main.cpp
         src/iterated_moore/tests/test_iterated_moore.cpp)
 
-add_executable(test_iterated_moore ${ITERATEDMOORE_INCLUDE} ${ITERATEDMOORE_TESTS})
+add_executable(test_iterated_moore ${ITERATEDMOORE_INCLUDE} ${ITERATEDMOORE_TESTS} ${Catch2_HDRS})
 target_include_directories(test_iterated_moore PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
