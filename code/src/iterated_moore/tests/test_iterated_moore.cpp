@@ -22,5 +22,14 @@ TEST_CASE("Test IteratedMooreRelation.") {
     dpa.SetLabel(2, 1);
 
     const EquivalenceRelation<state_t> im_relation = IteratedMooreRelation(dpa);
-    //TODO
+
+    CHECK(im_relation.IsEquiv(0, 0));
+    CHECK(im_relation.IsEquiv(0, 1));
+    CHECK(im_relation.IsEquiv(0, 2));
+    CHECK(im_relation.IsEquiv(1, 0));
+    CHECK(im_relation.IsEquiv(1, 1));
+    CHECK(im_relation.IsEquiv(1, 2));
+    CHECK(im_relation.IsEquiv(2, 0));
+    CHECK(im_relation.IsEquiv(2, 1));
+    CHECK(im_relation.IsEquiv(2, 2));
 }
