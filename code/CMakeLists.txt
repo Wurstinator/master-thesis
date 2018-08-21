@@ -165,3 +165,32 @@ set(FRITZWILKE06_TESTS
 
 add_executable(test_fritzwilke06 ${FRITZWILKE06_INCLUDE} ${FRITZWILKE06_TESTS})
 target_include_directories(test_fritzwilke06 PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
+
+
+
+# IteratedMoore
+
+set(ITERATEDMOORE_HDRS
+        src/iterated_moore/iterated_moore.h
+        src/iterated_moore/iterated_moore.cpp)
+
+set(ITERATEDMOORE_INCLUDE ${ITERATEDMOORE_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
+
+add_library(iterated_moore ${ITERATEDMOORE_INCLUDE})
+target_include_directories(iterated_moore PRIVATE range-v3/include)
+
+add_executable(iterated_moore_main src/iterated_moore/iterated_moore_main.cpp ${ITERATEDMOORE_INCLUDE})
+target_link_libraries(iterated_moore_main nbautils-lib automaton)
+add_dependencies(iterated_moore_main cpphoafparser)
+target_include_directories(iterated_moore_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+
+add_executable(iterated_moore_statistics src/iterated_moore/iterated_moore_statistics.cpp ${ITERATEDMOORE_INCLUDE})
+target_link_libraries(iterated_moore_statistics nbautils-lib automaton)
+add_dependencies(iterated_moore_statistics cpphoafparser)
+target_include_directories(iterated_moore_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+
+set(ITERATEDMOORE_TESTS
+        src/iterated_moore/tests/test_iterated_moore.cpp)
+
+add_executable(test_iterated_moore ${ITERATEDMOORE_INCLUDE} ${ITERATEDMOORE_TESTS})
+target_include_directories(test_iterated_moore PRIVATE ${CATCH2_DIR}/single_include range-v3/include)

@@ -167,17 +167,21 @@ Our next approach differs greatly in its computation from the delayed simulation
 
 \begin{defn}
 \label{def:fwe:itmoore}
-	Let $\mathcal{A}$ be a DPA with SCCs $\mathcal{S} \subseteq 2^Q$. Let $\preceq \in \mathcal{S} \times \mathcal{S}$ be a total preorder such that $S \preceq S'$ implies that $S'$ is reachable from $S$. For the $i$-th element w.r.t. this order, we write $S_i$, i.e. $S_0 \prec S_1 \prec \dots \prec S_{|\mathcal{S}|}$.
+	Let $\mathcal{A}$ be a DPA with SCCs $\mathcal{S} \subseteq 2^Q$ without unreachable states. Let $\preceq \subseteq \mathcal{S} \times \mathcal{S}$ be a total preorder such that $S \preceq S'$ implies that $S'$ is reachable from $S$. For the $i$-th element w.r.t. this order, we write $S_i$, i.e. $S_0 \prec S_1 \prec \dots \prec S_{|\mathcal{S}|}$. 
 	
-	We inductively define a sequence of automata $(\mathcal{B}_i)_{0 \leq i \leq |\mathcal{S}|}$ and a sequence of relations $(R_i)_{0 \leq i \leq |\mathcal{S}|}$. 
+	For every state $q$ in $\mathcal{A}$, let $\text{SCC}(q)$ be the SCC of $q$ and let $\text{SCCi}(q)$ be the index of that SCC, i.e. $\text{SCC}(q) = S_{\text{SCCi}(q)}$. Let $\preceq_Q \subseteq Q \times Q$ be a total preorder on the states such that $q \preceq_Q q'$ implies $\text{SCCi}(q) \leq \text{SCCi}(q')$.
+	
+	We inductively define a sequence of automata $(\mathcal{B}_i)_{0 \leq i \leq |\mathcal{S}|}$. For every $i$, we write $\mathcal{B}_i = (Q_i, \Sigma, q_0^i, \delta_i, c_i)$.
 	
 	\begin{itemize}
-		\item The base case is $\mathcal{B}_{|\mathcal{S}|} = \mathcal{A}\upharpoonright_{S_{|\mathcal{S}|}}$ and $R_{|\mathcal{S}|} = \{ (p, q) \in S_{|\mathcal{S}|} \mid \forall w: c(\delta^*(p, w)) = c(\delta^*(q, w))\}$, which is the Moore equivalence of $\mathcal{A}\upharpoonright_{S_{|\mathcal{S}|}}$.
-		\item $\mathcal{B}_i$ prepends $S_i$ to $\mathcal{B}_{i+1}$. We write $Q_i = \bigcup_{j=i}^{|\mathcal{S}|}$ for the state set of $\mathcal{B}_i$.
-		\item Let $R'_{i+1}$ be the transitive closure of $R_{i+1} \cup \{ (p, q) \in Q_i \mid c(p) = c(q)\}$. Let $R''_{i+1}$ be the congruence refinement of $R'_{i+1}$ in $\mathcal{B}_i$. If $S_i$ is a non-trivial SCC, then $R_i := R''_{i+1}$. Otherwise $S_i = \{q\}$. If $q$ is not $R''_{i+1}$-equivalent to any other state but there is a $p \in Q_{i+1}$ such that for all $a \in \Sigma$, $(\delta(q, a), \delta(p, a)) \in R''_{i+1}$, then $R_i$ is the transitive closure of $R''_{i+1} \cup \{(q, p), (p, q)\}$. Otherwise, $R_i := R''_{i+1}$.
+		\item The state sets are defined as $Q_i = \bigcup_{j=i}^{|\mathcal{S}|} S_j$.
+		\item The base case is $\mathcal{B}_{|\mathcal{S}|} = \mathcal{A}\upharpoonright_{S_{|\mathcal{S}|}}$.
+		\item Given that $\mathcal{B}_{i+1}$ is defined, let $\mathcal{B}'_i = (Q_i, \Sigma, q_0^{\prime i}, \delta'_i, c'_i)$ be a DPA that prepends $S_i$ to $\mathcal{B}_{i+1}$ such that $\delta \upharpoonright_{Q_i \times \Sigma} = \delta'_i$ and $c \upharpoonright_{S_i} = c'_i \upharpoonright_{S_i}$. If $i = 0$, we require $q_0^{\prime i} = q_0$.
+		\item Let $q_0^i = q_0^{\prime i}$ and $\delta_i = \delta'_i$.
+		\item Let $M'_i$ be the Moore equivalence on $\mathcal{B}'_i$. If $S_i = \{q\}$ is a trivial SCC, $q$ is not $M'_i$-equivalent to any other state, and there is a $p \in Q_{i+1}$ such that for all $a \in \Sigma$ $(\delta'_i(q, a), \delta'_i(p, a)) \in M'_i$, then let $p_0$ be $\preceq_Q$-maximal among those $p$ and let $c_i(r) = \begin{cases} c_{i+1}(p_0) & \text{if } r = q \\ c_{i+1}(r) & \text{else} \end{cases}$. If any of the three conditions is false, simply set $c_i = c'_i$.
 	\end{itemize} 
 	
-	We call $R_0$ the \emph{iterated Moore equivalence}, $\sim_{IM}$, of $\mathcal{A}$.
+	Let $M_i$ be the Moore equivalence on $\mathcal{B}_i$. We define $\sim_{IM} \,:= M_0$ and call this the \emph{iterated Moore equivalence} of $\mathcal{A}$.
 \end{defn}
 
 At first, this definition might seem complex and confusing when written down formally like this. %TODO example
@@ -186,50 +190,42 @@ More casually explained, we continuously add the SCCs of $\mathcal{A}$ starting 
 In the upcoming statements we prove the important properties of iterated Moore equivalence.
 
 \begin{lem}
-\label{lem:fwe:cong_refin_subset}
-	Let $\mathcal{A}$ be a DPA and let $\sim$ and $\sim'$ be equivalence relations. Let $\approx$ and $\approx'$ be the congruence refinements of $\sim$ and $\sim'$. If $\sim \,\subseteq\, \sim'$, then also $\approx \,\subseteq\, \approx'$.
+\label{lem:fwe:itm_mset_stays_same}
+	Let variables be as in definition \ref{def:fwe:itmoore}. For all $i$ and all $p, q \in Q_{i+1}$, $(p, q) \in M'_i$ iff $(p, q) \in M_{i+1}$. For all $i$ and all $p, q \in Q_{i+1}$, $(p, q) \in M_i$ iff $(p, q) \in M'_i$.
 \end{lem}
 
 \begin{proof}
 	%TODO
 \end{proof}
 
-\begin{lem}
-	Let variables be defined as in definition \ref{def:fwe:itmoore} and let $\sim_M$ be the Moore equivalence of $\mathcal{A}$. Every $R_i$ is a congruence relation on $Q_i$ and if $(p, q) \in R_i$, then $p \sim_M q$.
-\end{lem}
+\begin{theorem}
+	Let variables be defined as in definition \ref{def:fwe:itmoore} and let $\sim_M$ be the Moore equivalence of $\mathcal{A}$. Then $\sim_M \,\subseteq\, \sim_{IM}$.
+\end{theorem}
 
 \begin{proof}
-	In addition to the statement of the lemma, we also show that every $R'_i$ is an equivalence relation on $Q_i$, $(p, q) \in R'_i$ implies $c(p) = c(q)$, every $R''_i$ is a congruence relation on $Q_i$, and $(p, q) \in R''_i$ also implies $p \sim_M q$.
+	Let $p, q$ be two states with $p \sim_M q$ but $p \not\sim_{IM} q$ such that $\max \{\text{SCCi}(p), \text{SCCi}(q)\}$ is maximal among all possible pairs; if there are multiple pairs with the highest value, choose a pair which has maximal $\min \{\text{SCCi}(p), \text{SCCi}(q)\}$ as well.
 	
-	By definition, $R_{|\mathcal{S}|}$ is the Moore equivalence of $\mathcal{B}_{|\mathcal{S}|}$ and therefore it is a congruence that implies Moore equivalence.
-	\vspace*{8pt}
+	Without loss of generality we can assume that $c_0(p) \neq c_0(q)$ as we can always find such a pair with the definition of Moore equivalence. Since $c(p) = c(q)$, at least one of the two states must have a different priority in $c_0$ compared to $c$. By symmetry, assume that state is $q$. $\{q\}$ must be a trivial SCC in $\mathcal{A}$. Let $q'$ be the $\preceq_Q$-maximal state s.t. $(\delta(q, a), \delta(q', a)) \in M'_{\text{SCCi}(q)}$ for all $a \in \Sigma$, that is the state whose priority was copied to $q$.
 	
-	Now for the general case, assume that $R_{i+1}$ was shown to be a congruence that implies Moore equivalence. $R'_{i+1}$ is reflexive, as $R_{i+1}$ is, and $c(q) = c(q)$ for every state $q \in S_i$. For the same reason, $R'_{i+1}$ is symmetric and it is transitive by definition. Therefore, $R'_{i+1}$ is an equivalence relation. The implication of priority equality by $R'_{i+1}$ is clear from the definition.
-	\vspace*{8pt}
+	We can make the assumption that $\text{SCCi}(q) > \text{SCCi}(p)$: if $c(p) \neq c_0(\text{SCCi}(p))$, then $\{p\}$ is a trivial SCC and the choice of the states is symmetric. Otherwise, if we would have $\text{SCCi}(p) > \text{SCCi}(q)$ and $c(p) = c_0(\text{SCCi}(p))$, then $(p, q) \in M_{\text{SCCi}(q)} \subseteq\, \sim_{IM}$. 
 	
-	$R''_{i+1}$ is a congruence relation by definition. We know that $(p, q) \in R'_{i+1}$ implies $c(p) = c(q)$, so from lemma \ref{lem:fwe:cong_refin_subset}, the implication of Moore equivalence by $R''_{i+1}$ follows.
-	\vspace*{8pt}
+	Consider the case that $\text{SCC}(p)$ is a non-trivial SCC, so there is a non-empty word $w$ with $\delta^*(p, w) = p$. Because of the congruence property, we know $q \sim_M p \sim_M \delta^*(p, w) \sim_M \delta^*(q, w)$. As $\{q\}$ is a trivial SCC, $\text{SCCi}(\delta^*(q, w)) > \text{SCCi}(q)$. That means that every state that is $\sim_M$-equivalent to $\delta^*(q, w)$ must also be $\sim_{IM}$-equivalent to it; otherwise, the choice of $(p, q)$ as a pair with maximal value of $\text{SCCi}(q)$ would be contradicted. In particular, $q \sim_{IM} \delta(q, w) \sim_{IM} p$, which breaks our initial assumption.
+	\vspace{5pt}
 	
-	If $R_i = R''_{i+1}$, the properties translate of course, so the only case left to consider is that $R_i$ is transitive closure of $R''_{i+1} \cup \{(q_0, p_0), (p_0, q_0)\}$. The fact that $R_i$ is an equivalence relation should be clear again, as well as the fact that $(p, q) \in R_i$ implies $p \sim q$, since $\sim_M \subseteq R''_{i+1} \subseteq R_i$.
+	Finally, we look at the case that $\text{SCC}(p) = \{p\}$ is trivial. First, if $c(p) \neq c_0(p)$, then there must be a state $p'$ s.t. $(\delta(p, a), \delta(p', a)) \in M'_{\text{SCCi}(p)}$ for all $a \in \Sigma$; consider the $\preceq_Q$-maximal state that satisfies this. We can show that $p'$ must be the same as $q'$ and therefore $c_0(p) = c_0(q') = c_0(q)$, which would be a contradiction. The only possibility for this to be false is that there is an $a \in \Sigma$ such that $(\delta(p, a), \delta(p', a)) \in M'_{\text{SCCi}(p)}$ but $(\delta(p, a), \delta(q', a)) \notin M'_{\text{SCCi}(p)}$. Remember that $(\delta(q, a), \delta(q', a)) \in M'_{\text{SCCi}(p)}$ and $\delta(q, a) \sim_M \delta(p, a)$. If now $(\delta(p, a), \delta(q', a)) \notin M'_{\text{SCCi}(p)}$ would hold, then $(\delta(p, a), \delta(q, a)) \notin M'_{\text{SCCi}(p)} \subseteq M_0$, so $\delta(p, a) \not\sim_{IM} \delta(q, a)$. Since $\{q\}$ is a trivial SCC, $\text{SCCi}(q) < \text{SCCi}(\delta(p, a))$, meaning that the pair $(\delta(p, a), \delta(q, a))$ would contradict our choice of $(p, q)$.
 	
-	Let $(p, q) \in R_i$ and $p' = \delta(p, a), q' = \delta(q, a)$ for some $a \in \Sigma$. We have to show that also $(p', q') \in R_i$. Since $q_0$ was not equivalent to any other states in $R''_{i+1}$, we either have $(p, q) \in R''_{i+1}$, or $q = q_0$ and $(p, p_0) \in R''_{i+1}$ (or the symmetric case). If $(p, q) \in R''_{i+1}$, then also $(p', q') \in R''_{i+1} \subseteq R_i$, as $q_0$ is not reachable from any state in $Q_{i+1}$ by choice of $\preceq$. 
+	Second, if $c(p) = c_0(p)$, then there must be a state $p' \neq p$ s.t. $(p, p') \in M'_{\text{SCCi}(p)} \subseteq M_0$. Let that $p'$ be $\preceq_Q$-maximal. $\text{SCC}(p')$ cannot be a trivial SCC: note that $q \sim_{IM} q'$ and $p \sim_{IM} p'$. Furthermore, $\delta(p, a) \sim_{IM} \delta(q, a)$ for all $a$, as to not contradict the pair $(p, q)$. Put together this means $\delta(p', a) \sim_{IM} \delta(q', a)$ for all $a$ and therefore $c_0(p) = c_0(p') = c_0(q') = c_0(q)$.
 	
-	Otherwise $q = q_0$ and $(p, p_0) \in R''_{i+1}$. Then $(\delta(p, a), \delta(p_0, a)) \in R''_{i+1}$ because it is a congruence relation and $(\delta(q_0, a), \delta(p_0, a)) \in R''_{i+1}$ by choice of $p_0$. Therefore, $(q', p') \in R''_{i+1} \subseteq R_i$.
+	Hence, $\text{SCC}(p')$ is a non-trivial SCC. There is a non-empty word $w$ s.t. $\delta^*(p', w) = p'$. %TODO
 \end{proof}
 
-\begin{lem}
-	Let variables be defined as in definition \ref{def:fwe:itmoore}. For every $i$, $L(\bigslant{\mathcal{B}_i}{R_i}) = L(\mathcal{B})_i$.
-\end{lem}
-
-\begin{proof}
-	%TODO
-\end{proof}
-
-As $\mathcal{B}_0 = \mathcal{A}$ is a valid choice for the last automaton in the sequence, the corollary follows directly.
-
-\begin{cor}
+\begin{theorem}
 	For a DPA $\mathcal{A}$, $\bigslant{\mathcal{A}}{\sim_{IM}}$ is also a DPA with $L(\bigslant{\mathcal{A}}{\sim_{IM}}) = L(\mathcal{A})$.
-\end{cor}
+\end{theorem}
+
+\begin{proof}
+	From the definition of the $\mathcal{B}_i$ sequence in the construction of $\sim_{IM}$, it becomes clear that $\mathcal{B}_0$ and $\mathcal{A}$ are isomorphic up to the priority function at some trivial SCCs. As those priorities are only seen finitely often anyway, they do not impact the acceptance of a word. 
+\end{proof}
 
 \vspace{0.6cm}
 Another nice and maybe surprising result is the relation of iterated Moore equivalence to delayed simulation.

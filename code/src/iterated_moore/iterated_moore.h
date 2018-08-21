@@ -1,0 +1,8 @@
+//
+// Created by wurst on 21.08.18.
+//
+
+#ifndef HELLO_WORLD_ITERATED_MOORE_H
+#define HELLO_WORLD_ITERATED_MOORE_H
+
+#endif //HELLO_WORLD_ITERATED_MOORE_H
