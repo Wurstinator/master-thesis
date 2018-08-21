@@ -98,6 +98,10 @@ void QuotientAutomaton(NondeterministicAutomaton* automaton, const EquivalenceRe
 template <typename AutomatonT>
 void QuotientAutomaton(AutomatonT* automaton, const EquivalenceRelation<state_t>& relation, const std::function<parity_label_t(const EquivalenceRelation<state_t>::EquivClass&)>& merge_labels);
 
+// Merges all states that are equivalent in a given relation into one. This assumes that the given relation is a
+// congruence relation. The label of the new states are an arbitrary label of one of their merged states.
+void QuotientAutomatonUnsafe(DPA* automaton, const EquivalenceRelation<state_t>& relation);
+
 // Given a directed graph, computes a topological sorting on the states.
 // The algorithm assumes that the graph is acyclic. Behaviour for cyclic graphs is undefined.
 // based on DFS algorithm from [Tarjan1976].

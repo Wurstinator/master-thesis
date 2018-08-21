@@ -84,6 +84,23 @@ TEST_CASE("Test LabelledAutomaton::LabelEquivalence.") {
     CHECK(er2.IsEquiv(2, 2));
 }
 
+TEST_CASE("Test LabelledAutomaton::AllLabels.") {
+    LabelledAutomaton<std::string> automaton;
+    automaton.AddState(0);
+    automaton.AddState(1);
+    automaton.AddState(2);
+    automaton.SetLabel(0, "foo");
+    automaton.SetLabel(1, "bar");
+    automaton.SetLabel(2, "baz");
+    automaton.RemoveState(2);
+
+    const std::unordered_set<std::string> all_labels = automaton.AllLabels();
+    CHECK(all_labels.size() == 2);
+    CHECK(all_labels.find("foo") != all_labels.end());
+    CHECK(all_labels.find("bar") != all_labels.end());
+    CHECK(all_labels.find("baz") == all_labels.end());
+}
+
 TEST_CASE("Test functionality of TransitionAutomaton class.") {
     const DeterministicAutomaton automaton1(1);
     const DeterministicAutomaton automaton2(3);
@@ -235,6 +252,26 @@ TEST_CASE("Test functionality of DeterministicAutomaton class.") {
 TEST_CASE("Test DeterministicAutomaton::FromTransitionAutomaton.") {
     CHECK(DeterministicAutomaton::FromTransitionAutomaton(TestAutomaton2()) == TestAutomaton2());
     CHECK_THROWS(DeterministicAutomaton::FromTransitionAutomaton(TestAutomaton1()));
+}
+
+
+TEST_CASE("Test DeterministicAutomaton::MergeStates.") {
+    // TODO
+    /*NondeterministicAutomaton automaton = TestAutomaton1();
+    automaton.SetInitialState(3);
+    automaton.MergeStates(std::set<state_t>{2, 3});
+    CHECK(automaton.States().size() == 3);
+    CHECK(automaton.HasState(0));
+    CHECK(automaton.HasState(1));
+    CHECK(automaton.HasState(2));
+    CHECK(!automaton.HasState(3));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::set<state_t>{0, 1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::set<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::set<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::set<state_t>{1, 2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::set<state_t>{2}));
+    CHECK(automaton.InitialState() == 2); */
 }
 
 TEST_CASE("Test functionality of NondeterministicAutomaton class.") {

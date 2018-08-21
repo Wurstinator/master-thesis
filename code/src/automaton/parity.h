@@ -29,9 +29,14 @@ class NPA : public ParityAutomaton, public NondeterministicAutomaton {
 
     static NPA FromDPA(const DPA& dpa);
 
-    void AddState(state_t q) {
+    void AddState(state_t q) override {
         NondeterministicAutomaton::AddState(q);
         this->labels[q] = Label();
+    }
+
+    void RemoveState(state_t q) override {
+        NondeterministicAutomaton::RemoveState(q);
+        this->labels.erase(this->labels.find(q));
     }
 
     NPA(NondeterministicAutomaton&& automaton) : NondeterministicAutomaton(std::move(automaton)) {}
@@ -44,9 +49,14 @@ class DPA : public ParityAutomaton, public DeterministicAutomaton {
 
     static DPA FromNPA(const NPA& npa);
 
-    void AddState(state_t q) {
+    void AddState(state_t q) override {
         DeterministicAutomaton::AddState(q);
         this->labels[q] = Label();
+    }
+
+    void RemoveState(state_t q) override {
+        DeterministicAutomaton::RemoveState(q);
+        this->labels.erase(this->labels.find(q));
     }
 
     DPA(DeterministicAutomaton&& automaton) : DeterministicAutomaton(std::move(automaton)) {}

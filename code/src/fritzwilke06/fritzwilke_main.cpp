@@ -9,8 +9,6 @@
 #include "../automaton/util.h"
 
 // Given an det. parity automaton, performs the Schewe construction and outputs the result in the HOA format.
-// Arguments:
-//   -A  : Path to the file in which the DPA is stored in HOA format.
 int main(int argc, char** argv);
 
 

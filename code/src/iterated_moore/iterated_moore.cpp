@@ -5,7 +5,9 @@ namespace tollk {
 
 using namespace automaton;
 
-EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const DPA& automaton) {
+EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const DPA& automaton, std::unordered_map<automaton::state_t, automaton::parity_label_t>* new_labels_) {
+    std::unordered_map<automaton::state_t, automaton::parity_label_t> new_labels;
+
     // Sort the SCCs.
     NondeterministicAutomaton merged_sccs = NondeterministicAutomaton::FromTransitionAutomaton(automaton);
     SCCCollection sccs;
@@ -47,13 +49,29 @@ EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const DPA& automat
         }
         if (moore_relation.GetClass(trivial_state).size() == 1)
             result_dpa.SetLabel(trivial_state, automaton.GetLabel(trivial_state));
+        else
+            new_labels[trivial_state] = result_dpa.GetLabel(trivial_state);
     }
 
+    if (new_labels_ != nullptr)
+        *new_labels_ = std::move(new_labels);
 
     // Return the Moore equivalence of the new automaton.
     EquivalenceRelation<state_t> result_relation = result_dpa.LabelEquivalence();
     RefineToCongruence(&result_relation, result_dpa);
     return result_relation;
 }
+
+
+void IteratedMooreQuotient(automaton::DPA* automaton) {
+    std::unordered_map<automaton::state_t, automaton::parity_label_t> new_labels;
+    const EquivalenceRelation<automaton::state_t> im = IteratedMooreRelation(*automaton, &new_labels);
+
+    for (const std::pair<const automaton::state_t, automaton::parity_label_t>& kv_pair : new_labels)
+        automaton->SetLabel(kv_pair.first, kv_pair.second);
+
+    automaton::QuotientAutomatonUnsafe(automaton, im);
+}
+
 
 }

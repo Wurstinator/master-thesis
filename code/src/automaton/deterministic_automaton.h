@@ -54,6 +54,13 @@ class DeterministicAutomaton :
     // transitions. O(1) operation.
     void RemoveState(state_t q) override;
 
+    // Merges a set of states into one. Incoming transitions are redirected to the merged state.
+    // If the initial state is in the set, the merged state will be the initial state again.
+    // Note that the automaton remains deterministic, so only the outgoing transitions of *std::begin(merge_states)
+    // are kept. The ID of the new merged state will be *std::begin(merge_states). O(|A|) operation.
+    template <typename SetT>
+    void MergeStates(SetT&& merge_states);
+
     // Returns true.
     bool IsDeterministic() const override;
 
@@ -96,9 +103,35 @@ inline void DeterministicAutomaton::SetSucc(state_t q, symbol_t s, state_t succ)
     this->transitions.find(q)->second[s] = succ;
 }
 
+template <typename SetT>
+inline void DeterministicAutomaton::MergeStates(SetT&& merge_states) {
+    const state_t representative = *merge_states.begin();
+
+    // Move the incoming transitions to the representative.
+    for (state_t q : States()) {
+        for (symbol_t s : Symbols()) {
+            state_t succ = Succ(q, s);
+            for (state_t merge : merge_states)
+                if (merge != representative && succ == merge)
+                    SetSucc(q, s, representative);
+        }
+    }
+
+
+    // Erase the merged states.
+    for (state_t merge : merge_states)
+        if (merge != representative)
+            RemoveState(merge);
+
+    // Change the initial state, if necessary.
+    if (merge_states.find(InitialState()) != merge_states.end())
+        SetInitialState(representative);
+}
+
 inline bool DeterministicAutomaton::IsDeterministic() const {
     return true;
 }
+
 
 
 }  // namespace automaton

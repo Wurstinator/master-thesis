@@ -60,9 +60,9 @@ class NondeterministicAutomaton
 
     // Merges a set of states into one. Outgoing transitions are unified and incoming transitions are redirected to the
     // merged state. If the initial state is in the set, the merged state will be the initial state again.
-    // The ID of the new merged state will be *std::begin(range). O(|A|) operation.
+    // The ID of the new merged state will be *std::begin(merge_states). O(|A|) operation.
     template <typename SetT>
-    void MergeStates(const SetT& merge_states);
+    void MergeStates(SetT&& merge_states);
 
  protected:
     std::unordered_map<state_t, std::unordered_map<symbol_t, std::unordered_set<state_t>>> transitions{};
@@ -102,7 +102,7 @@ NondeterministicAutomaton NondeterministicAutomaton::FromTransitionAutomaton(con
 
 
 template <typename SetT>
-void NondeterministicAutomaton::MergeStates(const SetT& merge_states) {
+void NondeterministicAutomaton::MergeStates(SetT&& merge_states) {
     const state_t representative = *merge_states.begin();
 
     // Move the incoming transitions to the representative.

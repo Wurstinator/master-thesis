@@ -22,6 +22,9 @@ class LabelledAutomaton : public virtual FiniteAutomaton {
     // Adds a state to the automaton. The caller has to make sure that it does not exist already. O(1) operation.
     void AddState(state_t q) override;
 
+    // Removes a state from the automaton, if it exists. O(n) operation.
+    void RemoveState(state_t q) override;
+
     // Returns the label of a state.
     const Label& GetLabel(state_t q) const;
 
@@ -41,7 +44,13 @@ class LabelledAutomaton : public virtual FiniteAutomaton {
 template<typename LabelT>
 void LabelledAutomaton<LabelT>::AddState(state_t q) {
     FiniteAutomaton::AddState(q);
-    labels[q] = Label();
+    this->labels[q] = Label();
+}
+
+template<typename LabelT>
+void LabelledAutomaton<LabelT>::RemoveState(state_t q) {
+    FiniteAutomaton::RemoveState(q);
+    this->labels.erase(this->labels.find(q));
 }
 
 template<typename LabelT>

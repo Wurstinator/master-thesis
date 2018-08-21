@@ -397,6 +397,10 @@ TEST_CASE("Test QuotientAutomaton.") {
     CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::vector<state_t>{0}));
 }
 
+TEST_CASE("Test QuotientAutomatonUnsafe.") {
+    //TODO
+}
+
 
 TEST_CASE("Test TopologicalSorting.") {
     //TODO
