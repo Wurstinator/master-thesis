@@ -12,6 +12,7 @@ import subprocess
 autfilt = 'autfilt'
 executable_schewe10 = '../../bin/schewe_main'
 executable_fritzwilke06 = '../../bin/fritzwilke_main'
+executable_iterated_moore = '../../bin/iterated_moore_main'
 
 def executable_exists(filename):
     if not (os.path.isfile(filename) and os.access(filename, os.X_OK)):
@@ -33,6 +34,9 @@ class Execute:
         elif self.construction == 'fritzwilke06_reset':
             cmd = executable_fritzwilke06 + ' --reset_opt'
             executable_exists(executable_fritzwilke06)
+        elif self.construction == 'iterated_moore':
+            cmd = executable_iterated_moore
+            executable_exists(executable_iterated_moore)
         cmd = cmd + ' --automaton=' + filename
         return run_process_for_time(cmd, timeout=self.timeout)
 
@@ -61,7 +65,7 @@ def parse_args():
     parser.add_argument('input', help='One or multiple file paths to HOA files.', nargs='+')
     parser.add_argument('-t', dest='timeout', help='Time limit in seconds for each analysis.', type=int)
     parser.add_argument('-o', dest='output', help='Output file. If none is specified, stdout is used.')
-    parser.add_argument('-c', dest='construction', help='Type of construction to perform on the input.', choices=['schewe10', 'fritzwilke06', 'fritzwilke06_reset'])
+    parser.add_argument('-c', dest='construction', help='Type of construction to perform on the input.', choices=['schewe10', 'fritzwilke06', 'fritzwilke06_reset', 'iterated_moore'])
     return parser.parse_args()
 
 

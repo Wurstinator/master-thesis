@@ -152,10 +152,11 @@ void EquivalenceRelation<T>::SplitClass(typename std::vector<EquivalenceRelation
     for (const T& x : this->classes[i]) {
         if (X.find(x) != X.end()) {
             new_class.insert(x);
-            this->classes[i].erase(x);
             this->relation[x] = this->classes.size();
         }
     }
+    for (const T& x : new_class)
+        this->classes[i].erase(x);
     if (!new_class.empty())
         this->classes.push_back(std::move(new_class));
 }

@@ -192,10 +192,11 @@ void RefineToCongruence(EquivalenceRelation<state_t>* relation, const Transition
         W.erase(W.begin());
 
         for (symbol_t s : automaton.Symbols()) {
+            // Collect in "X" those states which move to "A" via symbol "s".
             std::set<state_t> X;
             for (state_t q : automaton.States()) {
-                if (ranges::v3::any_of(automaton.Successors(q, s), [&A](state_t q) {
-                    return A.find(q) != A.end();
+                if (ranges::v3::any_of(automaton.Successors(q, s), [&A](state_t p) {
+                    return A.find(p) != A.end();
                 }))
                     X.insert(q);
             }

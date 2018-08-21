@@ -5,7 +5,7 @@ namespace tollk {
 
 using namespace automaton;
 
-EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const DPA& automaton, std::unordered_map<automaton::state_t, automaton::parity_label_t>* new_labels_) {
+std::unordered_map<automaton::state_t, automaton::parity_label_t> IteratedMooreLabels(const automaton::DPA& automaton) {
     std::unordered_map<automaton::state_t, automaton::parity_label_t> new_labels;
 
     // Sort the SCCs.
@@ -16,10 +16,11 @@ EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const DPA& automat
 
     // Iteratively add the SCCs.
     DPA result_dpa(automaton.atomicPropositions);
-    for (unsigned int scc_index : scc_sorting) {
+    for (unsigned int scc_rep : scc_sorting) {
+        const SCCCollection::SCC& scc = sccs.sccs[sccs.scc_indices[scc_rep]];
         // Add the SCC.
-        result_dpa.SetInitialState(*sccs.sccs[scc_index].begin());
-        for (state_t q : sccs.sccs[scc_index]) {
+        result_dpa.SetInitialState(scc_rep);
+        for (state_t q : scc) {
             result_dpa.AddState(q);
             for (symbol_t sym : automaton.Symbols())
                 result_dpa.SetSucc(q, sym, automaton.Succ(q, sym));
@@ -27,9 +28,9 @@ EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const DPA& automat
         }
 
         // Check if the new SCC is trivial. Otherwise, nothing is left to do.
-        if (!SCCIsTrivial(result_dpa, sccs.sccs[scc_index]))
+        if (!SCCIsTrivial(result_dpa, scc))
             continue;
-        const state_t trivial_state = *sccs.sccs[scc_index].begin();
+        const state_t trivial_state = scc_rep;
 
         // Compute the Moore equivalence for the current automaton.
         EquivalenceRelation<state_t> moore_relation = result_dpa.LabelEquivalence();
@@ -53,24 +54,27 @@ EquivalenceRelation<automaton::state_t> IteratedMooreRelation(const DPA& automat
             new_labels[trivial_state] = result_dpa.GetLabel(trivial_state);
     }
 
-    if (new_labels_ != nullptr)
-        *new_labels_ = std::move(new_labels);
-
-    // Return the Moore equivalence of the new automaton.
-    EquivalenceRelation<state_t> result_relation = result_dpa.LabelEquivalence();
-    RefineToCongruence(&result_relation, result_dpa);
-    return result_relation;
+    return new_labels;
 }
 
 
 void IteratedMooreQuotient(automaton::DPA* automaton) {
-    std::unordered_map<automaton::state_t, automaton::parity_label_t> new_labels;
-    const EquivalenceRelation<automaton::state_t> im = IteratedMooreRelation(*automaton, &new_labels);
+    const std::unordered_map<automaton::state_t, automaton::parity_label_t> new_labels = IteratedMooreLabels(*automaton);
 
-    for (const std::pair<const automaton::state_t, automaton::parity_label_t>& kv_pair : new_labels)
-        automaton->SetLabel(kv_pair.first, kv_pair.second);
+    //for (const std::pair<const automaton::state_t, automaton::parity_label_t>& kv_pair : new_labels)
+    //    automaton->SetLabel(kv_pair.first, kv_pair.second);
 
-    automaton::QuotientAutomatonUnsafe(automaton, im);
+    EquivalenceRelation<automaton::state_t> moore;
+    for (state_t q : automaton->States())
+        moore.AddConnection(q, q);
+    //moore.AddConnection(4, 13);
+    //moore.AddConnection(5, 7);
+    //moore.AddConnection(10, 17);
+    moore.AddConnection(11, 18);
+
+    moore = automaton->LabelEquivalence();
+    RefineToCongruence(&moore, *automaton);
+    automaton::QuotientAutomatonUnsafe(automaton, moore);
 }
 
 

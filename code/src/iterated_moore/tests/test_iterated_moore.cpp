@@ -21,17 +21,11 @@ TEST_CASE("Test IteratedMooreRelation.") {
     dpa.SetLabel(1, 0);
     dpa.SetLabel(2, 1);
 
-    const EquivalenceRelation<state_t> im_relation = IteratedMooreRelation(dpa);
+    const std::unordered_map<automaton::state_t, automaton::parity_label_t> new_labels = IteratedMooreLabels(dpa);
 
-    CHECK(im_relation.IsEquiv(0, 0));
-    CHECK(im_relation.IsEquiv(0, 1));
-    CHECK(im_relation.IsEquiv(0, 2));
-    CHECK(im_relation.IsEquiv(1, 0));
-    CHECK(im_relation.IsEquiv(1, 1));
-    CHECK(im_relation.IsEquiv(1, 2));
-    CHECK(im_relation.IsEquiv(2, 0));
-    CHECK(im_relation.IsEquiv(2, 1));
-    CHECK(im_relation.IsEquiv(2, 2));
+    CHECK(new_labels.size() == 1);
+    CHECK(new_labels.find(1) != new_labels.end());
+    CHECK(new_labels.at(1) == 1);
 }
 
 
