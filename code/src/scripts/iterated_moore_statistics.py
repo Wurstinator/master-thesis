@@ -5,10 +5,10 @@ import os
 import sys
 from run_statistics import run_experiments, run_process_for_time
 
-executable = '../../bin/fritzwilke_statistics'
+executable = '../../bin/iterated_moore_statistics'
 
 
-class ExecFritzWilke:
+class ExecIM:
     def __init__(self, timeout):
         self.timeout = timeout
 
@@ -19,11 +19,11 @@ class ExecFritzWilke:
 
 def main():
     if not (os.path.isfile(executable) and os.access(executable, os.X_OK)):
-        print('Error. Compile fritzwilke_statistics first.')
+        print('Error. Compile iterated_moore_statistics first.')
         sys.exit(1)
 
     args = parse_args()
-    run_experiments(args, ExecFritzWilke(args.timeout))
+    run_experiments(args, ExecIM(args.timeout))
 
 
 # Parses the command line arguments.

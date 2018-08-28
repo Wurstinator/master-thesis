@@ -135,7 +135,8 @@ target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src ${RANGE
 set(SCHEWE10_TESTS
         src/schewe10/tests/test_almost_equivalent_states.cpp
         src/schewe10/tests/test_topological_ordering.cpp
-        src/schewe10/tests/test_main.cpp)
+        src/schewe10/tests/test_main.cpp
+        src/schewe10/tests/test_schewe_automaton.cpp)
 
 add_executable(test_schewe10 ${SCHEWE10_TESTS} ${Catch2_HDRS} ${SCHEWE10_INCLUDE})
 target_link_libraries(test_schewe10 nbautils-lib)

@@ -22,20 +22,7 @@ void MergeSCCs(NondeterministicAutomaton* automaton, SCCCollection* sccs) {
 void Hopcroft(DPA* automaton) {
     EquivalenceRelation<state_t> labels = automaton->LabelEquivalence();
     automaton::RefineToCongruence(&labels, *automaton);
-
-    for (state_t p : automaton->States()) {
-        for (symbol_t s : automaton->Symbols()) {
-            const state_t q = automaton->Succ(p, s);
-            automaton->SetSucc(p, s, *labels.GetClass(q).begin());
-        }
-    }
-    automaton->SetInitialState(*labels.GetClass(automaton->InitialState()).begin());
-
-    for (const EquivalenceRelation<state_t>::EquivClass& clas : labels.Classes()) {
-        for (auto iter = std::next(clas.begin()); iter != clas.end(); ++iter) {
-            automaton->RemoveState(*iter);
-        }
-    }
+    QuotientAutomatonUnsafe(automaton, labels);
 }
 
 

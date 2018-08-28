@@ -109,7 +109,8 @@ Statistics PerformConstructionMeasurement(tollk::automaton::DPA dpa, const BaseO
 
 // Output
 void PrintCSV(const Statistics& stat) {
-    std::cout << stat.original_size << ','
+    std::cout << stat.input_file << ','
+              << stat.original_size << ','
               << stat.number_of_sccs << ','
               << stat.milliseconds_taken << ','
               << stat.new_size
@@ -118,6 +119,7 @@ void PrintCSV(const Statistics& stat) {
 
 void PrintJSON(const Statistics& stat) {
     nlohmann::json j;
+    j["input_file"] = stat.input_file;
     j["original_size"] = stat.original_size;
     j["original_number_of_sccs"] = stat.number_of_sccs;
     j["milliseconds"] = stat.milliseconds_taken;
@@ -144,7 +146,8 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    const Statistics stats = PerformConstructionMeasurement(dpa, *options);
+    Statistics stats = PerformConstructionMeasurement(dpa, *options);
+    stats.input_file = options->input_file;
     switch (options->output_type) {
         case JSON:
             PrintJSON(stats);

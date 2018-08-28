@@ -47,7 +47,7 @@ void ScheweAutomaton(automaton::DPA* automaton) {
         for (symbol_t s : automaton->Symbols()) {
             const state_t q = automaton->Succ(p, s);
             const state_t representative = representatives[almost_equivalent_states.GetClass(q)];
-            if (state_sorting[q] < state_sorting[representative])
+            if (state_sorting[p] < state_sorting[representative])
                 automaton->SetSucc(p, s, representative);
         }
     }

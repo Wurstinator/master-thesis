@@ -18,6 +18,7 @@ std::unique_ptr<ConstructionExecutor> CreateConstructionExecutor() {
 
 tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA dpa, const BaseOptions& options) {
     tollk::ScheweAutomaton(&dpa);
+    tollk::automaton::Hopcroft(&dpa);
     return dpa;
 }
 

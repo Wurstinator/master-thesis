@@ -17,7 +17,7 @@ TEST_CASE("Test TopologicalSorting.") {
     automaton.AddSucc(2, 0, 3);
     automaton.AddSucc(4, 0, 3);
 
-    const std::vector<tollk::automaton::state_t> sorting = tollk::TopologicalSorting(automaton);
+    const std::vector<tollk::automaton::state_t> sorting = tollk::automaton::TopologicalSorting(automaton);
     REQUIRE(sorting.size() == 5);
 
     const unsigned int index0 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 0));
