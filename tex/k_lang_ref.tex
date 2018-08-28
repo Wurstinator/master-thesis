@@ -1,0 +1,143 @@
+
+\section{Congruence Path Refinement}
+
+In this section we present an algorithm that uses an existing congruence relation and refines it to the point where equivalent states can be \enquote{merged}.
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $\equiv \,\subseteq Q \times Q$ be an equivalence relation on the state set. For every equivalence class $\kappa \subseteq Q$, let $r_\kappa \in \kappa$ be an arbitrary representative of that class. For a DPA $\mathcal{A}' = (Q', \Sigma, q'_0, \delta', c')$, we say that $\mathcal{A}'$ is a \emph{representative merge of $\mathcal{A}$ w.r.t. $\equiv$} if it satisfies the following:
+	\begin{itemize}
+		\item $Q' = \{ r_{[q]_\equiv} \subseteq Q \mid q \in Q \}$
+		\item $q'_0 = r_{[q_0]_\equiv}$
+		\item For all $q \in Q'$ and $a \in \Sigma$: $\delta'(q, a) = r_{[\delta(q, a)]_\equiv}$
+		\item $c' = c\upharpoonright_{Q'}$
+	\end{itemize}
+\end{defn}
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. For any states $p, q \in Q$, let $L_{[p]_R \rightarrow [q]_R} \subseteq \Sigma^*$ be the set of words $w$ such that for any $u \sqsubseteq w$, $(\delta(p, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton reaches $[q]_R$ from $[p]_R$.
+	
+	Let $\kappa \subseteq Q$ be an equivalence class of $R$ and let $p, q \in \kappa$. We define $R_\kappa \subseteq \kappa \times \kappa$ as the smallest set $(p, q) \in R_\kappa$ iff the following holds for all words $w \in L_{\kappa \rightarrow \kappa}$:
+	\begin{itemize}
+		\item $(\delta^*(p, w), \delta^*(q, w)) \in R_\kappa$
+		\item $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$
+	\end{itemize}
+	
+	Finally, we call $\equiv_\text{PR}^R \,= \bigcup_{q \in Q} R_{[q]_R}$ the \emph{path refinement of $R$}.
+\end{defn}
+
+\begin{lem}
+	The path refinement is a well defined equivalence relation.
+	\label{lem:pr:pr_well_def}
+\end{lem}
+
+\begin{proof}
+	We have to consider the sets $L_{[p]_R \rightarrow [q]_R}$ and the sets $R_\kappa$. For $L_{[p]_R \rightarrow [q]_R}$, the definition works because $R$ has the congruence property. 
+	
+	For $R_\kappa$, consider the following function $f : 2^{Q \times Q} \rightarrow 2^{Q \times Q}$: 
+	$$f(X) = \{ (p, q) \in Y_\kappa \mid \text{for all } w \in L_{\kappa \rightarrow \kappa}: (\delta^*(p, w), \delta^*(q, w)) \in X \}$$
+	$$ Y_\kappa = \{ (p, q) \in Q \times Q \mid \text{for all } w \in L_{\kappa \rightarrow \kappa}: \min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \} \} $$
+
+	Now Let $X_0 = \{ (p, q) \in \kappa \times \kappa \mid p = q \}$ and $X_{i+1} = f(X_i)$. $f$ is monotone w.r.t. $\subseteq$, so there must be a fixed point $X_\infty$. By Kleene's fixed point theorem and from the definition of $R_\kappa$, we have $X_\infty = \text{lfp}(f) = R_\kappa$.
+	
+	Every $X_i$ is an equivalence relation on $\kappa$: for $i = 0$, every state is only equivalent to itself, and for $i > 0$, the three properties can easily be verified via induction. Hence, $X_\infty = R_\kappa$ is also an equivalence relation. All $R_\kappa$ are disjoint and thus $\equiv_\text{PR}^R$ has to be an equivalence relation as well.
+\end{proof}
+
+\begin{theorem}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation that implies language equivalence. Let $\mathcal{B}$ be a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^R$. Then $L(\mathcal{A}) = L(\mathcal{B})$.
+\end{theorem}
+
+\begin{proof}
+	Let $n$ be the number of non-trivial equivalence classes in $\equiv_\text{PR}^R$, i.e. classes with size greater than 1. If $n = 0$, then $p \equiv_\text{PR}^R q$ iff $p = q$ and therefore $\mathcal{B} = \mathcal{A}$. 
+	
+	Now assume for an argument of induction that the statement is true for $n$ and we want to show that it still holds for $n+1$ classes. Let $\kappa \subseteq Q$ be an arbitrary non-trivial equivalence class of $\equiv_\text{PR}^R$. Let $\mathcal{A}' = (Q', \Sigma, q'_0, \delta', c')$ be the representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^R \upharpoonright_\kappa$ with the same representative $r_\kappa$ as in $\mathcal{B}$. The path refinement equivalence of $\mathcal{A}'$ then is equal to $\equiv_\text{PR}^R \upharpoonright_{Q'}$ and has $n$ non-trivial equivalence classes (as $\kappa$ was merged into a single state). By induction, $L(\mathcal{A}') = L(\mathcal{B})$. It remains to be proven that $L(\mathcal{A}) = L(\mathcal{A}')$.
+	
+	Let $\alpha \in \Sigma^\omega$ be a word with runs $\rho \in Q^\omega$ and $\rho' \in (Q')^\omega$ of $\mathcal{A}$ and $\mathcal{A}'$ respectively. Let $\lambda \subseteq Q$ be the equivalence class of $R$ from which $\kappa$ was extracted.
+
+	\vspace{5pt}
+	\textbf{Claim 1}: At every position $i$, $\rho(i) \in \kappa$ iff $\rho'(i) \in \kappa$. \\
+	Let $k_0$ be the first position at which $\rho(k_0) \in \kappa$ is true. For all $i < k_0$, we have $\rho(i) = \rho'(i)$, and at $k_0$ we have $\rho(k_0) \equiv_\text{PR}^R r_\kappa = \rho'(k_0)$.
+	
+	Now assume that the claim holds for all $i \leq k$, where $k$ is a position at which $\rho(k) \in \kappa$. Let $l > k$ be the next position at which $\rho(l) \in \lambda$. If $l$ does not exist, then neither $\rho(i)$ nor $\rho'(i)$ are elements of $\kappa$ for any $i > k$.
+	
+	Let $w = \alpha[k, l]$. Since $\kappa \subseteq \lambda$, $w \in L_{\lambda \rightarrow \lambda}$. By definition of $\equiv_\text{PR}^R$, that means $\delta^*(\rho(k), w) = \rho(l) \equiv_\text{PR}^R \delta^*(\rho'(k), w)$. Between $k$ and $l-1$, no redirected edge is used in $\rho'$, so $\delta^*(\rho'(k), \alpha[k, l-1]) = \rho'(l-1)$. Finally, $\rho'(l) = \delta'(\rho'(l-1), \alpha(l)) = r_{[\delta(\rho'(l-1), \alpha(l)]_{\equiv_\text{PR}^R}} \equiv_\text{PR}^R \delta(\rho'(l-1), \alpha(l)) = \delta^*(\rho'(k), w)$. Thus, $\rho(l) \equiv_\text{PR}^R \rho'(l)$.
+	
+	Now, if $\rho(l) \in \kappa$, then $\rho(l+1) \in \kappa$ and our proof of induction is complete. If $\rho(l) \notin \kappa$, then $\rho'(l) = \rho(l)$, so the runs visit the same states in all positions until $\kappa$ is reached again. This also completes the proof of our claim.
+	
+	\vspace{5pt}
+	\textbf{Claim 2}: If $\kappa$ only occurs finitely often in $\rho$ and $\rho'$, then $\rho$ is accepting iff $\rho'$ is accepting.
+	
+	Let $k \in \mathbb{N}$ be the last position at which $\rho(k)$ and $\rho'(k)$ are in $\kappa$. From this point on, $\rho'[k, \omega]$ is also a valid run of $\mathcal{A}$ on $\alpha[k, \omega]$. $\rho(k) \equiv_\text{PR}^R \rho'(k)$, so $(\rho(k), \rho'(k)) \in R$. As $R$ implies language equivalence, reading $\alpha[k, \omega]$ from either state in $\mathcal{A}$ leads to the same acceptance status. This also means that $\rho'(k)$ has the same acceptance status as $\rho(k)$.
+	
+	\vspace{5pt}
+	\textbf{Claim 3}: If $\kappa$ occurs infinitely often in $\rho$ and $\rho'$, then $\rho$ is accepting iff $\rho'$ is accepting.
+	
+	Let $(k_i)_{i \in \mathbb{N}}$ be all positions at which $\kappa$ is visited. For each $k_i$, let $l_i > k_i$ be the minimal position at which $\rho(l_i) \in \lambda$. In two steps, we first show that $c(\rho[l_i, k_{i+1}]) = c'(\rho'[l_i, k_{i+1}])$ and second that $\min \text{Occ}(c(\rho[k_i, l_i])) = \min \text{Occ}(c'(\rho'[k_i, l_i]))$. Together, these results mean that the minimal priority that is seen infinitely often in the two runs is the same.
+	
+	First, observe that at every $l_i$, we either have $l_i = k_{i+1}$ (if $\rho(l_i) \in \kappa$) or $\rho(l_i) = \rho'(l_i)$. In the first case, $\rho[l_i, k_{i+1}]$ is empty, so $c(\varepsilon) = c'(\varepsilon)$ is true. In the second case, $\rho[l_i, k_{i+1}] = \rho'[l_i, k_{i+1}]$ and therefore $c(\rho[l_i, k_{i+1}]) = c'(\rho'[l_i, k_{i+1}])$.
+	
+	Second, let $w_i = \alpha[k_i, l_i]$. Then $\alpha \in L_{\lambda \rightarrow \lambda}$ and $\min \text{Occ}(c(\rho[k_i, l_i])) = \min \text{Occ}(c'(\rho'[k_i, l_i]))$ holds directly by definition of $\equiv_\text{PR}^R$.
+\end{proof}
+
+
+
+\subsection{Algorithmic Definition}
+The definition of path refinement that we introduced is useful for the proofs of correctness. It however does not provide one with a way to actually compute the relation. That is why we now provide an alternative definition that yields the same results but is more algorithmic in nature.
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation. For each equivalence class $\lambda$ of $R$, we define the \emph{path refinement automaton} $\mathcal{G}_\text{PR}^{R,\lambda}(p, q) = (Q_\text{PR}, \Sigma, q_{0, \text{PR}}, \delta_\text{PR}, F_\text{PR})$, which is a DFA.
+	
+	\begin{itemize}
+		\item $Q_\text{PR} = (Q \times Q \times c(Q) \times \{<, >, =\}) \cup \{ \perp \}$
+		\item $q_{0, \text{PR}} = (p, q, \eta_k(c(p), c(q), \checkmark), \eta_x(c(p), c(q), \checkmark, =))$
+		\item $\delta_\text{PR}((p, q, k, x), a) = \begin{cases}
+			(p', q', \eta_k(c(p'), c(q'), k), \eta_x(c(p'), c(q'), k, x)) & \text{if } p' \notin \lambda \\
+			(p', q', \eta_l(c(p'), c(q'), \checkmark), \eta_x(c(p'), c(q'), \checkmark, =)) & \text{if } p' \in \lambda \text{ and } (x =\, =) \\
+			\perp & \text{else}
+		\end{cases}$ \\
+			where $p' = \delta(p, a)$ and $q' = \delta(q, a)$. \\
+			$\eta_k(k_p, k_q, k) = \min_{\leq_\checkmark} \{k_p, k_q, k\}$ \\
+			$\eta_x(k_p, k_q, k, x) = \begin{cases}
+				< & \text{if } k_p < k_q \text{ and } k_p <_\checkmark k \\
+				> & \text{if } k_q < k_p \text{ and } k_q <_\checkmark k \\
+				x & \text{if } k \leq_\checkmark k_p \text{ and } k \leq_\checkmark k_q \text{ and } (k \neq k_p \text{ or } k \neq k_q) \\
+				= & \text{else}
+			\end{cases}$ %TODO
+		\item $F_\text{PR} = Q_\text{PR} \setminus \{\perp\}$
+	\end{itemize}
+\end{defn}
+
+\begin{theorem}
+	Let $\mathcal{A}$ be a DPA with a congruence relation $R$. Let $\lambda$ be an equivalence class of $R$ and $p, q \in \lambda$. Then $p \equiv_\text{PR}^R q$ iff $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) = \Sigma^*$.
+\end{theorem}
+
+\begin{proof}
+	\textbf{If } Let $p \not\equiv_\text{PR}^R q$. There is a word $w \in L_{\lambda \rightarrow \lambda}$ such that $(\delta^*(p, w), \delta^*(q, w)) \notin R$ or $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} \neq \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$.
+	
+	In the second case, assume $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$ without loss of generality. Let $u \sqsubset w$ be the prefix of $w$ with $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} = c(\delta^*(p, u))$. 
+	
+	\paragraph{Only If} Let $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) \neq \Sigma^*$. %TODO
+\end{proof}
+
+The differences between different $\mathcal{G}_\text{PR}^{R,\lambda}$ for different $\lambda$ are minor and the question whether the accepted language is universal boils down to a simple question of reachability. Thus, $\equiv_\text{PR}^R$ can be computed in $\mathcal{O}(|\mathcal{G}_\text{PR}^{R,\lambda}|)$ which is $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
