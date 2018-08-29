@@ -107,19 +107,10 @@ The definition of path refinement that we introduced is useful for the proofs of
 
 \begin{lem}
 	Let $\mathcal{A}$ be a DPA with a congruence relation $R$. Let $\lambda$ be an equivalence class of $R$, $p, q \in \lambda$, and $w \in L_{\lambda \rightarrow \lambda}$. For every $v \sqsubset w$ and $\oplus \in \{<, >, =\}$, the fourth component of $(\delta_\text{PR}^\lambda)^*(q_{0,\text{PR}}, v)$ is $\oplus$ if and only if $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq v \} \oplus \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq v \}$.
+	\label{lem:pr:pr_game_nx}
 \end{lem}
 
-\begin{proof}
-	This proof is a rather formal analysis of the definition of $\eta_x$. For $v = \varepsilon$, we have to show that the fourth component $x$ of $q_{0,\text{PR}}^{p,q}$ is $\oplus$ iff $c(p) \oplus c(q)$. We can simplify 
-	$$x = \eta_x(c(p), c(q), \checkmark, =) = \begin{cases}
-			< & \text{if } k_p <_\checkmark k_q \\
-			> & \text{if } k_p >_\checkmark k_q \\
-			= & \text{else}
-		\end{cases}.$$
-	This is exactly what we hoped to find.
-	
-	Now let $v = v' a$ and assume the statement is true for $v'$. Set $m_p = \min \{ c(\delta^*(p, u)) \mid u \sqsubseteq v' \}$ and $m_q$ analogously. Let $k_p = c(\delta^*(p, v))$ and $k_q = c(\delta^*(q, v))$. %TODO
-\end{proof}
+	The proof of this Lemma is a very formal analysis of every case in the relations between the different priorities that occur and making sure that the definition of $\eta_x$ covers these correctly. No great insight is gained, which is why we omit the proof at this point.
 
 \begin{theorem}
 	Let $\mathcal{A}$ be a DPA with a congruence relation $R$. Let $\lambda$ be an equivalence class of $R$ and $p, q \in \lambda$. Then $p \equiv_\text{PR}^R q$ iff $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) = \Sigma^*$.
@@ -128,13 +119,13 @@ The definition of path refinement that we introduced is useful for the proofs of
 \begin{proof}
 	\textbf{If } Let $p \not\equiv_\text{PR}^R q$. Similarly to the proof of Lemma \ref{lem:pr:pr_well_def}, we use the inductive definition of $R_\kappa \subseteq\, \equiv_\text{PR}^R$ using $f$ and the sets $X_i$ here. Let $m$ be the smallest index at which $(p, q) \notin X_m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i \leq |w|}$ be the run of $\mathcal{G}_\text{PR}^{R,\lambda}(p, q)$ on $w$. We prove that $\rho(|w|) = \perp$ and therefore $\rho$ is not accepting by induction on $m$.
 	
-	If $m = 0$, then $(p, q) \notin Y_\lambda$, meaning that there is a word $w$ such that $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} \neq \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Without loss of generality, assume $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. By Lemma \ref{}, $x_{|w|-1} =\, <$. Furthermore, $\delta(p_{|w|-1}, w_{|w|-1}) \in \lambda$, as $w \in L_{\lambda \rightarrow \lambda}$. Thus, $\rho(|w|) =\, \perp$ and the run is rejecting.
+	If $m = 0$, then $(p, q) \notin Y_\lambda$, meaning that there is a word $w$ such that $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} \neq \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Without loss of generality, assume $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. By Lemma \ref{lem:pr:pr_game_nx}, $x_{|w|-1} =\, <$. Furthermore, $\delta(p_{|w|-1}, w_{|w|-1}) \in \lambda$, as $w \in L_{\lambda \rightarrow \lambda}$. Thus, $\rho(|w|) =\, \perp$ and the run is rejecting.
 	
 	Now consider $m+1 > 1$. Since $(p, q) \in X_m \setminus f(X_m)$, there must be a word $w \in L_{\lambda \rightarrow \lambda}$ such that $(p', q') \notin X_m$, where $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. As $R_\kappa \subseteq X_m$, $(p', q') \notin R_\kappa$ and therefore $p' \not\equiv_\text{PR}^R q'$. By induction, $w \notin L(\mathcal{G}_\text{PR}^{R,\lambda}(p', q'))$; since that run is a suffix of $\rho$, $\rho$ itself is also a rejecting run.
 	
 	\paragraph{Only If} Let $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) \neq \Sigma^*$. Since $\varepsilon$ is always accepted, there is a word $w \in \Sigma^+ \setminus L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q))$, meaning that $\delta_\text{PR}^*(q_{0,\text{PR}}, w) = \perp$. Split $w$ into sub-words $w = u_1 \cdots u_m$ such that $u_1, \dots, u_m \in L_{\lambda \rightarrow \lambda}$. Note that this partition is unique. We show $p \not\equiv_\text{PR}^R q$ by induction on $m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i < |w|}$ be the run of $\mathcal{G}_\text{PR}^{R,\lambda}(p, q)$ on $w$.
 	
-	If $m = 1$, then $w \in L_{\lambda \rightarrow \lambda}$. Since $\rho(|w|) =\, \perp$, it must be true that $x_{|w|-1} \neq\, =$. Without loss of generality, assume $x_{|w|-1} =\, <$. By Lemma \ref{}, $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Therefore, $p \not\equiv_\text{PR}^R q$.
+	If $m = 1$, then $w \in L_{\lambda \rightarrow \lambda}$. Since $\rho(|w|) =\, \perp$, it must be true that $x_{|w|-1} \neq\, =$. Without loss of generality, assume $x_{|w|-1} =\, <$. By Lemma \ref{lem:pr:pr_game_nx}, $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Therefore, $p \not\equiv_\text{PR}^R q$.
 	
 	Now consider $m+1 > 1$. Let $p' = \delta^*(p, u_1)$ and $q' = \delta^*(q, u_1)$. By induction on the word $u_2 \cdots u_m$, $p' \not\equiv_\text{PR}^R q'$. Since $u_1 \in L_{\lambda \rightarrow \lambda}$, that also means $p \not\equiv_\text{PR}^R q$.
 \end{proof}
