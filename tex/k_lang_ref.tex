@@ -16,7 +16,7 @@ In this section we present an algorithm that uses an existing congruence relatio
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. For any states $p, q \in Q$, let $L_{[p]_R \rightarrow [q]_R} \subseteq \Sigma^*$ be the set of words $w$ such that for any $u \sqsubseteq w$, $(\delta(p, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton reaches $[q]_R$ from $[p]_R$.
 	
-	Let $\kappa \subseteq Q$ be an equivalence class of $R$ and let $p, q \in \kappa$. We define $R_\kappa \subseteq \kappa \times \kappa$ as the smallest set $(p, q) \in R_\kappa$ iff the following holds for all words $w \in L_{\kappa \rightarrow \kappa}$:
+	Let $\kappa \subseteq Q$ be an equivalence class of $R$ and let $p, q \in \kappa$. We define $R_\kappa \subseteq \kappa \times \kappa$ as the largest set $(p, q) \in R_\kappa$ iff the following holds for all words $w \in L_{\kappa \rightarrow \kappa}$:
 	\begin{itemize}
 		\item $(\delta^*(p, w), \delta^*(q, w)) \in R_\kappa$
 		\item $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$
@@ -34,10 +34,10 @@ In this section we present an algorithm that uses an existing congruence relatio
 	We have to consider the sets $L_{[p]_R \rightarrow [q]_R}$ and the sets $R_\kappa$. For $L_{[p]_R \rightarrow [q]_R}$, the definition works because $R$ has the congruence property. 
 	
 	For $R_\kappa$, consider the following function $f : 2^{Q \times Q} \rightarrow 2^{Q \times Q}$: 
-	$$f(X) = \{ (p, q) \in Y_\kappa \mid \text{for all } w \in L_{\kappa \rightarrow \kappa}: (\delta^*(p, w), \delta^*(q, w)) \in X \}$$
+	$$ f(X) = \{ (p, q) \in X \mid \text{for all } w \in L_{\kappa \rightarrow \kappa}: (\delta^*(p, w), \delta^*(q, w)) \in X \}$$
 	$$ Y_\kappa = \{ (p, q) \in Q \times Q \mid \text{for all } w \in L_{\kappa \rightarrow \kappa}: \min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \} \} $$
 
-	Now Let $X_0 = \{ (p, q) \in \kappa \times \kappa \mid p = q \}$ and $X_{i+1} = f(X_i)$. $f$ is monotone w.r.t. $\subseteq$, so there must be a fixed point $X_\infty$. By Kleene's fixed point theorem and from the definition of $R_\kappa$, we have $X_\infty = \text{lfp}(f) = R_\kappa$.
+	Now Let $X_0 = Y_\kappa$ and $X_{i+1} = f(X_i)$. $f$ is monotone w.r.t. $\subseteq$, so there must be a fixed point $X_\infty$. By Kleene's fixed point theorem and from the definition of $R_\kappa$, we have $X_\infty = \text{gfp}(f) = R_\kappa$.
 	
 	Every $X_i$ is an equivalence relation on $\kappa$: for $i = 0$, every state is only equivalent to itself, and for $i > 0$, the three properties can easily be verified via induction. Hence, $X_\infty = R_\kappa$ is also an equivalence relation. All $R_\kappa$ are disjoint and thus $\equiv_\text{PR}^R$ has to be an equivalence relation as well.
 \end{proof}
@@ -84,38 +84,59 @@ In this section we present an algorithm that uses an existing congruence relatio
 The definition of path refinement that we introduced is useful for the proofs of correctness. It however does not provide one with a way to actually compute the relation. That is why we now provide an alternative definition that yields the same results but is more algorithmic in nature.
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation. For each equivalence class $\lambda$ of $R$, we define the \emph{path refinement automaton} $\mathcal{G}_\text{PR}^{R,\lambda}(p, q) = (Q_\text{PR}, \Sigma, q_{0, \text{PR}}, \delta_\text{PR}, F_\text{PR})$, which is a DFA.
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation. For each equivalence class $\lambda$ of $R$, we define the \emph{path refinement automaton} $\mathcal{G}_\text{PR}^{R,\lambda}(p, q) = (Q_\text{PR}, \Sigma, q_{0, \text{PR}}^{p,q}, \delta^\lambda_\text{PR}, F_\text{PR})$, which is a DFA.
 	
 	\begin{itemize}
 		\item $Q_\text{PR} = (Q \times Q \times c(Q) \times \{<, >, =\}) \cup \{ \perp \}$
-		\item $q_{0, \text{PR}} = (p, q, \eta_k(c(p), c(q), \checkmark), \eta_x(c(p), c(q), \checkmark, =))$
-		\item $\delta_\text{PR}((p, q, k, x), a) = \begin{cases}
+		\item $q_{0, \text{PR}}^{p,q} = (p, q, \eta_k(c(p), c(q), \checkmark), \eta_x(c(p), c(q), \checkmark, =))$
+		\item $\delta^\lambda_\text{PR}((p, q, k, x), a) = \begin{cases}
 			(p', q', \eta_k(c(p'), c(q'), k), \eta_x(c(p'), c(q'), k, x)) & \text{if } p' \notin \lambda \\
-			(p', q', \eta_l(c(p'), c(q'), \checkmark), \eta_x(c(p'), c(q'), \checkmark, =)) & \text{if } p' \in \lambda \text{ and } (x =\, =) \\
+			q_{0,\text{PR}}^{p',q'} & \text{if } p' \in \lambda \text{ and } (x =\, =) \\
 			\perp & \text{else}
 		\end{cases}$ \\
 			where $p' = \delta(p, a)$ and $q' = \delta(q, a)$. \\
 			$\eta_k(k_p, k_q, k) = \min_{\leq_\checkmark} \{k_p, k_q, k\}$ \\
 			$\eta_x(k_p, k_q, k, x) = \begin{cases}
-				< & \text{if } k_p < k_q \text{ and } k_p <_\checkmark k \\
-				> & \text{if } k_q < k_p \text{ and } k_q <_\checkmark k \\
-				x & \text{if } k \leq_\checkmark k_p \text{ and } k \leq_\checkmark k_q \text{ and } (k \neq k_p \text{ or } k \neq k_q) \\
+				< & \text{if } (k_p <_\checkmark k_q \text{ and } k_p <_\checkmark k) \text{ or } (k < k_q \text{ and } (x =\, <)) \\
+				> & \text{if } (k_p >_\checkmark k_q \text{ and } k >_\checkmark k_q) \text{ or } (k_p > k \text{ and } (x =\, >)) \\
 				= & \text{else}
-			\end{cases}$ %TODO
+			\end{cases}$ 
 		\item $F_\text{PR} = Q_\text{PR} \setminus \{\perp\}$
 	\end{itemize}
 \end{defn}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA with a congruence relation $R$. Let $\lambda$ be an equivalence class of $R$, $p, q \in \lambda$, and $w \in L_{\lambda \rightarrow \lambda}$. For every $v \sqsubset w$ and $\oplus \in \{<, >, =\}$, the fourth component of $(\delta_\text{PR}^\lambda)^*(q_{0,\text{PR}}, v)$ is $\oplus$ if and only if $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq v \} \oplus \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq v \}$.
+\end{lem}
+
+\begin{proof}
+	This proof is a rather formal analysis of the definition of $\eta_x$. For $v = \varepsilon$, we have to show that the fourth component $x$ of $q_{0,\text{PR}}^{p,q}$ is $\oplus$ iff $c(p) \oplus c(q)$. We can simplify 
+	$$x = \eta_x(c(p), c(q), \checkmark, =) = \begin{cases}
+			< & \text{if } k_p <_\checkmark k_q \\
+			> & \text{if } k_p >_\checkmark k_q \\
+			= & \text{else}
+		\end{cases}.$$
+	This is exactly what we hoped to find.
+	
+	Now let $v = v' a$ and assume the statement is true for $v'$. Set $m_p = \min \{ c(\delta^*(p, u)) \mid u \sqsubseteq v' \}$ and $m_q$ analogously. Let $k_p = c(\delta^*(p, v))$ and $k_q = c(\delta^*(q, v))$. %TODO
+\end{proof}
 
 \begin{theorem}
 	Let $\mathcal{A}$ be a DPA with a congruence relation $R$. Let $\lambda$ be an equivalence class of $R$ and $p, q \in \lambda$. Then $p \equiv_\text{PR}^R q$ iff $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) = \Sigma^*$.
 \end{theorem}
 
 \begin{proof}
-	\textbf{If } Let $p \not\equiv_\text{PR}^R q$. There is a word $w \in L_{\lambda \rightarrow \lambda}$ such that $(\delta^*(p, w), \delta^*(q, w)) \notin R$ or $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} \neq \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$.
+	\textbf{If } Let $p \not\equiv_\text{PR}^R q$. Similarly to the proof of Lemma \ref{lem:pr:pr_well_def}, we use the inductive definition of $R_\kappa \subseteq\, \equiv_\text{PR}^R$ using $f$ and the sets $X_i$ here. Let $m$ be the smallest index at which $(p, q) \notin X_m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i \leq |w|}$ be the run of $\mathcal{G}_\text{PR}^{R,\lambda}(p, q)$ on $w$. We prove that $\rho(|w|) = \perp$ and therefore $\rho$ is not accepting by induction on $m$.
 	
-	In the second case, assume $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$ without loss of generality. Let $u \sqsubset w$ be the prefix of $w$ with $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} = c(\delta^*(p, u))$. 
+	If $m = 0$, then $(p, q) \notin Y_\lambda$, meaning that there is a word $w$ such that $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} \neq \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Without loss of generality, assume $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. By Lemma \ref{}, $x_{|w|-1} =\, <$. Furthermore, $\delta(p_{|w|-1}, w_{|w|-1}) \in \lambda$, as $w \in L_{\lambda \rightarrow \lambda}$. Thus, $\rho(|w|) =\, \perp$ and the run is rejecting.
 	
-	\paragraph{Only If} Let $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) \neq \Sigma^*$. %TODO
+	Now consider $m+1 > 1$. Since $(p, q) \in X_m \setminus f(X_m)$, there must be a word $w \in L_{\lambda \rightarrow \lambda}$ such that $(p', q') \notin X_m$, where $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. As $R_\kappa \subseteq X_m$, $(p', q') \notin R_\kappa$ and therefore $p' \not\equiv_\text{PR}^R q'$. By induction, $w \notin L(\mathcal{G}_\text{PR}^{R,\lambda}(p', q'))$; since that run is a suffix of $\rho$, $\rho$ itself is also a rejecting run.
+	
+	\paragraph{Only If} Let $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) \neq \Sigma^*$. Since $\varepsilon$ is always accepted, there is a word $w \in \Sigma^+ \setminus L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q))$, meaning that $\delta_\text{PR}^*(q_{0,\text{PR}}, w) = \perp$. Split $w$ into sub-words $w = u_1 \cdots u_m$ such that $u_1, \dots, u_m \in L_{\lambda \rightarrow \lambda}$. Note that this partition is unique. We show $p \not\equiv_\text{PR}^R q$ by induction on $m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i < |w|}$ be the run of $\mathcal{G}_\text{PR}^{R,\lambda}(p, q)$ on $w$.
+	
+	If $m = 1$, then $w \in L_{\lambda \rightarrow \lambda}$. Since $\rho(|w|) =\, \perp$, it must be true that $x_{|w|-1} \neq\, =$. Without loss of generality, assume $x_{|w|-1} =\, <$. By Lemma \ref{}, $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Therefore, $p \not\equiv_\text{PR}^R q$.
+	
+	Now consider $m+1 > 1$. Let $p' = \delta^*(p, u_1)$ and $q' = \delta^*(q, u_1)$. By induction on the word $u_2 \cdots u_m$, $p' \not\equiv_\text{PR}^R q'$. Since $u_1 \in L_{\lambda \rightarrow \lambda}$, that also means $p \not\equiv_\text{PR}^R q$.
 \end{proof}
 
 The differences between different $\mathcal{G}_\text{PR}^{R,\lambda}$ for different $\lambda$ are minor and the question whether the accepted language is universal boils down to a simple question of reachability. Thus, $\equiv_\text{PR}^R$ can be computed in $\mathcal{O}(|\mathcal{G}_\text{PR}^{R,\lambda}|)$ which is $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$.
