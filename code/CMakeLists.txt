@@ -1,5 +1,6 @@
 
 cmake_minimum_required (VERSION 2.6)
+cmake_policy(SET CMP0048 NEW)
 set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
@@ -94,7 +95,6 @@ set(AUTOMATON_TESTS
         src/automaton/tests/test_nbautils_bridge.cpp)
 
 add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
-target_link_libraries(test_automaton nbautils-lib)
 target_include_directories(test_automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include ${CATCH2_DIR}/single_include)
 
 

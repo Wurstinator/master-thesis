@@ -398,10 +398,62 @@ TEST_CASE("Test QuotientAutomaton.") {
 }
 
 TEST_CASE("Test QuotientAutomatonUnsafe.") {
-    //TODO
+    DeterministicAutomaton aut(1);
+    aut.AddState(0);
+    aut.SetSucc(0, 0, 0);
+    aut.SetSucc(0, 1, 2);
+    aut.AddState(1);
+    aut.SetSucc(1, 0, 1);
+    aut.SetSucc(1, 1, 0);
+    aut.AddState(2);
+    aut.SetSucc(2, 0, 2);
+    aut.SetSucc(2, 1, 1);
+    aut.SetInitialState(1);
+    EquivalenceRelation<state_t> quotient;
+    quotient.AddConnection(0, 0);
+    quotient.AddConnection(1, 2);
+    QuotientAutomatonUnsafe(&aut, quotient);
+
+    const state_t rep = (aut.HasState(1) ? 1 : 2);
+    CHECK(aut.InitialState() == rep);
+    CHECK(aut.HasState(0));
+    CHECK(aut.HasState(rep));
+    CHECK(!aut.HasState(rep == 1 ? 2 : 1));
+    CHECK(aut.States().size() == 2);
+    CHECK(aut.Succ(0, 0) == 0);
+    CHECK(aut.Succ(0, 1) == rep);
+    CHECK(aut.Succ(rep, 0) == rep);
+    CHECK(aut.Succ(rep, 1) == (rep == 1 ? 0 : 2));
 }
 
-
 TEST_CASE("Test TopologicalSorting.") {
+    NondeterministicAutomaton aut(0);
+    aut.AddState(0);
+    aut.AddState(1);
+    aut.AddState(2);
+    aut.AddState(3);
+    aut.AddState(4);
+    aut.AddSucc(1, 0, 2);
+    aut.AddSucc(1, 0, 3);
+    aut.AddSucc(2, 0, 4);
+    aut.AddSucc(3, 0, 4);
+    const std::vector<state_t> sorting = TopologicalSorting(aut);
+
+    CHECK(sorting.size() == 5);
+    CHECK(std::set<state_t>(sorting.begin(), sorting.end()).size() == 5);
+    const unsigned int index0 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 0));
+    const unsigned int index1 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 1));
+    const unsigned int index2 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 2));
+    const unsigned int index3 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 3));
+    const unsigned int index4 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 4));
+
+    CHECK(index4 < index1);
+    CHECK(index4 < index2);
+    CHECK(index4 < index3);
+    CHECK(index2 < index1);
+    CHECK(index3 < index1);
+}
+
+TEST_CASE("Test NormalizePriorities.") {
     //TODO
 }
