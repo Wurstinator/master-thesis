@@ -426,7 +426,7 @@ TEST_CASE("Test QuotientAutomatonUnsafe.") {
     CHECK(aut.Succ(rep, 1) == (rep == 1 ? 0 : 2));
 }
 
-TEST_CASE("Test TopologicalSorting.") {
+/*TEST_CASE("Test TopologicalSorting.") {
     NondeterministicAutomaton aut(0);
     aut.AddState(0);
     aut.AddState(1);
@@ -452,7 +452,7 @@ TEST_CASE("Test TopologicalSorting.") {
     CHECK(index4 < index3);
     CHECK(index2 < index1);
     CHECK(index3 < index1);
-}
+}*/
 
 TEST_CASE("Test NormalizePriorities.") {
     //TODO
