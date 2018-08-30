@@ -8,9 +8,7 @@
 #include <iostream>
 #include <string>
 #include <args.hxx>
-#include <io.hh>
 #include "automaton/util.h"
-#include "automaton/nbautils_bridge.h"
 
 // Inherit from this class to add additional options.
 struct BaseOptions {

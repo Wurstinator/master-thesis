@@ -3,7 +3,7 @@
 
 
 inline void ToHOA_WriteAtomicPropositions(unsigned int aps, std::ostream* ostream) {
-    (*ostream) << "AP: " << aps;
+    (*ostream) << "AP: " << aps << ' ';
     for (unsigned int i = 0; i < aps; ++i)
         (*ostream) << "\"a" << i << "\" ";
     (*ostream) << '\n';

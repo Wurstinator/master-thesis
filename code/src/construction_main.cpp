@@ -1,5 +1,7 @@
 
 #include "construction_main.h"
+#include "automaton/hoa/hoa_io.h"
+#include <fstream>
 
 
 void ConstructionExecutor::InitializeFlags(args::ArgumentParser* argParser) {
@@ -46,9 +48,8 @@ std::unique_ptr<BaseOptions> ParseArgs(int argc, char** argv, ConstructionExecut
 
 
 tollk::automaton::NPA NPAFromHoa(const std::string& filename) {
-    const std::vector<nbautils::SWA<std::string>::uptr> input_automata = nbautils::parse_hoa(filename);
-    assert(input_automaton.size() == 1);
-    return tollk::automaton::FromNbautils(*input_automata[0]);
+    std::ifstream file(filename);
+    return tollk::automaton::hoa::NPAFromHOA(&file);
 }
 
 
@@ -64,7 +65,7 @@ int main(int argc, char** argv) {
     const tollk::automaton::DPA in_dpa = tollk::automaton::DPA::FromNPA(NPAFromHoa(options->input_file));
     const tollk::automaton::DPA out_dpa = PerformConstruction(in_dpa, *options);
 
-    nbautils::print_hoa(tollk::automaton::ToNbautils(out_dpa), std::cout);
+    tollk::automaton::hoa::ToHOA(out_dpa, &std::cout);
     std::cout << std::flush;
 
     return 0;

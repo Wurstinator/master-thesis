@@ -2,6 +2,8 @@
 #include "construction_statistics.h"
 #include "automaton/parity.h"
 #include "../../json/single_include/nlohmann/json.hpp"
+#include <fstream>
+#include "automaton/hoa/hoa_io.h"
 
 
 void ConstructionExecutor::InitializeFlags(args::ArgumentParser* argParser) {
@@ -63,9 +65,8 @@ std::unique_ptr<BaseOptions> ParseArgs(int argc, char** argv, ConstructionExecut
 
 
 tollk::automaton::NPA NPAFromHoa(const std::string& filename) {
-    const std::vector<nbautils::SWA<std::string>::uptr> input_automata = nbautils::parse_hoa(filename);
-    assert(input_automaton.size() == 1);
-    return tollk::automaton::FromNbautils(*input_automata[0]);
+    std::ifstream file(filename);
+    return tollk::automaton::hoa::NPAFromHOA(&file);
 }
 
 

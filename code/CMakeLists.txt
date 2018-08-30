@@ -13,32 +13,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# nbautils
-
-set(NBAUTILS_DIR ./nbautils)
-add_subdirectory(${NBAUTILS_DIR})
-
-set(NBAUTILS_INCLUDE
-        ${NBAUTILS_DIR}/src/dev/memusage.h
-        ${NBAUTILS_DIR}/src/dev/bench.hh
-        ${NBAUTILS_DIR}/src/common/util.hh
-        ${NBAUTILS_DIR}/src/common/relorder.hh
-        ${NBAUTILS_DIR}/src/common/triebimap.hh
-        ${NBAUTILS_DIR}/src/common/bimap.hh
-        ${NBAUTILS_DIR}/src/common/algo.hh
-        ${NBAUTILS_DIR}/src/common/graph.hh
-        ${NBAUTILS_DIR}/src/common/scc.hh
-        ${NBAUTILS_DIR}/src/swa.hh
-        ${NBAUTILS_DIR}/src/ba.hh
-        ${NBAUTILS_DIR}/src/io.hh
-        ${NBAUTILS_DIR}/src/pa.hh
-        ${NBAUTILS_DIR}/src/ps.hh
-        ${NBAUTILS_DIR}/src/level.hh
-        ${NBAUTILS_DIR}/src/det.hh)
-
-ExternalProject_Get_Property(cpphoafparser source_dir)
-include_directories(${source_dir}/include)
-
 # Catch2
 
 set(CATCH2_DIR ./Catch2)
@@ -52,15 +26,36 @@ set(Catch2_HDRS
 set(RANGEV3_DIR ./range-v3)
 add_subdirectory(${RANGEV3_DIR})
 
-file(GLOB_RECURSE RANGE_V3_PUBLIC_HEADERS
-        RELATIVE ${RANGEV3_DIR}/include
-        "${RANGEV3_DIR}/include/*.hpp")
-
 # json
 
 set(JSON_DIR ./json)
 add_subdirectory(${JSON_DIR})
 
+# cpphoafparser
+
+set(HOAFP_DIR ./cpphoafparser)
+set(HOAFP_INCLUDE
+        ${HOAFP_DIR}/include/cpphoafparser/parser/hoa_parser_exception.hh
+        ${HOAFP_DIR}/include/cpphoafparser/parser/hoa_lexer.hh
+        ${HOAFP_DIR}/include/cpphoafparser/parser/hoa_parser.hh
+        ${HOAFP_DIR}/include/cpphoafparser/parser/hoa_parser_helper.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_intermediate.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_consumer.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_consumer_exception.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_consumer_print.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_intermediate_trace.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_intermediate_resolve_aliases.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_consumer_null.hh
+        ${HOAFP_DIR}/include/cpphoafparser/consumer/hoa_intermediate_check_validity.hh
+        ${HOAFP_DIR}/include/cpphoafparser/util/acceptance_repository_standard.hh
+        ${HOAFP_DIR}/include/cpphoafparser/util/implicit_edge_helper.hh
+        ${HOAFP_DIR}/include/cpphoafparser/util/int_or_string.hh
+        ${HOAFP_DIR}/include/cpphoafparser/util/dynamic_bitset.hh
+        ${HOAFP_DIR}/include/cpphoafparser/util/acceptance_repository.hh
+        ${HOAFP_DIR}/include/cpphoafparser/ast/boolean_expression.hh
+        ${HOAFP_DIR}/include/cpphoafparser/ast/atom_acceptance.hh
+        ${HOAFP_DIR}/include/cpphoafparser/ast/atom_label.hh
+        )
 
 # automaton module
 
@@ -79,33 +74,50 @@ set(AUTOMATON_FILES
         src/automaton/parity.h
         src/automaton/nbautils_bridge.h
         src/automaton/nbautils_bridge.impl.h
-        src/automaton/is_specialization_base_of.h
-        )
+        src/automaton/is_specialization_base_of.h)
 
-set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${NBAUTILS_INCLUDE} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
+set(AUTOMATON_HOA_FILES
+        src/automaton/hoa/hoa_io.h
+        src/automaton/hoa/hoa_io.cpp
+        src/automaton/hoa/hoa_consumer_debug.h
+        src/automaton/hoa/pa_consumer.h
+        src/automaton/hoa/pa_consumer.cpp
+        src/automaton/hoa/dpa_consumer.h
+        src/automaton/hoa/dpa_consumer.cpp
+        src/automaton/hoa/npa_consumer.h
+        src/automaton/hoa/npa_consumer.cpp
+        src/automaton/hoa/boolean_evaluation.h
+        src/automaton/hoa/hoa_io.impl.h)
+
+set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} src/equivalence_relation.h)
+set(AUTOMATON_HOA_INCLUDE ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_FILES} ${HOAFP_INCLUDE})
 
 add_library(automaton ${AUTOMATON_INCLUDE})
-target_link_libraries(automaton nbautils-lib)
-target_include_directories(automaton PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
+target_include_directories(automaton PRIVATE ${RANGEV3_DIR}/include)
+
+add_library(automaton_with_hoa ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE})
+target_include_directories(automaton_with_hoa PRIVATE ${RANGEV3_DIR}/include)
 
 set(AUTOMATON_TESTS
         src/automaton/tests/test_automata.cpp
         src/automaton/tests/test_util.cpp
         src/automaton/tests/helper_functions.h
-        src/automaton/tests/test_nbautils_bridge.cpp)
+        src/automaton/tests/test_hoa.cpp)
 
-add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_FILES} ${AUTOMATON_TESTS} ${Catch2_HDRS} ${nbautils_HDRS} ${RANGE_V3_PUBLIC_HEADERS} src/equivalence_relation.h)
-target_include_directories(test_automaton PRIVATE ${NBAUTILS_DIR}/src range-v3/include ${CATCH2_DIR}/single_include)
+add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE} ${AUTOMATON_TESTS} ${Catch2_HDRS})
+target_include_directories(test_automaton PRIVATE range-v3/include ${CATCH2_DIR}/single_include ${HOAFP_DIR}/include)
 
 
 # *_main / *_statistics
 set(MAST_COMMON_HDRS_MAIN
         src/construction_main.cpp
-        src/construction_main.h)
+        src/construction_main.h
+        ${AUTOMATON_HOA_INCLUDE})
 
 set(MAST_COMMON_HDRS_STAT
         src/construction_statistics.cpp
-        src/construction_statistics.h)
+        src/construction_statistics.h
+        ${AUTOMATON_HOA_INCLUDE})
 
 # Schewe10
 
@@ -118,18 +130,13 @@ set(SCHEWE10_HDRS
 set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h ${NBAUTILS_INCLUDE})
 
 add_library(schewe_automaton ${SCHEWE10_INCLUDE})
-target_link_libraries(schewe_automaton nbautils-lib automaton)
-target_include_directories(schewe_automaton PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
+target_include_directories(schewe_automaton PRIVATE ${RANGEV3_DIR}/include)
 
 add_executable(schewe_main src/schewe10/schewe_main.cpp ${SCHEWE10_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
-target_link_libraries(schewe_main nbautils-lib)
-add_dependencies(schewe_main cpphoafparser)
-target_include_directories(schewe_main PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
+target_include_directories(schewe_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 add_executable(schewe_statistics src/schewe10/schewe_statistics.cpp ${SCHEWE10_INCLUDE} ${MAST_COMMON_HDRS_STAT})
-target_link_libraries(schewe_statistics nbautils-lib)
-add_dependencies(schewe_statistics cpphoafparser)
-target_include_directories(schewe_statistics PRIVATE ${NBAUTILS_DIR}/src ${RANGEV3_DIR}/include)
+target_include_directories(schewe_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 
 set(SCHEWE10_TESTS
@@ -139,8 +146,7 @@ set(SCHEWE10_TESTS
         src/schewe10/tests/test_schewe_automaton.cpp)
 
 add_executable(test_schewe10 ${SCHEWE10_TESTS} ${Catch2_HDRS} ${SCHEWE10_INCLUDE})
-target_link_libraries(test_schewe10 nbautils-lib)
-target_include_directories(test_schewe10 PRIVATE ${NBAUTILS_DIR}/src ${CATCH2_DIR}/single_include range-v3/include)
+target_include_directories(test_schewe10 PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
 
 
 # FritzWilke06
@@ -159,14 +165,10 @@ add_library(delayed_simulation ${FRITZWILKE06_INCLUDE})
 target_include_directories(delayed_simulation PRIVATE range-v3/include)
 
 add_executable(fritzwilke_main src/fritzwilke06/fritzwilke_main.cpp ${FRITZWILKE06_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
-target_link_libraries(fritzwilke_main nbautils-lib automaton)
-add_dependencies(fritzwilke_main cpphoafparser)
-target_include_directories(fritzwilke_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+target_include_directories(fritzwilke_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 add_executable(fritzwilke_statistics src/fritzwilke06/fritzwilke_statistics.cpp ${FRITZWILKE06_INCLUDE} ${MAST_COMMON_HDRS_STAT})
-target_link_libraries(fritzwilke_statistics nbautils-lib automaton)
-add_dependencies(fritzwilke_statistics cpphoafparser)
-target_include_directories(fritzwilke_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+target_include_directories(fritzwilke_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(FRITZWILKE06_TESTS
         src/fritzwilke06/tests/test_delayed_simulation.cpp
@@ -189,15 +191,11 @@ set(ITERATEDMOORE_INCLUDE ${ITERATEDMOORE_HDRS} ${AUTOMATON_INCLUDE} src/equival
 add_library(iterated_moore ${ITERATEDMOORE_INCLUDE})
 target_include_directories(iterated_moore PRIVATE range-v3/include)
 
-add_executable(iterated_moore_main src/iterated_moore/iterated_moore_main.cpp ${ITERATEDMOORE_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
-target_link_libraries(iterated_moore_main nbautils-lib automaton)
-add_dependencies(iterated_moore_main cpphoafparser)
-target_include_directories(iterated_moore_main PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+add_executable(iterated_moore_main src/iterated_moore/iterated_moore_main.cpp ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(iterated_moore_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
-add_executable(iterated_moore_statistics src/iterated_moore/iterated_moore_statistics.cpp ${ITERATEDMOORE_INCLUDE} ${MAST_COMMON_HDRS_STAT})
-target_link_libraries(iterated_moore_statistics nbautils-lib automaton)
-add_dependencies(iterated_moore_statistics cpphoafparser)
-target_include_directories(iterated_moore_statistics PRIVATE ${NBAUTILS_DIR}/src range-v3/include)
+add_executable(iterated_moore_statistics src/iterated_moore/iterated_moore_statistics.cpp ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_STAT})
+target_include_directories(iterated_moore_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(ITERATEDMOORE_TESTS
         src/iterated_moore/tests/test_main.cpp
