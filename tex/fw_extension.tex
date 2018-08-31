@@ -105,34 +105,39 @@ Algorithm \ref{alg:fwe:normalize_c} shows how an equivalent normalized priority 
   \label{alg:fwe:normalize_c}
   \begin{algorithmic}[1]
     \Function{Normalize}{$\mathcal{A}$}
-  	  \Ensure{$c_N$ is normalized in $\mathcal{A}$.}
-      \State $c_D \gets $\Call{MakeDense}{$\mathcal{A}$}
-      \State $c_N : Q \rightarrow \mathbb{N}, q \mapsto c_D(q)$
-      \State $Q' \gets Q$
-      \State $k \gets 0$
-      \While{$Q' \neq \emptyset$}
-        \State $Q' \gets Q' \setminus c_D^{-1}(k)$
-        \State $S \gets $ Trivial SCCs of $\mathcal{A}\upharpoonright_{Q'}$
-        \For{$q \in S$}
-          \State $c_N(q) \gets k$
-        \EndFor
-        \State $Q' \gets Q' \setminus S$
-        \State $k \gets k+1$
-      \EndWhile
-      \State \Return{$c_N$}
+      \State $c' : Q \rightarrow \mathbb{N}, q \mapsto c(q)$
+      \State \Call{M}{$\mathcal{A}$, $c'$}
+      \State \Return{$c'$}
     \EndFunction
     \Statex
-    \Function{MakeDense}{$\mathcal{A}$}
-      \Ensure{For all $0 \leq i \leq \max c(Q)$, $c_D^{-1}(i) \neq \emptyset$}.
-      \State $c_D : Q \rightarrow \mathbb{N}, q \mapsto c(q)$
-      \For{$i \gets 0 \textrm{ to } \max c(Q)$}
-        \While{$c_D^{-1}(i+1) = \emptyset$}
-          \For{$q \in Q : c_D(q) > i$}
-            \State $c_D(q) \gets c_D(q) - 2$
-          \EndFor
-        \EndWhile
+    \Function{M}{$\mathcal{A} \upharpoonright_P$, $c'$}
+      \If{$P = \emptyset$}
+        \State \Return 0
+      \EndIf
+      \State $min \gets 0$
+      \For{SCC $S$ in $\mathcal{A} \upharpoonright_P$}
+        \State $m := \min c(S) \mod 2$
+        \State $X := c^{-1}(m)$
+        \For{$q \in X$}
+          \State $c'(q) \gets m$
+        \EndFor
+        \State $S' := S \setminus X$
+        \State $m' \gets $\Call{M}{$\mathcal{A} \upharpoonright_{S'}$, $c'$}
+        \If{$m'$ even}
+          \If{$m$ even}
+            \State $\delta := m$
+          \Else
+            \State $\delta := m-2$
+          \EndIf
+        \Else
+          \State $\delta := m-1$
+        \EndIf
+        \For{$q \in S'$}
+          \State $c'(q) \gets c'(q) - \delta$
+        \EndFor
+        \State $min \gets \min \{min, m\}$
       \EndFor
-      \State \Return{$c_D$}
+      \State \Return{$min$}
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
