@@ -426,7 +426,7 @@ TEST_CASE("Test QuotientAutomatonUnsafe.") {
     CHECK(aut.Succ(rep, 1) == (rep == 1 ? 0 : 2));
 }
 
-/*TEST_CASE("Test TopologicalSorting.") {
+TEST_CASE("Test TopologicalSorting.") {
     NondeterministicAutomaton aut(0);
     aut.AddState(0);
     aut.AddState(1);
@@ -452,8 +452,54 @@ TEST_CASE("Test QuotientAutomatonUnsafe.") {
     CHECK(index4 < index3);
     CHECK(index2 < index1);
     CHECK(index3 < index1);
-}*/
+}
+
+TEST_CASE("Test Subautomaton.") {
+    //TODO
+}
 
 TEST_CASE("Test NormalizePriorities.") {
-    //TODO
+    DPA dpa(1);
+    dpa.AddState(0);
+    dpa.AddState(1);
+    dpa.AddState(2);
+    dpa.AddState(3);
+    dpa.AddState(4);
+    dpa.AddState(5);
+    dpa.AddState(6);
+    dpa.AddState(7);
+    dpa.SetSucc(0, 0, 1);
+    dpa.SetSucc(0, 1, 1);
+    dpa.SetSucc(1, 0, 0);
+    dpa.SetSucc(1, 1, 2);
+    dpa.SetSucc(2, 0, 1);
+    dpa.SetSucc(2, 1, 1);
+    dpa.SetSucc(3, 0, 3);
+    dpa.SetSucc(3, 1, 1);
+    dpa.SetSucc(4, 0, 4);
+    dpa.SetSucc(4, 1, 5);
+    dpa.SetSucc(5, 0, 4);
+    dpa.SetSucc(5, 1, 5);
+    dpa.SetSucc(6, 0, 7);
+    dpa.SetSucc(6, 1, 7);
+    dpa.SetSucc(7, 0, 6);
+    dpa.SetSucc(7, 1, 6);
+    dpa.SetLabel(0, 0);
+    dpa.SetLabel(1, 1);
+    dpa.SetLabel(2, 2);
+    dpa.SetLabel(3, 1);
+    dpa.SetLabel(4, 2);
+    dpa.SetLabel(5, 0);
+    dpa.SetLabel(6, 3);
+    dpa.SetLabel(7, 3);
+
+    const std::map<state_t, parity_label_t> new_priorities = NormalizePriorities(dpa);
+    CHECK(new_priorities.at(0) == 0);
+    CHECK(new_priorities.at(1) == 1);
+    CHECK(new_priorities.at(2) == 2);
+    CHECK(new_priorities.at(3) == 1);
+    CHECK(new_priorities.at(4) == 0);
+    CHECK(new_priorities.at(5) == 0);
+    CHECK(new_priorities.at(6) == 1);
+    CHECK(new_priorities.at(7) == 1);
 }

@@ -110,8 +110,11 @@ template<typename RT1, typename RT2>
 std::vector<state_t>
 TopologicalSorting(const TransitionAutomaton<RT1, RT2>& automaton);
 
-// Given a deterministic parity automaton, normalizes the priority function.
-void NormalizePriorities(DPA* dpa);
+// Given a Nondeterministic automaton, remove all states that are not in a given set (and their transitions).
+void Subautomaton(NondeterministicAutomaton* automaton, const std::unordered_set<state_t>& newStateSet);
+
+// Given a deterministic parity automaton, normalizes the priority function. (returns the new priorities)
+std::map<state_t, parity_label_t> NormalizePriorities(DPA dpa);
 
 
 }  // namespace automaton
