@@ -4,7 +4,7 @@
 
 inline void ToHOA_WriteAtomicPropositions(unsigned int aps, std::ostream* ostream) {
     (*ostream) << "AP: " << aps << ' ';
-    for (unsigned int i = 0; i < aps; ++i)
+    for (unsigned int i = 1; i <= aps; ++i)
         (*ostream) << "\"a" << i << "\" ";
     (*ostream) << '\n';
 }
@@ -25,7 +25,7 @@ inline void ToHOA_WriteParityAcceptance(parity_label_t max_prio, std::ostream* o
 inline void ToHOA_WriteTransition(unsigned int symbol_size, symbol_t sym, unsigned int to, std::ostream* ostream) {
     (*ostream) << '[';
     std::vector<bool> bits;
-    for (unsigned int i = symbol_size - 1; i-- > 0;)
+    for (unsigned int i = 0; i < symbol_size; ++i)
         bits.push_back(!!((sym >> i) & 1));
     for (unsigned int i = 0; i < bits.size(); ++i) {
         if (!bits[i])
@@ -62,7 +62,7 @@ void ToHOA(const AutomatonT& automaton, std::ostream* ostream) {
     (*ostream) << "States: " << automaton.States().size() << '\n';
     (*ostream) << "Start: " << state_indices[automaton.InitialState()] << '\n';
     if (is_transition_automaton)
-        ToHOA_WriteAtomicPropositions(automaton.SymbolsNum(), ostream);
+        ToHOA_WriteAtomicPropositions(automaton.atomicPropositions, ostream);
     if (is_parity_automaton)
         ToHOA_WriteParityAcceptance(max_prio, ostream);
     (*ostream) << "properties: ";
@@ -79,13 +79,13 @@ void ToHOA(const AutomatonT& automaton, std::ostream* ostream) {
     for (unsigned int p = 0; p < automaton.States().size(); ++p) {
         (*ostream) << "State: " << p;
         if (is_parity_automaton)
-            (*ostream) << " {" << automaton.GetLabel(p) << '}';
+            (*ostream) << " {" << automaton.GetLabel(automaton.States()[p]) << '}';
         (*ostream) << '\n';
 
         if (is_transition_automaton)
             for (symbol_t s : automaton.Symbols())
-                for (state_t q : automaton.Successors(p, s))
-                    ToHOA_WriteTransition(automaton.SymbolsNum(), s, state_indices[q], ostream);
+                for (state_t q : automaton.Successors(automaton.States()[p], s))
+                    ToHOA_WriteTransition(automaton.atomicPropositions, s, state_indices[q], ostream);
     }
 
     // Done.

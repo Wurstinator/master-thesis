@@ -72,8 +72,6 @@ set(AUTOMATON_FILES
         src/automaton/util.cpp
         src/automaton/parity.cpp
         src/automaton/parity.h
-        src/automaton/nbautils_bridge.h
-        src/automaton/nbautils_bridge.impl.h
         src/automaton/is_specialization_base_of.h)
 
 set(AUTOMATON_HOA_FILES
@@ -141,7 +139,6 @@ target_include_directories(schewe_statistics PRIVATE ${RANGEV3_DIR}/include ${HO
 
 set(SCHEWE10_TESTS
         src/schewe10/tests/test_almost_equivalent_states.cpp
-        src/schewe10/tests/test_topological_ordering.cpp
         src/schewe10/tests/test_main.cpp
         src/schewe10/tests/test_schewe_automaton.cpp)
 

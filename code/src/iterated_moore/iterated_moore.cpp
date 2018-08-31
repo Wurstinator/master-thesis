@@ -12,11 +12,11 @@ std::unordered_map<automaton::state_t, automaton::parity_label_t> IteratedMooreL
     NondeterministicAutomaton merged_sccs = NondeterministicAutomaton::FromTransitionAutomaton(automaton);
     SCCCollection sccs;
     MergeSCCs(&merged_sccs, &sccs);
-    const std::vector<unsigned int> scc_sorting = TopologicalSorting(merged_sccs);
+    const std::vector<state_t> scc_sorting = TopologicalSorting(merged_sccs);
 
     // Iteratively add the SCCs.
     DPA result_dpa(automaton.atomicPropositions);
-    for (unsigned int scc_rep : scc_sorting) {
+    for (state_t scc_rep : scc_sorting) {
         const SCCCollection::SCC& scc = sccs.sccs[sccs.scc_indices[scc_rep]];
         // Add the SCC.
         result_dpa.SetInitialState(scc_rep);
@@ -61,18 +61,10 @@ std::unordered_map<automaton::state_t, automaton::parity_label_t> IteratedMooreL
 void IteratedMooreQuotient(automaton::DPA* automaton) {
     const std::unordered_map<automaton::state_t, automaton::parity_label_t> new_labels = IteratedMooreLabels(*automaton);
 
-    //for (const std::pair<const automaton::state_t, automaton::parity_label_t>& kv_pair : new_labels)
-    //    automaton->SetLabel(kv_pair.first, kv_pair.second);
+    for (const std::pair<const automaton::state_t, automaton::parity_label_t>& kv_pair : new_labels)
+        automaton->SetLabel(kv_pair.first, kv_pair.second);
 
-    EquivalenceRelation<automaton::state_t> moore;
-    for (state_t q : automaton->States())
-        moore.AddConnection(q, q);
-    //moore.AddConnection(4, 13);
-    //moore.AddConnection(5, 7);
-    //moore.AddConnection(10, 17);
-    moore.AddConnection(11, 18);
-
-    moore = automaton->LabelEquivalence();
+    EquivalenceRelation<automaton::state_t> moore = automaton->LabelEquivalence();
     RefineToCongruence(&moore, *automaton);
     automaton::QuotientAutomatonUnsafe(automaton, moore);
 }

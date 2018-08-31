@@ -33,13 +33,13 @@ void ScheweAutomaton(automaton::DPA* automaton) {
         }
     }
 
-    // For each equivalence class (priority almost-equivalence), find an element that is maximal w.r.t. the ordering.
+    // For each equivalence class (priority almost-equivalence), find an element that is minimal w.r.t. the ordering.
     std::map<EquivalenceRelation<automaton::state_t>::EquivClass, state_t> representatives;
     for (const EquivalenceRelation<automaton::state_t>::EquivClass& clas : almost_equivalent_states.Classes()) {
         const auto compare_topological = [&state_sorting](state_t lhs, state_t rhs) {
-            return state_sorting[lhs] < state_sorting[rhs];
+            return state_sorting[lhs] > state_sorting[rhs];
         };
-        representatives[clas] = *std::max_element(clas.begin(), clas.end(), compare_topological);
+        representatives[clas] = *std::min_element(clas.begin(), clas.end(), compare_topological);
     }
 
     // Redirect transitions.
@@ -47,7 +47,7 @@ void ScheweAutomaton(automaton::DPA* automaton) {
         for (symbol_t s : automaton->Symbols()) {
             const state_t q = automaton->Succ(p, s);
             const state_t representative = representatives[almost_equivalent_states.GetClass(q)];
-            if (state_sorting[p] < state_sorting[representative])
+            if (state_sorting[p] > state_sorting[representative])
                 automaton->SetSucc(p, s, representative);
         }
     }

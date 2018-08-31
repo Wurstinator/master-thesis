@@ -41,7 +41,7 @@ class Execute:
         return run_process_for_time(cmd, timeout=self.timeout)
 
 
-def test_correctness(filename_in, data_out):
+def test_correctness(verbose, filename_in, data_out):
     outfile = tempfile.NamedTemporaryFile(mode='w')
     outfile.write(data_out)
     outfile.flush()
@@ -49,14 +49,17 @@ def test_correctness(filename_in, data_out):
     process = subprocess.run(cmd, shell=True, capture_output=True)
     process_stdout = process.stdout.decode('utf-8')
     if process_stdout != '':
-        return 'Good. ' + filename_in + '\n'
+        if verbose:
+            return 'Good. ' + filename_in + '\n'
+        else:
+            return ''
     else:
         return 'ERROR! ' + filename_in + '\n'
 
 
 def main():
     args = parse_args()
-    run_experiments(args, Execute(args.timeout, args.construction), test_correctness)
+    run_experiments(args, Execute(args.timeout, args.construction), (lambda x, y: test_correctness(args.verbose, x, y)))
 
 
 # Parses the command line arguments.
@@ -66,6 +69,7 @@ def parse_args():
     parser.add_argument('-t', dest='timeout', help='Time limit in seconds for each analysis.', type=int)
     parser.add_argument('-o', dest='output', help='Output file. If none is specified, stdout is used.')
     parser.add_argument('-c', dest='construction', help='Type of construction to perform on the input.', choices=['schewe10', 'fritzwilke06', 'fritzwilke06_reset', 'iterated_moore'])
+    parser.add_argument('-v', dest='verbose', help='Prints a message even if there was no error.')
     return parser.parse_args()
 
 

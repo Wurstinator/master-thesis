@@ -314,7 +314,6 @@ std::vector<state_t> TopologicalSorting(const TransitionAutomaton<RT1, RT2>& aut
     std::unordered_set<state_t> to_visit(automaton.States().begin(), automaton.States().end());
     while (!to_visit.empty())
         _TopologicalSorting_Visit(automaton, &sorting, &to_visit, *to_visit.begin());
-    std::reverse(sorting.begin(), sorting.end());
     return sorting;
 }
 
