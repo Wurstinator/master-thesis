@@ -48,6 +48,9 @@ class NondeterministicAutomaton
     // Adds a state to the automaton. The caller has to make sure that it does not exist already. O(m) operation.
     void AddState(state_t q) override;
 
+    // Deletes all transitions outgoing from a certain state. O(1) operation.
+    void DeleteTransitionsFrom(state_t from);
+
     // Deletes all transitions to a certain state. O(|Δ|+n) operation.
     void DeleteTransitionsTo(state_t to);
 

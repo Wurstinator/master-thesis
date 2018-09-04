@@ -41,6 +41,11 @@ void NondeterministicAutomaton::AddState(state_t q) {
         this->transitions[q][s] = std::unordered_set<state_t>();
 }
 
+void NondeterministicAutomaton::DeleteTransitionsFrom(state_t from) {
+    for (symbol_t s : Symbols())
+        StateSymbOut(from, s).clear();
+}
+
 void NondeterministicAutomaton::DeleteTransitionsTo(state_t to) {
     for (auto& kv_pair : this->transitions) {
         for (auto& kv_pair2 : kv_pair.second) {

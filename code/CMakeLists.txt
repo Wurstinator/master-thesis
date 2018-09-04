@@ -200,3 +200,31 @@ set(ITERATEDMOORE_TESTS
 
 add_executable(test_iterated_moore ${ITERATEDMOORE_INCLUDE} ${ITERATEDMOORE_TESTS} ${Catch2_HDRS})
 target_include_directories(test_iterated_moore PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
+
+
+
+# PathRefinement
+
+set(PATHREFIN_HDRS
+        src/path_refinement/path_refinement_automaton.h
+        src/path_refinement/path_refinement_automaton.cpp
+        src/path_refinement/path_refinement.h
+        src/path_refinement/path_refinement.cpp)
+
+set(PATHREFIN_INCLUDE ${PATHREFIN_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
+
+add_library(path_refinement ${PATHREFIN_INCLUDE})
+target_include_directories(path_refinement PRIVATE range-v3/include)
+
+add_executable(path_refinement_main src/path_refinement/path_refinement_main.cpp ${PATHREFIN_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(path_refinement_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+add_executable(path_refinement_statistics src/path_refinement/path_refinement_statistics.cpp ${PATHREFIN_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_STAT})
+target_include_directories(path_refinement_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+set(PATHREFIN_TESTS
+        src/path_refinement/tests/test_main.cpp
+        src/path_refinement/tests/test_path_refinement_automaton.cpp)
+
+add_executable(test_path_refinement ${PATHREFIN_INCLUDE} ${PATHREFIN_TESTS} ${Catch2_HDRS})
+target_include_directories(test_path_refinement PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
