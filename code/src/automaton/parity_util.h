@@ -29,6 +29,9 @@ std::unordered_set<state_t> BuchiEmptyStates(const AutomatonT& automaton);
 // Given a deterministic parity automaton, normalizes the priority function. (returns the new priorities)
 std::map<state_t, parity_label_t> NormalizePriorities(DPA dpa);
 
+// Takes in a DPA and computes the relation of language equivalent state pairs.
+EquivalenceRelation<state_t> LanguageEquivalentStates(const DPA& dpa);
+
 
 }  // namespace automaton
 }  // namespace tollk

@@ -18,7 +18,7 @@ tollk::EquivalenceRelation<tollk::automaton::state_t> PriorityAlmostEquivalence(
     // Build the product automaton of the automaton with itself. It is a Büchi automaton / DFA in which the
     // accepting states are those in which the priority of the components differs.
     boost::bimap<state_t, std::pair<state_t, state_t>> product_pairs;
-    NPA product(NondeterministicAutomaton::FromTransitionAutomaton(ProductAutomaton(automaton, automaton, &product_pairs)));
+    NPA product(ProductAutomaton(automaton, automaton, &product_pairs));
     for (state_t q : product.States()) {
         const std::pair<state_t, state_t> state_pair = product_pairs.left.at(q);
         const parity_label_t label1 = automaton.GetLabel(state_pair.first);

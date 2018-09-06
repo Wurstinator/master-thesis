@@ -2,6 +2,7 @@
 #include <range/v3/algorithm/any_of.hpp>
 #include "is_specialization_base_of.h"
 #include <range/v3/algorithm/find.hpp>
+#include "transition_util.h"
 
 namespace tollk {
 namespace automaton {

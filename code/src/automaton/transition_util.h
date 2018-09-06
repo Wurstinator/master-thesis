@@ -74,7 +74,7 @@ ProductAutomaton(const TransitionAutomaton<RT1, RT2>& automaton1, const Transiti
 
 // Similar to the other ProductAutomaton call but a specialized case for deterministic automata.
 DeterministicAutomaton
-ProductAutomaton(const DeterministicAutomaton& automaton1, const DeterministicAutomaton& automaton2,
+DeterministicProductAutomaton(const DeterministicAutomaton& automaton1, const DeterministicAutomaton& automaton2,
                  boost::bimap<state_t, std::pair<state_t, state_t>>* pair_indices = nullptr);
 
 // Merges all states that are equivalent in a given relation into one. "MergeStates" is used, so the new representative

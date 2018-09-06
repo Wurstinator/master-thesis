@@ -17,7 +17,7 @@ void MergeSCCs(NondeterministicAutomaton* automaton, SCCCollection* sccs) {
 
 
 DeterministicAutomaton
-ProductAutomaton(const DeterministicAutomaton& automaton1, const DeterministicAutomaton& automaton2,
+DeterministicProductAutomaton(const DeterministicAutomaton& automaton1, const DeterministicAutomaton& automaton2,
                  boost::bimap<state_t, std::pair<state_t, state_t>>* pair_indices) {
     assert(automaton1.atomicPropositions == automaton2.atomicPropositions);
 

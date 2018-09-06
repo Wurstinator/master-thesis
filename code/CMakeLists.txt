@@ -102,9 +102,10 @@ target_include_directories(automaton_with_hoa PRIVATE ${RANGEV3_DIR}/include)
 
 set(AUTOMATON_TESTS
         src/automaton/tests/test_automata.cpp
-        src/automaton/tests/test_util.cpp
         src/automaton/tests/helper_functions.h
-        src/automaton/tests/test_hoa.cpp)
+        src/automaton/tests/test_hoa.cpp
+        src/automaton/tests/test_parity_util.cpp
+        src/automaton/tests/test_transition_util.cpp)
 
 add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE} ${AUTOMATON_TESTS} ${Catch2_HDRS})
 target_include_directories(test_automaton PRIVATE range-v3/include ${CATCH2_DIR}/single_include ${HOAFP_DIR}/include)
