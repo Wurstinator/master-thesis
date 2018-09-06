@@ -5,7 +5,7 @@ import os
 import sys
 from run_statistics import run_experiments, run_process_for_time
 
-executable = '../../bin/iterated_moore_statistics'
+executable = '../../bin/path_refinement_statistics'
 
 
 class ExecIM:
@@ -19,7 +19,7 @@ class ExecIM:
 
 def main():
     if not (os.path.isfile(executable) and os.access(executable, os.X_OK)):
-        print('Error. Compile iterated_moore_statistics first.')
+        print('Error. Compile path_refinement_statistics first.')
         sys.exit(1)
 
     args = parse_args()

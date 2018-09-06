@@ -355,6 +355,6 @@ TEST_CASE("Test functionality of ParityAutomaton class.") {
     aut1.SetLabel(1, 1);
     aut2.SetLabel(0, 0);
     aut2.SetLabel(1, 2);
-    CHECK(aut1.IsBuchi());
-    CHECK(!aut2.IsBuchi());
+    CHECK(ParityIsBuchi(aut1));
+    CHECK(!ParityIsBuchi(aut2));
 }

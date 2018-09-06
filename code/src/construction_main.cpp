@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    const tollk::automaton::DPA in_dpa = tollk::automaton::DPA::FromNPA(NPAFromHoa(options->input_file));
+    const tollk::automaton::DPA in_dpa = tollk::automaton::DPA::FromNondeterministic(NPAFromHoa(options->input_file));
     const tollk::automaton::DPA out_dpa = PerformConstruction(in_dpa, *options);
 
     tollk::automaton::hoa::ToHOA(out_dpa, &std::cout);

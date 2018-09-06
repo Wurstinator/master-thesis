@@ -64,7 +64,7 @@ DeterministicAutomaton PathRefinementAutomaton(const DPA& automaton, const std::
     for (state_t p : automaton.States()) {
         for (state_t q : automaton.States()) {
             for (parity_label_t k : automaton_priorities) {
-                PathRefinementAutomatonState state{p, q, k};
+                PathRefinementAutomatonState state{p, q, k, PathRefinementAutomatonState::Less};
                 state.obligation = PathRefinementAutomatonState::Less;
                 state_indices_.left.insert(std::make_pair(1 + state_indices_.size(), state));
                 state.obligation = PathRefinementAutomatonState::Equal;
@@ -109,7 +109,7 @@ PathRefinementAutomatonState
 PathRefinementInitialState(const DPA& automaton, automaton::state_t p, automaton::state_t q) {
     const parity_label_t kp = automaton.GetLabel(p);
     const parity_label_t kq = automaton.GetLabel(q);
-    const auto x = _EtaX(kp, kp, std::nullopt, PathRefinementAutomatonState::Equal);
+    const auto x = _EtaX(kp, kq, std::nullopt, PathRefinementAutomatonState::Equal);
     return PathRefinementAutomatonState{p, q, std::min(kp, kq), x};
 }
 

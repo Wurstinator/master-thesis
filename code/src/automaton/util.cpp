@@ -132,7 +132,7 @@ std::map<state_t, parity_label_t> NormalizePriorities(DPA dpa) {
     std::map<state_t, parity_label_t> new_priorities;
     for (state_t q : dpa.States())
         new_priorities[q] = dpa.GetLabel(q);
-    _NormalizePriorities_M(NPA::FromDPA(dpa), &new_priorities);
+    _NormalizePriorities_M(NPA::FromDeterministic(dpa), &new_priorities);
     return new_priorities;
 }
 

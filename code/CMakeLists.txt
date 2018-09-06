@@ -72,7 +72,7 @@ set(AUTOMATON_FILES
         src/automaton/util.cpp
         src/automaton/parity.cpp
         src/automaton/parity.h
-        src/automaton/is_specialization_base_of.h)
+        src/automaton/is_specialization_base_of.h src/automaton/labelled_automaton.impl.h)
 
 set(AUTOMATON_HOA_FILES
         src/automaton/hoa/hoa_io.h

@@ -26,9 +26,12 @@ EquivalenceRelation<state_t> PathRefinementEquivalence(const DPA& dpa, const Equ
         // Build the interesection of initial states and universal states in lambda.
         for (state_t coded_universal : universal_states) {
             PathRefinementAutomatonState decoded_universal = state_indices.left.at(coded_universal);
-            if (lambda.find(decoded_universal.p) != lambda.end()
+            const state_t p = decoded_universal.p;
+            const state_t q = decoded_universal.q;
+            if (lambda.find(p) != lambda.end()
+                && lambda.find(q) != lambda.end()
                 && initial_states.find(decoded_universal) != initial_states.end())
-                result.AddConnection(decoded_universal.p, decoded_universal.q);
+                result.AddConnection(p, q);
         }
     }
 

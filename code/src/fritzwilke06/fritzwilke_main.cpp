@@ -48,8 +48,8 @@ tollk::automaton::parity_label_t MinParity(const tollk::automaton::ParityAutomat
 tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA dpa, const BaseOptions& options_) {
     const FritzWilkeOptions& options = dynamic_cast<const FritzWilkeOptions&>(options_);
     const tollk::EquivalenceRelation<tollk::automaton::state_t> desim_relation = tollk::DelayedSimulationEquivalence(dpa, options.reset_at_sccs);
-    tollk::automaton::NPA npa = tollk::automaton::NPA::FromDPA(dpa);
+    tollk::automaton::NPA npa = tollk::automaton::NPA::FromDeterministic(dpa);
     const std::function<tollk::automaton::parity_label_t(const tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass&)> f = std::bind(&MinParity<tollk::EquivalenceRelation<tollk::automaton::state_t>::EquivClass>, npa, std::placeholders::_1);
     tollk::automaton::QuotientAutomaton(&npa, desim_relation, f);
-    return tollk::automaton::DPA::FromNPA(npa);
+    return tollk::automaton::DPA::FromNondeterministic(npa);
 }
