@@ -65,6 +65,8 @@ void QuotientAutomatonUnsafe(DeterministicAutomaton* automaton, const Equivalenc
 
 
 void Subautomaton(NondeterministicAutomaton* automaton, const std::unordered_set<state_t>& newStateSet) {
+    if (newStateSet.find(automaton->InitialState()) == newStateSet.end() && !newStateSet.empty())
+        automaton->SetInitialState(*newStateSet.begin());
     std::unordered_set<state_t> remove_states(automaton->States().begin(), automaton->States().end());
     for (state_t p : newStateSet)
         remove_states.erase(p);

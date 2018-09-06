@@ -121,6 +121,19 @@ TEST_CASE("Test NormalizePriorities.") {
 TEST_CASE("Test LanguageEquivalentStates.") {
     DPA dpa(1);
     dpa.AddState(0);
-    LanguageEquivalentStates(dpa);
-    //TODO
+    dpa.AddState(1);
+    dpa.SetInitialState(0);
+    dpa.SetSucc(0, 0, 0);
+    dpa.SetSucc(0, 1, 1);
+    dpa.SetSucc(1, 0, 0);
+    dpa.SetSucc(1, 1, 1);
+    dpa.SetLabel(0, 0);
+    dpa.SetLabel(0, 1);
+
+    const EquivalenceRelation<state_t> relation = LanguageEquivalentStates(dpa);
+    CHECK(relation.Classes().size() == 1);
+    CHECK(relation.Exists(0));
+    CHECK(relation.Exists(1));
+    CHECK(relation.IsEquiv(0, 1));
+    CHECK(relation.GetClass(0).size() == 2);
 }

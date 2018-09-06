@@ -400,5 +400,29 @@ TEST_CASE("Test TopologicalSorting.") {
 }
 
 TEST_CASE("Test Subautomaton.") {
-    //TODO
+    NondeterministicAutomaton automaton = TestAutomaton1();
+    Subautomaton(&automaton, std::unordered_set<state_t> {0, 1, 2, 3});
+    CHECK(automaton == TestAutomaton1());
+
+    Subautomaton(&automaton, std::unordered_set<state_t> {0, 1, 2});
+    CHECK(automaton.States().size() == 3);
+    CHECK(automaton.HasState(0));
+    CHECK(automaton.HasState(1));
+    CHECK(automaton.HasState(2));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 0), std::vector<state_t>{0, 1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(0, 1), std::vector<state_t>{}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::vector<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::vector<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::vector<state_t>{1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::vector<state_t>{}));
+
+    Subautomaton(&automaton, std::unordered_set<state_t> {1, 2});
+    CHECK(automaton.States().size() == 2);
+    CHECK(automaton.HasState(1));
+    CHECK(automaton.HasState(2));
+    CHECK(automaton.HasState(automaton.InitialState()));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 0), std::vector<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(1, 1), std::vector<state_t>{2}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 0), std::vector<state_t>{1}));
+    CHECK(CheckStateRangeEquivalence(automaton.Successors(2, 1), std::vector<state_t>{}));
 }
