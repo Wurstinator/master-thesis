@@ -8,7 +8,7 @@ namespace automaton {
 
 
 template<typename RT1, typename RT2>
-NondeterministicAutomaton TransposeAutomaton(const TransitionAutomaton<RT1, RT2>& automaton) {
+NondeterministicAutomaton TransposeAutomaton(const TransitionAutomaton <RT1, RT2>& automaton) {
     NondeterministicAutomaton transposed(automaton.atomicPropositions);
     for (state_t q : automaton.States())
         transposed.AddState(q);
@@ -35,7 +35,7 @@ struct _SCCTarjan_Struct {
 };
 
 template<typename RT1, typename RT2>
-void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
+void _SCCTarjan(const TransitionAutomaton <RT1, RT2>& automaton,
                 state_t node,
                 unsigned int* depth,
                 std::map<state_t, _SCCTarjan_Struct>* visit_indices,
@@ -45,7 +45,7 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
         return;
 
     // Add the node to the "visited" set.
-    (*visit_indices)[node] = _SCCTarjan_Struct {*depth, *depth, true};
+    (*visit_indices)[node] = _SCCTarjan_Struct{*depth, *depth, true};
     stack->push(node);
     (*depth) += 1;
 
@@ -54,7 +54,8 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
         if (visit_indices->find(neighbour) == visit_indices->end()) {
             // The node still has to be visited.
             _SCCTarjan(automaton, neighbour, depth, visit_indices, stack, sccs);
-            if ((visit_indices->find(neighbour) != visit_indices->end()) && (*visit_indices)[node].min_reach > (*visit_indices)[neighbour].min_reach)
+            if ((visit_indices->find(neighbour) != visit_indices->end()) &&
+                (*visit_indices)[node].min_reach > (*visit_indices)[neighbour].min_reach)
                 (*visit_indices)[node].min_reach = (*visit_indices)[neighbour].min_reach;
         } else if ((*visit_indices)[neighbour].in_stack) {
             // The node has been visited but has not been assigned to an SCC yet.
@@ -79,7 +80,7 @@ void _SCCTarjan(const TransitionAutomaton<RT1, RT2>& automaton,
 
 
 template<typename RT1, typename RT2>
-SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& automaton) {
+SCCCollection StronglyConnectedComponents(const TransitionAutomaton <RT1, RT2>& automaton) {
     SCCCollection result;
     for (state_t q : automaton.States()) {
         std::map<state_t, _SCCTarjan_Struct> visit_indices;
@@ -92,7 +93,7 @@ SCCCollection StronglyConnectedComponents(const TransitionAutomaton<RT1, RT2>& a
 
 
 template<typename RT1, typename RT2, typename SCCRangeT>
-bool SCCIsTrivial(const TransitionAutomaton<RT1, RT2>& automaton, SCCRangeT&& scc) {
+bool SCCIsTrivial(const TransitionAutomaton <RT1, RT2>& automaton, SCCRangeT&& scc) {
     if (scc.size() > 1)
         return false;
     const state_t q = *scc.begin();
@@ -104,7 +105,8 @@ bool SCCIsTrivial(const TransitionAutomaton<RT1, RT2>& automaton, SCCRangeT&& sc
 
 // Performs a simple DFS and collects the visited states. Returns true if a goal state was found.
 template<typename RT1, typename RT2, typename Rng>
-bool _CanReach_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_t q, Rng&& goal, std::unordered_set<state_t>* visited) {
+bool _CanReach_DSF(const TransitionAutomaton <RT1, RT2>& automaton, state_t q, Rng&& goal,
+                   std::unordered_set<state_t>* visited) {
     if (ranges::v3::find(goal, q) != goal.end())
         return true;
     if (visited->find(q) != visited->end())
@@ -118,7 +120,7 @@ bool _CanReach_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_t q, Rn
 
 
 template<typename RT1, typename RT2, typename Rng>
-bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&& goal, bool allow_trivial) {
+bool CanReach(const TransitionAutomaton <RT1, RT2>& automaton, state_t from, Rng&& goal, bool allow_trivial) {
     std::unordered_set<state_t> visited;
     if (allow_trivial) {
         return _CanReach_DSF(automaton, from, goal, &visited);
@@ -134,7 +136,8 @@ bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&
 
 // Performs a simple DFS and collects the visited states.
 template<typename RT1, typename RT2>
-void _ReachableStates_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_t q, std::unordered_set<state_t>* visited) {
+void
+_ReachableStates_DSF(const TransitionAutomaton <RT1, RT2>& automaton, state_t q, std::unordered_set<state_t>* visited) {
     if (visited->find(q) != visited->end())
         return;
     visited->insert(q);
@@ -144,14 +147,14 @@ void _ReachableStates_DSF(const TransitionAutomaton<RT1, RT2>& automaton, state_
 
 
 template<typename RT1, typename RT2>
-std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>& automaton, state_t q) {
+std::unordered_set<state_t> ReachableStates(const TransitionAutomaton <RT1, RT2>& automaton, state_t q) {
     std::unordered_set<state_t> result;
     _ReachableStates_DSF(automaton, q, &result);
     return result;
 }
 
-template <typename RT1, typename RT2, typename Rng>
-std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng) {
+template<typename RT1, typename RT2, typename Rng>
+std::unordered_set<state_t> ReachingStates(const TransitionAutomaton <RT1, RT2>& automaton, Rng&& rng) {
     const NondeterministicAutomaton transposed_automaton = TransposeAutomaton(automaton);
     std::unordered_set<state_t> result;
     for (state_t q : rng) {
@@ -162,8 +165,8 @@ std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& 
     return result;
 }
 
-template <typename RT1, typename RT2, typename Rng>
-std::unordered_set<state_t> NotReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng) {
+template<typename RT1, typename RT2, typename Rng>
+std::unordered_set<state_t> NotReachingStates(const TransitionAutomaton <RT1, RT2>& automaton, Rng&& rng) {
     const NondeterministicAutomaton transposed_automaton = TransposeAutomaton(automaton);
     std::unordered_set<state_t> result(automaton.States().begin(), automaton.States().end());
     for (state_t q : rng) {
@@ -176,60 +179,17 @@ std::unordered_set<state_t> NotReachingStates(const TransitionAutomaton<RT1, RT2
 
 
 template<typename RT1, typename RT2, typename SetT>
-NondeterministicAutomaton MergeStates(const TransitionAutomaton<RT1, RT2>& automaton, const SetT& merge_states) {
+NondeterministicAutomaton MergeStates(const TransitionAutomaton <RT1, RT2>& automaton, const SetT& merge_states) {
     NondeterministicAutomaton result = NondeterministicAutomaton::FromTransitionAutomaton(automaton);
     result.MergeStates(merge_states);
     return result;
 }
 
 
-
-template<typename RT1, typename RT2>
-void RefineToCongruence(EquivalenceRelation<state_t>* relation, const TransitionAutomaton<RT1, RT2>& automaton) {
-    std::set<EquivalenceRelation<state_t>::EquivClass> W(relation->Classes().begin()+1, relation->Classes().end());
-    while (!W.empty()) {
-        EquivalenceRelation<state_t>::EquivClass A(std::move(*W.begin()));
-        W.erase(W.begin());
-
-        for (symbol_t s : automaton.Symbols()) {
-            // Collect in "X" those states which move to "A" via symbol "s".
-            std::set<state_t> X;
-            for (state_t q : automaton.States()) {
-                if (ranges::v3::any_of(automaton.Successors(q, s), [&A](state_t p) {
-                    return A.find(p) != A.end();
-                }))
-                    X.insert(q);
-            }
-
-            const std::vector<EquivalenceRelation<state_t>::EquivClass> classes = relation->Classes();
-            for (unsigned int i = 0; i < classes.size(); ++i) {
-                const EquivalenceRelation<state_t>::EquivClass& Y = classes[i];
-                EquivalenceRelation<state_t>::EquivClass XY_diff;
-                std::set_difference(Y.begin(), Y.end(), X.begin(), X.end(), std::inserter(XY_diff, XY_diff.begin()));
-                if (XY_diff.size() == Y.size() || XY_diff.empty())
-                    continue;
-                EquivalenceRelation<state_t>::EquivClass XY_intersect;
-                std::set_intersection(Y.begin(), Y.end(), X.begin(), X.end(), std::inserter(XY_intersect, XY_intersect.begin()));
-
-                relation->SplitClass(i, X);
-                if (W.find(Y) != W.end()) {
-                    W.erase(W.find(Y));
-                    W.insert(XY_diff);
-                    W.insert(XY_intersect);
-                } else {
-                    if (XY_diff.size() < XY_intersect.size())
-                        W.insert(XY_diff);
-                    else
-                        W.insert(XY_intersect);
-                }
-            }
-        }
-    }
-}
-
-
-template <typename RT1, typename RT2, typename RT3, typename RT4>
-NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& automaton1, const TransitionAutomaton<RT3, RT4>& automaton2, boost::bimap<state_t, std::pair<state_t, state_t>>* pair_indices) {
+template<typename RT1, typename RT2, typename RT3, typename RT4>
+NondeterministicAutomaton
+ProductAutomaton(const TransitionAutomaton <RT1, RT2>& automaton1, const TransitionAutomaton <RT3, RT4>& automaton2,
+                 boost::bimap<state_t, std::pair<state_t, state_t>>* pair_indices) {
     assert(automaton1.atomicPropositions == automaton2.atomicPropositions);
 
     // Fill the map of state pairs.
@@ -242,7 +202,8 @@ NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& 
     NondeterministicAutomaton product(automaton1.atomicPropositions);
     for (const auto& kv_pair : pair_indices_.left)
         product.AddState(kv_pair.first);
-    product.SetInitialState(pair_indices_.right.at(std::make_pair(automaton1.InitialState(), automaton2.InitialState())));
+    product.SetInitialState(
+            pair_indices_.right.at(std::make_pair(automaton1.InitialState(), automaton2.InitialState())));
 
     // Set the transitions.
     for (state_t p : automaton1.States()) {
@@ -250,7 +211,8 @@ NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& 
             for (symbol_t s : product.Symbols()) {
                 for (state_t succ1 : automaton1.Successors(p, s)) {
                     for (state_t succ2 : automaton2.Successors(q, s)) {
-                        product.AddSucc(pair_indices_.right.at(std::make_pair(p, q)), s, pair_indices_.right.at(std::make_pair(succ1, succ2)));
+                        product.AddSucc(pair_indices_.right.at(std::make_pair(p, q)), s,
+                                        pair_indices_.right.at(std::make_pair(succ1, succ2)));
                     }
                 }
             }
@@ -263,41 +225,10 @@ NondeterministicAutomaton ProductAutomaton(const TransitionAutomaton<RT1, RT2>& 
 }
 
 
-template <typename AutomatonT>
-std::unordered_set<state_t> BuchiEmptyStates(const AutomatonT& automaton) {
-    static_assert(std::is_base_of<ParityAutomaton, AutomatonT>::value);
-    assert(automaton.IsBuchi());
-    static_assert(is_specialization_base_of<TransitionAutomaton, AutomatonT>::value);
-
-    // Find "goal" states, which are accepting states that can reach themselves.
-    std::unordered_set<state_t> goal_states;
-    for (state_t q : automaton.States()) {
-        if (automaton.GetLabel(q) == 0 && CanReach(automaton, q, ranges::v3::view::single(q), false))
-            goal_states.insert(q);
-    }
-
-    // Find all states that can reach no goal state.
-    return NotReachingStates(automaton, goal_states);
-}
-
-
-
-template <typename AutomatonT>
-void QuotientAutomaton(AutomatonT* automaton, const EquivalenceRelation<state_t>& relation, const std::function<parity_label_t(const EquivalenceRelation<state_t>::EquivClass&)>& merge_labels) {
-    static_assert(is_specialization_base_of<LabelledAutomaton, AutomatonT>::value);
-    static_assert(std::is_base_of<NondeterministicAutomaton, AutomatonT>::value);
-
-    for (const EquivalenceRelation<state_t>::EquivClass& c : relation.Classes()) {
-        automaton->MergeStates(c);
-        automaton->SetLabel(*c.begin(), merge_labels(c));
-    }
-}
-
-
-
 // Helper function for "TopologicalSorting".
-template <typename RT1, typename RT2>
-void _TopologicalSorting_Visit(const TransitionAutomaton<RT1, RT2>& automaton, std::vector<state_t>* sorting, std::unordered_set<state_t>* to_visit, const state_t& node) {
+template<typename RT1, typename RT2>
+void _TopologicalSorting_Visit(const TransitionAutomaton <RT1, RT2>& automaton, std::vector<state_t>* sorting,
+                               std::unordered_set<state_t>* to_visit, const state_t& node) {
     if (to_visit->find(node) == to_visit->end())
         return;
     for (const state_t& succ : automaton.Successors(node))
@@ -308,16 +239,14 @@ void _TopologicalSorting_Visit(const TransitionAutomaton<RT1, RT2>& automaton, s
 }
 
 
-template <typename RT1, typename RT2>
-std::vector<state_t> TopologicalSorting(const TransitionAutomaton<RT1, RT2>& automaton) {
+template<typename RT1, typename RT2>
+std::vector<state_t> TopologicalSorting(const TransitionAutomaton <RT1, RT2>& automaton) {
     std::vector<state_t> sorting;
     std::unordered_set<state_t> to_visit(automaton.States().begin(), automaton.States().end());
     while (!to_visit.empty())
         _TopologicalSorting_Visit(automaton, &sorting, &to_visit, *to_visit.begin());
     return sorting;
 }
-
-
 
 
 }  // namespace automaton

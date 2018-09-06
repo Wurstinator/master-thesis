@@ -68,8 +68,12 @@ set(AUTOMATON_FILES
         src/automaton/nondeterministic_automaton.cpp
         src/automaton/labelled_automaton.h
         src/automaton/util.h
-        src/automaton/util.impl.h
-        src/automaton/util.cpp
+        src/automaton/transition_util.h
+        src/automaton/transition_util.impl.h
+        src/automaton/transition_util.cpp
+        src/automaton/parity_util.h
+        src/automaton/parity_util.impl.h
+        src/automaton/parity_util.cpp
         src/automaton/parity.cpp
         src/automaton/parity.h
         src/automaton/is_specialization_base_of.h src/automaton/labelled_automaton.impl.h)

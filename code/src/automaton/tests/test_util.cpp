@@ -441,7 +441,7 @@ TEST_CASE("Test TopologicalSorting.") {
 
     CHECK(sorting.size() == 5);
     CHECK(std::set<state_t>(sorting.begin(), sorting.end()).size() == 5);
-    const unsigned int index0 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 0));
+    //const unsigned int index0 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 0));
     const unsigned int index1 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 1));
     const unsigned int index2 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 2));
     const unsigned int index3 = std::distance(sorting.begin(), std::find(sorting.begin(), sorting.end(), 3));
