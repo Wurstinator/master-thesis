@@ -44,7 +44,7 @@ bool CanReach(const TransitionAutomaton<RT1, RT2>& automaton, state_t from, Rng&
 template<typename RT1, typename RT2>
 std::unordered_set<state_t> ReachableStates(const TransitionAutomaton<RT1, RT2>& automaton, state_t q);
 
-// Computes states that can reach a collection of given states.
+// Computes states that can reach any state in a given collection.
 template<typename RT1, typename RT2, typename Rng>
 std::unordered_set<state_t> ReachingStates(const TransitionAutomaton<RT1, RT2>& automaton, Rng&& rng);
 

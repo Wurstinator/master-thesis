@@ -91,3 +91,78 @@ void ToHOA(const AutomatonT& automaton, std::ostream* ostream) {
     // Done.
     (*ostream) << "--END--";
 }
+
+
+template <typename AutomatonT>
+std::string AutTypeName_() {
+    constexpr bool is_finite_automaton = std::is_base_of<FiniteAutomaton, AutomatonT>::value;
+    constexpr bool is_parity_automaton = std::is_base_of<ParityAutomaton, AutomatonT>::value;
+    constexpr bool is_transition_automaton = is_specialization_base_of<TransitionAutomaton, AutomatonT>::value;
+    constexpr bool is_deterministic_automaton = std::is_base_of<DeterministicAutomaton, AutomatonT>::value;
+    static_assert(is_finite_automaton);
+
+    if (is_transition_automaton) {
+        if (is_deterministic_automaton) {
+            if (is_parity_automaton) {
+                return "DPA";
+            } else {
+                return "DeterministicAutomaton";
+            }
+        } else {
+            if (is_parity_automaton) {
+                return "NPA";
+            } else {
+                return "NondeterministicAutomaton";
+            }
+        }
+    } else {
+        if (is_parity_automaton) {
+            return "ParityAutomaton";
+        } else {
+            return "FiniteAutomaton";
+        }
+    }
+}
+
+
+template <typename AutomatonT>
+std::string ToCPPCode(const AutomatonT& automaton) {
+    constexpr bool is_finite_automaton = std::is_base_of<FiniteAutomaton, AutomatonT>::value;
+    constexpr bool is_parity_automaton = std::is_base_of<ParityAutomaton, AutomatonT>::value;
+    constexpr bool is_transition_automaton = is_specialization_base_of<TransitionAutomaton, AutomatonT>::value;
+    constexpr bool is_deterministic_automaton = std::is_base_of<DeterministicAutomaton, AutomatonT>::value;
+    static_assert(is_finite_automaton);
+
+    // Initialization.
+    std::stringstream result;
+    result << AutTypeName_<AutomatonT>() << " automaton";
+    if (is_transition_automaton)
+        result << "(" << static_cast<int>(automaton.atomicPropositions) << ")";
+    result << ";\n";
+
+    // Setup states.
+    for (state_t q : automaton.States())
+        result << "automaton.AddState(" << q << ");\n";
+    result << "automaton.SetInitialState(" << automaton.InitialState() << ");\n";
+
+    // Setup labels.
+    if (is_parity_automaton)
+        for (state_t q : automaton.States())
+            result << "automaton.SetLabel(" << q << ", " << automaton.GetLabel(q) << ");\n";
+
+    // Setup transitions.
+    if (is_transition_automaton) {
+        for (state_t p : automaton.States()) {
+            for (int s : automaton.Symbols()) {
+                for (state_t q : automaton.Successors(p, s)) {
+                    if (is_deterministic_automaton)
+                        result << "automaton.SetSucc(" << p << ", " << s << ", " << q << ");\n";
+                    else
+                        result << "automaton.AddSucc(" << p << ", " << s << ", " << q << ");\n";
+                }
+            }
+        }
+    }
+
+    return result.str();
+}

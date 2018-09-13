@@ -1,20 +1,15 @@
 #include "catch.hpp"
 
 #include "helper_functions.h"
+#include "../hoa/hoa_io.h"
 #include "../parity_util.h"
 
 using namespace tollk;
 using namespace automaton;
 
-NondeterministicAutomaton TestAutomaton1();
-
 DeterministicAutomaton TestAutomaton2();
-
-DeterministicAutomaton TestAutomaton3();
-
-DeterministicAutomaton TestAutomaton4();
-
 DPA TestAutomaton5();
+DPA TestAutomaton6();
 
 TEST_CASE("Test RefineToCongruence.") {
     EquivalenceRelation<state_t> equivalence_relation;
@@ -117,8 +112,8 @@ TEST_CASE("Test NormalizePriorities.") {
     CHECK(new_priorities.at(7) == 1);
 }
 
-
-TEST_CASE("Test LanguageEquivalentStates.") {
+/*
+TEST_CASE("Test LanguageEquivalentStates. 1") {
     DPA dpa(1);
     dpa.AddState(0);
     dpa.AddState(1);
@@ -136,4 +131,78 @@ TEST_CASE("Test LanguageEquivalentStates.") {
     CHECK(relation.Exists(1));
     CHECK(relation.IsEquiv(0, 1));
     CHECK(relation.GetClass(0).size() == 2);
+}
+
+
+TEST_CASE("Test LanguageEquivalentStates. 2") {
+    DPA dpa(1);
+    dpa.AddState(0);
+    dpa.AddState(1);
+    dpa.AddState(2);
+    dpa.AddState(3);
+    dpa.SetInitialState(0);
+    dpa.SetSucc(0, 0, 2);
+    dpa.SetSucc(0, 1, 1);
+    dpa.SetSucc(1, 0, 3);
+    dpa.SetSucc(1, 1, 1);
+    dpa.SetSucc(2, 0, 2);
+    dpa.SetSucc(2, 1, 2);
+    dpa.SetSucc(3, 0, 3);
+    dpa.SetSucc(3, 1, 0);
+    dpa.SetLabel(0, 0);
+    dpa.SetLabel(1, 0);
+    dpa.SetLabel(2, 1);
+    dpa.SetLabel(3, 1);
+
+    const EquivalenceRelation<state_t> relation = LanguageEquivalentStates(dpa);
+    CHECK(relation.Classes().size() == 4);
+    CHECK(relation.Exists(0));
+    CHECK(relation.Exists(1));
+    CHECK(relation.Exists(2));
+    CHECK(relation.Exists(3));
+    CHECK(!relation.IsEquiv(0, 1));
+    CHECK(!relation.IsEquiv(0, 2));
+    CHECK(!relation.IsEquiv(0, 3));
+    CHECK(!relation.IsEquiv(1, 2));
+    CHECK(!relation.IsEquiv(1, 3));
+    CHECK(!relation.IsEquiv(2, 3));
+}
+*/
+
+
+TEST_CASE("Test LanguageEquivalentStates. 3") {
+    const DPA dpa = TestAutomaton6();
+    const EquivalenceRelation<state_t> relation = LanguageEquivalentStates(dpa);
+    const EquivalenceRelation<state_t>::EquivClass c1 {10, 29, 52, 66, 87}; // 10 29 52 / 66 87
+    const EquivalenceRelation<state_t>::EquivClass c2 {16, 31, 67, 73, 82};
+    const EquivalenceRelation<state_t>::EquivClass c3 {25, 36};
+    const EquivalenceRelation<state_t>::EquivClass c4 {26, 45};
+    const EquivalenceRelation<state_t>::EquivClass c5 {27, 35, 50};
+    const EquivalenceRelation<state_t>::EquivClass c6 {30, 63};
+    const EquivalenceRelation<state_t>::EquivClass c7 {33, 38};
+    const EquivalenceRelation<state_t>::EquivClass c8 {34, 51};
+    const EquivalenceRelation<state_t>::EquivClass c9 {39, 46};
+    const EquivalenceRelation<state_t>::EquivClass c10 {40, 58};
+    const EquivalenceRelation<state_t>::EquivClass c11 {41, 47, 54, 75};
+    const EquivalenceRelation<state_t>::EquivClass c12 {42, 57, 68, 74, 86};
+    const EquivalenceRelation<state_t>::EquivClass c13 {43, 61};
+    const EquivalenceRelation<state_t>::EquivClass c14 {48, 56, 64, 81};
+    const EquivalenceRelation<state_t>::EquivClass c15 {49, 53, 60, 69, 70, 76, 77, 78, 79, 83, 85, 89, 90, 91, 92, 93, 94};
+    const EquivalenceRelation<state_t>::EquivClass c16 {59, 65, 71, 72, 80, 84, 88, 95};
+    //CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c1) != relation.Classes().end());
+    //CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c2) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c3) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c4) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c5) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c6) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c7) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c8) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c9) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c10) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c11) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c12) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c13) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c14) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c15) != relation.Classes().end());
+    CHECK(std::find(relation.Classes().begin(), relation.Classes().end(), c16) != relation.Classes().end());
 }

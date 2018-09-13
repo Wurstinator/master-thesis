@@ -25,6 +25,11 @@ std::string ToHOAStr(const AutomatonT& automaton) {
     return ss.str();
 }
 
+
+// Writes a given automaton to C++ code.
+template <typename AutomatonT>
+std::string ToCPPCode(const AutomatonT& automaton);
+
 #include "hoa_io.impl.h"
 
 

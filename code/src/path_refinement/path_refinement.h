@@ -8,6 +8,7 @@
 namespace tollk {
 
 // Compute the path refinement equivalence relation.
-EquivalenceRelation<automaton::state_t> PathRefinementEquivalence(const automaton::DPA& dpa, const EquivalenceRelation<automaton::state_t>& R);
+EquivalenceRelation<automaton::state_t> PathRefinementEquivalence(const automaton::DPA& dpa, const EquivalenceRelation<automaton::state_t>::EquivClass& lambda);
+
 
 }

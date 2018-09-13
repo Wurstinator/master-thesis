@@ -96,7 +96,7 @@ EquivalenceRelation<state_t> LanguageEquivalentStates(const DPA& dpa) {
         std::unordered_set<state_t> second_prio_ge_l(product.States().begin(), product.States().end());
 
         for (parity_label_t l = 0; l <= max_priority; ++l) {
-            const auto prio_lt_l = [&dpa, &pair_indices, k](state_t q) {return dpa.GetLabel(pair_indices.left.at(q).second) < k;};
+            const auto prio_lt_l = [&dpa, &pair_indices, l](state_t q) {return dpa.GetLabel(pair_indices.left.at(q).second) < l;};
             discard_if(&second_prio_ge_l, prio_lt_l);
             Subautomaton(&product_copy, second_prio_ge_l);
             sub_automata.insert(std::make_pair(std::make_pair(k, l), product_copy));
@@ -106,7 +106,7 @@ EquivalenceRelation<state_t> LanguageEquivalentStates(const DPA& dpa) {
     // Two states are NOT language equivalent, if there is a non-trivial SCC in one of the sub-automata such that
     // the parity of the lowest first priority and the lowest second priority differs.
 
-    // First, collect all non-trivial SCCs that occur in any of the subautomata.
+    // First, collect all SCCs that occur in any of the subautomata.
     std::set<std::set<state_t>> all_sccs;
     for (const std::pair<const std::pair<parity_label_t, parity_label_t>, NondeterministicAutomaton>& kv_pair : sub_automata) {
         const SCCCollection sccs = StronglyConnectedComponents(kv_pair.second);
@@ -128,22 +128,20 @@ EquivalenceRelation<state_t> LanguageEquivalentStates(const DPA& dpa) {
     };
     discard_if(&all_sccs, first_second_prio_is_same);
 
-    // Finally, collect all states that are not in any of the leftover SCCs.
-    std::vector<state_t> non_equivalent_states;
+    // Collect all states that are not in any of the leftover SCCs. These are the states which lie on a loop
+    // with different parities in the components.
+    std::vector<state_t> ce_states;
     for (const std::set<state_t>& scc : all_sccs)
-        std::copy(scc.begin(), scc.end(), std::back_inserter(non_equivalent_states));
+        std::copy(scc.begin(), scc.end(), std::back_inserter(ce_states));
 
-    std::set<std::pair<state_t, state_t>> equivalent_states;
-    for (state_t p : dpa.States())
-        for (state_t q : dpa.States())
-            equivalent_states.insert(std::make_pair(p, q));
-    for (state_t q : non_equivalent_states)
-        equivalent_states.erase(pair_indices.left.at(q));
+    // Two states are not language-equivalent if any of these "counter example states" is reachable in the product
+    // automaton.
+    const std::unordered_set<state_t> equivalent_pairs = NotReachingStates(ProductAutomaton(dpa, dpa), ce_states);
 
     // Collect the equivalent states in a relation.
     EquivalenceRelation<state_t> result;
-    for (const std::pair<state_t, state_t>& pair : equivalent_states)
-        result.AddConnection(pair.first, pair.second);
+    for (state_t q : equivalent_pairs)
+        result.AddConnection(pair_indices.left.at(q).first, pair_indices.left.at(q).second);
     return result;
 }
 
