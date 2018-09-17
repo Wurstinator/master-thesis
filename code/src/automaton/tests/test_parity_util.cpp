@@ -173,7 +173,7 @@ TEST_CASE("Test LanguageEquivalentStates. 2") {
 TEST_CASE("Test LanguageEquivalentStates. 3") {
     const DPA dpa = TestAutomaton6();
     const EquivalenceRelation<state_t> relation = LanguageEquivalentStates(dpa);
-    const EquivalenceRelation<state_t>::EquivClass c1 {10, 29, 52, 66, 87}; // 10 29 52 / 66 87
+    const EquivalenceRelation<state_t>::EquivClass c1 {10, 29, 52, 66, 87};
     const EquivalenceRelation<state_t>::EquivClass c2 {16, 31, 67, 73, 82};
     const EquivalenceRelation<state_t>::EquivClass c3 {25, 36};
     const EquivalenceRelation<state_t>::EquivClass c4 {26, 45};

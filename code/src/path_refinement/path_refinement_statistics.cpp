@@ -17,7 +17,9 @@ std::unique_ptr<ConstructionExecutor> CreateConstructionExecutor() {
 
 tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA dpa, const BaseOptions& options) {
     const EquivalenceRelation<automaton::state_t> R = LanguageEquivalentStates(dpa);
-    const EquivalenceRelation<automaton::state_t> pr = PathRefinementEquivalence(dpa, R);
-    QuotientAutomatonUnsafe(&dpa, pr);
+    for (const EquivalenceRelation<automaton::state_t>::EquivClass& clas : R.Classes()) {
+        const EquivalenceRelation<automaton::state_t> pr = PathRefinementEquivalence(dpa, clas);
+        QuotientAutomatonUnsafe(&dpa, pr);
+    }
     return dpa;
 }

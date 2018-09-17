@@ -69,14 +69,13 @@ class DeterministicAutomaton :
 };
 
 
-
 // Implementation
 
 
 template<typename RT1, typename RT2>
 DeterministicAutomaton DeterministicAutomaton::FromTransitionAutomaton(const TransitionAutomaton<RT1, RT2>& automaton) {
     if (!automaton.IsDeterministic())
-        throw "DeterministicAutomaton::FromTransitionAutomaton : Given automaton is not deterministic.";
+        throw std::logic_error("DeterministicAutomaton::FromTransitionAutomaton : Given automaton is not deterministic.");
 
     DeterministicAutomaton result(automaton.atomicPropositions);
 

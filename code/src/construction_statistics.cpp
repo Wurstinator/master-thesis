@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
     }
 
     const tollk::automaton::NPA npa = NPAFromHoa(options->input_file);
-    const tollk::automaton::DPA dpa = tollk::automaton::DPA::FromNPA(npa);
+    const tollk::automaton::DPA dpa = tollk::automaton::DPA::FromNondeterministic(npa);
 
     if (options->size_limit && dpa.States().size() > options->size_limit.value()) {
         std::cerr << "Automaton of size " << dpa.States().size() << " is too big." << std::endl;
