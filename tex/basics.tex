@@ -1,0 +1,590 @@
+\chapter{Basic Definitions}
+The first chapter (re)defines the fundamentals of this thesis and notation used later on.
+
+\section{General Mathematical Terms}
+We begin with a set theoretic approach to define the natural numbers.
+\begin{defn}
+	The natural numbers $\mathbb{N} = \{0, 1, 2, 3, \dots\}$ are defined as follows: For every natural $n$, we set $n := \{0, \dots, n-1\}$. For example, $0 = \emptyset$, $1 = \{0\}$, $2 = \{0, 1\} = \{\emptyset, \{\emptyset\}\}$.
+\end{defn}
+
+We can extend this definition to ordinal numbers up to $\omega$.
+
+\begin{defn}
+	We write $\omega = \mathbb{N}$. The set of \emph{ordinal numbers} (up to $\omega$) is $\omega \cup \{\omega\} = \{0, 1, 2, \dots, \omega\}$. For two ordinal numbers $\alpha, \beta$, we define $\alpha < \beta$ if and only if $\alpha \in \beta$. \\
+	For an ordinal $\alpha \in \omega$, we define $\alpha^+ = \alpha \cup \{\alpha\}$ as the successor of $\alpha$. If $\alpha = \beta^+$ for some ordinal $\beta$, we define $\alpha^- = \beta$. Otherwise, i.e. if $\alpha \in \{0, \omega\}$, we define $\alpha^- = \alpha$.
+\end{defn}
+
+\begin{defn}
+	Let $\alpha, \beta$ be ordinal numbers. We need to consider the following special cases of ordinal arithmetic:
+	\begin{itemize}
+		\item If $\alpha, \beta \in \mathbb{N}$, then $\alpha + \beta$ is defined as usual.
+		\item If $\alpha = \omega, \beta = 0$, then $\alpha + \beta = \omega$.
+		\item If $\alpha \in \mathbb{N}, \beta = \omega$, then $\alpha + \beta = \omega$.
+	\end{itemize}
+	In particular $1 + \alpha = \begin{cases}\alpha^+ & \text{if } \alpha < \omega \\ \omega & \text{if } \alpha = \omega\end{cases}$.
+	
+	For some $n \in \mathbb{N}$, we write $\alpha - n = \alpha$ if $n = 0$, and $\alpha - n = (\alpha^-) - (n-1)$ otherwise.
+\end{defn}
+
+\begin{defn}
+	Let $X$ and $Y$ be two sets. We define $X^Y$ as the set of all functions $f : Y \rightarrow X$.
+\end{defn}
+
+\begin{defn}
+	Let $X$ be a set. We denote the power set $\{ Y \mid Y \subseteq X \}$ by $\mathcal{P}(X)$.
+\end{defn}
+
+\begin{defn}
+	A \emph{partial order} on a set $X$ is a relation $< \subseteq X \times X$ which satisfies
+	\begin{itemize}
+		\item irreflexivity, i.e. $x \not< x$ for all $x \in X$, and
+		\item transitivity, i.e. if $x < y$ and $y < z$, then $x < z$.
+	\end{itemize}
+	
+	$<$ is called a \emph{linear order} if additionally to that it satisfies totality, i.e. for all $x, y \in X$, either $x = y$, or $x < y$, or $y < x$.
+	
+	$<$ is called a \emph{well order} if there is no infinitely descending sequence in $X$.
+\end{defn}
+
+
+\begin{defn}
+	Let $f : X \rightarrow Y$ be a function and $X' \subseteq X$. We define $f(X') = \{y \in Y \mid \text{There is an } x \in X' \text{ such that } f(x) = y \text{.}\}$, and $f \upharpoonright_{X'} = g$, where $g : X' \rightarrow Y$ is a function with $g(x) = f(x)$.
+\end{defn}
+
+
+\begin{defn}
+	Let $X, Y$ be sets. We define $X \overset{.}\cup Y = Z$ as the \emph{disjunct union} of $X$ and $Y$, which means we assume via renaming that $X \cap Y = \emptyset$.
+\end{defn}
+
+
+
+\section{Words and Languages}
+\begin{defn}
+	A  non-empty set of symbols can be called \emph{alphabet} and will usually be denoted by a variable $\Sigma, \Gamma, \Pi$. \\
+	A finite \emph{word} (denoted by $w, v, u$) over an alphabet $\Sigma$ is a function $w : \{0, \dots, n-1\} \rightarrow \Sigma$ for some $n \in \mathbb{N}$. The \emph{length} of this word is $|w| = n$. The word $w$ with length $|w| = 0$ is called the \emph{empty word} $\varepsilon$. \\
+	This gives an alternative description of $\Sigma^n$: $\Sigma^n = \{ w : n \rightarrow \Sigma \mid w \text{ is a word of length } n \text{ over } \Sigma\}$. \\
+	Further, we define $\Sigma^* = \bigcup\limits_{n \in \mathbb{N}} \Sigma^n$ as the set of all words over $\Sigma$.\\
+	A \emph{language} (denoted by $L, K$) over an alphabet $\Sigma$ is a set $L \subseteq \Sigma^*$.
+\end{defn}
+
+\vspace*{10pt}
+We now repeat the extension of this definition for infinite words.
+\vspace*{10pt}
+
+\begin{defn}
+	An \emph{$\omega$-word} (denoted by $\alpha, \beta, \gamma$) over an alphabet $\Sigma$ is a function $\alpha : \mathbb{N} \rightarrow \Sigma$. The length of $\alpha$ is $|\alpha| = \omega = \mathbb{N}$. \\
+	Again, this can be used to describe $\Sigma^\omega$ as $\{w : \mathbb{N} \rightarrow \Sigma \mid w \text{ is an } \omega \text{-word over } \Sigma\}$.\\
+	An \emph{$\omega$-language} (denoted by $U, V$) over an alphabet $\Sigma$ is a set $L \subseteq \Sigma^\omega$.
+\end{defn}
+
+\vspace*{10pt}
+We can now define the usual operations on words and languages. From now on, we always assume $\Sigma$ to be an arbitrary alphabet unless specified otherwise.
+\vspace*{10pt}
+
+\begin{defn}
+	Let $v, w \in \Sigma^*$ and $w_i \in \Sigma^*$ for all $i \in \mathbb{N}$ be words over $\Sigma$ and $\alpha \in \Sigma^\omega$ be an $\omega$-word over $\Sigma$.
+	
+	The \emph{concatenation} of $v$ and $w$ (denoted by $v \cdot w$) is a word $u$ such that:
+	\begin{align*}
+	u : |v|+|w| \allowbreak \rightarrow \Sigma, i \mapsto 
+	\begin{cases}
+		v(i) & \text{if } i < |v| \\
+		w(i-|v|) & \text{else}
+	\end{cases}
+	\end{align*}
+
+	The \emph{concatenation} of $w$ and $\alpha$ (denoted by $w \cdot \alpha$) is an $\omega$-word $\beta$ such that:
+	\begin{align*}
+	\beta : \mathbb{N} \rightarrow \Sigma, i \mapsto 
+	\begin{cases}
+		w(i) & \text{if } i < |w| \\
+		\alpha(i-|w|) & \text{else}
+	\end{cases}
+	\end{align*}
+	
+	For some $n \in \mathbb{N}$, the \emph{$n$-iteration} of $w$ (denoted by $w^n$) is a word $u$ such that:
+	\begin{align*}
+		u : |w|^n \rightarrow \Sigma, i \mapsto w(i \mod |w|)
+	\end{align*}
+	
+	The \emph{$\omega$-iteration} of $w$ (denoted by $w^\omega$) is an $\omega$-word $\alpha$ such that:
+	\begin{align*}
+		\beta : \mathbb{N} \rightarrow \Sigma, i \mapsto w(i \mod |w|)
+	\end{align*}
+	
+	The \emph{concatenation} of a sequence $(w_i)_{i \in \mathbb{N}}$ (denoted by $\underset{i \in \mathbb{N}}{\circ} w_i$ or $w_0 \cdot \dots$) is an $\omega$-word $\alpha$ such that:
+	\begin{align*}
+		\alpha : \mathbb{N} \rightarrow \Sigma, i \mapsto w_j(x)
+	\end{align*}
+	where $x = i - \sum\limits_{k = 0}^{j-1} |w_k|$ and $j$ is the biggest number such that $x \geq 0$.
+\end{defn}
+
+\vspace{20pt}
+For the purpose of easier notation and readability, we write singular symbols as words, i.e. for an $a \in \Sigma$ we write $a$ for the word $w_a : \{0\} \rightarrow \Sigma, i \mapsto a$.\\
+We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Further, we use $\alpha \cdot \varepsilon = \alpha$ for $\alpha \in \Sigma^\omega$.
+\vspace{10pt}
+
+\begin{defn}
+	Let $L, K \subseteq \Sigma^*$ be a language and $U \subseteq \Sigma^\omega$ be an $\omega$-language.\\
+	The \emph{concatenation} of $L$ and $K$ is $L \cdot K = \{ u \in \Sigma^* \mid \text{There are } v \in L \text{ and } \allowbreak w \in K \text{ such that } u = v \cdot w\}$.\\
+	The \emph{concatenation} of $L$ and $U$ is $L \cdot U = \{ \alpha \in \Sigma^\omega \mid \text{There are } w \in L \text{ and } \allowbreak \beta \in U \text{ such that } \alpha = w \cdot \beta\}$.\\
+	For some $n \in \mathbb{N}$, the \emph{$n$-iteration} of $L$ is $L^n = \{ w \in \Sigma^* \mid \text{There is } v \in L \text{ such that } w = v^n\}$.\\
+	The \emph{Kleene closure} of $L$ is $L^* = \bigcup\limits_{n \in \mathbb{N}} L^n$.\\
+	The \emph{$\omega$-iteration} of $L$ is $L^\omega = \{\alpha \in \Sigma^\omega \mid \text{There is a sequence } (w_i)_{i \in \mathbb{N}} \in L \text{ such that } \alpha = \underset{i \in \mathbb{N}}{\circ} w_i \}$.\\
+	The \emph{$\infty$-iteration} of $L$ is $L^\infty = L^* \cup L^\omega$.
+\end{defn}
+
+\begin{defn}
+	Let $w \in \Sigma^\infty$ be a word. For $0 \leq n, m < |w|$, we define $w[n,m] = w(n) \cdots w(m)$. \\
+	If $w \in \Sigma^*$ is finite, we define $\text{Tail}(w) = w[1,|w|-1]$ and $\text{Last}(w) = w(|w|-1)$. \\
+	If $w \in \Sigma^\omega$ is infinite, we also define $w[n, \omega] = \underset{i \geq n}{\circ} w(i)$ and $\text{Tail}(w) = w[1, \omega]$.
+\end{defn}
+
+\begin{defn}
+	The \emph{occurrence set} of a word $w \in \Sigma^\infty$ is the set of symbols which occur at least once in $w$. 
+	\begin{align*}
+	\text{Occ}(w) = \{ a \in \Sigma \mid \text{There is an } n \in |w| \text{ such that } w(n) = a \text{.}\}
+	\end{align*}
+\end{defn}
+
+\begin{defn}
+	The \emph{infinity set} of a word $w \in \Sigma^\infty$ is the set of symbols which occur infinitely often in $w$.
+	\begin{align*}
+	\text{Inf}(w) = \{ a \in \Sigma \mid \text{For every } n \in \mathbb{N} \text{ there is a } m > n \text{ such that } w(m) = a \text{.}\}
+	\end{align*}
+	Note that for finite alphabets, $\text{Inf}(w) = \emptyset$ iff $w \in \Sigma^*$.
+\end{defn}
+
+
+
+\section{Syntax of Regular Expressions}
+We now define three kinds of regular expressions for the languages. For this entire section, we assume $\Sigma$ to be an arbitrary alphabet.
+
+\begin{defn}
+	A \emph{regular expression} is defined inductively as follows.
+	\begin{itemize}
+		\item $\varepsilon$ and $\emptyset$ are regular expressions.
+		\item For every $a \in \Sigma$, $a$ is a regular expression.
+		\item If $r$ and $s$ are regular expressions, so are $(r \cdot s)$ and $(r + s)$.
+		\item If $r$ is a regular expression, so is $(r^*)$.
+	\end{itemize}
+	For readability, unnecessary brackets will be omitted from this notation.\\
+	We call $\mathcal{R}eg_*[\Sigma]$ the set of all regular expressions over $\Sigma$, whereas the specification of the alphabet will be left out if it is clear within the given context.
+\end{defn}
+
+\begin{defn}
+	Let $r \in \mathcal{R}eg_*$ be a regular expression. The set of \emph{sub-expressions} $\text{sub}(r)$ is the set of all regular expressions \enquote{contained} in $r$ and is defined inductively as:
+	\begin{itemize}
+		\item If $r \in \{\varepsilon, \emptyset\}$, then $\text{sub}(r) = \{r\}$.
+		\item If $r = a$ for some $a \in \Sigma$, then $\text{sub}(r) = \{a\}$.
+		\item If $r = s \cdot t$, then $\text{sub}(r) = \{r\} \cup \text{sub}(s) \cup \text{sub}(t)$.
+		\item If $r = s + t$, then $\text{sub}(r) = \{r\} \cup \text{sub}(s) \cup \text{sub}(t)$.
+		\item If $r = s^*$, then $\text{sub}(r) = \{r\} \cup \text{sub}(s)$.
+	\end{itemize}
+\end{defn}
+
+\begin{exmp}
+	For $\Sigma = \{a, b, c\}$ and the regular expression $r = ((ab) + (b + c^*))^*$, the set of sub-expressions is $\text{sub}(r) = \{r, (ab) + (b + c^*), ab, b + c^*, c^*, a, b, c\}$.
+\end{exmp}
+
+\vspace{10pt}
+
+\begin{defn}
+	An \emph{$\omega$-regular expression} is an expression $r = r_1 s_1^\omega + \dots + r_n s_n^\omega$ for regular expressions $r_1, s_1, \dots, r_n, s_n \in \mathcal{R}eg_*$.\\
+	We call the set of all $\omega$-regular expressions $\mathcal{R}eg_\omega[\Sigma]$.
+\end{defn}
+
+\begin{defn}
+	Let $r = r_1 s_1^\omega + \dots + r_n s_n^\omega$ be an $\omega$-regular expression. The set of sub-expressions of $r$ are defined similarly as before:
+	\begin{itemize}
+		\item If $n = 1$, then $\text{sub}(r) = \{r, s_1^\omega\} \cup \text{sub}(r_1) \cup \text{sub}(s_1)$.
+		\item If $n > 1$, then $\text{sub}(r) = \{r\} \cup \text{sub}(r_1 s_1^\omega + \dots + r_{n-1} s_{n-1}^\omega) \cup \text{sub}(r_n s_n^\omega)$.
+	\end{itemize}
+\end{defn}
+
+\begin{exmp}
+	For $\Sigma = \{a, b, c\}$ and the regular expression $r = ab^\omega + \varepsilon (cc)^\omega$, the set of sub-expressions is $\text{sub}(r) = \{r, ab^\omega, \varepsilon (cc)^\omega, b^\omega, (cc)^\omega, cc, a, b, c, \epsilon \}$.
+\end{exmp}
+
+\vspace*{10pt}
+
+\begin{defn}
+	An \emph{$\infty$-regular expression} is an extension of regular expression, i.e. it is defined inductively with the same rules as regular expressions with the addition of a new one:
+	\begin{itemize}
+		\item If $r$ is an $\infty$-regular expression, so is $(r^\infty)$.
+	\end{itemize}
+	The set of all $\infty$-regular expressions is $\mathcal{R}eg_\infty[\Sigma]$.
+\end{defn}
+
+\begin{defn}
+	We set $\mathcal{R}eg[\Sigma] = \mathcal{R}eg_*[\Sigma] \cup \mathcal{R}eg_\omega[\Sigma] \cup \mathcal{R}eg_\infty[\Sigma]$.
+\end{defn}
+
+\begin{defn}
+	The sub-expressions for $\infty$-regular expressions are defined as they are for regular expressions, with the addition that $\text{sub}(r^\infty) = \{r^\infty\} \cup \text{sub}(r)$.\\
+	A sub-expression $s \in \text{sub}(r)$ of an $\infty$-regular expression $r$ is called an \emph{$\infty$-base} of $r$ if $s^\infty \in \text{sub}(r)$. $s$ is called a \emph{$*$-base} of $r$ if $s^* \in \text{sub}(r)$.\\
+	We call $s$ a \emph{$*$-sub-expression} if $s = r^*$ for some $*$-base $r$. Analogous to that we call $s$ an \emph{$\infty$-sub-expression} if $s = r^\infty$ for some $\infty$-base $r$.
+\end{defn}
+
+\begin{exmp}
+	For $\Sigma = \{a, b, c\}$ and the regular expression $r = (a b^\infty a)^\infty + c^*$, the $\infty$-bases of $r$ are $b$, $a b^\infty a$. The only $*$-base of $r$ is $c$.
+\end{exmp}
+
+\begin{defn}
+	For two regular expressions of an arbitrary type $r, s$ we set $r \in_\text{reg} s$ if $r \neq s$ and $r \in \text{sub}(s)$.
+\end{defn}
+
+\begin{defn}
+	Let $r \in \mathcal{R}_eg[\Sigma]$ be a regular expression. We define the \emph{length} of $r$ ($|r|$) as the number of $\Sigma$-symbols.
+	\begin{itemize}
+		\item $|\varepsilon| = |\emptyset| = 0$
+		\item $|a| = 1$ for all $a \in \Sigma$
+		\item $|r + s| = |r \cdot s| = |r| + |s|$
+		\item $|r^*| = |r^\omega| = |r^\infty| = |r|$
+	\end{itemize}
+\end{defn}
+
+
+
+
+\section{Semantics of Regular Expressions}
+We now define the languages of the three kinds of regular expressions we introduced.
+
+\begin{defn}
+	Let $r \in \mathcal{R}eg_*[\Sigma]$ be a regular expression. The \emph{language of $r$}, $L(r) \subseteq \Sigma^*$, is defined inductively as:
+	\begin{itemize}
+		\item $L(\emptyset)$ = $\emptyset$
+		\item $L(\varepsilon) = \{\varepsilon\}$
+		\item For all $a \in \Sigma$, $L(a) = \{a\}$
+		\item $L(r + s) = L(r) \cup L(s)$
+		\item $L(r \cdot s) = L(r) \cdot L(s)$
+		\item $L(r^*) = (L(r))^*$
+	\end{itemize}
+	
+	A language $L \subseteq \Sigma^*$ is called \emph{regular} if there is a regular expression $r \in \mathcal{R}eg_*$ such that $L = L(r)$.
+\end{defn}
+
+\begin{defn}
+	Let $r = r_1 s_1^\omega + \dots + r_n s_n^\omega$ be an $\omega$-regular expression. $L(r) \subseteq \Sigma^\omega$ is defined as $L(r) = \bigcup\limits_{i=1}^n L(r_i) \cdot (L(s_i))^\omega$.\\
+	An $\omega$-language $U \subseteq \Sigma^\omega$ is called \emph{$\omega$-regular} if there is an $\omega$-regular expression $r \in \mathcal{R}eg_\omega$ such that $U = L(r)$.
+\end{defn}
+
+\begin{defn}
+	Let $r \in \mathcal{R}eg_\infty[\Sigma]$ be an $\infty$-regular expression. The language of $r$, $L(r) \subseteq \Sigma^\infty$, is defined inductively as:
+	\begin{itemize}
+		\item $L(\emptyset)$ = $\emptyset$
+		\item $L(\varepsilon) = \{\varepsilon\}$
+		\item For all $a \in \Sigma$, $L(a) = \{a\}$
+		\item $L(r + s) = L(r) \cup L(s)$
+		\item $L(r \cdot s) = (L_*(r) \cdot L(s)) \cup L_\omega(r)$
+		\item $L(r^*) = ((L_*(r))^*) \cdot (\{\varepsilon\} \cup L_\omega(r))$
+		\item $L(r^\infty) = L(r^*) \cup (L_*(r))^\omega$
+	\end{itemize}
+	Here, $L_*(r)$ and $L_\omega(r)$ denote the sets of finite and infinite words in $L(r)$, i.e. $L_*(r) = L(r) \cap \Sigma^*$ and $L_\omega(r) = L(r) \cap \Sigma^\omega$.
+	
+	A language $L \subseteq \Sigma^\infty$ is called \emph{$\infty$-regular} if there is an $\infty$-regular expression $r \in \mathcal{R}eg_\infty$ such that $L = L(r)$.
+\end{defn}
+
+\begin{exmp}
+	Let $\Sigma = \{a, b\}$ and $r = a^\infty b^\infty$.
+	Then $L_*(r) = L(a^* b^*)$ and $L_\omega(r) = L(a^\omega + a^* b^\omega)$.
+\end{exmp}
+
+\begin{defn}
+	We say for any two types of regular expressions $r, s \in \mathcal{R}eg[\Sigma]$, $r$ and $s$ are \emph{equivalent} ($r \equiv s$) if $L(r) = L(s)$.
+\end{defn}
+
+\vspace{5pt}
+
+
+\subsection{Correlation of regular, $\boldsymbol{\omega}$-regular, and $\boldsymbol{\infty}$-regular expressions}
+While regular expressions and $\omega$-regular expressions are the standard object used in their respective fields of automata theory, $\infty$-regular expressions are just as powerful as we show in the following statements.
+
+\begin{lem}
+	Let $r \in \mathcal{R}eg_\infty$ be an $\infty$-regular expression. There is a regular expression $g(r) \in \mathcal{R}eg_*$ such that $L_*(r) = L(g(r))$ and $|g(r)| \in \mathcal{O}(|r|)$.
+	\label{lem:infty_regexp_to_normal_regexp}
+\end{lem}
+
+\begin{proof}
+	We define the construction of $g(r)$ inductively.
+	\begin{itemize}
+		\item If $r = a \in \Sigma \cup \{\varepsilon\}$, then $g(r) = r$.\\
+			$L_*(r) = \{a\} = L(g(r))$.
+			
+		\item If $r = \emptyset$, then $g(r) = r$. \\
+			$L_*(r) = \emptyset = L(g(r))$.
+		
+		\item If $r = s + t$, then $g(r) = g(s) + g(t)$.
+		\begin{align*}
+			& L_*(r) \\
+			=\;& (L(s) \cup L(t)) \cap \Sigma^* \\
+			=\;& (L(s) \cap \Sigma^*) \cup (L(t) \cap \Sigma^*) \\ 
+			=\;& L_*(s) \cup L_*(t) \\
+			=\;& L(g(r))
+		\end{align*}
+		
+		\item If $r = s \cdot t$, then $g(r) = g(s) \cdot g(t)$. \\
+		\begin{align*}
+			& L_*(r) \\
+			=\;& ((L_*(s) \cdot L(t)) \cup L_\omega(s)) \cap \Sigma^* \\
+			=\;& ((L_*(s) \cdot L(t)) \cap \Sigma^*) \cup (L_\omega(s)) \cap \Sigma^*) \\
+			=\;& (L_*(s) \cdot L(t)) \cap \Sigma^* \\
+			=\;& (L_*(s) \cap \Sigma^*) \cdot (L(t) \cap \Sigma^*) \\
+			=\;& L_*(s) \cdot L_*(t) \\
+			=\;& L(g(r))
+		\end{align*}
+		
+		\item If $r = s^*$, then $g(r) = g(s)^*$. \\
+		\begin{align*}
+			& L_*(r) \\
+			=\;& (((L_*(s))^*) \cdot (\{\varepsilon\} \cup L_\omega(s))) \cap \Sigma^* \\
+			=\;& (((L_*(s))^* \cap \Sigma^*) \cdot ((\{\varepsilon\} \cap \Sigma^*) \cup (L_\omega(s) \cap \Sigma^*)) \\
+			=\;& (((L_*(s))^*) \cdot (\{\varepsilon\} \cup \emptyset) \\
+			=\;& ((L_*(s))^* \\
+			=\;& L(g(r))
+		\end{align*}
+		
+		\item If $r = s^\infty$, then $g(r) = g(s)^*$.
+		\begin{align*}
+			& L_*(r) \\
+			=\;& (L(s^*) \cup (L_*(s))^\omega) \cap \Sigma^* \\
+			=\;& (L(s^*) \cap \Sigma^*) \cup (L_*(s))^\omega \cap \Sigma^*) \\
+			=\;& L_*(s^*) \cup \emptyset \\
+			=\;& L(g(s^*)) \\
+			=\;& L(g(r))
+		\end{align*}
+	\end{itemize}
+\end{proof}
+
+
+\begin{lem}
+	Let $r \in \mathcal{R}eg_\infty$ be an $\infty$-regular expression. There is an $\omega$-regular expression $h(r) \in \mathcal{R}eg_\omega$ such that $L_\omega(r) = L(h(r))$.
+	\label{lem:infty_regexp_to_omega_regexp}
+\end{lem}
+
+\begin{proof}
+	We define the construction of $h(r)$ inductively.
+	\begin{itemize}
+		\item If $r = a \in \Sigma \cup \{\varepsilon, \emptyset\}$, then $h(r) = \emptyset$.\\
+			$L_\omega(r) = \emptyset = L(h(r))$
+		
+		\item If $r = s + t$, then $h(r) = h(s) + h(t)$.\\
+		\begin{align*}
+			& L_\omega(r) \\
+			=\;& (L(s) \cup L(t)) \cap \Sigma^\omega \\
+			=\;& (L(s) \cap \Sigma^\omega) \cup (L(t) \cap \Sigma^\omega) \\
+			=\;& L_\omega(s) \cup L_\omega(t) \\
+			=\;& L(h(s)) \cup L(h(t)) \\
+			=\;& L(h(r))
+		\end{align*}
+		
+		\item If $r = s \cdot t$, let $h(t) = a_1 b_1^\omega + \dots + a_n b_n^\omega$ and set $h(r) = h(s) + g(s) a_1 b_1^\omega + \dots + g(s) a_n b_n^\omega$. \\
+		\begin{align*}
+			& L_\omega(r) \\
+			=\;& ((L_*(s) \cdot L(t)) \cup L_\omega(s)) \cap \Sigma^\omega \\
+			=\;& ((L_*(s) \cdot L(t)) \cap \Sigma^\omega) \cup (L_\omega(s) \cap \Sigma^\omega) \\
+			=\;& ((L_*(s) \cdot L(t)) \cap \Sigma^\omega) \cup L_\omega(s) \\
+			=\;& ((L_*(s) \cap \Sigma^\omega) \cdot (L(t) \cap \{\varepsilon\})) \cup ((L_*(s) \cap \Sigma^*) \cdot (L(t) \cap \Sigma^\omega)) \cup L_\omega(s) \\
+			=\;& (L_*(s) \cdot (L(t) \cap \Sigma^\omega)) \cup L_\omega(s) \\
+			=\;& (L_*(s) \cdot L_\omega(t)) \cup L_\omega(s) \\
+			=\;& (L(g(s)) \cdot L(h(t))) \cup L(h(s)) \\
+			=\;& (L(g(s)) \cdot L(a_1 b_1^\omega + \dots + a_n b_n^\omega)) \cup L(h(s)) \\
+			=\;& (L(g(s) a_1 b_1^\omega + \dots + g(s) a_n b_n^\omega)) \cup L(h(s)) \\
+			=\;& L(h(r))
+		\end{align*}
+		
+		\item If $r = s^*$, then $h(r) = g(s^*) \cdot h(s)$. \\
+		\begin{align*}
+			& L_\omega(r) \\
+			=\;& (((L_*(s))^*) \cdot (\{\varepsilon\} \cup L_\omega(s))) \cap \Sigma^\omega \\
+			=\;& (((L_*(s))^*) \cap \Sigma^\omega) \cup ((((L_*(s))^*) \cap \Sigma^*) \cdot (L_\omega(s) \cap \Sigma^\omega)) \\
+			=\;& (((L_*(s))^*) \cap \Sigma^*) \cdot (L_\omega(s) \cap \Sigma^\omega) \\
+			=\;& ((L_*(s))^*) \cdot L_\omega(s) \\
+			=\;& L_*(s^*) \cdot L_\omega(s) \\
+			=\;& L(g(s^*)) \cdot L(h(s)) \\
+			=\;& L(h(r))
+		\end{align*}
+		
+		\item If $r = s^\infty$, then $h(r) = h(r^*) + g(s)^\omega$. \\
+		\begin{align*}
+			& L_\omega(r) \\
+			=\;& (L(s^*) \cup (L_*(s))^\omega) \cap \Sigma^\omega \\
+			=\;& (L(s^*) \cap \Sigma^\omega) \cup ((L_*(s))^\omega \cap \Sigma^\omega) \\
+			=\;& L_\omega(s^*) \cup (L_*(s))^\omega \\
+			=\;& L(h(s^*)) \cup L(g(s))^\omega \\
+			=\;& L(h(r))
+		\end{align*}
+	\end{itemize}
+\end{proof}
+
+
+\begin{prop}
+	A language $L \subseteq \Sigma^*$ is regular if and only if there is an $\infty$-regular expression $r \in \mathcal{R}eg_\infty$ such that $L_*(r) = L$.
+\end{prop}
+
+\begin{proof}
+	\begin{description}
+	\item[Only if] \hfill \\
+		If $L$ is regular, there is a regular expression $r \in \mathcal{R}eg_*$ with $L = L(r)$. By construction, $r$ is also an $\infty$-regular expression with $L(r) = L$.
+		
+	\item[If] \hfill \\
+		Let $r \in \mathcal{R}eg_\infty$ be the described $\infty$-regular expression. With Lemma \ref{lem:infty_regexp_to_normal_regexp}, $L = L(g(r))$ is regular.
+	\end{description}
+\end{proof}
+
+
+\begin{prop}
+	An $\omega$-language $U \subseteq \Sigma^\omega$ is $\omega$-regular if and only if there is an $\infty$-regular expression $r \in \mathcal{R}eg_\infty$ such that $L_\omega(r) = U$.
+\end{prop}
+
+\begin{proof}
+	\begin{description}
+	\item[Only if] \hfill \\
+		If $L$ is $\omega$-regular, there is a regular expression $r \in \mathcal{R}eg_\omega$ with $L = L(r)$. By replacing every occurrence of an $s^\omega$ by $s^\infty$, the $\infty$-regular expression $r'$ is constructed. By definition, $L(r') = L(r) = L$.
+		
+	\item[If] \hfill \\
+		Let $r \in \mathcal{R}eg_\infty$ be the described $\infty$-regular expression. With Lemma \ref{lem:infty_regexp_to_omega_regexp}, $L = L(h(r))$ is $\omega$-regular.
+	\end{description}
+\end{proof}
+
+
+\begin{prop}
+	Let $L \subseteq \Sigma^\infty$ be a language. $L$ is $\infty$-regular if and only if $L \cap \Sigma^*$ is regular and $L \cap \Sigma^\omega$ is $\omega$-regular.
+	\label{prop:infty_language_split_omega_regular}
+\end{prop}
+
+\begin{proof}
+	\begin{description}
+	\item[Only if] Let $L$ be $\infty$-regular, so there is an $\infty$-regular expression $r \in \mathcal{R}eg_\infty[\Sigma]$ such that $L(r) = L$. Using Lemmas \ref{lem:infty_regexp_to_normal_regexp} and \ref{lem:infty_regexp_to_omega_regexp}, $L \cap \Sigma^* = L(g(r))$ and $L \cap \Sigma^\omega = L(h(r))$.
+	
+	\item[If] Let $L \cap \Sigma^*$ be regular and $L \cap \Sigma^\omega$ be $\omega$-regular, so there are a regular expressions $s \in \mathcal{R}eg_*[\Sigma]$ and an $\omega$-regular expression $t \in \mathcal{R}eg_\omega[\Sigma]$ such that $L(s) = L \cap \Sigma^*$ and $L(t) = L \cap \Sigma^\omega$. Our goal is to construct an $\infty$-expression $r$ with $L(r) = L(s) \cup L(t) = L$. \\
+		We construct $t'$ from $t$ by replacing all $^\omega$ with $^\infty$ and set $r = s + t' \cdot \emptyset$. It should be clear that $L(t) = L_\omega(t')$.
+		\begin{align*}
+			& L(r) \\
+			=\;& L(s) \cup L(t' \cdot \emptyset) \\
+			=\;& L(s) \cup (L_*(t') \cdot \emptyset) \cup L_\omega(t') \\
+			=\;& L(s) \cup L_\omega(t') \\
+			=\;& L(s) \cup L(t) \\
+			=\;& L
+		\end{align*}
+	\end{description}
+\end{proof}
+
+
+
+
+\section{Automata}
+In this work, we focus ourselves on the model of parity automata (abbreviated PA) (also known as Rabin chain automata). We now give three different but similar definitions of this structure, the classical model and two variations better suited for the upcoming constructions. 
+
+
+\begin{defn}
+	A \emph{standard parity automaton} is a tuple $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$, where
+	\begin{itemize}
+		\item $Q$ is the finite, nonempty set of states.
+		\item $\Sigma$ is the input alphabet.
+		\item $q_0 \in Q$ is the initial state.
+		\item $\delta : Q \times \Sigma \rightarrow \mathcal{P}(Q)$ is the transition function.
+		\item $c : Q \rightarrow \mathbb{N}$ is the priority function.
+	\end{itemize}
+	$\mathcal{A}$ is said to be \emph{deterministic} if for all $q \in Q, a \in \Sigma$, the transition is uniquely defined, i.e. $|\delta(q, a)| \leq 1$. In that case, we write $\delta(q, a) = \emptyset$ or $\delta(q, a) = p \in Q$.
+	
+	A \emph{run} of $\mathcal{A}$ on an $\omega$-word $\alpha \in \Sigma^\omega$ is a word $\rho \in Q^\omega$, such that $\rho(0) = q_0$ and for all $i > 0: \rho(i) \in \delta(\rho(i-1), \alpha(i))$. \\
+	The priorities of $\rho$ are $c(\rho) = \gamma \in \mathbb{N}^\omega$ such that $\gamma(i) = c(\rho(i))$. $\rho$ is \emph{accepting} if $\max \text{Inf}(c(\rho))$ is an even number.
+	
+	The language of $\mathcal{A}$, written $L(\mathcal{A}) \subseteq \Sigma^\omega$ is defined as the set of all $\omega$-words over $\Sigma$ which have an accepting run on $\mathcal{A}$. \\
+	$\mathcal{A}$ \emph{recognizes} or \emph{accepts} a language $U \subseteq \Sigma^\omega$ if $L(\mathcal{A}) = U$.
+\end{defn}
+
+
+\begin{defn}
+	A \emph{transition parity automaton} is a tuple $\mathcal{A} = (Q, \Sigma, q_0, \delta, c, F)$, where
+	\begin{itemize}
+		\item $Q$ is the finite, nonempty set of states.
+		\item $\Sigma$ is the input alphabet.
+		\item $q_0 \in Q$ is the initial state.
+		\item $\delta : Q \times \Sigma \rightarrow \mathcal{P}(Q)$ is the transition function.
+		\item $c : Q \times Q \rightarrow \mathbb{Z}$ is the priority function.
+		\item $F \subseteq Q$ is the set of accepting states.
+	\end{itemize}
+	Determinism of $\mathcal{A}$ is defined as for standard parity automata.
+	
+	A \emph{run} of $\mathcal{A}$ on an $\infty$-word $w \in \Sigma^\infty$ is a word $\rho \in Q^{1 + |w|}$, such that $\rho(0) = q_0$ and for all $0 < i \leq |w|: \rho(i) \in \delta(\rho(i-1), \alpha(i))$. \\
+	The priorities of $\rho$ are $c(\rho) = \gamma \in \mathbb{N}^{|w|}$ such that $\gamma(i) = c(\rho(i), \rho(i+1))$. For an $\omega$-word, $\rho$ is \emph{accepting} if $\max \text{Inf}(c(\rho))$ is an even number. For a finite word, $\rho$ is \emph{accepting} if $\rho(|w|) \in F$.
+	
+	The language of $\mathcal{A}$, written $L(\mathcal{A}) \subseteq \Sigma^\infty$ is defined as the set of all $\infty$-words over $\Sigma$ which have an accepting run on $\mathcal{A}$. We define $L_*(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^*$ and $L_\omega(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^\omega$. \\
+	$\mathcal{A}$ \emph{recognizes} or \emph{accepts} a language $L \subseteq \Sigma^\infty$ if $L(\mathcal{A}) = L$.
+	
+	Regarding the transition function $\delta$, we also write $\delta(q, A) = \bigcup\limits_{a \in A} \delta(q, a)$ for some set of symbols $A \subseteq \Sigma$.
+\end{defn}
+
+
+\begin{defn}
+	An \emph{expression parity automaton} is a tuple $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$, where
+	\begin{itemize}
+		\item $Q$ is the finite, nonempty set of states.
+		\item $\Sigma$ is the input alphabet.
+		\item $q_0 \in Q$ is the initial state.
+		\item $\delta : Q \times Q \rightarrow \mathcal{R}eg_\infty[\Sigma]$ is the transition function, with $\infty$-regular expressions as labels.
+		\item $c : Q \rightarrow \mathbb{N}$ is the priority function.
+	\end{itemize}
+	
+	A \emph{run} of $\mathcal{A}$ on an $\infty$-word $w \in \Sigma^\infty$ is a word $\rho \in Q^{1 + |w|}$, such that $\rho(0) = q_0$ and there is a decomposition $w = \underset{i < |\rho|}{\circ} v_i$, with $v_i \in \begin{cases}\Sigma^* & \text{if } i+1 < |\rho| \\ \Sigma^\infty & \text{else} \end{cases}$, such that $v_i \in L(\delta(\rho(i), \rho(i+1)))$ for all  $i$. \\
+	The priorities of $\rho$ are $c(\rho) = \gamma \in \mathbb{N}^{|\rho|}$ such that $\gamma(i) = c(\rho(i))$. $\rho$ is accepting if $C = \emptyset$ or $\max C$ is even, where $C = \text{Inf}(c(\rho))$.
+	
+	The language of $\mathcal{A}$, written $L(\mathcal{A}) \subseteq \Sigma^\infty$ is defined as the set of all $\infty$-words over $\Sigma$ which have an accepting run on $\mathcal{A}$. We define $L_*(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^*$ and $L_\omega(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^\omega$. \\
+	$\mathcal{A}$ \emph{recognizes} or \emph{accepts} a language $L \subseteq \Sigma^\infty$ if $L(\mathcal{A}) = L$.
+\end{defn}
+
+
+Every $\omega$-regular language can be recognized by a standard parity automaton, even a deterministic one. (see \cite{Thomas96}). The other two models are exactly as powerful.
+
+\begin{prop}
+	Let $U \subseteq \Sigma^\omega$ be an $\omega$-language. The following statements are equivalent:
+	\begin{itemize}
+		\item $U$ is regular.
+		\item There is a standard PA $\mathcal{A}$ with $L(\mathcal{A}) = U$.
+		\item There is a transition PA $\mathcal{A}$ with $L_\omega(\mathcal{A}) = U$.
+		\item There is an expression PA $\mathcal{A}$ with $L_\omega(\mathcal{A}) = U$.
+	\end{itemize}
+\end{prop}
+
+\begin{prop}
+	Let $L \subseteq \Sigma^\infty$ be an $\infty$-language. The following statements are equivalent:
+	\begin{itemize}
+		\item $L$ is regular.
+		\item There is a transition PA $\mathcal{A}$ with $L(\mathcal{A}) = L$.
+		\item There is an expression PA $\mathcal{A}$ with $L(\mathcal{A}) = L$.
+	\end{itemize}
+\end{prop}
+
+Most of the constructions are trivial and require at most $|Q|$ many additional states. The only step not as clear is the question on how to transform an expression PA to one of the other models. That will be part of a later chapter, when we discuss the conversion from automata to regular expressions. 
+
+
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c, F)$ and $\mathcal{A}' = (Q', \Sigma, q'_0, \delta', c', F')$ be transition parity automata. A function $f : Q \rightarrow Q'$ is an \emph{isomorphism} from $\mathcal{A}$ to $\mathcal{A}'$, if
+	\begin{itemize}
+		\item $f$ is bijective.
+		\item $f(q_0) = q'_0$.
+		\item For all $q \in Q$, for all $a \in \Sigma$: $\delta'(f(q), a) = \{f(p) \mid p \in \delta(q, a))\}$.
+		\item For all $q \in Q$: $q \in F$ if and only if $f(q) \in F'$.
+		\item There is a bijective, monotone function $n : \mathbb{Z} \rightarrow \mathbb{Z}$ (i.e. $x < y$ implies $n(x) < n(y)$) for which $n(x)$ is even if and only if $x$ is even, such that for all $q \in Q$ and $p \in \text{succ}(q)$: $c(p, q) = n(c(f(p), f(q)))$. (In particular, this can be satisfied by the identity function.)
+	\end{itemize}
+	
+	If an isomorphism from $\mathcal{A}$ to $\mathcal{A}'$ exists, $\mathcal{A}$ and $\mathcal{A}'$ are \emph{isomorphic} ($\mathcal{A} \cong \mathcal{A}'$).
+\end{defn}
+
+
+\begin{prop}
+	Let $\mathcal{A}$ and $\mathcal{A}'$ be transition parity automata. If $\mathcal{A} \cong \mathcal{A}'$, then $L(\mathcal{A}) = L(\mathcal{A}')$.
+\end{prop}
+
+\begin{proof}
+	$\mathcal{A} \cong \mathcal{A}'$, so let $f : Q \rightarrow Q'$ be an isomorphism from $\mathcal{A}$ to $\mathcal{A}'$. It is clear that $f^{-1}$ is also an isomorphism from $\mathcal{A}'$ to $\mathcal{A}$ and therefore, it suffices to show that $L(\mathcal{A}) \subseteq L(\mathcal{A}')$. Let $w \in L(\mathcal{A})$ and let $\rho$ be the run of $\mathcal{A}$ on $w$.
+	
+	We first show that $\rho' : |\rho| \rightarrow Q', i \mapsto f(\rho(i))$ is a valid run of $\mathcal{A}'$ on $w$. We do so using induction over $|w|$. For $|w| = 0$, this is clear because $\rho'(0) = q'_0 = f(q_0) = f(\rho(0))$. Otherwise, let $0 < |w|$. By the induction hypothesis, $\rho'[0, |w|-1]$ is a valid run of $\mathcal{A}'$ on $w[0, |w|-2]$. $\rho$ is a valid run of $\mathcal{A}$ on $w$, so $\rho(|w|) \in \delta(\rho(|w|-1), w(|w|-1))$. The definition of an isomorphism then implies that $\delta'(f(\rho(|w|-1)), w(|w|-1)) = \delta'(\rho'(|w|-1), w(|w|-1)) = \{f(p) \mid p \in \delta(\rho(|w|-1), w(|w|-1))\}$. In particular, $f(\rho(|w|)) = \rho'(|w|) \in \delta'(\rho'(|w|-1), w(|w|-1))$, which is what had to be shown.
+	
+	If $w \in \Sigma^*$, $\rho(|w|) \in F$. By definition, $\rho'(|w|) \in F'$, which means that $w \in L(\mathcal{A}')$.
+	
+	If $w \in \Sigma^\omega$, let $P$ be the priority set of $\rho$. $\max P$ must be even. By definition of the isomorphism, the priority set of $\rho'$ is $P' = \{n(x) \mid x \in P\}$ for a fitting function $n$. $n$ is monotone, so $(\max P) = \max P'$. Also, $\max P$ is even which means that $n(\max P) = \max P'$ must be even. Therefore, $w \in L(\mathcal{A}')$.
+\end{proof}
