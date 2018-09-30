@@ -115,6 +115,42 @@ The differences between different $\mathcal{G}_\text{PR}^{R,\lambda}$ for differ
 
 
 
+\subsection{Alternative Algorithmic Definition}
+The computation presented in the previous section was a straight-forward description of $\equiv_\text{PR}^\lambda$ in an algorithmic way. We can reduce the complexity of that computation by taking a more indirect route, as we will see now.
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. Let $R$ be a congruence relation on $Q$ and let $\lambda \subseteq Q$ be an equivalence class of $R$. We define a (deterministic) graph $\mathbb{A}^\lambda_\text{visit} = (Q^\lambda_\text{visit}, \Sigma, \delta^\lambda_\text{visit})$ as follows:
+	
+	\begin{itemize}
+		\item $Q^\lambda_\text{visit} = Q \times c(Q)$
+		\item $\delta^\lambda_\text{visit}((q, k), a) = \begin{cases}
+			(\delta(q, a), \min \{k, c(q)\}) & \text{if } q \notin \lambda \\
+			(\delta(q, a), c(q)) & \text{else} 
+		\end{cases}$
+	\end{itemize}
+\end{defn}
+
+Similar as is done in the definition of the path refinement relation, this automaton uses its second component to \enquote{memorize} the lowest priority seen on a run from $\lambda$ back into $\lambda$. 
+
+\begin{defn}
+	Consider $\mathbb{A}^\lambda_\text{visit}$ of a DPA $\mathcal{A}$ and a congruence relation $R$. We define an equivalence relation $V \subseteq Q^\lambda_\text{visit} \times Q^\lambda_\text{visit}$ as:
+	\begin{itemize}
+		\item For every $p, q \in Q \setminus \lambda$ and $l, k \in c(Q)$, $((p, l), (q, k)) \in V$.
+		\item For every $p, q \in \lambda$, $((p, l), (q, k)) \in V$ iff $l = k$.
+	\end{itemize}
+	
+	The Moore-refinement of $V$ is then called $V_M$.
+\end{defn}
+
+\begin{theorem}
+	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For $p, q \in \lambda$, we have $p \equiv_\text{PR}^\lambda q$ iff $((p, \max c(Q)), (q, \max c(Q))) \in V_M$.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+Constructing $\mathcal{A}^\lambda_\text{visit}$ and $V$ requires time $\mathcal{O}(nk)$ and the computation of $V_M$ brings it up to $\mathcal{O}(nk \log(nk))$, where $n = |Q|$ and $k = |c(Q)|$.
 
 
 
