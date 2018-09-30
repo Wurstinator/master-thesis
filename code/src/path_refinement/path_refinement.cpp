@@ -35,4 +35,16 @@ EquivalenceRelation<state_t> PathRefinementEquivalence(const DPA& dpa, const Equ
 }
 
 
+void PathRefinementMerge(automaton::DPA* dpa, const EquivalenceRelation<automaton::state_t>::EquivClass& lambda) {
+    const EquivalenceRelation<automaton::state_t> pr = PathRefinementEquivalence(*dpa, lambda);
+    std::function<automaton::parity_label_t(const EquivalenceRelation<automaton::state_t>::EquivClass&)> min_priority_selector =
+        [dpa](const EquivalenceRelation<automaton::state_t>::EquivClass& kappa) {
+        const auto compare_prio = [&dpa](automaton::state_t p, automaton::state_t q) {return dpa->GetLabel(p) < dpa->GetLabel(q);};
+        const automaton::state_t min_state = *std::min_element(kappa.begin(), kappa.end(), compare_prio);
+        return dpa->GetLabel(min_state);
+    };
+    QuotientAutomatonLabelled(dpa, pr, min_priority_selector);
+}
+
+
 }

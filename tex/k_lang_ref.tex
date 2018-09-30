@@ -17,7 +17,7 @@ In this section we present an algorithm that uses an existing congruence relatio
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. Let $\lambda \subseteq Q$ be an equivalence class of $R$. We define $L_{\lambda \hookleftarrow}$ as the set of words $w$ such that for any $u \sqsubseteq w$, $(\delta(p, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton moves from $\lambda$ to $\lambda$ again.
 	
 	Let $f_\text{PR} : 2^{\lambda \times \lambda} \rightarrow 2^{\lambda \times \lambda}$ be a function such that $(p, q) \in f(X)$  iff for all $w \in L_{\lambda \hookleftarrow}$, $(\delta^*(p, w), \delta^*(q, w)) \in X$.
-	Then let $X_0 \subseteq \lambda \times \lambda$ such that $(p, q) \in X_0$ iff for all $w \in L_{\lambda \hookleftarrow}$, $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$, i.e. the minimal priority when moving from $p$ or $q$ to $\lambda$ again is the same.
+	Then let $X_0 \subseteq \lambda \times \lambda$ such that $(p, q) \in X_0$ iff for all $w \in L_{\lambda \hookleftarrow}$, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$, i.e. the minimal priority when moving from $p$ or $q$ to $\lambda$ again is the same.
 	
 	Using both, we set $X_{i+1} = f_\text{PR}(X_i)$. $f_\text{PR}$ is monotone w.r.t. $\subseteq$, so there is an $X_n = X_{n+1}$ by Kleene's fixed point theorem. We define the \emph{path refinement of $\lambda$}, called $\equiv_\text{PR}^\lambda$, as
 	\begin{itemize}
@@ -28,10 +28,10 @@ In this section we present an algorithm that uses an existing congruence relatio
 
 
 \begin{theorem}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation that implies language equivalence. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^\lambda$ for some equivalence class $\lambda$ of $R$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation that implies language equivalence. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^\lambda$ for some equivalence class $\lambda$ of $R$ such that each representative $r_\kappa$ is chosen to have minimal priority. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
 \end{theorem}
 
-\begin{proof}
+\begin{proof} %TODO
 	Let $\alpha \in \Sigma^\omega$ be a word with runs $\rho \in Q^\omega$ and $\rho' \in (Q')^\omega$ of $\mathcal{A}$ and $\mathcal{A}'$ respectively. Let $k_0, \dots \in \mathbb{N}$ be exactly those positions (in order) at which $\rho$ reaches $\lambda$, and analogously $k'_0, \dots$ for $\rho'$.
 
 	\vspace{5pt}
@@ -72,7 +72,7 @@ The definition of path refinement that we introduced is useful for the proofs of
 		\item $q_{0, \text{PR}}^{p,q} = (p, q, \eta_k(c(p), c(q), \checkmark), \eta_x(c(p), c(q), \checkmark, =))$
 		\item $\delta^\lambda_\text{PR}((p, q, k, x), a) = \begin{cases}
 			(p', q', \eta_k(c(p'), c(q'), k), \eta_x(c(p'), c(q'), k, x)) & \text{if } p' \notin \lambda \\
-			q_{0,\text{PR}}^{p',q'} & \text{if } p' \in \lambda \text{ and } (x =\, =) \\
+			q_{0,\text{PR}}^{p',q'} & \text{if } p' \in \lambda \text{ and } (\eta_x(c(p'), c(q'), k, x) =\, =) \\
 			\perp & \text{else}
 		\end{cases}$ \\
 			where $p' = \delta(p, a)$ and $q' = \delta(q, a)$. \\

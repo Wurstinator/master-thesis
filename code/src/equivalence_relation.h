@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <set>
+#include <algorithm>
 #include <vector>
 
 namespace tollk {
@@ -34,6 +35,9 @@ public:
     // Returns whether some element is already present in the relation in some form.
     bool Exists(const T& x) const;
 
+    // Returns a list of all elements that are part of any class.
+    std::vector<T> Domain() const;
+
     // Returns the equivalence class of a given element.
     const EquivClass& GetClass(const T& x) const;
 
@@ -46,6 +50,9 @@ public:
     // Splits a class C at index i into two new classes: C \ X and C ∩ X. O(|C|) operation.
     void SplitClass(typename std::vector<EquivClass>::size_type i, const EquivClass& X);
 
+    template <typename S>
+    friend bool operator==(const EquivalenceRelation<S>& lhs, const EquivalenceRelation<S>& rhs);
+
 private:
     using RelationMap = std::unordered_map<T, typename std::vector<EquivClass>::size_type>;
 
@@ -55,6 +62,9 @@ private:
     std::vector<EquivClass> classes;
     RelationMap relation;
 };
+
+template <typename T>
+bool operator==(const EquivalenceRelation<T>& lhs, const EquivalenceRelation<T>& rhs);
 
 // Implementation
 
@@ -129,6 +139,13 @@ bool EquivalenceRelation<T>::Exists(const T& x) const {
     return this->relation.find(x) != this->relation.end();
 }
 
+template <typename T>
+std::vector<T> EquivalenceRelation<T>::Domain() const {
+    std::vector<T> domain;
+    for (const EquivalenceRelation<T>::EquivClass& c : classes)
+        std::copy(c.begin(), c.end(), std::back_inserter(domain));
+    return domain;
+}
 
 template<typename T>
 const typename EquivalenceRelation<T>::EquivClass& EquivalenceRelation<T>::GetClass(const T& x) const {
@@ -161,5 +178,27 @@ void EquivalenceRelation<T>::SplitClass(typename std::vector<EquivalenceRelation
         this->classes.push_back(std::move(new_class));
 }
 
+
+template <typename T>
+bool operator==(const EquivalenceRelation<T>& lhs, const EquivalenceRelation<T>& rhs) {
+    // Check that lhs and rhs have the same domain.
+    const std::vector<T> lhs_domain = lhs.Domain();
+    const std::vector<T> rhs_domain = rhs.Domain();
+    if (lhs_domain.size() != rhs_domain.size())
+         return false;
+    if (std::any_of(lhs_domain.begin(), lhs_domain.end(), [&rhs](const T& element) {return !rhs.Exists(element);}))
+        return false;
+
+    // Check that the equivalence classes are the same.
+    for (const T& a : lhs_domain) {
+        for (const T& b : lhs_domain) {
+            const bool lhs_equiv = lhs.IsEquiv(a, b);
+            const bool rhs_equiv = rhs.IsEquiv(a, b);
+            if ((lhs_equiv && !rhs_equiv) || (!lhs_equiv && rhs_equiv))
+                return false;
+        }
+    }
+    return true;
+}
 
 }  // namespace tollk

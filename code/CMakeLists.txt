@@ -214,7 +214,7 @@ set(PATHREFIN_HDRS
         src/path_refinement/path_refinement_automaton.h
         src/path_refinement/path_refinement_automaton.cpp
         src/path_refinement/path_refinement.h
-        src/path_refinement/path_refinement.cpp)
+        src/path_refinement/path_refinement.cpp src/path_refinement/visit_graph.h src/path_refinement/visit_graph.cpp)
 
 set(PATHREFIN_INCLUDE ${PATHREFIN_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
 
@@ -229,7 +229,7 @@ target_include_directories(path_refinement_statistics PRIVATE ${RANGEV3_DIR}/inc
 
 set(PATHREFIN_TESTS
         src/path_refinement/tests/test_main.cpp
-        src/path_refinement/tests/test_path_refinement_automaton.cpp)
+        src/path_refinement/tests/test_path_refinement_automaton.cpp src/path_refinement/tests/test_visit_equality.cpp)
 
 add_executable(test_path_refinement ${PATHREFIN_INCLUDE} ${PATHREFIN_TESTS} ${Catch2_HDRS})
 target_include_directories(test_path_refinement PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
