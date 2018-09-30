@@ -35,15 +35,16 @@ std::optional<PathRefinementAutomatonState>
 _Delta(const DPA& automaton, const PathRefinementAutomatonState& state, symbol_t a,
        const std::set<state_t>& lambda) {
     const bool goes_to_lambda = (lambda.find(automaton.Succ(state.p, a)) != lambda.end());
-    const bool obligations_satisfied = (state.obligation == PathRefinementAutomatonState::Equal);
-
-    if (goes_to_lambda && !obligations_satisfied)
-        return std::nullopt;
-
     const state_t p_prime = automaton.Succ(state.p, a);
     const state_t q_prime = automaton.Succ(state.q, a);
     const parity_label_t kp = automaton.GetLabel(p_prime);
     const parity_label_t kq = automaton.GetLabel(q_prime);
+    const PathRefinementAutomatonState::LEG next_obligation = _EtaX(kp, kq, state.k, state.obligation);
+    const bool obligations_satisfied = (next_obligation == PathRefinementAutomatonState::Equal);
+
+    if (goes_to_lambda && !obligations_satisfied)
+        return std::nullopt;
+
     const parity_label_t k_prime = std::min(std::min(kp, kq), (goes_to_lambda ? kp : state.k));
     const std::optional<parity_label_t> k = goes_to_lambda ? std::nullopt : std::optional<parity_label_t>(state.k);
     const PathRefinementAutomatonState::LEG x_prime = _EtaX(kp, kq, k,

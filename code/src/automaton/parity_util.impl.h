@@ -54,15 +54,16 @@ void RefineToCongruence(EquivalenceRelation <state_t>* relation, const Transitio
 
 
 template<typename AutomatonT, typename LabelT>
-void QuotientAutomaton(AutomatonT* automaton, const EquivalenceRelation <state_t>& relation,
+void QuotientAutomatonLabelled(AutomatonT* automaton, const EquivalenceRelation <state_t>& relation,
                        const std::function<LabelT(
                                const EquivalenceRelation<state_t>::EquivClass&)>& merge_labels) {
     static_assert(std::is_base_of<LabelledAutomaton<LabelT>, AutomatonT>::value);
-    static_assert(std::is_base_of<NondeterministicAutomaton, AutomatonT>::value);
+//    static_assert(std::is_base_of<NondeterministicAutomaton, AutomatonT>::value);
 
     for (const EquivalenceRelation<state_t>::EquivClass& c : relation.Classes()) {
+        const LabelT new_label = merge_labels(c);
         automaton->MergeStates(c);
-        automaton->SetLabel(*c.begin(), merge_labels(c));
+        automaton->SetLabel(*c.begin(), new_label);
     }
 }
 
