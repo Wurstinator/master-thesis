@@ -1,6 +1,7 @@
 
 #include "../construction_statistics.h"
 #include "path_refinement.h"
+#include "visit_graph.h"
 
 using namespace tollk;
 
@@ -17,9 +18,7 @@ std::unique_ptr<ConstructionExecutor> CreateConstructionExecutor() {
 
 tollk::automaton::DPA PerformConstruction(tollk::automaton::DPA dpa, const BaseOptions& options) {
     const EquivalenceRelation<automaton::state_t> R = LanguageEquivalentStates(dpa);
-    for (const EquivalenceRelation<automaton::state_t>::EquivClass& clas : R.Classes()) {
-        const EquivalenceRelation<automaton::state_t> pr = PathRefinementEquivalence(dpa, clas);
-        QuotientAutomatonUnsafe(&dpa, pr);
-    }
+    for (const EquivalenceRelation<automaton::state_t>::EquivClass& lambda : R.Classes())
+        PathRefinementMerge_VIS(&dpa, lambda);
     return dpa;
 }

@@ -1,6 +1,7 @@
 
 #include "../construction_main.h"
 #include "path_refinement.h"
+#include "visit_graph.h"
 
 using namespace tollk;
 
@@ -18,6 +19,6 @@ std::unique_ptr<ConstructionExecutor> CreateConstructionExecutor() {
 automaton::DPA PerformConstruction(automaton::DPA dpa, const BaseOptions& options) {
     const EquivalenceRelation<automaton::state_t> R = LanguageEquivalentStates(dpa);
     for (const EquivalenceRelation<automaton::state_t>::EquivClass& lambda : R.Classes())
-        PathRefinementMerge(&dpa, lambda);
+        PathRefinementMerge_VIS(&dpa, lambda);
     return dpa;
 }
