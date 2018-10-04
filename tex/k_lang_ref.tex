@@ -31,11 +31,11 @@ In this section we present an algorithm that uses an existing congruence relatio
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation that implies language equivalence. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^\lambda$ for some equivalence class $\lambda$ of $R$ such that each representative $r_\kappa$ is chosen to have minimal priority. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
 \end{theorem}
 
-\begin{proof} %TODO
+\begin{proof} 
 	Let $\alpha \in \Sigma^\omega$ be a word with runs $\rho \in Q^\omega$ and $\rho' \in (Q')^\omega$ of $\mathcal{A}$ and $\mathcal{A}'$ respectively. Let $k_0, \dots \in \mathbb{N}$ be exactly those positions (in order) at which $\rho$ reaches $\lambda$, and analogously $k'_0, \dots$ for $\rho'$.
 
 	\vspace{5pt}
-	\textbf{Claim 1}: For every $i$, $k_i = k'_i$ and $\rho(k_i) \equiv_\text{PR}^\lambda \rho'(k_i)$.
+	\textbf{Claim 1}: For every $i$, $k_i = k'_i$ and $\rho(k_i) \equiv_\text{PR}^\lambda \rho'(k_i)$. \\
 	For all $j < k_0$, we know that $\rho(j) = \rho'(j)$, as no redirected edge is taken. Thus, $\rho'(k_0) = r_{[\rho(k_0)]_{\equiv_\text{PR}^\lambda}} \equiv_\text{PR}^\lambda = \rho(k_0)$.
 	
 	Now assume that the claim holds for all $i \leq n$. By definition, $w = \alpha[k_n, k_{n+1}] \in L_{\lambda \hookleftarrow}$ and therefore $\rho(k_{n+1}) = \delta^*(\rho(k_n), w) \equiv_\text{PR}^\lambda \delta^*(\rho'(k_n), w) = \rho'(k_{n+1})$.
@@ -48,16 +48,13 @@ In this section we present an algorithm that uses an existing congruence relatio
 	\vspace{5pt}
 	\textbf{Claim 3}: If $\lambda$ occurs infinitely often in $\rho$ and $\rho'$, then $\rho$ is accepting iff $\rho'$ is accepting. 
 	
-	For each $i$, $\alpha[k_i, k_{i+1}] \in L_{\lambda \hookleftarrow}$ by choice of the $k_i$. Hence, $\min \text{Occ}(c(\rho[k_i, k_{i+1}])) = \min \text{Occ}(c'(\rho'[k_i, k_{i+1}]))$ follows directly from the definition of $\equiv_\text{PR}^\lambda$. Extending that result gives us $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c'(\rho'))$. 
-\end{proof}
-
-
-\begin{lem}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation that implies language equivalence. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^\lambda$ for some equivalence class $\lambda$ of $R$. Then $R \upharpoonright_{Q'}$ still is a congruence relation that implies language equivalence in $\mathcal{A}'$.
-\end{lem}
-
-\begin{proof}
-	%TODO
+	We show that for all $i$, $\min \text{Occ}(c(\rho[k_i, k_{i+1}+1]))$ and $\min \text{Occ}(c'(\rho'[k_i, k_{i+1}+1]))$ are the same. The claim then follows immediately. 
+	
+	Directly observe that $c'(\rho'[k_i, k_{i+1}+1]) = c(\rho'[k_i, k_{i+1}+1])$ and that $\min \text{Occ}(c(\rho[k_i, k_{i+1}+1])) = \min \text{Occ}(c(\rho'[k_i, k_{i+1}] \cdot \delta(\rho'(k_{i+1} - 1), \alpha(k_{i+1})))$ because $\rho(k_i) \equiv_\text{PR}^\lambda \rho'(k_i)$.
+	
+	Now $\text{Occ}(c(\rho[k_i, k_{i+1}+1])) = \text{Occ}(c(\rho[k_i, k_{i+1}])) \cup \{c(\rho(k_{i+1}))\}$ and $\text{Occ}(c(\rho'[k_i, k_{i+1}] \cdot \delta(\rho'(k_{i+1} - 1), \alpha(k_{i+1}))) = \text{Occ}(c(\rho[k_i, k_{i+1}])) \cup \{c(\delta(\rho'(k_{i+1} - 1), \alpha(k_{i+1})))\}$.
+	
+	The rest of the claim follows because $c(\rho'(k_i)) = c(\rho'(k_{i+1})) \leq \delta(\rho'(k_{i+1}, \alpha(k_{i+1}))$.
 \end{proof}
 
 
@@ -106,7 +103,7 @@ The definition of path refinement that we introduced is useful for the proofs of
 	
 	\paragraph{Only If} Let $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q)) \neq \Sigma^*$. Since $\varepsilon$ is always accepted, there is a word $w \in \Sigma^+ \setminus L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q))$, meaning that $\delta_\text{PR}^*(q_{0,\text{PR}}, w) = \perp$. Split $w$ into sub-words $w = u_1 \cdots u_m$ such that $u_1, \dots, u_m \in L_{\lambda \rightarrow \lambda}$. Note that this partition is unique. We show $p \not\equiv_\text{PR}^R q$ by induction on $m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i < |w|}$ be the run of $\mathcal{G}_\text{PR}^{R,\lambda}(p, q)$ on $w$.
 	
-	If $m = 1$, then $w \in L_{\lambda \rightarrow \lambda}$. Since $\rho(|w|) =\, \perp$, it must be true that $x_{|w|-1} \neq\, =$. Without loss of generality, assume $x_{|w|-1} =\, <$. By Lemma \ref{lem:pr:pr_game_nx}, $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Therefore, $p \not\equiv_\text{PR}^R q$.
+	If $m = 1$, then $w \in L_{\lambda \rightarrow \lambda}$. Since $\rho(|w|) =\, \perp$, it must be true that $x_{|w|-1} \neq\, =$. Without loss of generality, assume $x_{|w|-1} =\, <$. By Lemma \ref{lem:pr:pr_game_nx}, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$. Therefore, $p \not\equiv_\text{PR}^R q$.
 	
 	Now consider $m+1 > 1$. Let $p' = \delta^*(p, u_1)$ and $q' = \delta^*(q, u_1)$. By induction on the word $u_2 \cdots u_m$, $p' \not\equiv_\text{PR}^R q'$. Since $u_1 \in L_{\lambda \rightarrow \lambda}$, that also means $p \not\equiv_\text{PR}^R q$.
 \end{proof}
@@ -148,7 +145,11 @@ The computation presented in the previous section was a straight-forward descrip
 \end{theorem}
 
 \begin{proof}
-	%TODO
+	We abbreviate the states $r_0 := (r, c(R), \max c(Q))$ for all $r \in Q$. We have $(p_0, q_0) \in V_M$ if and only if for all $w \in \Sigma^*$: $(\delta^*(p_0, w), \delta^*(q_0, w)) \in V$. Thus, we want to show that his property holds for all $w$ iff $p \equiv_\text{PR}^\lambda q$.
+	
+	\paragraph{If} Assume there is a $w$ such that $(\delta^*(p_0, w), \delta^*(q_0, w)) \notin V$. %TODO
+	
+	\paragraph{Only If} Assume $p \not\equiv_\text{PR}^\lambda q$. %TODO
 \end{proof}
 
 Constructing $\mathcal{A}^\lambda_\text{visit}$ and $V$ requires time $\mathcal{O}(nk)$ and the computation of $V_M$ brings it up to $\mathcal{O}(nk \log(nk))$, where $n = |Q|$ and $k = |c(Q)|$.
