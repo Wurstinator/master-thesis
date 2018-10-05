@@ -140,19 +140,35 @@ The computation presented in the previous section was a straight-forward descrip
 	The Moore-refinement of $V$ is then called $V_M$.
 \end{defn}
 
+\begin{lem}
+	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For $k \in c(Q)$ and $q \in Q$, we call $\iota_q^k = (q, c(q), k)$. Then for all $p, q \in \lambda$, and $l, k \in c(Q)$, $(\iota_p^k, \iota_q^k) \in V_M$ if and only if $(\iota_p^l, \iota_q^l) \in V_M$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
 \begin{theorem}
-	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For $p, q \in \lambda$, we have $$p \equiv_\text{PR}^\lambda q \Leftrightarrow ((p, c(p), \max c(Q)), (q, c(q), \max c(Q))) \in V_M$$.
+	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For $k \in c(Q)$ and $q \in Q$, we call $\iota_q^k = (q, c(q), k)$. Then for all $p, q \in \lambda$, and $k \in c(Q)$, we have $p \equiv_\text{PR}^\lambda q$ iff $(\iota_p^k, \iota_q^k) \in V_M$.
 \end{theorem}
 
 \begin{proof}
-	We abbreviate the states $r_0 := (r, c(R), \max c(Q))$ for all $r \in Q$. We have $(p_0, q_0) \in V_M$ if and only if for all $w \in \Sigma^*$: $(\delta^*(p_0, w), \delta^*(q_0, w)) \in V$. Thus, we want to show that his property holds for all $w$ iff $p \equiv_\text{PR}^\lambda q$.
+	We have $(p_0, q_0) \in V_M$ if and only if for all $w \in \Sigma^*$: $(\delta^*(p_0, w), \delta^*(q_0, w)) \in V$. Thus, we want to show that his property holds for all $w$ iff $p \equiv_\text{PR}^\lambda q$.
 	
 	\paragraph{If} Assume there is a $w$ such that $(\delta^*(p_0, w), \delta^*(q_0, w)) \notin V$. %TODO
 	
-	\paragraph{Only If} Assume $p \not\equiv_\text{PR}^\lambda q$. %TODO
+	\paragraph{Only If} Assume $p \not\equiv_\text{PR}^\lambda q$. Let $f_\text{PR}$ and $(X_i)_i$ be the function and sets used in the construction of the path refinement. Let $n$ be minimal s.t. $(p, q) \notin X_n$. We use induction on $n$ to prove the claim.
+	
+	If $n = 0$, %TODO
+	
+	For $n+1 > 0$, there is a $v \in L_{\lambda \hookleftarrow}$ such that $(\delta^*(p, v), \delta^*(q, v)) \notin X_n$. By induction, there is a word $u$ such that $(\delta^*(\iota^{l}_{\delta^*(p, v)}, u), \delta^*(\iota^{l'}_{\delta^*(q, v)}, u)) \notin V$.
+
+	If $u = \varepsilon$, then $(\iota^{l}_{\delta^*(p, v)}, \iota^{l'}_{\delta^*(q, v)}) \notin V$. %TODO
+	
+	Otherwise, $u \neq \varepsilon$.
 \end{proof}
 
-Constructing $\mathcal{A}^\lambda_\text{visit}$ and $V$ requires time $\mathcal{O}(nk)$ and the computation of $V_M$ brings it up to $\mathcal{O}(nk \log(nk))$, where $n = |Q|$ and $k = |c(Q)|$.
+The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \cdot |c(Q)|^2)$ and the computation of $V_M$ brings the runtime up to $\mathcal{O}(|\mathcal{A}^\lambda_\text{visit}| \cdot \log |\mathcal{A}^\lambda_\text{visit}|)$.
 
 
 
