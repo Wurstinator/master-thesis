@@ -14,7 +14,7 @@ In this section we present an algorithm that uses an existing congruence relatio
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. Let $\lambda \subseteq Q$ be an equivalence class of $R$. We define $L_{\lambda \hookleftarrow}$ as the set of words $w$ such that for any $u \sqsubseteq w$, $(\delta(p, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton moves from $\lambda$ to $\lambda$ again.
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. Let $\lambda \subseteq Q$ be an equivalence class of $R$. We define $L_{\lambda \hookleftarrow}$ as the set of non-empty words $w$ such that for any $u \sqsubseteq w$, $(\delta(p, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton moves from $\lambda$ to $\lambda$ again.
 	
 	Let $f_\text{PR} : 2^{\lambda \times \lambda} \rightarrow 2^{\lambda \times \lambda}$ be a function such that $(p, q) \in f(X)$  iff for all $w \in L_{\lambda \hookleftarrow}$, $(\delta^*(p, w), \delta^*(q, w)) \in X$.
 	Then let $X_0 \subseteq \lambda \times \lambda$ such that $(p, q) \in X_0$ iff for all $w \in L_{\lambda \hookleftarrow}$, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$, i.e. the minimal priority when moving from $p$ or $q$ to $\lambda$ again is the same.
@@ -119,37 +119,81 @@ The computation presented in the previous section was a straight-forward descrip
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. Let $R$ be a congruence relation on $Q$ and let $\lambda \subseteq Q$ be an equivalence class of $R$. We define a deterministic transition structure $\mathcal{A}^\lambda_\text{visit} = (Q^\lambda_\text{visit}, \Sigma, \delta^\lambda_\text{visit})$ as follows:
 	
 	\begin{itemize}
-		\item $Q^\lambda_\text{visit} = ((Q \setminus \lambda) \times c(Q)) \cup (\lambda \times c(Q) \times c(Q))$ \\
+		\item $Q^\lambda_\text{visit} = ((Q \setminus \lambda) \times c(Q) \times \{\perp\}) \cup (\lambda \times c(Q) \times c(Q))$ \\
 		These states \enquote{simulate} $\mathcal{A}$ and use the second component to track the minimal priority that was seen since a last visit to $\lambda$. The states in $\lambda$ itself also have a third component that is used to distinguish their classes, as is explained below.
-		\item For $q \in Q \setminus \lambda$: $\delta^\lambda_\text{visit}((q, k), a) = \begin{cases}
-			(q', \min \{k, c(q')\}) & \text{if } q' \notin \lambda \\
+		\item $\delta^\lambda_\text{visit}((q, k, k'), a) = \begin{cases}
+			(q', \min \{k, c(q')\}, \perp) & \text{if } q' \notin \lambda \\
 			(q', c(q'), \min \{k, c(q')\}) & \text{if } q' \in \lambda
-		\end{cases}$. \\
-		For $q \in \lambda$: $\delta^\lambda_\text{visit}((q, k, k'), a) = (q', \min \{k, c(q')\})$. \\
-		Where $q' = \delta(q, a)$.
+		\end{cases}$, where $q' = \delta(q, a)$.
 	\end{itemize}
 \end{defn}
 
 \begin{defn}
 	Consider $\mathcal{A}^\lambda_\text{visit}$ of a DPA $\mathcal{A}$ and a congruence relation $R$. We define an equivalence relation $V \subseteq Q^\lambda_\text{visit} \times Q^\lambda_\text{visit}$ as:
 	\begin{itemize}
-		\item For every $p, q \in Q \setminus \lambda$ and $l, k \in c(Q)$, $((p, l), (q, k)) \in V$.
+		\item For every $p, q \in Q \setminus \lambda$ and $l, k \in c(Q)$, $((p, l, \perp), (q, k, \perp)) \in V$.
 		\item For every $p, q \in \lambda$ and $l, k \in c(Q)$, $((p, l, l'), (q, k, k')) \in V$ iff $l' = k'$.
 	\end{itemize}
 	
 	The Moore-refinement of $V$ is then called $V_M$.
+	
+	We abbreviate the state $(q, c(q), k)$ for any $q \in \lambda$ and $k \in c(Q)$ by $\iota_q^k$.
 \end{defn}
 
 \begin{lem}
-	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For $k \in c(Q)$ and $q \in Q$, we call $\iota_q^k = (q, c(q), k)$. Then for all $p, q \in \lambda$, and $l, k \in c(Q)$, $(\iota_p^k, \iota_q^k) \in V_M$ if and only if $(\iota_p^l, \iota_q^l) \in V_M$.
+	For all $p, q \in \lambda$ and $k \in c(Q)$: $(\iota_p^k, \iota_q^k) \in V$.
 \end{lem}
 
 \begin{proof}
-	%TODO
+	Follows directly from the definition.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For every $q \in \lambda$, $l, k \in c(Q)$, and $w \in \Sigma^+$: $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = (\delta^\lambda_\text{visit})^*(\iota_q^l, w)$.
+\end{lem}
+
+\begin{proof}
+	We provide a proof via induction on the word length $|w|$. 
+	
+	If $w = a \in \Sigma$, we have $\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \delta^\lambda_\text{visit}(\iota_q^k, a) = (\delta(q, a), \min \{c(q), c(q)\}) = (\delta(q, a), c(q))$. Analogously, $\delta^\lambda_\text{visit})^*(\iota_q^k, w) = (\delta(q, a), c(q))$, which is what had to be shown.
+	
+	Now consider $w = ua \in \Sigma^* \cdot \Sigma$. We have to show that $(\delta^\lambda_\text{visit})^*(\iota_q^k, ua) = (\delta^\lambda_\text{visit})^*(\iota_q^l, ua)$. By induction, there is a state $x \in Q^\lambda_\text{visit}$ with $(\delta^\lambda_\text{visit})^*(\iota_q^k, u) = (\delta^\lambda_\text{visit})^*(\iota_q^l, u) = x$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, ua) = (\delta^\lambda_\text{visit})^*(\iota_q^l, ua) = \delta^\lambda_\text{visit}(x, a)$.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For all $p, q \in \lambda$, and $l, k \in c(Q)$, $(\iota_p^k, \iota_q^k) \in V_M$ if and only if $(\iota_p^l, \iota_q^l) \in V_M$.
+\end{lem}
+
+\begin{proof}
+	As $l$ and $k$ are chosen symmetrically, it suffices for us to prove on direction of the bidirectional implication. Assume towards a contradiction that $(\iota_p^k, \iota_q^k) \in V_M$ but $(\iota_p^l, \iota_q^l) \notin V_M$, so there is a word $w \in \Sigma^*$ such that $((\delta^\lambda_\text{visit})^*(\iota_p^l, w), (\delta^\lambda_\text{visit})^*(\iota_q^l, w)) \notin V$.
+	
+	It must be true that $w \neq \varepsilon$; otherwise, $(\iota_p^l, \iota_q^l) \notin V$, which would contradict Lemma \ref{}.
+	
+	By Lemma \ref{}, we have $(\delta^\lambda_\text{visit})^*(\iota_p^l, w) = (\delta^\lambda_\text{visit})^*(\iota_p^k, w)$ and analogously for $q$. Therefore, $((\delta^\lambda_\text{visit})^*(\iota_p^k, w), (\delta^\lambda_\text{visit})^*(\iota_q^k, w)) \notin V$ and thus $(\iota_p^k, \iota_q^k) \notin V_M$, which contradicts our assumption.
+\end{proof}
+
+\begin{lem}
+	Let $q \in \lambda$, $k \in c(Q)$, $w \in L_{\lambda \hookleftarrow}$, and $\varepsilon \sqsubset v \sqsubset w$. Then Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = (\delta^*(q, v), x_v, \perp)$, where $x_v = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq v\}$.
+\end{lem}
+
+\begin{proof}
+We provide this claim by induction on $v$. First, consider $v = a \in \Sigma$, so $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = \delta^\lambda_\text{visit}(\iota_q^k, a) = (\delta(q, a), \min \{c(q), c(\delta(q, a))\}, \perp)$. This is exactly what we had to show, as $\min \{c(q), c(\delta(q, a))\} = x_a$.
+	
+	For the induction step, let $v = v'a \in \Sigma^+ \cdot \Sigma$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = \delta^\lambda_\text{visit}((\delta^*(q, v'), x_{v'}, \perp), a)$. Definition tells us that 
+\end{proof}
+
+\begin{lem}
+	Let $q \in \lambda$, $k \in c(Q)$, and $w \in L_{\lambda \hookleftarrow}$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \iota_{q'}^x$, where $q' = \delta^*(q, w)$ and $x = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$.
+\end{lem}
+
+\begin{proof}
+	For all $v \sqsubseteq w$, let $\min \{c(\delta^*(q, u)) \mid u \sqsubseteq v\}$ (i.e. $x = x_w$. Let $w = va \in \Sigma^* \cdot \Sigma$ (since words in $L_{\lambda \hookleftarrow}$ are non-empty). Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = (\delta^*(q, v), x_v, \perp)$ by Lemma \ref{} and $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \delta^\lambda_\text{visit}((\delta^*(q, v), x_v, \perp), a)$.
+	
+	Since $\delta(\delta^*(q, v), a) = \delta^*(q, w)) \in \lambda$, definition tells us $\delta^\lambda_\text{visit}((\delta^*(q, v), x_v, \perp), a) = (\delta^*(q, w), c(\delta^*(q, w)), \min \{x_v, c(\delta^*(q, w)\})$. The fact that $\min \{x_v, c(\delta^*(q, w)\} = x_w$ finishes our proof. 
 \end{proof}
 
 \begin{theorem}
-	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For $k \in c(Q)$ and $q \in Q$, we call $\iota_q^k = (q, c(q), k)$. Then for all $p, q \in \lambda$, and $k \in c(Q)$, we have $p \equiv_\text{PR}^\lambda q$ iff $(\iota_p^k, \iota_q^k) \in V_M$.
+	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. Let $\hat{c} = \max c(Q)$. Then for all $p, q \in \lambda$, we have $p \equiv_\text{PR}^\lambda q$ iff $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \in V_M$.
 \end{theorem}
 
 \begin{proof}
@@ -159,16 +203,24 @@ The computation presented in the previous section was a straight-forward descrip
 	
 	\paragraph{Only If} Assume $p \not\equiv_\text{PR}^\lambda q$. Let $f_\text{PR}$ and $(X_i)_i$ be the function and sets used in the construction of the path refinement. Let $n$ be minimal s.t. $(p, q) \notin X_n$. We use induction on $n$ to prove the claim.
 	
-	If $n = 0$, %TODO
+	If $n = 0$, there is a word $w \in L_{\lambda \hookleftarrow}$ such that $\min \{c(\delta^*(p, u)) \mid u \sqsubseteq w\} \neq \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$. Let $x, y \in c(Q)$ be the third components of $(\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w)$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)$ respectively. By Lemma \ref{}, $x = \min \{c(\delta^*(p, u)) \mid u \sqsubseteq w\}$ and $y = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$, so $x \neq y$. By definition of $\mathcal{A}^\lambda_\text{visit}$, this means that $((\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w), (\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)) \notin V$.
 	
-	For $n+1 > 0$, there is a $v \in L_{\lambda \hookleftarrow}$ such that $(\delta^*(p, v), \delta^*(q, v)) \notin X_n$. By induction, there is a word $u$ such that $(\delta^*(\iota^{l}_{\delta^*(p, v)}, u), \delta^*(\iota^{l'}_{\delta^*(q, v)}, u)) \notin V$.
-
-	If $u = \varepsilon$, then $(\iota^{l}_{\delta^*(p, v)}, \iota^{l'}_{\delta^*(q, v)}) \notin V$. %TODO
-	
-	Otherwise, $u \neq \varepsilon$.
+	For $n+1 > 0$, there is a $w \in L_{\lambda \hookleftarrow}$ such that $(\delta^*(p, w), \delta^*(q, w)) \notin V$. Let $p' = \delta^*(p, w)$ and $q'$ analogously. By induction, $(\iota_{p'}^{\hat{c}}, \iota_{q'}^{\hat{c}}) \notin V_M$. Lemma \ref{} tells us that there are $k'$ and $l'$ such that $(\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w) = \iota_{p'}^{k'}$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w) = \iota_{q'}^{l'}$. Since $n$ was chosen to be minimal, it must be true that $k' = l'$; otherwise, we would already have $p, q \notin X_0$. From Lemma \ref{}, we know that $(\iota_{p'}^{\hat{c}}, \iota_{q'}^{\hat{c}}) \notin V_M$ if and only if $(\iota_{p'}^{k'}, \iota_{q'}^{l'}) \notin V_M$, which is false. Thus, finally, $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \notin V_M$.
 \end{proof}
 
 The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \cdot |c(Q)|^2)$ and the computation of $V_M$ brings the runtime up to $\mathcal{O}(|\mathcal{A}^\lambda_\text{visit}| \cdot \log |\mathcal{A}^\lambda_\text{visit}|)$.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
