@@ -141,55 +141,73 @@ The computation presented in the previous section was a straight-forward descrip
 \end{defn}
 
 \begin{lem}
-	For all $p, q \in \lambda$ and $k \in c(Q)$: $(\iota_p^k, \iota_q^k) \in V$.
+	For all $p, q \in \lambda$ and $l, k \in c(Q)$: $(\iota_p^l, \iota_q^k) \in V$ iff $l = k$.
+	\label{lem:pr_alg2:iota_equiv}
 \end{lem}
 
 \begin{proof}
 	Follows directly from the definition.
 \end{proof}
 
+
 \begin{lem}
-	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For every $q \in \lambda$, $l, k \in c(Q)$, and $w \in \Sigma^+$: $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = (\delta^\lambda_\text{visit})^*(\iota_q^l, w)$.
+	Let $q \in \lambda$, $k \in c(Q)$, $w \in L_{\lambda \hookleftarrow}$, and $\varepsilon \sqsubset v \sqsubset w$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = (\delta^*(q, v), x_v, \perp)$, where $x_v = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq v\}$.
+	\label{lem:pr_alg2:delta_charact_1}
 \end{lem}
 
 \begin{proof}
-	We provide a proof via induction on the word length $|w|$. 
+	We provide this proof by using induction on $v$. First, consider $v = a \in \Sigma$. Since $v \notin L_{\lambda \hookleftarrow}$, we know $\delta(q, a) \notin \lambda$ and thus $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = \delta^\lambda_\text{visit}(\iota_q^k, a) = (\delta(q, a), c(\min \{c(q), c(\delta(q, a))\}, \perp)$. This is exactly what we had to show, as $\min \{c(q), c(\delta(q, a))\} = x_a$.
 	
-	If $w = a \in \Sigma$, we have $\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \delta^\lambda_\text{visit}(\iota_q^k, a) = (\delta(q, a), \min \{c(q), c(q)\}) = (\delta(q, a), c(q))$. Analogously, $\delta^\lambda_\text{visit})^*(\iota_q^k, w) = (\delta(q, a), c(q))$, which is what had to be shown.
-	
-	Now consider $w = ua \in \Sigma^* \cdot \Sigma$. We have to show that $(\delta^\lambda_\text{visit})^*(\iota_q^k, ua) = (\delta^\lambda_\text{visit})^*(\iota_q^l, ua)$. By induction, there is a state $x \in Q^\lambda_\text{visit}$ with $(\delta^\lambda_\text{visit})^*(\iota_q^k, u) = (\delta^\lambda_\text{visit})^*(\iota_q^l, u) = x$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, ua) = (\delta^\lambda_\text{visit})^*(\iota_q^l, ua) = \delta^\lambda_\text{visit}(x, a)$.
+	For the induction step, let $v = v'a \in \Sigma^+ \cdot \Sigma$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = \delta^\lambda_\text{visit}((\delta^*(q, v'), x_{v'}, \perp), a)$ by induction. Again, $\delta^*(q, v) \notin \lambda$, so $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = (\delta^*(q, v), \min \{x_{v'}, c(\delta^*(q, v))\}, \perp)$. This is our goal, as $\min \{x_{v'}, c(\delta^*(q, v))\} = x_v$.
 \end{proof}
 
+
 \begin{lem}
-	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. For all $p, q \in \lambda$, and $l, k \in c(Q)$, $(\iota_p^k, \iota_q^k) \in V_M$ if and only if $(\iota_p^l, \iota_q^l) \in V_M$.
+	Let $q \in \lambda$, $k \in c(Q)$, and $w \in L_{\lambda \hookleftarrow}$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \iota_{q'}^x$, where $q' = \delta^*(q, w)$ and $x = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$.
+	\label{lem:pr_alg2:delta_charact_2}
+\end{lem}
+
+\begin{proof}
+	For all $v \sqsubseteq w$, let $x_v = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq v\}$ (i.e. $x = x_w$). Let $w = va \in \Sigma^* \cdot \Sigma$ (since words in $L_{\lambda \hookleftarrow}$ are non-empty). Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = (\delta^*(q, v), x_v, \perp)$ by Lemma \ref{lem:pr_alg2:delta_charact_1} and $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \delta^\lambda_\text{visit}((\delta^*(q, v), x_v, \perp), a)$.
+	
+	Let $q' = \delta^*(q, w)$. Since $w \in L_{\lambda \hookleftarrow}$, $q' \in \lambda$ and definition tells us $\delta^\lambda_\text{visit}((\delta^*(q, v), x_v, \perp), a) = (q', c(q'), \min \{x_v, c(q')\})$. The fact that $\min \{x_v, c(q')\} = x_w$ finishes our proof. 
+\end{proof}
+
+
+\begin{lem}
+	For every $q \in \lambda$, $l, k \in c(Q)$, and $w \in \Sigma^+$: $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = (\delta^\lambda_\text{visit})^*(\iota_q^l, w)$.
+	\label{lem:pr_alg2:iota_converge}
+\end{lem}
+
+\begin{proof} 
+	If suffices to consider the case $w = a \in \Sigma$. If the statement is true for any one-symbol word, then it is for words of any length, as $\mathcal{A}_\text{visit}^\lambda$ is deterministic.
+	
+	For $w \in \Sigma$, $w$ is always in $L_{\lambda \hookleftarrow}$ or a prefix of a word in that set. Thus we can apply Lemma \ref{lem:pr_alg2:delta_charact_1} and \ref{lem:pr_alg2:delta_charact_2} to obtain our wanted result.
+\end{proof}
+
+
+\begin{lem}
+	For all $p, q \in \lambda$, and $l, k \in c(Q)$, $(\iota_p^k, \iota_q^k) \in V_M$ if and only if $(\iota_p^l, \iota_q^l) \in V_M$.
+	\label{lem:pr_alg2:iota_indexc_no_matter}
 \end{lem}
 
 \begin{proof}
 	As $l$ and $k$ are chosen symmetrically, it suffices for us to prove on direction of the bidirectional implication. Assume towards a contradiction that $(\iota_p^k, \iota_q^k) \in V_M$ but $(\iota_p^l, \iota_q^l) \notin V_M$, so there is a word $w \in \Sigma^*$ such that $((\delta^\lambda_\text{visit})^*(\iota_p^l, w), (\delta^\lambda_\text{visit})^*(\iota_q^l, w)) \notin V$.
 	
-	It must be true that $w \neq \varepsilon$; otherwise, $(\iota_p^l, \iota_q^l) \notin V$, which would contradict Lemma \ref{}.
+	It must be true that $w \neq \varepsilon$; otherwise, $(\iota_p^l, \iota_q^l) \notin V$, which would contradict Lemma \ref{lem:pr_alg2:iota_equiv}.
 	
-	By Lemma \ref{}, we have $(\delta^\lambda_\text{visit})^*(\iota_p^l, w) = (\delta^\lambda_\text{visit})^*(\iota_p^k, w)$ and analogously for $q$. Therefore, $((\delta^\lambda_\text{visit})^*(\iota_p^k, w), (\delta^\lambda_\text{visit})^*(\iota_q^k, w)) \notin V$ and thus $(\iota_p^k, \iota_q^k) \notin V_M$, which contradicts our assumption.
+	By Lemma \ref{lem:pr_alg2:iota_converge}, we have $(\delta^\lambda_\text{visit})^*(\iota_p^l, w) = (\delta^\lambda_\text{visit})^*(\iota_p^k, w)$ and analogously for $q$. Therefore, $((\delta^\lambda_\text{visit})^*(\iota_p^k, w), (\delta^\lambda_\text{visit})^*(\iota_q^k, w)) \notin V$ and thus $(\iota_p^k, \iota_q^k) \notin V_M$, which contradicts our assumption.
 \end{proof}
 
 \begin{lem}
-	Let $q \in \lambda$, $k \in c(Q)$, $w \in L_{\lambda \hookleftarrow}$, and $\varepsilon \sqsubset v \sqsubset w$. Then Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = (\delta^*(q, v), x_v, \perp)$, where $x_v = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq v\}$.
+	Let $q \in \lambda$ and $w \in \Sigma^+$ such that $\delta^*(q, w) \in \lambda$. Then there is a decomposition of $w$ into words $v_1 \cdots v_m$ such that all $v_i \in L_{\lambda \hookleftarrow}$.
+	\label{lem:pr_alg2:decompose_lambdahook}
 \end{lem}
 
 \begin{proof}
-We provide this claim by induction on $v$. First, consider $v = a \in \Sigma$, so $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = \delta^\lambda_\text{visit}(\iota_q^k, a) = (\delta(q, a), \min \{c(q), c(\delta(q, a))\}, \perp)$. This is exactly what we had to show, as $\min \{c(q), c(\delta(q, a))\} = x_a$.
+	Let $\rho \in Q^*$ be the run of $\mathcal{A}$ starting in $q$ on $w$. Let $i_1 < \dots < i_m$ be those positions at which $\rho(i_j) \in \lambda$. For every $1 \leq j < m$, we define $v_j = w[i_j, i_{j+1}]$. By choice of the $i_j$, all of those words are elements of $L_{\lambda \hookleftarrow}$.
 	
-	For the induction step, let $v = v'a \in \Sigma^+ \cdot \Sigma$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = \delta^\lambda_\text{visit}((\delta^*(q, v'), x_{v'}, \perp), a)$. Definition tells us that 
-\end{proof}
-
-\begin{lem}
-	Let $q \in \lambda$, $k \in c(Q)$, and $w \in L_{\lambda \hookleftarrow}$. Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \iota_{q'}^x$, where $q' = \delta^*(q, w)$ and $x = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$.
-\end{lem}
-
-\begin{proof}
-	For all $v \sqsubseteq w$, let $\min \{c(\delta^*(q, u)) \mid u \sqsubseteq v\}$ (i.e. $x = x_w$. Let $w = va \in \Sigma^* \cdot \Sigma$ (since words in $L_{\lambda \hookleftarrow}$ are non-empty). Then $(\delta^\lambda_\text{visit})^*(\iota_q^k, v) = (\delta^*(q, v), x_v, \perp)$ by Lemma \ref{} and $(\delta^\lambda_\text{visit})^*(\iota_q^k, w) = \delta^\lambda_\text{visit}((\delta^*(q, v), x_v, \perp), a)$.
-	
-	Since $\delta(\delta^*(q, v), a) = \delta^*(q, w)) \in \lambda$, definition tells us $\delta^\lambda_\text{visit}((\delta^*(q, v), x_v, \perp), a) = (\delta^*(q, w), c(\delta^*(q, w)), \min \{x_v, c(\delta^*(q, w)\})$. The fact that $\min \{x_v, c(\delta^*(q, w)\} = x_w$ finishes our proof. 
+	Since $q \in \lambda$ and $\delta^*(q, w) \in \lambda$, we have $i_0 = 0$ and $i_m = |w| + 1$, so $w = v_1 \cdots v_m$.  
 \end{proof}
 
 \begin{theorem}
@@ -197,15 +215,21 @@ We provide this claim by induction on $v$. First, consider $v = a \in \Sigma$, s
 \end{theorem}
 
 \begin{proof}
-	We have $(p_0, q_0) \in V_M$ if and only if for all $w \in \Sigma^*$: $(\delta^*(p_0, w), \delta^*(q_0, w)) \in V$. Thus, we want to show that his property holds for all $w$ iff $p \equiv_\text{PR}^\lambda q$.
+	We have $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \in V_M$ if and only if for all $w \in \Sigma^*$: $(\delta^*(\iota_p^{\hat{c}}, w), \delta^*(\iota_q^{\hat{c}}, w)) \in V$. Thus, we want to show that his property holds for all $w$ iff $p \equiv_\text{PR}^\lambda q$.
 	
-	\paragraph{If} Assume there is a $w$ such that $(\delta^*(p_0, w), \delta^*(q_0, w)) \notin V$. %TODO
+	\paragraph{If} Assume there is a $w$ such that $((\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w), (\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)) \notin V$. Choose this $w$ to have minimal length. By definition of $V$, both $(\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w)$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)$ must be in $\lambda$. By Lemma \ref{lem:pr_alg2:decompose_lambdahook}, there is a decomposition of $w$ into words $v_1 \cdots v_m$ that are in $L_{\lambda \hookleftarrow}$. We perform a proof of induction on $m$.
+	
+	If $m = 1$, then $w \in L_{\lambda \hookleftarrow}$. From Lemmas \ref{lem:pr_alg2:iota_equiv} and \ref{lem:pr_alg2:delta_charact_2}, we know that $\min \{c(\delta^*(p, u)) \mid u \sqsubseteq w\} \neq \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$ and therefore $p \not\equiv_\text{PR}^\lambda q$.
+	
+	If $m+1 > 1$, consider $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, v_1) = \iota_{q'}^x$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, v_1) = \iota_{p'}^y$ as stated in Lemma \ref{lem:pr_alg2:delta_charact_2} (with $p' = \delta^*(p, v_1)$ and $q'$ analogously). $w$ was chosen to have minimal length, so $(\iota_{q'}^x, \iota_{p'}^y) \in V$, which means that $x = y$. 
+	
+	As $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \notin V_M$, we also have $(\iota_{p'}^x, \iota_{q'}^y) \notin V_M$ and by Lemma \ref{lem:pr_alg2:iota_indexc_no_matter}, $(\iota_{p'}^{\hat{c}}, \iota_{q'}^{\hat{c}}) \notin V_M$ with the word $v_2 \cdots v_m$ being a witness. We can therefore argue with induction to deduce $p' = \delta^*(p, v_1) \not\equiv_\text{PR}^\lambda q' = \delta^*(q, v_1)$. As $v_1 \in L_{\lambda \hookleftarrow}$, the definition of path refinement tells us $p \not\equiv_\text{PR}^\lambda q$.
 	
 	\paragraph{Only If} Assume $p \not\equiv_\text{PR}^\lambda q$. Let $f_\text{PR}$ and $(X_i)_i$ be the function and sets used in the construction of the path refinement. Let $n$ be minimal s.t. $(p, q) \notin X_n$. We use induction on $n$ to prove the claim.
 	
-	If $n = 0$, there is a word $w \in L_{\lambda \hookleftarrow}$ such that $\min \{c(\delta^*(p, u)) \mid u \sqsubseteq w\} \neq \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$. Let $x, y \in c(Q)$ be the third components of $(\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w)$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)$ respectively. By Lemma \ref{}, $x = \min \{c(\delta^*(p, u)) \mid u \sqsubseteq w\}$ and $y = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$, so $x \neq y$. By definition of $\mathcal{A}^\lambda_\text{visit}$, this means that $((\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w), (\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)) \notin V$.
+	If $n = 0$, there is a word $w \in L_{\lambda \hookleftarrow}$ such that $\min \{c(\delta^*(p, u)) \mid u \sqsubseteq w\} \neq \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$. Let $x, y \in c(Q)$ be the third components of $(\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w)$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)$ respectively. By Lemma \ref{lem:pr_alg2:delta_charact_2}, $x = \min \{c(\delta^*(p, u)) \mid u \sqsubseteq w\}$ and $y = \min \{c(\delta^*(q, u)) \mid u \sqsubseteq w\}$, so $x \neq y$. By definition of $\mathcal{A}^\lambda_\text{visit}$, this means that $((\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w), (\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w)) \notin V$.
 	
-	For $n+1 > 0$, there is a $w \in L_{\lambda \hookleftarrow}$ such that $(\delta^*(p, w), \delta^*(q, w)) \notin V$. Let $p' = \delta^*(p, w)$ and $q'$ analogously. By induction, $(\iota_{p'}^{\hat{c}}, \iota_{q'}^{\hat{c}}) \notin V_M$. Lemma \ref{} tells us that there are $k'$ and $l'$ such that $(\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w) = \iota_{p'}^{k'}$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w) = \iota_{q'}^{l'}$. Since $n$ was chosen to be minimal, it must be true that $k' = l'$; otherwise, we would already have $p, q \notin X_0$. From Lemma \ref{}, we know that $(\iota_{p'}^{\hat{c}}, \iota_{q'}^{\hat{c}}) \notin V_M$ if and only if $(\iota_{p'}^{k'}, \iota_{q'}^{l'}) \notin V_M$, which is false. Thus, finally, $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \notin V_M$.
+	For $n+1 > 0$, there is a $w \in L_{\lambda \hookleftarrow}$ such that $(\delta^*(p, w), \delta^*(q, w)) \notin V$. Let $p' = \delta^*(p, w)$ and $q'$ analogously. By induction, $(\iota_{p'}^{\hat{c}}, \iota_{q'}^{\hat{c}}) \notin V_M$. Lemma \ref{lem:pr_alg2:delta_charact_2} tells us that there are $k'$ and $l'$ such that $(\delta^\lambda_\text{visit})^*(\iota_p^{\hat{c}}, w) = \iota_{p'}^{k'}$ and $(\delta^\lambda_\text{visit})^*(\iota_q^{\hat{c}}, w) = \iota_{q'}^{l'}$. Since $n$ was chosen to be minimal, it must be true that $k' = l'$; otherwise, we would already have $p, q \notin X_0$. From Lemma \ref{lem:pr_alg2:iota_indexc_no_matter}, we know that $(\iota_{p'}^{\hat{c}}, \iota_{q'}^{\hat{c}}) \notin V_M$ if and only if $(\iota_{p'}^{k'}, \iota_{q'}^{l'}) \notin V_M$, which is false. Thus, finally, $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \notin V_M$.
 \end{proof}
 
 The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \cdot |c(Q)|^2)$ and the computation of $V_M$ brings the runtime up to $\mathcal{O}(|\mathcal{A}^\lambda_\text{visit}| \cdot \log |\mathcal{A}^\lambda_\text{visit}|)$.
