@@ -1,8 +1,18 @@
-//
-// Created by wurst on 19.10.18.
-//
 
-#ifndef HELLO_WORLD_NBAUTILS_POST_H
-#define HELLO_WORLD_NBAUTILS_POST_H
+#pragma once
 
-#endif //HELLO_WORLD_NBAUTILS_POST_H
+/**
+ * Used only for post-processing determinized automata from nbautils. The additional information in the form of
+ * state labels is used to compute a relation on the states that implies language equivalence.
+ */
+
+#include "../equivalence_relation.h"
+#include "../automaton/finite_automaton.h"
+#include <map>
+
+namespace tollk {
+
+
+EquivalenceRelation<automaton::state_t> NbautilsEquivalence(const std::map<automaton::state_t, std::string>& state_labels);
+
+}
