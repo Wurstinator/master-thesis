@@ -60,6 +60,7 @@ inline void FiniteAutomaton::AddState(state_t q) {
     this->states.push_back(q);
 }
 
+
 inline void FiniteAutomaton::RemoveState(state_t q) {
     auto iter = std::find(this->states.begin(), this->states.end(), q);
     if (iter != this->states.end())

@@ -39,6 +39,12 @@ inline void ToHOA_WriteTransition(unsigned int symbol_size, symbol_t sym, unsign
 
 template <typename AutomatonT>
 void ToHOA(const AutomatonT& automaton, std::ostream* ostream) {
+    const std::map<state_t, std::string> empty_map;
+    ToHOA(automaton, ostream, empty_map);
+}
+
+template <typename AutomatonT>
+void ToHOA(const AutomatonT& automaton, std::ostream* ostream, const std::map<state_t, std::string>& state_labels) {
     constexpr bool is_finite_automaton = std::is_base_of<FiniteAutomaton, AutomatonT>::value;
     constexpr bool is_parity_automaton = std::is_base_of<ParityAutomaton, AutomatonT>::value;
     constexpr bool is_transition_automaton = is_specialization_base_of<TransitionAutomaton, AutomatonT>::value;
@@ -78,6 +84,11 @@ void ToHOA(const AutomatonT& automaton, std::ostream* ostream) {
     (*ostream) << "--BODY--\n";
     for (unsigned int p = 0; p < automaton.States().size(); ++p) {
         (*ostream) << "State: " << p;
+        if (state_labels.find(p) != state_labels.end()) {
+            (*ostream) << " \"";
+            (*ostream) << state_labels.at(p);
+            (*ostream) << '"';
+        }
         if (is_parity_automaton)
             (*ostream) << " {" << automaton.GetLabel(automaton.States()[p]) << '}';
         (*ostream) << '\n';

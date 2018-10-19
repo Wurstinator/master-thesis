@@ -1,19 +1,18 @@
-
-
 # This script can generate a batch of DPAs in different ways and save them as
 # HOA files.
 
 import argparse
-import multiprocessing
-import subprocess
-import random
-import tempfile
-import os
-import threading
-import progressbar
-import sys
-import re
 import math
+import multiprocessing
+import os
+import random
+import re
+import subprocess
+import sys
+import tempfile
+import threading
+
+import progressbar
 
 # How many priorities the DPAs should have, if the option to generate them
 # directly with spot is chosen.
@@ -25,6 +24,8 @@ GEN_TIMEOUT = 60
 # Path to nbautils: nbadet executable.
 NBAUTILS_NBADET_PATH = '../../code/nbautils/build/bin/nbadet'
 
+# Path to (transition->state based) executable.
+PRIORITY_BASE_CONVERTER_PATH = '../../code/bin/transition_based_converter'
 
 
 def main():
@@ -47,7 +48,8 @@ def main():
                 written_files += 1
                 progress_bar.update(written_files)
 
-    progress_bar = progressbar.ProgressBar(max_value = args.gen_num)
+    progress_bar = progressbar.ProgressBar(maxval=args.gen_num)
+    progress_bar.start()
     progress_bar.update(0)
 
     tries = 0
@@ -64,20 +66,29 @@ def main():
         pool.close()
         pool.join()
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate a batch of DPAs and save them as HOA files.")
 
     parser.add_argument('-n', dest='gen_num', help='Number of automata to generate.', type=int, default=1)
-    parser.add_argument('--max_tries', dest='max_tries', help='Maximal number of tries to generate the requested number of automata. The process simply exits if this number is reached.', type=int)
+    parser.add_argument('--max_tries', dest='max_tries',
+                        help='Maximal number of tries to generate the requested number of automata. The process simply exits if this number is reached.',
+                        type=int)
     parser.add_argument('--ap', help='Number of atomic propositions used by the automata.', type=int, default=1)
     parser.add_argument('-D', dest='directory', help='Output directory.', required=True)
-    parser.add_argument('--qmin', dest='min_states', help='Minimal number of states the output automata must have.', required=True, type=int)
-    parser.add_argument('--qmax', dest='max_states', help='Maximal number of states the output automata can have.', required=True,  type=int)
+    parser.add_argument('--qmin', dest='min_states', help='Minimal number of states the output automata must have.',
+                        required=True, type=int)
+    parser.add_argument('--qmax', dest='max_states', help='Maximal number of states the output automata can have.',
+                        required=True, type=int)
 
     group_generation = parser.add_mutually_exclusive_group(required=True)
-    group_generation.add_argument('--grand', action='store_true', dest='generate_random', help='Uses Spot library to generate a random DPA with {} priorities.'.format(GENDET_PRIORITIES))
-    group_generation.add_argument('--gnbaut', action='store_true', dest='determinize_nbautils', help='Uses Spot library to generate a random NBA and determinize it with nbautils.')
-    group_generation.add_argument('--gspot', action='store_true', dest='determinize_spot', help='Uses Spot library to generate a random NBA and determinize it with Spot.')
+    group_generation.add_argument('--grand', action='store_true', dest='generate_random',
+                                  help='Uses Spot library to generate a random DPA with {} priorities.'.format(
+                                      GENDET_PRIORITIES))
+    group_generation.add_argument('--gnbaut', action='store_true', dest='determinize_nbautils',
+                                  help='Uses Spot library to generate a random NBA and determinize it with nbautils.')
+    group_generation.add_argument('--gspot', action='store_true', dest='determinize_spot',
+                                  help='Uses Spot library to generate a random NBA and determinize it with Spot.')
 
     return parser.parse_args()
 
@@ -121,50 +132,62 @@ def run_process_for_time(command, timeout=None, outfile=subprocess.PIPE):
 def generate_one_automaton(filename, args):
     if args.generate_random:
         cmd = 'randaut {} -Q{}..{} -D -A \'parity min even {}\' --colored -S --seed={}'
-        cmd = cmd.format(atomic_propositions(args.ap), args.min_states, args.max_states, GENDET_PRIORITIES, random.randint(0, 1000000))
+        cmd = cmd.format(atomic_propositions(args.ap), args.min_states, args.max_states, GENDET_PRIORITIES,
+                         random.randint(0, 1000000))
         with open(filename, 'w') as file:
-            run_process_for_time(cmd, outfile=file)
+            gen_result = run_process_for_time(cmd, outfile=file)
         return True
 
     elif args.determinize_nbautils:
-        with generate_random_nba(args) as generated_automaton_file:
-            cmd = '{} -d -s -n -a -b -c -t -p -m -u1 {}'.format(NBAUTILS_NBADET_PATH, generated_automaton_file.name)
-            return determinize(filename, cmd, args)
+        with tempfile.NamedTemporaryFile() as nbadet_file:
+            with generate_random_nba(args) as generated_automaton_file:
+                cmd = '{} -d -s -n -a -b -c -t -m -u1 {}'.format(NBAUTILS_NBADET_PATH, generated_automaton_file.name)
+                det_result = determinize(nbadet_file, cmd, args)
+            if not det_result:
+                return False
+            cmd = '{} -A {}'.format(PRIORITY_BASE_CONVERTER_PATH, nbadet_file.name)
+            with open(filename, 'w') as file:
+                run_process_for_time(cmd, outfile=file)
+            return True
+
 
     elif args.determinize_spot:
         with generate_random_nba(args) as generated_automaton_file:
-            cmd = 'autfilt --colored-parity=\'min even\' --small --high -S -D -C {}'.format(generated_automaton_file.name)
-            return determinize(filename, cmd, args)
+            cmd = 'autfilt --colored-parity=\'min even\' --small --high -S -D -C {}'.format(
+                generated_automaton_file.name)
+            with open(filename, 'w') as file:
+                det_result = determinize(file, cmd, args)
+            if not det_result:
+                os.remove(filename)
+            return det_result
 
     return False
+
 
 # Generates an array of atomic propositions ('a0', 'a1', ...).
 def atomic_propositions(aps):
     return ' '.join(['a' + str(i) for i in range(1, aps + 1)])
 
+
 # Write random NBA to a HOA file and return a handler to that file.
 def generate_random_nba(args):
     qmin = max(1, int(math.log(args.min_states, 2)))
     qmax = max(1, int(math.sqrt(args.max_states)))
-    generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions(args.ap), qmin, qmax, random.randint(0, 1000000))
+    generate_cmd = 'randaut {} -Q{}..{} -A Buchi -S --seed={}'.format(atomic_propositions(args.ap), qmin, qmax,
+                                                                      random.randint(0, 1000000))
     generated_automaton_file = tempfile.NamedTemporaryFile()
     run_process_for_time(generate_cmd, outfile=generated_automaton_file)
     return generated_automaton_file
 
+
 # Determinizes an NBA with a given command. The command should be a string
 # that contains exactly one {} which will be replaced by the target output
 # file.
-def determinize(out_filename, command, args):
-    with open(out_filename, 'w') as file:
-        if run_process_for_time(command, outfile=file, timeout=GEN_TIMEOUT) is None:
-            return False
-    q = hoa_num_of_states(out_filename)
-    if q >= args.min_states and q <= args.max_states:
-        return True
-    else:
-        os.remove(out_filename)
+def determinize(outfile, command, args):
+    if run_process_for_time(command, outfile=outfile, timeout=GEN_TIMEOUT) is None:
         return False
-
+    q = hoa_num_of_states(outfile.name)
+    return (q >= args.min_states and q <= args.max_states)
 
 
 main()

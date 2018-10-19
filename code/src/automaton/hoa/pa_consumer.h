@@ -30,8 +30,12 @@ class PAConsumer : public cpphoafparser::HOAConsumerNull {
     // Adds a labeled edge to the automaton (and removes the old one, for DPA).
     virtual void AddTransition(state_t from, symbol_t sym, state_t to) = 0;
 
+    virtual const std::map<state_t, std::string>& GetStateLabels() const;
+
  protected:
     virtual ParityAutomaton* _get_automaton() = 0;
+
+    std::map<state_t, std::string> state_labels;
 
     unsigned long aps;
     std::vector<unsigned int> initial_states;

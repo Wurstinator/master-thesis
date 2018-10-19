@@ -53,6 +53,8 @@ void PAConsumer::addState(unsigned int id, std::shared_ptr<std::string> info, la
     _get_automaton()->AddState(id);
     if (static_cast<bool>(accSignature))
         this->_get_automaton()->SetLabel(id, accSignature->front());
+    if (static_cast<bool>(info))
+        this->state_labels[id] = *info;
 }
 
 
@@ -66,6 +68,7 @@ void PAConsumer::addEdgeWithLabel(unsigned int stateId, label_expr::ptr labelExp
             hit_symbols.push_back(s);
     }
 
+    // Insert the transitions.
     for (symbol_t s : hit_symbols)
         for (state_t q : conjSuccessors)
             AddTransition(stateId, s, q);
@@ -75,6 +78,9 @@ void PAConsumer::notifyEnd() {
     FixInitialStates(this->initial_states);
 }
 
+const std::map<state_t, std::string>& PAConsumer::GetStateLabels() const {
+    return this->state_labels;
+}
 
 
 }

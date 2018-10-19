@@ -1,19 +1,12 @@
 HOA: v1
-name: ""
-States: 3
+States: 1
 Start: 0
-AP: 1 "a1"
-acc-name: parity min even 2
-Acceptance: 2 Inf(0)|(Fin(1))
-properties: trans-labels explicit-labels state-acc deterministic colored
+AP: 1 "a1" 
+acc-name: parity min even 1
+Acceptance: 1 Inf(0)
+properties: trans-labels state-acc colored complete deterministic 
 --BODY--
-State: 0 "({0},1), ({},2), ({},0) : 2" {0}
+State: 0 "N: {}	(AC: {0}, AB: {}):0	D: ()	M: ()" {0}
 [!0] 0
-[0] 1
-State: 1 "({1},1), ({},2), ({},0) : 3" {1}
-[!0] 2
 [0] 0
-State: 2 {1}
-[!0] 2
-[0] 2
 --END--
