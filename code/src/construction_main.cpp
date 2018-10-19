@@ -1,21 +1,10 @@
 
 #include "construction_main.h"
-#include "automaton/hoa/hoa_io.h"
 #include <fstream>
+#include <iostream>
+#include "automaton/hoa/hoa_io.h"
 
-
-void ConstructionExecutor::InitializeFlags(args::ArgumentParser* argParser) {
-    argParser->Description("Performs the " + ConstructionName() + " construction on a given DPA.");
-}
-
-std::unique_ptr<BaseOptions> ConstructionExecutor::ParseFlags() {
-    return std::make_unique<BaseOptions>();
-}
-
-std::string ConstructionExecutor::ConstructionName() const {
-    return "foo";
-}
-
+using namespace tollk;
 
 std::unique_ptr<BaseOptions> ParseArgs(int argc, char** argv, ConstructionExecutor* specialization) {
     args::ArgumentParser parser("Performs a construction on a given DPA.");
@@ -47,12 +36,6 @@ std::unique_ptr<BaseOptions> ParseArgs(int argc, char** argv, ConstructionExecut
 }
 
 
-tollk::automaton::NPA NPAFromHoa(const std::string& filename) {
-    std::ifstream file(filename);
-    return tollk::automaton::hoa::NPAFromHOA(&file);
-}
-
-
 int main(int argc, char** argv) {
     const std::unique_ptr<ConstructionExecutor> construction_executor = CreateConstructionExecutor();
     const std::unique_ptr<const BaseOptions> options = ParseArgs(argc, argv, construction_executor.get());
@@ -62,8 +45,11 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    const tollk::automaton::DPA in_dpa = tollk::automaton::DPA::FromNondeterministic(NPAFromHoa(options->input_file));
-    const tollk::automaton::DPA out_dpa = PerformConstruction(in_dpa, *options);
+    {
+        std::ifstream input_file(options->input_file);
+        construction_executor->LoadInput(&input_file);
+    }
+    const tollk::automaton::DPA out_dpa = construction_executor->PerformConstruction(*options);
 
     tollk::automaton::hoa::ToHOA(out_dpa, &std::cout);
     std::cout << std::flush;

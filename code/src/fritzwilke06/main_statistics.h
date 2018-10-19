@@ -7,15 +7,14 @@
 
 namespace tollk {
 
-struct PathRefinementOptions : public BaseOptions {
-    bool use_nbautils_labels = false;
+struct FritzWilkeOptions : public BaseOptions {
+    bool reset_at_sccs = false;
 };
 
 
-class PathRefinementConstructionExecutor : public ConstructionExecutor {
+class FritzWilkeConstructionExecutor : public ConstructionExecutor {
  private:
-    std::unique_ptr<args::Flag> useNbautilsLabelsFlag;
-    std::map<automaton::state_t, std::string> stateLabels;
+    std::unique_ptr<args::Flag> resetAtSCCsFlag;
 
  public:
     void InitializeFlags(args::ArgumentParser* argParser) override;
@@ -23,8 +22,6 @@ class PathRefinementConstructionExecutor : public ConstructionExecutor {
     std::unique_ptr<BaseOptions> ParseFlags() const override;
 
     std::string ConstructionName() const override;
-
-    void LoadInput(std::istream* istream) override;
 
     automaton::DPA PerformConstruction(const BaseOptions& options) const override;
 };

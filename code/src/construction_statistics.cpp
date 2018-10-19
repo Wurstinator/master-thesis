@@ -1,23 +1,10 @@
 
 #include "construction_statistics.h"
-#include "automaton/parity.h"
 #include "../../json/single_include/nlohmann/json.hpp"
 #include <fstream>
 #include "automaton/hoa/hoa_io.h"
 
-
-void ConstructionExecutor::InitializeFlags(args::ArgumentParser* argParser) {
-    argParser->Description("Performs the " + ConstructionName() + " construction on a given DPA.");
-}
-
-std::unique_ptr<BaseOptions> ConstructionExecutor::ParseFlags() {
-    return std::make_unique<BaseOptions>();
-}
-
-std::string ConstructionExecutor::ConstructionName() const {
-    return "foo";
-}
-
+using namespace tollk;
 
 // Parser
 std::unique_ptr<BaseOptions> ParseArgs(int argc, char** argv, ConstructionExecutor* specialization) {
@@ -64,12 +51,6 @@ std::unique_ptr<BaseOptions> ParseArgs(int argc, char** argv, ConstructionExecut
 }
 
 
-tollk::automaton::NPA NPAFromHoa(const std::string& filename) {
-    std::ifstream file(filename);
-    return tollk::automaton::hoa::NPAFromHOA(&file);
-}
-
-
 
 // Measurement
 using TimePoint = std::chrono::steady_clock::time_point;
@@ -95,12 +76,12 @@ tollk::automaton::parity_label_t MinParity(const tollk::automaton::ParityAutomat
     return ranges::v3::min(ranges::v3::view::transform(range, get_label));
 }
 
-Statistics PerformConstructionMeasurement(tollk::automaton::DPA dpa, const BaseOptions& options) {
+Statistics PerformConstructionMeasurement(const ConstructionExecutor& construction_executioner, const BaseOptions& options) {
     Statistics data{};
-    data.original_size = dpa.States().size();
-    data.number_of_sccs = CountSCCs(dpa);
+    data.original_size = construction_executioner.GetInDPA().States().size();
+    data.number_of_sccs = CountSCCs(construction_executioner.GetInDPA());
     TimePoint time = TimeNow();
-    tollk::automaton::DPA final_dpa = PerformConstruction(dpa, options);
+    const tollk::automaton::DPA final_dpa = construction_executioner.PerformConstruction(options);
     data.milliseconds_taken = TimeDiffMS(time, TimeNow());
     data.new_size = final_dpa.States().size();
     return data;
@@ -139,15 +120,18 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    const tollk::automaton::NPA npa = NPAFromHoa(options->input_file);
-    const tollk::automaton::DPA dpa = tollk::automaton::DPA::FromNondeterministic(npa);
+    {
+        std::ifstream input_file(options->input_file);
+        construction_executor->LoadInput(&input_file);
+    }
 
-    if (options->size_limit && dpa.States().size() > options->size_limit.value()) {
-        std::cerr << "Automaton of size " << dpa.States().size() << " is too big." << std::endl;
+    const size_t statenum = construction_executor->GetInDPA().States().size();
+    if (options->size_limit && statenum > options->size_limit.value()) {
+        std::cerr << "Automaton of size " << statenum << " is too big." << std::endl;
         return 1;
     }
 
-    Statistics stats = PerformConstructionMeasurement(dpa, *options);
+    Statistics stats = PerformConstructionMeasurement(*construction_executor, *options);
     stats.input_file = options->input_file;
     switch (options->output_type) {
         case JSON:

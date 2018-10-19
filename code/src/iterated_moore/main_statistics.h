@@ -1,14 +1,18 @@
-//
-// Created by wurst on 19.10.18.
-//
 
-#ifndef HELLO_WORLD_MAIN_STATISTICS_H
-#define HELLO_WORLD_MAIN_STATISTICS_H
+#pragma once
+
+#include "../construction_main.h"
+#include "../automaton/hoa/hoa_io.h"
+#include <iostream>
+
+namespace tollk {
 
 
-class main_statistics {
+class IMConstructionExecutor : public ConstructionExecutor {
+ public:
+    std::string ConstructionName() const override;
 
+    automaton::DPA PerformConstruction(const BaseOptions& options) const override;
 };
 
-
-#endif //HELLO_WORLD_MAIN_STATISTICS_H
+}
