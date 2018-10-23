@@ -1,13 +1,13 @@
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 cmake_policy(SET CMP0048 NEW)
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
-project (hello_world)
+project(hello_world)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -76,7 +76,8 @@ set(AUTOMATON_FILES
         src/automaton/parity_util.cpp
         src/automaton/parity.cpp
         src/automaton/parity.h
-        src/automaton/is_specialization_base_of.h src/automaton/labelled_automaton.impl.h)
+        src/automaton/is_specialization_base_of.h
+        src/automaton/labelled_automaton.impl.h)
 
 set(AUTOMATON_HOA_FILES
         src/automaton/hoa/hoa_io.h
@@ -89,7 +90,9 @@ set(AUTOMATON_HOA_FILES
         src/automaton/hoa/npa_consumer.h
         src/automaton/hoa/npa_consumer.cpp
         src/automaton/hoa/boolean_evaluation.h
-        src/automaton/hoa/hoa_io.impl.h)
+        src/automaton/hoa/hoa_io.impl.h
+        src/automaton/hoa/transition_labeled_pa_consumer.cpp
+        src/automaton/hoa/transition_labeled_pa_consumer.h)
 
 set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} src/equivalence_relation.h)
 set(AUTOMATON_HOA_INCLUDE ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_FILES} ${HOAFP_INCLUDE})
@@ -111,16 +114,20 @@ add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_INCL
 target_include_directories(test_automaton PRIVATE range-v3/include ${CATCH2_DIR}/single_include ${HOAFP_DIR}/include)
 
 
+# transition->state based converter
+add_executable(transition_based_converter src/transition_based_converter.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE})
+target_include_directories(transition_based_converter PRIVATE range-v3/include ${HOAFP_DIR}/include)
+
 # *_main / *_statistics
 set(MAST_COMMON_HDRS_MAIN
         src/construction_main.cpp
         src/construction_main.h
-        ${AUTOMATON_HOA_INCLUDE})
+        ${AUTOMATON_HOA_INCLUDE} src/construction_executioner.cpp src/construction_executioner.h)
 
 set(MAST_COMMON_HDRS_STAT
         src/construction_statistics.cpp
         src/construction_statistics.h
-        ${AUTOMATON_HOA_INCLUDE})
+        ${AUTOMATON_HOA_INCLUDE} src/construction_executioner.cpp src/construction_executioner.h)
 
 # Schewe10
 
@@ -135,10 +142,10 @@ set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relat
 add_library(schewe_automaton ${SCHEWE10_INCLUDE})
 target_include_directories(schewe_automaton PRIVATE ${RANGEV3_DIR}/include)
 
-add_executable(schewe_main src/schewe10/schewe_main.cpp ${SCHEWE10_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
+add_executable(schewe_main src/schewe10/main_statistics.h src/schewe10/main_statistics.cpp ${SCHEWE10_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(schewe_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
-add_executable(schewe_statistics src/schewe10/schewe_statistics.cpp ${SCHEWE10_INCLUDE} ${MAST_COMMON_HDRS_STAT})
+add_executable(schewe_statistics src/schewe10/main_statistics.h src/schewe10/main_statistics.cpp ${SCHEWE10_INCLUDE} ${MAST_COMMON_HDRS_STAT})
 target_include_directories(schewe_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 
@@ -166,10 +173,10 @@ set(FRITZWILKE06_INCLUDE ${FRITZWILKE06_HDRS} ${AUTOMATON_INCLUDE} src/equivalen
 add_library(delayed_simulation ${FRITZWILKE06_INCLUDE})
 target_include_directories(delayed_simulation PRIVATE range-v3/include)
 
-add_executable(fritzwilke_main src/fritzwilke06/fritzwilke_main.cpp ${FRITZWILKE06_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
+add_executable(fritzwilke_main src/fritzwilke06/main_statistics.h src/fritzwilke06/main_statistics.cpp ${FRITZWILKE06_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(fritzwilke_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
-add_executable(fritzwilke_statistics src/fritzwilke06/fritzwilke_statistics.cpp ${FRITZWILKE06_INCLUDE} ${MAST_COMMON_HDRS_STAT})
+add_executable(fritzwilke_statistics src/fritzwilke06/main_statistics.h src/fritzwilke06/main_statistics.cpp ${FRITZWILKE06_INCLUDE} ${MAST_COMMON_HDRS_STAT})
 target_include_directories(fritzwilke_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(FRITZWILKE06_TESTS
@@ -179,7 +186,6 @@ set(FRITZWILKE06_TESTS
 
 add_executable(test_fritzwilke06 ${FRITZWILKE06_INCLUDE} ${FRITZWILKE06_TESTS} ${Catch2_HDRS})
 target_include_directories(test_fritzwilke06 PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
-
 
 
 # IteratedMoore
@@ -193,10 +199,10 @@ set(ITERATEDMOORE_INCLUDE ${ITERATEDMOORE_HDRS} ${AUTOMATON_INCLUDE} src/equival
 add_library(iterated_moore ${ITERATEDMOORE_INCLUDE})
 target_include_directories(iterated_moore PRIVATE range-v3/include)
 
-add_executable(iterated_moore_main src/iterated_moore/iterated_moore_main.cpp ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_MAIN})
+add_executable(iterated_moore_main ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_MAIN} src/iterated_moore/main_statistics.cpp src/iterated_moore/main_statistics.h)
 target_include_directories(iterated_moore_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
-add_executable(iterated_moore_statistics src/iterated_moore/iterated_moore_statistics.cpp ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_STAT})
+add_executable(iterated_moore_statistics ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_STAT} src/iterated_moore/main_statistics.cpp src/iterated_moore/main_statistics.h)
 target_include_directories(iterated_moore_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(ITERATEDMOORE_TESTS
@@ -207,29 +213,38 @@ add_executable(test_iterated_moore ${ITERATEDMOORE_INCLUDE} ${ITERATEDMOORE_TEST
 target_include_directories(test_iterated_moore PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
 
 
-
 # PathRefinement
 
 set(PATHREFIN_HDRS
         src/path_refinement/path_refinement_automaton.h
         src/path_refinement/path_refinement_automaton.cpp
         src/path_refinement/path_refinement.h
-        src/path_refinement/path_refinement.cpp src/path_refinement/visit_graph.h src/path_refinement/visit_graph.cpp)
+        src/path_refinement/path_refinement.cpp src/path_refinement/visit_graph.h src/path_refinement/visit_graph.cpp src/path_refinement/nbautils_post.h src/path_refinement/nbautils_post.cpp)
 
 set(PATHREFIN_INCLUDE ${PATHREFIN_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
 
 add_library(path_refinement ${PATHREFIN_INCLUDE})
 target_include_directories(path_refinement PRIVATE range-v3/include)
 
-add_executable(path_refinement_main src/path_refinement/path_refinement_main.cpp ${PATHREFIN_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_MAIN})
+add_executable(path_refinement_main
+        src/path_refinement/main_statistics.h
+        src/path_refinement/main_statistics.cpp
+        ${PATHREFIN_INCLUDE}
+        ${AUTOMATON_HOA_FILES}
+        ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(path_refinement_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
-add_executable(path_refinement_statistics src/path_refinement/path_refinement_statistics.cpp ${PATHREFIN_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_STAT})
+add_executable(path_refinement_statistics
+        src/path_refinement/main_statistics.h
+        src/path_refinement/main_statistics.cpp
+        ${PATHREFIN_INCLUDE}
+        ${AUTOMATON_HOA_FILES}
+        ${MAST_COMMON_HDRS_STAT})
 target_include_directories(path_refinement_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(PATHREFIN_TESTS
         src/path_refinement/tests/test_main.cpp
-        src/path_refinement/tests/test_path_refinement_automaton.cpp src/path_refinement/tests/test_visit_equality.cpp)
+        src/path_refinement/tests/test_path_refinement_automaton.cpp src/path_refinement/tests/test_visit_equality.cpp src/path_refinement/tests/test_nbautils_post.cpp)
 
 add_executable(test_path_refinement ${PATHREFIN_INCLUDE} ${PATHREFIN_TESTS} ${Catch2_HDRS})
 target_include_directories(test_path_refinement PRIVATE ${CATCH2_DIR}/single_include range-v3/include)

@@ -14,6 +14,9 @@ then
     python path_refinement_statistics.py -t 150 -o ../../../data/raw/path_refinement/detnbaut_ap2.json "../../../data/automata/detnbaut/ap2/*/*"
     python path_refinement_statistics.py -t 150 -o ../../../data/raw/path_refinement/detspot_ap1.json "../../../data/automata/detspot/ap1/*/*"
     python path_refinement_statistics.py -t 150 -o ../../../data/raw/path_refinement/detspot_ap2.json "../../../data/automata/detspot/ap2/*/*"
+
+    python path_refinement_statistics.py -t 150 -o ../../../data/raw/path_refinement/detnbaut_special_ap1.json --nbautils "../../../data/automata/detnbaut/ap1/*/*"
+    python path_refinement_statistics.py -t 150 -o ../../../data/raw/path_refinement/detnbaut_special_ap2.json --nbautils "../../../data/automata/detnbaut/ap2/*/*"
     )
 
 fi
