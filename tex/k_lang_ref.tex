@@ -238,16 +238,66 @@ The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \
 
 
 
+\subsection{Further notes}
+\subsubsection{Order of equivalence classes}
+We can consider state reduction via path refinement as a function: $\text{PR}(\mathcal{A}, \lambda) = \mathcal{A}'$, which is a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^\lambda$. For a congruence relation $R$, let $\lambda_1, \dots \lambda_n$ be an enumeration of all the equivalence classes. To achieve even better reduction, we can simply repeat the algorithm as $f(f(\dots f(\mathcal{A}, \lambda_1) \dots , \lambda_{n-1}), \lambda_n)$.
+
+The automaton displayed in figure \ref{fig:pr:example_lambda_order} is an example for a case where this order matters. Assume our relation has four classes, $\{q_1, q_5\}$, $\{q_2, q_3\}$, $\{q_4\}$, and $\{q_0\}$. Equivalence classes of size 1 cannot cause any state reduction, so we focus on $\lambda_1 = \{q_1, q_5\}$ and $\lambda_2 = \{q_2, q_3\}$.
+
+Consider $\text{PR}(\mathcal{A}, \lambda_1)$. From $q_1$, there is a path back to $\lambda_1$ again that only visits priority 1, namely $q_1 q_3 q_4 q_5$. That is impossible from $q_5$, as the first step always leads to $q_0$ with priority 0. Hence, no merge will occur in this step.
+
+$\text{PR}(\mathcal{A}, \lambda_2)$ will cause a merge: from the pair $(q_2, q_3)$, every path back to $\lambda_2$ will either move through $q_2$ or $q_0$ and thus have the minimal priority 0. The resulting automaton is shown in figure \ref{fig:pr:example_lambda_order2}.
+
+Now look at $\text{PR}(\text{PR}(\mathcal{A}, \lambda_2), \lambda_1)$. As $q_3$ does not exist anymore, the path $q_1 q_3 q_4 q_5$ becomes $q_1 q_2 q_4 q_5$ with minimal priority of 0. In fact, now $q_1$ and $q_5$ can be merged, unlike before.
 
 
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \node[state]           (2) [below=of 0]   {$q_2,0$};
+  \node[state]           (3) [right=of 2]   {$q_3,1$};
+  \node[state]           (4) [right=of 3]   {$q_4,1$};
+  \node[state]           (5) [above=of 0]   {$q_5,1$};
+  \path[->] (0) edge node [above] {a} (3)
+            (0) edge [bend left] node [above] {b} (1)
+            (1) edge node [left] {a} (3)
+            (1) edge [bend left] node [above] {b} (0)
+            (2) edge [loop left] node {a} (2)
+            (2) edge [bend right] node [below] {b} (4)
+            (3) edge node [above] {a} (2)
+            (3) edge node [above] {b} (4)
+            (4) edge [bend right] node [above right] {a,b} (5)
+            (5) edge node [left] {a,b} (0);
+\end{tikzpicture}
+\caption{Example automaton for which the order of congruence classes matters in path refinement.}
+\label{fig:pr:example_lambda_order}
+\end{figure}
 
 
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \node[state]           (2) [below=of 0]   {$q_2,0$};
+  \node[state]           (4) [right=of 3]   {$q_4,1$};
+  \node[state]           (5) [above=of 0]   {$q_5,1$};
+  \path[->] (0) edge node [left] {a} (2)
+            (0) edge [bend left] node [above] {b} (1)
+            (1) edge node [left] {a} (2)
+            (1) edge [bend left] node [above] {b} (0)
+            (2) edge [loop left] node {a} (2)
+            (2) edge node [below] {b} (4)
+            (4) edge [bend right] node [above right] {a,b} (5)
+            (5) edge node [left] {a,b} (0);
+\end{tikzpicture}
+\caption{Automaton from figure \ref{fig:pr:example_lambda_order} after merging $q_2$ and $q_3$.}
+\label{fig:pr:example_lambda_order2}
+\end{figure}
 
-
-
-
-
-
+We were not able to find an easy heuristic to determine which order of classes gives the best reduction. One could of course repeat the reduction process over and over until no change is made anymore but that would bring the worst case runtime to about cubic in the number of states.
 
 
 
