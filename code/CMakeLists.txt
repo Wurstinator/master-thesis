@@ -171,7 +171,7 @@ set(FRITZWILKE06_HDRS
 set(FRITZWILKE06_INCLUDE ${FRITZWILKE06_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
 
 add_library(delayed_simulation ${FRITZWILKE06_INCLUDE})
-target_include_directories(delayed_simulation PRIVATE range-v3/include)
+target_include_directories(delayed_simulation PRIVATE ${RANGEV3_DIR}/include)
 
 add_executable(fritzwilke_main src/fritzwilke06/main_statistics.h src/fritzwilke06/main_statistics.cpp ${FRITZWILKE06_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(fritzwilke_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
@@ -197,7 +197,7 @@ set(ITERATEDMOORE_HDRS
 set(ITERATEDMOORE_INCLUDE ${ITERATEDMOORE_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
 
 add_library(iterated_moore ${ITERATEDMOORE_INCLUDE})
-target_include_directories(iterated_moore PRIVATE range-v3/include)
+target_include_directories(iterated_moore PRIVATE ${RANGEV3_DIR}/include)
 
 add_executable(iterated_moore_main ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_MAIN} src/iterated_moore/main_statistics.cpp src/iterated_moore/main_statistics.h)
 target_include_directories(iterated_moore_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
@@ -224,7 +224,7 @@ set(PATHREFIN_HDRS
 set(PATHREFIN_INCLUDE ${PATHREFIN_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
 
 add_library(path_refinement ${PATHREFIN_INCLUDE})
-target_include_directories(path_refinement PRIVATE range-v3/include)
+target_include_directories(path_refinement PRIVATE ${RANGEV3_DIR}/include)
 
 add_executable(path_refinement_main
         src/path_refinement/main_statistics.h
@@ -241,6 +241,12 @@ add_executable(path_refinement_statistics
         ${AUTOMATON_HOA_FILES}
         ${MAST_COMMON_HDRS_STAT})
 target_include_directories(path_refinement_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+add_executable(path_refinement_lambda_order
+        src/path_refinement/main_lambda_order.cpp
+        ${PATHREFIN_INCLUDE}
+        ${AUTOMATON_HOA_FILES})
+target_include_directories(path_refinement_lambda_order PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(PATHREFIN_TESTS
         src/path_refinement/tests/test_main.cpp
