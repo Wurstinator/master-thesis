@@ -394,6 +394,62 @@ TEST_CASE("Tests EquivalenceRelation::SplitClass") {
 
 
 TEST_CASE("Tests EquivalenceRelation::Intersection") {
-    //TODO
+    const EquivalenceRelation<int>::EquivClass c1 {1, 2, 3};
+    const EquivalenceRelation<int>::EquivClass c2 {4, 5, 6};
+    const EquivalenceRelation<int>::EquivClass c3 {7};
+    const EquivalenceRelation<int>::EquivClass c4 {8, 9};
+    const EquivalenceRelation<int> relation1(std::vector<EquivalenceRelation<int>::EquivClass> {c1, c2, c3, c4});
+    const EquivalenceRelation<int>::EquivClass c5 {1, 4, 6};
+    const EquivalenceRelation<int>::EquivClass c6 {7, 8, 9};
+    const EquivalenceRelation<int>::EquivClass c7 {2, 3, 5};
+    const EquivalenceRelation<int> relation2(std::vector<EquivalenceRelation<int>::EquivClass> {c5, c6, c7});
+
+    const EquivalenceRelation<int> inter = EquivalenceRelation<int>::Intersection(relation1, relation2);
+    CHECK(inter.Domain().size() == 9);
+    CHECK(inter.IsEquiv(1, 1));
+    CHECK(!inter.IsEquiv(1, 2));
+    CHECK(!inter.IsEquiv(1, 3));
+    CHECK(!inter.IsEquiv(1, 4));
+    CHECK(!inter.IsEquiv(1, 5));
+    CHECK(!inter.IsEquiv(1, 6));
+    CHECK(!inter.IsEquiv(1, 7));
+    CHECK(!inter.IsEquiv(1, 8));
+    CHECK(!inter.IsEquiv(1, 9));
+    CHECK(inter.IsEquiv(2, 2));
+    CHECK(inter.IsEquiv(2, 3));
+    CHECK(!inter.IsEquiv(2, 4));
+    CHECK(!inter.IsEquiv(2, 5));
+    CHECK(!inter.IsEquiv(2, 6));
+    CHECK(!inter.IsEquiv(2, 7));
+    CHECK(!inter.IsEquiv(2, 8));
+    CHECK(!inter.IsEquiv(2, 9));
+    CHECK(inter.IsEquiv(3, 3));
+    CHECK(!inter.IsEquiv(3, 4));
+    CHECK(!inter.IsEquiv(3, 5));
+    CHECK(!inter.IsEquiv(3, 6));
+    CHECK(!inter.IsEquiv(3, 7));
+    CHECK(!inter.IsEquiv(3, 8));
+    CHECK(!inter.IsEquiv(3, 9));
+    CHECK(inter.IsEquiv(4, 4));
+    CHECK(!inter.IsEquiv(4, 5));
+    CHECK(inter.IsEquiv(4, 6));
+    CHECK(!inter.IsEquiv(4, 7));
+    CHECK(!inter.IsEquiv(4, 8));
+    CHECK(!inter.IsEquiv(4, 9));
+    CHECK(inter.IsEquiv(5, 5));
+    CHECK(!inter.IsEquiv(5, 6));
+    CHECK(!inter.IsEquiv(5, 7));
+    CHECK(!inter.IsEquiv(5, 8));
+    CHECK(!inter.IsEquiv(5, 9));
+    CHECK(inter.IsEquiv(6, 6));
+    CHECK(!inter.IsEquiv(6, 7));
+    CHECK(!inter.IsEquiv(6, 8));
+    CHECK(!inter.IsEquiv(6, 9));
+    CHECK(inter.IsEquiv(7, 7));
+    CHECK(!inter.IsEquiv(7, 8));
+    CHECK(!inter.IsEquiv(7, 9));
+    CHECK(inter.IsEquiv(8, 8));
+    CHECK(inter.IsEquiv(8, 9));
+    CHECK(inter.IsEquiv(9, 9));
 }
 
