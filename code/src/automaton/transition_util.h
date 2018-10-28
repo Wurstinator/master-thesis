@@ -6,7 +6,7 @@
 #include "deterministic_automaton.h"
 #include "nondeterministic_automaton.h"
 #include <boost/bimap.hpp>
-#include "../equivalence_relation.h"
+#include "../util/equivalence_relation.h"
 
 
 namespace tollk {

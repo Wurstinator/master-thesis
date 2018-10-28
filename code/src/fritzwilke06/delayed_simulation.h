@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../equivalence_relation.h"
+#include "../util/equivalence_relation.h"
 #include "../automaton/parity.h"
 
 namespace tollk {

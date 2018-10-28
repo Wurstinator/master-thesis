@@ -6,7 +6,7 @@
 #include "finite_automaton.h"
 #include "deterministic_automaton.h"
 #include "nondeterministic_automaton.h"
-#include "../equivalence_relation.h"
+#include "../util/equivalence_relation.h"
 
 namespace tollk {
 namespace automaton {

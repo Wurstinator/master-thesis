@@ -27,8 +27,6 @@ public:
     // relation, their classes are merged. (note that the two elements can be the same to create a new singleton class)
     void AddConnection(const T& x, const T& y);
 
-    // TODO remove element
-
     // Merges two given equivalence classes.
     void MergeClasses(const EquivClass& c1, const EquivClass& c2);
 
@@ -50,6 +48,9 @@ public:
     // Splits a class C at index i into two new classes: C \ X and C ∩ X. O(|C|) operation.
     void SplitClass(typename std::vector<EquivClass>::size_type i, const EquivClass& X);
 
+    // Builds the intersection of two equivalence classes.
+    void Intersection(const EquivalenceRelation<T>& other);
+
     template <typename S>
     friend bool operator==(const EquivalenceRelation<S>& lhs, const EquivalenceRelation<S>& rhs);
 
@@ -70,7 +71,7 @@ bool operator==(const EquivalenceRelation<T>& lhs, const EquivalenceRelation<T>&
 
 template<typename T>
 EquivalenceRelation<T>::EquivalenceRelation(std::vector<EquivClass> classes)
-        : classes(std::move(classes)), relation(EquivalenceRelation<T>::InitRelation(classes)) {};
+        : classes(std::move(classes)), relation(EquivalenceRelation<T>::InitRelation(this->classes)) {};
 
 template<typename T>
 typename EquivalenceRelation<T>::RelationMap
@@ -136,7 +137,7 @@ void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass&
 
 template<typename T>
 bool EquivalenceRelation<T>::Exists(const T& x) const {
-    return this->relation.find(x) != this->relation.end();
+    return IsEquiv(x, x);
 }
 
 template <typename T>
@@ -154,7 +155,10 @@ const typename EquivalenceRelation<T>::EquivClass& EquivalenceRelation<T>::GetCl
 
 template<typename T>
 bool EquivalenceRelation<T>::IsEquiv(const T& x, const T& y) const {
-    const EquivClass& c = GetClass(x);
+    const auto iter = relation.find(x);
+    if (iter == relation.end())
+        return false;
+    const EquivClass& c = classes[iter->second];
     return c.find(y) != c.end();
 }
 
@@ -176,6 +180,16 @@ void EquivalenceRelation<T>::SplitClass(typename std::vector<EquivalenceRelation
         this->classes[i].erase(x);
     if (!new_class.empty())
         this->classes.push_back(std::move(new_class));
+}
+
+template <typename T>
+void EquivalenceRelation<T>::Intersection(const EquivalenceRelation<T>& other) {
+    for (const EquivalenceRelation<T>::EquivClass& clas : other.Classes()) {
+        const size_t old_classes = this->Classes().size();
+        for (size_t i = 0; i < old_classes; ++i) {
+            SplitClass(i, clas);
+        }
+    }
 }
 
 
