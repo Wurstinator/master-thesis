@@ -6,7 +6,6 @@ namespace tollk {
 
 using namespace automaton;
 
-
 EquivalenceRelation<state_t> Moore_LTK(const DPA& automaton, parity_label_t k) {
     EquivalenceRelation<state_t> labels = automaton.LabelEquivalence();
 
@@ -25,6 +24,27 @@ EquivalenceRelation<state_t> Moore_LTK(const DPA& automaton, parity_label_t k) {
     automaton::RefineToCongruence(&labels, automaton);
 
     return labels;
+}
+
+
+EquivalenceRelation<state_t> AllMoore_LTK(const DPA& automaton) {
+    std::unordered_map<parity_label_t, std::vector<state_t>> label_states;
+    for (parity_label_t k : automaton.AllLabels())
+        label_states.insert(std::make_pair(k, std::vector<state_t>()));
+    for (state_t q : automaton.States())
+        label_states[automaton.GetLabel(q)].push_back(q);
+
+    std::vector<EquivalenceRelation<state_t>::EquivClass> equivalence_classes;
+    for (const std::pair<const parity_label_t, std::vector<state_t>>& kv_pair : label_states) {
+        const EquivalenceRelation<state_t> ltk = Moore_LTK(automaton, kv_pair.first);
+        std::unordered_set<EquivalenceRelation<state_t>::ClassIndex> classes_with_prio_k;
+        for (state_t q : kv_pair.second)
+            classes_with_prio_k.insert(ltk.GetClassIndex(q));
+        for (EquivalenceRelation<state_t>::ClassIndex i : classes_with_prio_k)
+            equivalence_classes.push_back(ltk.Classes()[i]);
+    }
+
+    return EquivalenceRelation<state_t>(equivalence_classes);
 }
 
 }

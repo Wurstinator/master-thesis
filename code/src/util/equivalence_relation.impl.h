@@ -47,8 +47,8 @@ void EquivalenceRelation<T>::AddConnection(const T& x, const T& y) {
 template<typename T>
 void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass& c1,
                                           const EquivalenceRelation::EquivClass& c2) {
-    typename std::vector<EquivClass>::size_type index1 = relation[*c1.begin()];
-    typename std::vector<EquivClass>::size_type index2 = relation[*c2.begin()];
+    ClassIndex index1 = GetClassIndex(*c1.begin());
+    ClassIndex index2 = GetClassIndex(*c2.begin());
 
     if (index1 == index2)
         return;
@@ -87,7 +87,12 @@ std::vector<T> EquivalenceRelation<T>::Domain() const {
 
 template<typename T>
 const typename EquivalenceRelation<T>::EquivClass& EquivalenceRelation<T>::GetClass(const T& x) const {
-    return classes[relation.at(x)];
+    return classes[GetClassIndex(x)];
+}
+
+template <typename T>
+typename EquivalenceRelation<T>::ClassIndex EquivalenceRelation<T>::GetClassIndex(const T& x) const {
+    return relation.at(x);
 }
 
 template<typename T>
@@ -124,8 +129,8 @@ EquivalenceRelation<T> EquivalenceRelation<T>::Intersection(const EquivalenceRel
     std::vector<EquivalenceRelation<T>::EquivClass> intersected_classes(lhs.Classes().size() * rhs.Classes().size());
     assert(lhs.Domain() == rhs.Domain());
     for (const T& x : lhs.Domain()) {
-        const size_t i = lhs.relation.at(x);
-        const size_t j = rhs.relation.at(x);
+        const size_t i = lhs.GetClassIndex(x);
+        const size_t j = rhs.GetClassIndex(x);
         intersected_classes[i + j*lhs.Classes().size()].insert(x);
     }
     intersected_classes.erase(std::remove_if(intersected_classes.begin(), intersected_classes.end(), std::mem_fn(&EquivClass::empty)), intersected_classes.end());

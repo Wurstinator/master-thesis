@@ -14,6 +14,7 @@ template<typename T>
 class EquivalenceRelation {
 public:
     using EquivClass = std::set<T>;
+    using ClassIndex = typename std::vector<EquivClass>::size_type;
 
     // Creates a new empty relation.
     EquivalenceRelation() = default;
@@ -38,6 +39,9 @@ public:
     // Returns the equivalence class of a given element.
     const EquivClass& GetClass(const T& x) const;
 
+    // Returns the index in the classes array of the equivalence class of a given element.
+    ClassIndex GetClassIndex(const T& x) const;
+
     // Checks whether two elements are equivalent.
     bool IsEquiv(const T& x, const T& y) const;
 
@@ -54,7 +58,7 @@ public:
     friend bool operator==(const EquivalenceRelation<S>& lhs, const EquivalenceRelation<S>& rhs);
 
 private:
-    using RelationMap = std::unordered_map<T, typename std::vector<EquivClass>::size_type>;
+    using RelationMap = std::unordered_map<T, ClassIndex>;
 
     // From a list of classes, creates a relation map.
     static RelationMap InitRelation(const std::vector<EquivClass>& classes);
