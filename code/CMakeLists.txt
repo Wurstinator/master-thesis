@@ -57,6 +57,19 @@ set(HOAFP_INCLUDE
         ${HOAFP_DIR}/include/cpphoafparser/ast/atom_label.hh
         )
 
+
+# util
+set(UTIL_INCLUDE
+        src/util/equivalence_relation.h
+        src/util/equivalence_relation.impl.h)
+add_executable(test_equivalence_relation
+        src/util/tests/test_main.cpp
+        src/util/tests/test_equivalence_relation.cpp
+        ${UTIL_INCLUDE}
+        ${Catch2_HDRS})
+target_include_directories(test_equivalence_relation PRIVATE ${CATCH2_DIR}/single_include)
+
+
 # automaton module
 
 set(AUTOMATON_FILES
@@ -94,7 +107,7 @@ set(AUTOMATON_HOA_FILES
         src/automaton/hoa/transition_labeled_pa_consumer.cpp
         src/automaton/hoa/transition_labeled_pa_consumer.h)
 
-set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} src/equivalence_relation.h)
+set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${UTIL_INCLUDE})
 set(AUTOMATON_HOA_INCLUDE ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_FILES} ${HOAFP_INCLUDE})
 
 add_library(automaton ${AUTOMATON_INCLUDE})
@@ -137,7 +150,7 @@ set(SCHEWE10_HDRS
         src/schewe10/schewe_automaton.h
         src/schewe10/schewe_automaton.cpp)
 
-set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h ${NBAUTILS_INCLUDE})
+set(SCHEWE10_INCLUDE ${SCHEWE10_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE} ${NBAUTILS_INCLUDE})
 
 add_library(schewe_automaton ${SCHEWE10_INCLUDE})
 target_include_directories(schewe_automaton PRIVATE ${RANGEV3_DIR}/include)
@@ -168,7 +181,7 @@ set(FRITZWILKE06_HDRS
         src/fritzwilke06/gamma.cpp
         src/fritzwilke06/gamma.h)
 
-set(FRITZWILKE06_INCLUDE ${FRITZWILKE06_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
+set(FRITZWILKE06_INCLUDE ${FRITZWILKE06_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE})
 
 add_library(delayed_simulation ${FRITZWILKE06_INCLUDE})
 target_include_directories(delayed_simulation PRIVATE ${RANGEV3_DIR}/include)
@@ -194,7 +207,7 @@ set(ITERATEDMOORE_HDRS
         src/iterated_moore/iterated_moore.h
         src/iterated_moore/iterated_moore.cpp)
 
-set(ITERATEDMOORE_INCLUDE ${ITERATEDMOORE_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
+set(ITERATEDMOORE_INCLUDE ${ITERATEDMOORE_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE})
 
 add_library(iterated_moore ${ITERATEDMOORE_INCLUDE})
 target_include_directories(iterated_moore PRIVATE ${RANGEV3_DIR}/include)
@@ -221,7 +234,7 @@ set(PATHREFIN_HDRS
         src/path_refinement/path_refinement.h
         src/path_refinement/path_refinement.cpp src/path_refinement/visit_graph.h src/path_refinement/visit_graph.cpp src/path_refinement/nbautils_post.h src/path_refinement/nbautils_post.cpp)
 
-set(PATHREFIN_INCLUDE ${PATHREFIN_HDRS} ${AUTOMATON_INCLUDE} src/equivalence_relation.h)
+set(PATHREFIN_INCLUDE ${PATHREFIN_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE})
 
 add_library(path_refinement ${PATHREFIN_INCLUDE})
 target_include_directories(path_refinement PRIVATE ${RANGEV3_DIR}/include)
@@ -250,7 +263,48 @@ target_include_directories(path_refinement_lambda_order PRIVATE ${RANGEV3_DIR}/i
 
 set(PATHREFIN_TESTS
         src/path_refinement/tests/test_main.cpp
-        src/path_refinement/tests/test_path_refinement_automaton.cpp src/path_refinement/tests/test_visit_equality.cpp src/path_refinement/tests/test_nbautils_post.cpp)
+        src/path_refinement/tests/test_path_refinement_automaton.cpp
+        src/path_refinement/tests/test_visit_equality.cpp
+        src/path_refinement/tests/test_nbautils_post.cpp)
 
 add_executable(test_path_refinement ${PATHREFIN_INCLUDE} ${PATHREFIN_TESTS} ${Catch2_HDRS})
 target_include_directories(test_path_refinement PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
+
+
+
+# Threshold Moore
+
+set(TREMOORE_HDRS
+        src/threshold_moore/moore_ltk.cpp
+        src/threshold_moore/moore_ltk.h
+        src/threshold_moore/tm_relation.cpp
+        src/threshold_moore/tm_relation.h)
+
+set(TREMOORE_INCLUDE ${TREMOORE_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE})
+
+add_library(tremoore ${TREMOORE_INCLUDE})
+target_include_directories(tremoore PRIVATE ${RANGEV3_DIR}/include)
+
+add_executable(tremoore_main
+        src/threshold_moore/main_statistics.h
+        src/threshold_moore/main_statistics.cpp
+        ${TREMOORE_INCLUDE}
+        ${AUTOMATON_HOA_FILES}
+        ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(tremoore_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+add_executable(tremoore_statistics
+        src/threshold_moore/main_statistics.h
+        src/threshold_moore/main_statistics.cpp
+        ${TREMOORE_INCLUDE}
+        ${AUTOMATON_HOA_FILES}
+        ${MAST_COMMON_HDRS_STAT})
+target_include_directories(tremoore_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+set(TREMOORE_TESTS
+        src/threshold_moore/tests/test_main.cpp
+        src/threshold_moore/tests/test_moore_ltk.cpp
+        src/threshold_moore/tests/test_tm_relation.cpp)
+
+add_executable(test_tremoore ${TREMOORE_INCLUDE} ${TREMOORE_TESTS} ${Catch2_HDRS})
+target_include_directories(test_tremoore PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
