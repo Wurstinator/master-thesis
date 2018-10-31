@@ -1,0 +1,85 @@
+\section{Threshold Moore}
+\begin{defn}
+	Let $x, y, n \in \mathbb{N}$. We write $x =^{\leq n} y$ if $x = y$ or $x, y > n$.
+
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. For $k \in c(Q)$, we define $\equiv_M^{\leq k} \subseteq Q \times Q$ as a relation, such that $p \equiv_M^{\leq k} q$ if and only if for all $w \in \Sigma^*$, $c(\delta^*(p, w)) =^{\leq k} c(\delta^*(q, w))$. We call $\equiv_M^{\leq k}$ the \emph{$k$-threshold Moore equivalence}.
+\end{defn}
+
+\begin{lem}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(q) = \min \{k+1, c(q)\}$. Then $\equiv_M^{\leq k}$ of $\mathcal{A}$ is equal to $\equiv_M$ of $\mathcal{A}'$.
+	\label{lem:tremoore:mleq_is_actually_just_moore}
+\end{lem}
+
+\begin{proof}
+	Follows directly from the definition of $=^{\leq k}$.
+\end{proof}
+
+\begin{cor}
+	$\equiv_M^{\leq k}$ is a congruence relation.
+\end{cor}
+
+\begin{defn}
+	Let $\mathcal{A}$ be a DPA and let $R$ be an equivalence relation on the state space that implies language equivalence. We define a relation $\equiv_\text{TM}^R$ such that $p \equiv_\text{TM} q$ if and only if all of the following are satisfied:
+	\begin{enumerate}
+		\item $c(p) = c(q)$
+		\item $p \equiv_M^{\leq c(p)} q$
+		\item $(p, q) \in R$
+	\end{enumerate}
+\end{defn}
+
+\begin{theorem}
+	Let $\mathcal{A}$ and $R$ as before and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. an equivalence class $\lambda$ of $\equiv_\text{TM}^R$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
+\end{theorem}
+
+\begin{proof}
+	Let $q \in Q'$ be a state in the representative merge and let $\alpha \in \Sigma^\omega$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
+	
+	We show that for all $i$, $\rho(i) \equiv_L \rho'(i)$ (in $\mathcal{A}$) and $\rho(i) \equiv_M^{\leq k} \rho'(i)$. If that is true, then there are two cases: if $c(\rho)$ sees infinitely many priorities of at most $k$, then $c(\rho')$ sees the same priorities at the same positions and thus $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c(\rho'))$. Otherwise there is a position $n$ from which $c(\rho)$ only is greater than $k$ and therefore the same is true for $c(\rho')$. That means reading $\alpha[n,\omega]$ from $\rho'(n)$ in either $\mathcal{A}$ or $\mathcal{A}'$ yields the same run which has the same acceptance as $\rho$.
+	
+	\paragraph{Claim} For all $i$, $\rho(i) \equiv_L \rho'(i)$ and $\rho(i) \equiv_M^{\leq k} \rho'(i)$.
+	
+	First, consider $i = 0$. If $\rho'(0) \notin \lambda$, then $\rho(0) = \rho'(0)$ and we are done. Otherwise, $\rho'(0) = r_\lambda \in \lambda$. Then $\rho(0) \in \lambda$ and thus $\rho(0) \equiv_M^{\leq k} \rho'(0)$ and $(\rho(0), \rho'(0)) \in R$. Since $R \subseteq \,\equiv_L$, we are done.
+	
+	Next, consider $i+1 > 0$. If $\rho'(i+1) \notin \lambda$, then $\rho'(i+1) = \delta(\rho'(i), \alpha(i))$. By induction, $\rho(i) \equiv_L \rho'(i)$. Since $\equiv_L$ is a congruence relation this implies $\rho(i+1) \equiv_L \rho'(i+1)$. The same argumentation works for $\equiv_M^{\leq k}$.
+	
+	Otherwise, $\rho'(i+1) = r_\lambda \in \lambda$. That means $\delta(\rho'(i), \alpha(i)) = p$ for some $p \in \lambda$. Since $\equiv_L$ is a congruence relation, $p \equiv_L \delta(\rho(i), \alpha(i)) = \rho(i+1)$. Because $p \equiv_\text{TM}^R \rho'(i+1)$, $p \equiv_L \rho'(i+1)$ and together this gives $\rho'(i+1) \equiv_L \rho(i+1)$. The same argumentation works for $\equiv_M^{\leq k}$.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $p$ and $q$ be two states with $p \equiv_M q$. We construct $\mathcal{A}'$ from $\mathcal{A}$ by redirecting all transitions to $p$ to $q$ instead. Then for all states $r \neq p$ and all words $w$, $c(\delta^*(r, w)) = c'(\delta^{\prime *}(r, w))$.
+	\label{lem:tremoore:moore_redirect_is_ok}
+\end{lem}
+
+\begin{proof}
+	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $w$ starting in $r$. If $\rho$ never visits $p$, then $\rho = \rho'$ and the proof is done. Otherwise, let $n$ be the last position at which $\rho(n) = p$. Then $\rho'(n) = q$. Since $p \equiv_M q$, $c(\delta^*(p, u)) = c(\delta^*(q, u))$ for all $u \in \Sigma^*$ and especially for $u = w[n, |w|]$. Since $n$ was chosen as the last position where $p$ is visited, $\delta^*(q, u) = \delta^{\prime *}(q, u)$ and therefore $c(\delta^*(p, u)) = c'(\delta^{\prime *}(q, u))$ which finishes the proof.
+\end{proof}
+
+\begin{lem}
+	Let $\mathcal{A}$ and $R$ as before and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. an equivalence class $\lambda$ of $\equiv_\text{TM}^R$. Let $k$ be the priority of the states in $\lambda$ and let $\equiv_M^{\leq l}$ and $\equiv_M^{\unlhd l}$ be the $l$-threshold Moore equivalences of $\mathcal{A}$ and $\mathcal{A}'$. If $l \leq k$, then $\equiv_M^{\leq l}$ and $\equiv_M^{\unlhd l}$ are the same.
+\end{lem}
+
+\begin{proof}
+	A representative merge w.r.t. $\lambda$ can be seen as a repeated redirection of transitions, meaning that Lemma \ref{lem:tremoore:moore_redirect_is_ok} applies. Together with Lemma \ref{lem:tremoore:mleq_is_actually_just_moore}, that already finishes our proof.
+\end{proof}
+
+On the other hand, figures \ref{} show that if $l > k$, the $l$-threshold Moore equivalence can both grow or shrink during the merge step. %TODO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
