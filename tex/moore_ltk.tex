@@ -27,6 +27,18 @@
 	\end{enumerate}
 \end{defn}
 
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA. Let $\equiv$ be a congruence relation on $Q$ and let $R$ be a equivalence relation on $Q$ such that $R \subseteq\, \equiv$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $R$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on some $\alpha$. Then for all $i$, $\rho(i) \equiv \rho'(i)$.
+	\label{lem:tremoore:cong_stays_in_merge}
+\end{lem}
+
+\begin{proof}
+	We use a proof by induction. For $i = 0$, we have $\rho(0) = q_0$ and $\rho'(0) = r_{[q_0]_R}$. By choice of the representative, $(q_0, r_{[q_0]_R}) \in R$ and thus $q_0 \equiv r_{[q_0]_R}$.
+	
+	Now consider some $i+1 > 0$. Then $\rho'(i+1) = r_{[q]_R}$ for $q = \delta(\rho'(i), \alpha(i))$. By induction we know that $\rho(i) \equiv \rho'(i)$ and thus $\delta(\rho(i), \alpha(i)) = \rho(i+1) \equiv q$. Further, we know $q \equiv r_{[q]_R}$ by the same argument as before. Together this lets us conclude in $\rho(i+1) \equiv q \equiv \rho'(i+1)$.
+\end{proof}
+
+
 \begin{theorem}
 	Let $\mathcal{A}$ and $R$ as before and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. an equivalence class $\lambda$ of $\equiv_\text{TM}^R$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
 \end{theorem}
@@ -34,15 +46,7 @@
 \begin{proof}
 	Let $q \in Q'$ be a state in the representative merge and let $\alpha \in \Sigma^\omega$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
 	
-	We show that for all $i$, $\rho(i) \equiv_L \rho'(i)$ (in $\mathcal{A}$) and $\rho(i) \equiv_M^{\leq k} \rho'(i)$. If that is true, then there are two cases: if $c(\rho)$ sees infinitely many priorities of at most $k$, then $c(\rho')$ sees the same priorities at the same positions and thus $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c(\rho'))$. Otherwise there is a position $n$ from which $c(\rho)$ only is greater than $k$ and therefore the same is true for $c(\rho')$. That means reading $\alpha[n,\omega]$ from $\rho'(n)$ in either $\mathcal{A}$ or $\mathcal{A}'$ yields the same run which has the same acceptance as $\rho$.
-	
-	\paragraph{Claim} For all $i$, $\rho(i) \equiv_L \rho'(i)$ and $\rho(i) \equiv_M^{\leq k} \rho'(i)$.
-	
-	First, consider $i = 0$. If $\rho'(0) \notin \lambda$, then $\rho(0) = \rho'(0)$ and we are done. Otherwise, $\rho'(0) = r_\lambda \in \lambda$. Then $\rho(0) \in \lambda$ and thus $\rho(0) \equiv_M^{\leq k} \rho'(0)$ and $(\rho(0), \rho'(0)) \in R$. Since $R \subseteq \,\equiv_L$, we are done.
-	
-	Next, consider $i+1 > 0$. If $\rho'(i+1) \notin \lambda$, then $\rho'(i+1) = \delta(\rho'(i), \alpha(i))$. By induction, $\rho(i) \equiv_L \rho'(i)$. Since $\equiv_L$ is a congruence relation this implies $\rho(i+1) \equiv_L \rho'(i+1)$. The same argumentation works for $\equiv_M^{\leq k}$.
-	
-	Otherwise, $\rho'(i+1) = r_\lambda \in \lambda$. That means $\delta(\rho'(i), \alpha(i)) = p$ for some $p \in \lambda$. Since $\equiv_L$ is a congruence relation, $p \equiv_L \delta(\rho(i), \alpha(i)) = \rho(i+1)$. Because $p \equiv_\text{TM}^R \rho'(i+1)$, $p \equiv_L \rho'(i+1)$ and together this gives $\rho'(i+1) \equiv_L \rho(i+1)$. The same argumentation works for $\equiv_M^{\leq k}$.
+	By Lemma \ref{lem:tremoore:cong_stays_in_merge}, $\rho(i) \equiv_L \rho'(i)$ and $\rho(i) \equiv_M^{\leq k} \rho'(i)$ for all $i$. Now there are two cases: if $c(\rho)$ sees infinitely many priorities of at most $k$, then $c(\rho')$ sees the same priorities at the same positions and thus $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c(\rho'))$. Otherwise there is a position $n$ from which $c(\rho)$ only is greater than $k$ and therefore the same is true for $c(\rho')$. That means reading $\alpha[n,\omega]$ from $\rho'(n)$ in either $\mathcal{A}$ or $\mathcal{A}'$ yields the same run which has the same acceptance as $\rho$.
 \end{proof}
 
 \begin{lem}
@@ -67,6 +71,78 @@ On the other hand, figures \ref{} show that if $l > k$, the $l$-threshold Moore 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+\section{Labeled SCC Filter}
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. We define $\mathcal{A}\upharpoonright^c_{= k} := \mathcal{A}\upharpoonright_P$ with $P = \{q \in Q \mid c(q) = k\}$. Analogously, we define $\mathcal{A}\upharpoonright^c_{> k}$.
+	
+	We define a relation $R_k \subseteq Q \times Q$ such that $(p, q) \in R_k$ if and only if all of the following are true:
+	\begin{enumerate}
+		\item $\min \{c(p), c(q)\} > k$
+		\item $p \equiv_L q$
+		\item $p \equiv_M^{\leq k} q$
+		\item In $\mathcal{A}\upharpoonright^c_{> k}$, $p$ and $q$ lie in different SCCs.
+	\end{enumerate}
+	
+	We define $\equiv_\text{LSF}^k \,\subseteq Q \times Q$ to be the reflexive and transitive closure of $R_k$.
+\end{defn}
+
+\begin{lem}
+	$\equiv_\text{LSF}^k$ is an equivalence relation.
+\end{lem}
+
+\begin{defn}
+	Let $\mathcal{A}$ be a DPA and $k \in \mathbb{N}$. We define $\preceq_k \subseteq Q \times Q$ to be a total extension of the reachability preorder in $\mathcal{A}\upharpoonright^c_{\geq k}$.
+	
+	Let $\lambda$ be an equivalence class of $\equiv_\text{LSF}^k$. Let $r \in \lambda$ be a representative of $\lambda$ that is $\preceq_k$-maximal. We set $\lambda' := \{q \in \lambda \mid q \prec_k r\} \cup \{r\}$. We call an automaton $\mathcal{A}'$ a \emph{$\text{LSF}_\lambda^k$-merge} of $\mathcal{A}$ if it is a representative merge of $\mathcal{A}$ w.r.t. $\lambda'$ that uses the representative $r_{\lambda'} = r$.
+\end{defn}
+
+\begin{theorem}
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a $\text{LSF}_\lambda^k$-merge of $\mathcal{A}$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
+	\label{thm:lsf:correctness}
+\end{theorem}
+
+\begin{proof}
+	Let $r_\lambda$ be the representative that is used in the construction of $\mathcal{A}'$. Let $q \in Q'$ be a state in the representative merge and let $\alpha \in \Sigma^\omega$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
+	
+	By Lemma \ref{lem:tremoore:cong_stays_in_merge}, we know that $\rho(i) \equiv_L \rho'(i)$ and $\rho(i) \equiv_M^{\leq k} \rho'(i)$ for all $i$. If there is a position $n$ from which on $\rho'[n,\omega]$ is both a valid run in $\mathcal{A}$ and $\mathcal{A}'$, then we know that $\rho$ is accepting if and only if $\rho'$ is accepting since $\rho(n) \equiv_L \rho'(n)$.
+	
+	If $\rho'$ visits infinitely many states with priority equal to or less than $k$, then $\rho$ and $\rho'$ share the same minimal priority that is visited infinitely often and thus have the same acceptance.
+	
+	For the last case, assume that $\rho'$ uses infinitely many redirected edges but from some point $n_1$ on stays in $\mathcal{A}\upharpoonright^c_{>k}$. Let $n_3 > n_2 > n_1$ be the next two positions at which $\rho'$ uses a redirected edge, i.e. $\delta(\rho'(n_2), \alpha(n_2)) \neq \delta'(\rho'(n_2), \alpha(n_2))$ and analogous for $n_3$. Note that $\delta'(\rho'(n_2), \alpha(n_2)) = \delta'(\rho'(n_3), \alpha(n_3)) = r_\lambda$, since all redirected transition target the representative state. Let we call $\delta(\rho'(n_3), \alpha(n_3)) = q$. Since between $n_2$ and $n_3$ no redirected transition is taken, $\rho'[n_2, n_3]$ is a valid path in $\mathcal{A}$, so we have $r_\lambda \preceq_k q$ by choice of $n_1$. The fact that transitions to $q$ are redirected to $r_\lambda$ however requires that $q \prec_k r_\lambda$, which would be a contradiction.
+\end{proof}
+
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a $\text{LSF}_\lambda^k$-merge of $\mathcal{A}$. Let $\equiv_\text{LSF}^l$ be the LSF-relation in $\mathcal{A}$ and let $\equiv_\text{LSF'}^l$ be the LSF-relation in $\mathcal{A}'$. If $l \leq k$, then $\equiv_\text{LSF}^l \upharpoonright_{Q' \times Q'} \,supseteq\, \equiv_\text{LSF'}^l$.
+	\label{lem:lsf:constr_does_not_change_lower_k}
+\end{lem}
+
+\begin{proof}
+	Let $R_l$ and $R'_l$ be the relations used in the definition of $\equiv_\text{LSF}^l$ and $\equiv_\text{LSF'}^l$. We prove $R'_l \subseteq R'_l \upharpoonright_{Q' \times Q'}$. If that is true, then so is the statement of our Lemma. We do so by considering the four properties of $R_l$ individually.
+	
+	The first point is clear; $c' = c \upharpoonright_{Q'}$, so $c'(p) = c(p)$ and $c'(q) = c(q)$.
+	
+	For the second point, consider Theorem \ref{thm:lsf:correctness}. By making $p$ or $q$ the initial state of our DPA, we observe that neither state has its language changed by the construction, so they must still be equal.
+	
+	For the third point, %TODO
+	
+	For the fourth point, %TODO
+\end{proof}
+
+The two previous statements provide us with a possible algorithm to perform state space reduction with the LSF method. Starting at $k = \min c(Q) - 1$ and iterating up to $\max c(Q)$, compute $\equiv_\text{LSF}^k$ and build representative merges of each equivalence class. By Lemma \ref{lem:lsf:constr_does_not_change_lower_k}, strictly iterating once through all $k$ in ascending order gives us all possible merges.
+
+The final question that remains is how to compute $\equiv_\text{LSF}^k$ itself. This can be done rather easily 
 
 
 
