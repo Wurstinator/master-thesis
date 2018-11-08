@@ -49,32 +49,29 @@ std::unordered_map<state_t, std::unordered_set<state_t>> LSFMergeClasses(const D
     // Find a topological sorting of the SCCs.
     const std::vector<state_t> scc_sorting = TopologicalSorting(gtk_subautomaton);
 
+    // Extend the topological sorting to all states.
+    std::unordered_map<state_t, size_t> state_sorting;
+    for (size_t i = 0; i < scc_sorting.size(); ++i) {
+        const SCCCollection::SCC& scc = subautomaton_sccs.sccs[subautomaton_sccs.scc_indices[scc_sorting[i]]];
+        for (state_t q : scc)
+            state_sorting[q] = i;
+    }
+
     // Iterate through all equivalence classes from the base relation.
     std::unordered_map<state_t, std::unordered_set<state_t>> result;
-    for (const EquivalenceRelation<state_t>::EquivClass& clas : LSFBaseRelation(automaton, k).Classes()) {
+    const EquivalenceRelation<state_t> base_relation = LSFBaseRelation(automaton, k);
+    for (const EquivalenceRelation<state_t>::EquivClass& clas : base_relation.Classes()) {
         // Skip if the class contains only one element.
         if (clas.size() == 1)
             continue;
 
-        // Find the "deepest" SCC that contains an element from the class.
-        const auto is_in_clas = [&clas](state_t q) {return clas.find(q) != clas.end();};
-        size_t deepest_scc = 0;
-        for (size_t i = 0; i < scc_sorting.size(); ++i) {
-            const SCCCollection::SCC& scc = subautomaton_sccs.sccs[subautomaton_sccs.scc_indices[scc_sorting[i]]];
-            if (std::any_of(scc.begin(), scc.end(), is_in_clas))
-                deepest_scc = i;
-        }
+        const state_t representative = *std::min_element(clas.begin(), clas.end(), [&state_sorting](state_t p, state_t q) {return state_sorting[p] < state_sorting[q];});
 
         // Copy all elements from the class that lie in a different SCC to the result set.
-        std::unordered_set<state_t> lambda_prime;
+        std::unordered_set<state_t> lambda_prime {representative};
         for (state_t q : clas)
-            if (subautomaton_sccs.scc_indices[q] < deepest_scc)
+            if (state_sorting[q] > state_sorting[representative])
                 lambda_prime.insert(q);
-
-        // Choose a representative.
-        const SCCCollection::SCC& scc = subautomaton_sccs.sccs[subautomaton_sccs.scc_indices[scc_sorting[deepest_scc]]];
-        const state_t representative = *std::find_if(scc.begin(), scc.end(), is_in_clas);
-        lambda_prime.insert(representative);
 
         // Insert the set to the result map.
         if (lambda_prime.size() > 1)
