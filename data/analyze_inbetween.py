@@ -3,8 +3,8 @@ import analyze_common
 import matplotlib.pyplot as pyplot
 
 # Analyzes data from multiple algorithms to compare them to each other.
-NAMES = ['schewe', 'fritzwilke', 'iterated_moore', 'path_refinement']
-PRETTY_NAMES = ['Schewe 10', 'Fritz & Wilke 06', 'Iterated Moore eq.', 'Path Refinement']
+NAMES = ['schewe', 'fritzwilke', 'iterated_moore', 'path_refinement', 'threshold_moore', 'lsf']
+PRETTY_NAMES = ['Schewe 10', 'Fritz & Wilke 06', 'Iterated Moore eq.', 'Path Refinement', 'Threshold Moore', 'LSF']
 all_data = {
     name: list(analyze_common.read_prefix_to_json(name + '/')) for name in NAMES
 }

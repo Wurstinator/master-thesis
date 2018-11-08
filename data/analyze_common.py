@@ -80,6 +80,15 @@ def plot_time_comparison(datapoints, title, filename, labels=None):
         pyplot.legend(loc='upper left')
     f.savefig(filename)
 
+# Plots a histogram of the number of automata w.r.t relative state reduction.
+def plot_histogram_statereduction(data, filename, title):
+    f = pyplot.figure()
+    x = [(point['original_size'] - point['new_size'])/point['original_size'] for point in data]
+    pyplot.hist(x, bins=10)
+    pyplot.title(title, fontsize=TITLE_FONTSIZE)
+    pyplot.xlabel('Relative number of removed states')
+    pyplot.ylabel('Number of automata')
+    f.savefig(filename)
 
 def fitting_function_1(xs, a, b, c):
     return [numpy.asscalar(a*numpy.square(x) + b*numpy.log(x)*x + c*x) for x in xs]
@@ -97,7 +106,9 @@ def general_analysis_v1(name, input_prefix, output_prefix):
     title = name + ' state reduction on random DPAs with three colors and |Σ|=2.'
     plot_statenum_time(gendet_ap1, 'analysis/' + output_prefix + 'gendet_ap1_time.pdf', title)#, fitting_function_1)
     plot_statenum_statereduction(gendet_ap1, 'analysis/' + output_prefix + 'gendet_ap1_statereduction.pdf', title)
+    plot_statenum_statereductionrel(gendet_ap1, 'analysis/' + output_prefix + 'gendet_ap1_statereductionrelative.pdf', title)
     plot_sccnum_statereduction(gendet_ap1, 'analysis/' + output_prefix + 'gendet_ap1_sccreduction.pdf', title)
+    plot_histogram_statereduction(gendet_ap1, 'analysis/' + output_prefix + 'gendet_ap1_statereduction_hist.pdf', title)
 
     # Plot gendet: Time comparison for different ap.
     title = 'Time for ' + name + ' construction on a random DPA with 3 priorities and different alphabets.'
@@ -112,6 +123,7 @@ def general_analysis_v1(name, input_prefix, output_prefix):
     plot_statenum_statereduction(detnbaut_ap1, 'analysis/' + output_prefix + 'detnbaut_ap1_statereduction.pdf', title)
     plot_statenum_statereductionrel(detnbaut_ap1, 'analysis/' + output_prefix + 'detnbaut_ap1_statereductionrelative.pdf', title)
     plot_sccnum_statereduction(detnbaut_ap1, 'analysis/' + output_prefix + 'detnbaut_ap1_sccreduction.pdf', title)
+    plot_histogram_statereduction(detnbaut_ap1, 'analysis/' + output_prefix + 'detnbaut_ap1_statereduction_hist.pdf', title)
 
     # Plot detnbaut ap2
     title = name + ' state reduction on a DPA with |Σ|=4 that was created by nbautils from an NBA.'
@@ -124,6 +136,7 @@ def general_analysis_v1(name, input_prefix, output_prefix):
     plot_statenum_statereduction(detspot_ap1, 'analysis/' + output_prefix + 'detspot_ap1_statereduction.pdf', title)
     plot_statenum_statereductionrel(detspot_ap1, 'analysis/' + output_prefix + 'detspot_ap1_statereductionrelative.pdf', title)
     plot_sccnum_statereduction(detspot_ap1, 'analysis/' + output_prefix + 'detspot_ap1_sccreduction.pdf', title)
+    plot_histogram_statereduction(detspot_ap1, 'analysis/' + output_prefix + 'detspot_ap1_statereduction_hist.pdf', title)
 
     # Plot detspot ap2
     title = name + ' state reduction on a DPA with |Σ|=4 that was created by Spot from an NBA.'
