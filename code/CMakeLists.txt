@@ -308,3 +308,33 @@ set(TREMOORE_TESTS
 
 add_executable(test_tremoore ${TREMOORE_INCLUDE} ${TREMOORE_TESTS} ${Catch2_HDRS})
 target_include_directories(test_tremoore PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
+
+
+
+
+# LSF
+
+set(LSF_HDRS
+        src/lsf/lsf_relation.cpp
+        src/lsf/lsf_relation.h)
+
+set(LSF_INCLUDE ${LSF_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE} ${TREMOORE_HDRS})
+
+add_library(lsf ${LSF_HDRS})
+target_include_directories(lsf PRIVATE ${RANGEV3_DIR}/include)
+
+add_executable(lsf_main
+        src/lsf/main_statistics.h
+        src/lsf/main_statistics.cpp
+        ${LSF_INCLUDE}
+        ${AUTOMATON_HOA_FILES}
+        ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(lsf_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+add_executable(lsf_statistics
+        src/lsf/main_statistics.h
+        src/lsf/main_statistics.cpp
+        ${LSF_INCLUDE}
+        ${AUTOMATON_HOA_FILES}
+        ${MAST_COMMON_HDRS_STAT})
+target_include_directories(lsf_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)

@@ -61,6 +61,11 @@ class DeterministicAutomaton :
     template <typename SetT>
     void MergeStates(SetT&& merge_states);
 
+    // Merge operation but with an explicit representative state. The initial state of the automaton is updated,
+    // if necessary.
+    template <typename SetT>
+    void MergeStates(SetT&& merge_states, state_t representative);
+
     // Returns true.
     bool IsDeterministic() const override;
 
@@ -103,9 +108,13 @@ inline void DeterministicAutomaton::SetSucc(state_t q, symbol_t s, state_t succ)
 }
 
 template <typename SetT>
-inline void DeterministicAutomaton::MergeStates(SetT&& merge_states) {
-    const state_t representative = *merge_states.begin();
+void DeterministicAutomaton::MergeStates(SetT&& merge_states) {
+    MergeStates(std::forward<SetT>(merge_states), *merge_states.begin());
+}
 
+
+template <typename SetT>
+void DeterministicAutomaton::MergeStates(SetT&& merge_states, state_t representative) {
     // Move the incoming transitions to the representative.
     for (state_t q : States()) {
         for (symbol_t s : Symbols()) {
@@ -115,7 +124,6 @@ inline void DeterministicAutomaton::MergeStates(SetT&& merge_states) {
                     SetSucc(q, s, representative);
         }
     }
-
 
     // Erase the merged states.
     for (state_t merge : merge_states)
