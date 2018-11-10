@@ -6,6 +6,7 @@
 #include <range/v3/view/bounded.hpp>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/set_algorithm.hpp>
+#include "is_specialization_base_of.h"
 
 namespace tollk {
 namespace automaton {
@@ -58,6 +59,12 @@ template <typename RT1, typename RT2, typename RT3, typename RT4>
 bool operator==(const TransitionAutomaton<RT1, RT2>& lhs, const TransitionAutomaton<RT3, RT4>& rhs);
 template <typename RT1, typename RT2, typename RT3, typename RT4>
 bool operator!=(const TransitionAutomaton<RT1, RT2>& lhs, const TransitionAutomaton<RT3, RT4>& rhs);
+
+
+template <typename AutomatonT>
+constexpr bool IsTransitionAutomaton() {
+    return is_specialization_base_of<TransitionAutomaton, AutomatonT>::value;
+}
 
 
 

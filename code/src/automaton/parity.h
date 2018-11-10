@@ -17,7 +17,10 @@ using NPA = NondeterministicLabelledAutomaton<parity_label_t>;
 
 bool ParityIsBuchi(const ParityAutomaton& automaton);
 
-
+template <typename AutomatonT>
+constexpr bool IsParityAutomaton() {
+    return std::is_base_of<ParityAutomaton, AutomatonT>::value;
+}
 
 
 }

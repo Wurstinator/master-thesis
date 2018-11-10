@@ -73,6 +73,11 @@ class DeterministicAutomaton :
     std::unordered_map<state_t, std::vector<state_t>> transitions{};
 };
 
+template <typename AutomatonT>
+constexpr bool IsDeterministicAutomaton() {
+    return std::is_base_of<DeterministicAutomaton, AutomatonT>::value;
+}
+
 
 // Implementation
 

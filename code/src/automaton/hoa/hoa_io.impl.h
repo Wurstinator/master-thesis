@@ -45,11 +45,10 @@ void ToHOA(const AutomatonT& automaton, std::ostream* ostream) {
 
 template <typename AutomatonT>
 void ToHOA(const AutomatonT& automaton, std::ostream* ostream, const std::map<state_t, std::string>& state_labels) {
-    constexpr bool is_finite_automaton = std::is_base_of<FiniteAutomaton, AutomatonT>::value;
-    constexpr bool is_parity_automaton = std::is_base_of<ParityAutomaton, AutomatonT>::value;
-    constexpr bool is_transition_automaton = is_specialization_base_of<TransitionAutomaton, AutomatonT>::value;
-    constexpr bool is_deterministic_automaton = std::is_base_of<DeterministicAutomaton, AutomatonT>::value;
-    static_assert(is_finite_automaton);
+    constexpr bool is_parity_automaton = IsParityAutomaton<AutomatonT>();
+    constexpr bool is_transition_automaton = IsTransitionAutomaton<AutomatonT>();
+    constexpr bool is_deterministic_automaton = IsDeterministicAutomaton<AutomatonT>();
+    static_assert(IsFiniteAutomaton<AutomatonT>());
 
     // State IDs have to be "normalized" i.e. continious IDs from 0 to n.
     std::map<state_t, unsigned int> state_indices;

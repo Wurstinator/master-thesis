@@ -142,6 +142,10 @@ set(MAST_COMMON_HDRS_STAT
         src/construction_statistics.h
         ${AUTOMATON_HOA_INCLUDE} src/construction_executioner.cpp src/construction_executioner.h)
 
+# rawstats
+add_executable(rawstats src/rawstats.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE})
+target_include_directories(rawstats PRIVATE range-v3/include ${HOAFP_DIR}/include)
+
 # Schewe10
 
 set(SCHEWE10_HDRS

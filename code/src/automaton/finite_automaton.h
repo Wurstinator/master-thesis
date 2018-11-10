@@ -45,6 +45,12 @@ protected:
 };
 
 
+template <typename AutomatonT>
+constexpr bool IsFiniteAutomaton() {
+    return std::is_base_of<FiniteAutomaton, AutomatonT>::value;
+}
+
+
 // Implementation
 
 
