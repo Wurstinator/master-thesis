@@ -1,6 +1,135 @@
 \section{General Results}
 We first use this section to establish some general results that are used multiple times in the upcoming proofs.
 
+\subsection{Equivalence Relations}
+
+In general, we use the symbol $\equiv$ to denote equivalence relations, mostly between states of an automaton. The following is a comprehensive list of all relevant equivalence relations that we use.
+
+\begin{itemize}
+	\item Language equivalence, $\equiv_L$. Defined below.
+	\item Moore equivalence, $\equiv_M$. Defined below.
+	\item Priority almost equivalence, $\equiv_\text{\Ankh}$. Defined below.
+	\item Delayed simulation equivalence, $\equiv_\text{de}$. Defined in %TODO
+	\item Path refinement equivalence, $\equiv_\text{PR}$. Defined in %TODO
+	\item Threshold Moore equivalence, $\equiv_\text{TM}$. Defined in %TODO
+	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}$. Defined in %TODO
+\end{itemize}
+
+
+\subsubsection{Language Equivalence}
+
+\begin{defn}
+	Let $\mathcal{A}$ be an $\omega$-automaton with state set $Q$. We define \emph{language equivalence} over $Q$ as $p \equiv_L q$ if and only if for all words $\alpha \in \Sigma^\omega$, $\mathcal{A}$ accepts $\alpha$ from $p$ iff $\mathcal{A}$ accepts $\alpha$ from $q$.
+\end{defn}
+
+\begin{lem}
+	$\equiv_L$ is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	It is obvious that $\equiv_L$ is an equivalence relation. For two states $p \equiv_L q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_L q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ that is accepted from $p'$ and rejected from $q'$ (or vice-versa). Then $a \cdot \alpha$ is rejected from $p$ and accepted from $q$ and thus $p \not\equiv_L q$.
+\end{proof}
+
+
+\subsubsection{Priority Almost Equivalence}
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define \emph{priority almost equivalence} over $Q$ as $p \equiv_\text{\Ankh} q$ if and only if for all words $\alpha \in \Sigma^\omega$, $c^*(p, \alpha)$ and $c^*(q, \alpha)$ differ at only finitely many positions.
+\end{defn}
+
+\begin{lem}
+	Priority almost equivalence is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	It is obvious that $\equiv_M$ is an equivalence relation. For two states $p \equiv_\text{\Ankh} q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_\text{\Ankh} q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ such that $c^*(p', \alpha)$ and $c^*(q', \alpha)$ differ at infinitely many positions. Then $c^*(p, a \alpha)$ and $c^*(q, a \alpha)$ also differ at infinitely many positions and thus $p \not\equiv_\text{\Ankh} q$.
+\end{proof}
+
+\begin{lem}
+	Priority almost equivalence of a given DPA can be computed in quadratic time.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+
+\begin{defn}
+	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. We define the deterministic Büchi automaton $\mathcal{A} \intercal \mathcal{B} = (Q_1 \times Q_2, \Sigma, (q^1_0, q^2_0), \delta_\intercal, F_\intercal)$ with $\delta_\intercal((q_1, q_2), a) = (\delta_1(q_1, a), \delta_2(q_2, a))$. The transition structure is a common product automaton.
+	
+	The final states are $F_\intercal = \{ (p, q) \in Q_1 \times Q_2 \mid c_1(p) \neq c_2(q) \}$, i.e. every pair of states at which the priorities differ. 
+\end{defn}
+
+\begin{lem}
+\label{lem:schewe:equiv_intercal}
+	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. $\mathcal{A}$ and $\mathcal{B}$ are priority almost-equivalent iff $L(\mathcal{A} \intercal \mathcal{B}) = \emptyset$. 
+\end{lem}
+
+\begin{proof}
+	For the first direction of implication, let $L(\mathcal{A} \intercal \mathcal{B}) \neq \emptyset$, so there is a word $\alpha$ accepted by that automaton. Let $(p_0, q_0) (p_1, q_1) \cdots$ be the accepting run on $\alpha$. Then $p_0 p_1 \cdots$ and $q_0 q_1 \cdots$ are the runs of $\mathcal{A}$ and $\mathcal{B}$ on $\alpha$ respectively. Whenever $(p_i, q_i) \in F_\intercal$, $p_i$ and $q_i$ have different priorities. As the run of the product automaton vists infinitely many accepting states, $\alpha$ is a witness for $\mathcal{A}$ and $\mathcal{B}$ being not priority almost-equivalent.
+	
+	For the second direction, let $\mathcal{A}$ and $\mathcal{B}$ be not priority almost-equivalent, so there is a witness $\alpha$ at which infinitely many positions differ in priority. Analogously to the first direction, this means that the run of $\mathcal{A} \intercal \mathcal{B}$ on the same word is accepting and therefore the language is not empty.
+\end{proof}
+
+\begin{lem}
+	The priority almost-equivalence of a DPA $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|^2)$.
+\end{lem}
+
+
+\begin{proof}
+	The definition of $\mathcal{A} \intercal \mathcal{A}$ is a straightforward construction and can be done in quadratic time. By Lemma \ref{lem:schewe:equiv_intercal}, we know that $p$ and $q$ are priority almost-equivalent iff the language of $(\mathcal{A} \intercal \mathcal{A})_{(p,q)}$ is empty. 
+
+	The product automaton $\mathcal{A} \intercal \mathcal{A}$ itself can be computed in quadratic time. The SCCs of $\mathcal{A} \intercal \mathcal{A}$ can be computed in linear time in said automaton, i.e. in $\mathcal{O}(|\mathcal{A}|^2)$.
+	
+	The language from a given starting state is non-empty iff a goal SCC is reachable, i.e. an SCC that contains an accepting state and is non-trivial. It is a rather simple procedure to collect these SCCs and as described in the proof of Lemma \ref{lem:schewe:schewe_aut_linear_time}, we can merge all of them into a single state $\hat{q}$ in $\mathcal{O}(|\mathcal{A}^2|)$.
+	
+	All that remains to be done is to find all states from which $\hat{q}$ is unreachable. This is easily done by using the transposed automaton of $\mathcal{A} \intercal \mathcal{A}$, which has all transition edges inverted, and performing a DFS starting in $\hat{q}$. States which are \textbf{not} found here correspond to priority almost-equivalent pairs.
+\end{proof}
+
+
+
+\subsubsection{Moore Equivalence}
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define \emph{Moore equivalence} over $Q$ as $p \equiv_M q$ if and only if for all words $w \in \Sigma^*$, $c(\delta^*(p, w)) = c(\delta^*(q, w))$.
+\end{defn}
+
+\begin{lem}
+	$\equiv_M$ is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	It is obvious that $\equiv_M$ is an equivalence relation. For two states $p \equiv_M q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_M q'$. Otherwise there is a word $w \in \Sigma^*$ such that $c(\delta^*(p', w)) \neq c(\delta^*(q', w))$. Then $c(\delta^*(p, aw)) \neq c(\delta^*(q, aw))$ and thus $p \not\equiv_M q$.
+\end{proof}
+
+\begin{lem}
+	Moore equivalence of a given DPA can be computed in log-linear time.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+
+\vspace{10pt}
+
+\begin{lem}
+	$\equiv_M \,\subseteq\, \equiv_\text{\Ankh} \,\subseteq\, \equiv_L$
+\end{lem}
+
+\begin{proof}
+	Let $\mathcal{A} = (Q_\mathcal{A}, \Sigma, q_0^\mathcal{A}, \delta_\mathcal{A}, c_\mathcal{A})$ and $\mathcal{B} = (Q_\mathcal{B}, \Sigma, q_0^\mathcal{B}, \delta_\mathcal{B}, c_\mathcal{B})$ be two DPA that are priority almost-equivalent and assume towards a contradiction that they are not language equivalent. Due to symmetry we can assume that there is a $w \in L(\mathcal{A}) \setminus L(\mathcal{B})$. 
+	
+	Consider $\alpha = \lambda_\mathcal{A}(q_0^\mathcal{A}, w)$ and $\beta = \lambda_\mathcal{B}(q_0^\mathcal{B}, w)$, the priority outputs of the automata on $w$. By choice of $w$, we know that $a := \max \text{Inf}(\alpha)$ is even and $b := \max \text{Inf}(\beta)$ is odd. Without loss of generality, assume $a > b$. That means $a$ is seen only finitely often in $\beta$ but infinitely often in $a$. Hence, $\alpha$ and $\beta$ differ at infinitely many positions where $a$ occurs in $\alpha$. That would mean $w$ is a witness that the two automata are not priority almost-equivalent, contradicting our assumption.
+	
+	%TODO
+\end{proof}
+
+
+
+
+
+
 \subsection{Representative Merge}
 
 \begin{defn}
@@ -8,19 +137,27 @@ We first use this section to establish some general results that are used multip
 	\begin{itemize}
 		\item There is a state $r_M \in C$ such that $Q' = (Q \setminus M) \cup \{r_M\}$.
 		\item $c' = c\upharpoonright_{Q'}$.
-		\item Let $p \in Q'$ and $\delta(p, a) = q$. If $q \notin M$, then $\delta'(p, a) = q$. If $q \in M$, then $\delta'(p, a) = r_M$.
+		\item Let $p \in Q'$ and $\delta(p, a) = q$. If $q \in M $, then $\delta'(p, a) = r_M$. Otherwise, $\delta'(p, a) = q$. 
 	\end{itemize}
 	
 	We call $r_M$ the \emph{representative} of $M$ in the merge. We might omit $C$ and implicitly assume $C = M$.
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim \,\subseteq Q \times Q$ be an equivalence relation over $Q$. Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be another DPA. We call $\mathcal{A}'$ a \emph{representative merge of $\mathcal{A}$ w.r.t. $\sim$} if $\mathcal{A}'$ can be constructed as follows:
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\mu : D \rightarrow (2^\mathcal{Q} \setminus \emptyset)$ be a function for some $D \subseteq 2^Q$. If all sets in $D$ are pairwise disjoint and for all $X \in D$, $\mu(X) \subseteq X$, we call $\mu$ a \emph{merger function}. 
 	
-	Let $n$ be the number of equivalence classes in $\sim$ and let $\kappa_1, \dots, \kappa_n$ be an arbitrary enumeration of them. Let $\mathcal{A}_0 = \mathcal{A}$ and for all $i$, let $\mathcal{A}_{i+1}$ be a representative merge of $\mathcal{A}_i$ w.r.t. $\kappa_{i+1}$. Then $\mathcal{A}' = \mathcal{A}_n$.
+	A DPA $\mathcal{A}'$ is a representative merge of $\mathcal{A}$ w.r.t. $\mu$ if there is an enumeration $X_1, \dots, X_{|D|}$ of $D$ and a sequence of automata $\mathcal{A}_0, \dots, \mathcal{A}_{|D|}$ such that $\mathcal{A}_0 = \mathcal{A}$, $\mathcal{A}_{|D|} = \mathcal{A}'$ and every $\mathcal{A}_{i+1}$ is a representative merge of $\mathcal{A}_i$ w.r.t. $X_{i+1}$ by candidates $\mu(X_{i+1})$.
 \end{defn}
 
-If $\sim$ is a congruence relation, then the representative merge will actually be the same as the quotient automaton that is used commonly in state space reduction of automata. The following Lemma formally proofs that this definition actually makes sense, as building representative merges is commutative if the merge sets are disjoint.
+A common special case of this are quotient automata that are often used in state space reduction. Given a congruence relation $\sim$, the quotient automaton w.r.t. $\sim$ is equivalent to a representative merge w.r.t. $\mu : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$.
+
+\begin{lem}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be an equivalence relation. A representative merge of $\mathcal{A}$ w.r.t. $\sim$ is a representative merge of $\mathcal{A}$ w.r.t. $\mu : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$.
+\end{lem}
+
+\vspace{5pt}
+
+The following Lemma formally proofs that this definition actually makes sense, as building representative merges is commutative if the merge sets are disjoint.
 
 \begin{lem}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $M_1, M_2 \subseteq Q$. Let $\mathcal{A}_1$ be a representative merge of $\mathcal{A}$ w.r.t. $M_1$ by some candidates $C_1$. Let $\mathcal{A}_{12}$ be a representative merge of $\mathcal{A}_1$ w.r.t. $M_2$ by some candidates $C_2$. If $M_1$ and $M_2$ are disjoint, then there is a representative merge $\mathcal{A}_2$ of $\mathcal{A}$ w.r.t. $M_2$ by candidates $C_2$ such that $\mathcal{A}_{12}$ is a representative merge of $\mathcal{A}_2$ w.r.t $M_1$ by candidates $C_1$.
@@ -43,6 +180,28 @@ The following Lemma, while simple to prove, is interesting and will find use in 
 	Now consider some $i+1 > 0$. Then $\rho'(i+1) = r_{[q]_M}$ for $q = \delta(\rho'(i), \alpha(i))$. By induction we know that $\rho(i) \sim \rho'(i)$ and thus $\delta(\rho(i), \alpha(i)) = \rho(i+1) \sim q$. Further, we know $q \sim r_{[q]_M}$ by the same argument as before. Together this lets us conclude in $\rho(i+1) \sim q \sim \rho'(i+1)$.
 \end{proof}
 
+The following is a comprehensive list of all relevant merger functions that we use.
+
+\begin{itemize}
+	\item Moore merger $\mu_M$. Defined below.
+	\item Schewe merger, $\mu_\text{Sch}^\sim$. Defined in %TODO
+\end{itemize}
+
+\begin{defn}
+	Let $\mathcal{A}$ be a DPA. The Moore merger $\mu_M$ is defined as $\mu_M : \mathfrak{C}(\equiv_M) \rightarrow 2^Q, \kappa \mapsto \kappa$.
+\end{defn}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_M$. Then $\mathcal{A}$ and $\mathcal{A}'$ are language equivalent.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+
+
+
 
 \subsection{Reachability}
 
@@ -62,45 +221,30 @@ We want to note here that we always assume for all automata to only have one con
 	For $p \preceq q$ and $q \preceq p$, we write $p \simeq q$.
 \end{defn}
 
-
-\subsection{Equivalence Relations}
-
-In general, we use the symbol $\equiv$ to denote equivalence relations, mostly between states of an automaton. The following is a comprehensive list of all relevant equivalence relations that we use.
-
-\begin{itemize}
-	\item Language equivalence, $\equiv_L$. Defined below.
-	\item Moore equivalence, $\equiv_M$. Defined below.
-	\item Schewe equivalence, $\equiv_\text{Sch}$. Defined in %TODO
-	\item Delayed simulation equivalence, $\equiv_\text{de}$. Defined in %TODO
-	\item Path refinement equivalence, $\equiv_\text{PR}$. Defined in %TODO
-	\item Threshold Moore equivalence, $\equiv_\text{TM}$. Defined in %TODO
-	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}$. Defined in %TODO
-\end{itemize}
-
-
-\begin{defn}
-	Let $\mathcal{A}$ be an $\omega$-automaton with state set $Q$. We define \emph{language equivalence} over $Q$ as $p \equiv_L q$ if and only if for all words $\alpha \in \Sigma^\omega$, $\mathcal{A}$ accepts $\alpha$ from $p$ iff $\mathcal{A}$ accepts $\alpha$ from $q$.
-\end{defn}
-
-
 \begin{lem}
-	$\equiv_L$ is a congruence relation.
+	For a given deterministic transition structure $\mathcal{S}$, a total extension of reachability is computable in $\mathcal{O}(|\mathcal{S}|)$.
+	\label{lem:general:reach_topo_lintime}
 \end{lem}
 
 \begin{proof}
-	It is obvious that $\equiv_L$ is an equivalence relation. For two states $p \equiv_L q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_L q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ that is accepted from $p'$ and rejected from $q'$ (or vice-versa). Then $a \cdot \alpha$ is rejected from $p$ and accepted from $q$ and thus $p \not\equiv_L q$.
+	Using e.g. Kosaraju's algorithm \ref{}, the SCCs of $\mathcal{A}$ can be computed in linear time. We can now build a DAG from $\mathcal{A}$ by merging all states in an SCC into a single state; iterate over all transitions $(p, a, q)$ and add an $a$-transition from the merged representative of $p$ to that of $q$. Assuming efficient data structures for the computed SCCs, this DAG can be computed in $O(|\mathcal{A}|)$ time.
+	
+	To finish the computation of $\preceq$, we look for a topological order on that DAG. This is a total preorder on the SCCs that is compatible with reachability. All that is left to be done is to extend that order to all states.
 \end{proof}
 
 
-\begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define \emph{Moore equivalence} over $Q$ as $p \equiv_M q$ if and only if for all words $w \in \Sigma^*$, $c(\delta^*(p, w)) = c(\delta^*(q, w))$.
-\end{defn}
 
 
-\begin{lem}
-	$\equiv_M$ is a congruence relation.
-\end{lem}
 
-\begin{proof}
-	It is obvious that $\equiv_M$ is an equivalence relation. For two states $p \equiv_L q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_M q'$. Otherwise there is a word $w \in \Sigma^*$ such that $c(\delta^*(p', w)) \neq c(\delta^*(q', w))$. Then $c(\delta^*(p, aw)) \neq c(\delta^*(q, aw))$ and thus $p \not\equiv_M q$.
-\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -64,7 +64,7 @@ As our main focus is $\omega$-words, we will require a small extension of natura
 \end{defn}
 
 \begin{defn}
-	Let $R$ be an equivalence relation over $X$. $R$ implicitly forms a partition of $X$ into \emph{equivalence classes}. For an element $x \in X$, we call $[x]_R := \{ y \in X \mid (x, y) \in R \}$ the equivalence class of $x$.
+	Let $R$ be an equivalence relation over $X$. $R$ implicitly forms a partition of $X$ into \emph{equivalence classes}. For an element $x \in X$, we call $[x]_R := \{ y \in X \mid (x, y) \in R \}$ the equivalence class of $x$. We denote the set of equivalence classes by $\mathfrak{C}(R) = \{ [x]_R \mid x \in R \}$.
 \end{defn}
 
 
@@ -183,7 +183,7 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define $c^* : Q \times \Sigma^* \rightarrow \mathbb{N}$ as $c^*(q, w) = c(\delta^*(q, w))$.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define $c^* : Q \times (\Sigma^* \cup \Sigma^\omega) \rightarrow (\mathbb{N}^* \cup \mathbb{N}^\omega)$ as $c^*(q, w) : 1+|w| \rightarrow \mathbb{N}, i \mapsto c(\delta^*(q, w[0, i]))$.
 \end{defn}
 
 \begin{defn}
