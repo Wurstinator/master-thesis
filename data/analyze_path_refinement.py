@@ -10,6 +10,7 @@ plot_statenum_time(detnbaut_ap1, 'analysis/path_refinement/detnbaut_safra_ap1_ti
 plot_statenum_statereduction(detnbaut_ap1, 'analysis/path_refinement/detnbaut_safra_ap1_statereduction.pdf', title)
 plot_statenum_statereductionrel(detnbaut_ap1, 'analysis/path_refinement/detnbaut_safra_ap1_statereductionrelative.pdf', title)
 plot_sccnum_statereduction(detnbaut_ap1, 'analysis/path_refinement/detnbaut_safra_ap1_sccreduction.pdf', title)
+plot_histogram_statereduction(detnbaut_ap1, 'analysis/path_refinement/detnbaut_safra_ap1_statereduction_hist.pdf', title)
 
 # Plot detnbaut special ap2
 detnbaut_ap2 = filelines_to_json('raw/path_refinement/detnbaut_special_ap2.json')
