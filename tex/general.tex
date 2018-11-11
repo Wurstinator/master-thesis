@@ -1,0 +1,106 @@
+\section{General Results}
+We first use this section to establish some general results that are used multiple times in the upcoming proofs.
+
+\subsection{Representative Merge}
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\emptyset \neq C \subseteq M \subseteq Q$. Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be another DPA. We call $\mathcal{A}'$ a \emph{representative merge of $\mathcal{A}$ w.r.t. $M$ by candidates $C$} if it satisfies the following:
+	\begin{itemize}
+		\item There is a state $r_M \in C$ such that $Q' = (Q \setminus M) \cup \{r_M\}$.
+		\item $c' = c\upharpoonright_{Q'}$.
+		\item Let $p \in Q'$ and $\delta(p, a) = q$. If $q \notin M$, then $\delta'(p, a) = q$. If $q \in M$, then $\delta'(p, a) = r_M$.
+	\end{itemize}
+	
+	We call $r_M$ the \emph{representative} of $M$ in the merge. We might omit $C$ and implicitly assume $C = M$.
+\end{defn}
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim \,\subseteq Q \times Q$ be an equivalence relation over $Q$. Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be another DPA. We call $\mathcal{A}'$ a \emph{representative merge of $\mathcal{A}$ w.r.t. $\sim$} if $\mathcal{A}'$ can be constructed as follows:
+	
+	Let $n$ be the number of equivalence classes in $\sim$ and let $\kappa_1, \dots, \kappa_n$ be an arbitrary enumeration of them. Let $\mathcal{A}_0 = \mathcal{A}$ and for all $i$, let $\mathcal{A}_{i+1}$ be a representative merge of $\mathcal{A}_i$ w.r.t. $\kappa_{i+1}$. Then $\mathcal{A}' = \mathcal{A}_n$.
+\end{defn}
+
+If $\sim$ is a congruence relation, then the representative merge will actually be the same as the quotient automaton that is used commonly in state space reduction of automata. The following Lemma formally proofs that this definition actually makes sense, as building representative merges is commutative if the merge sets are disjoint.
+
+\begin{lem}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $M_1, M_2 \subseteq Q$. Let $\mathcal{A}_1$ be a representative merge of $\mathcal{A}$ w.r.t. $M_1$ by some candidates $C_1$. Let $\mathcal{A}_{12}$ be a representative merge of $\mathcal{A}_1$ w.r.t. $M_2$ by some candidates $C_2$. If $M_1$ and $M_2$ are disjoint, then there is a representative merge $\mathcal{A}_2$ of $\mathcal{A}$ w.r.t. $M_2$ by candidates $C_2$ such that $\mathcal{A}_{12}$ is a representative merge of $\mathcal{A}_2$ w.r.t $M_1$ by candidates $C_1$.
+\end{lem}
+
+\begin{proof}
+	By choosing the same representative $r_{M_1}$ and $r_{M_2}$ in the merges, this is a simple application of the definition.
+\end{proof}
+
+The following Lemma, while simple to prove, is interesting and will find use in multiple proofs of correctness later on.
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA. Let $\sim$ be a congruence relation on $Q$ and let $M \subseteq Q$ such that for all $x, y \in M$, $x \sim y$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M$ by candidates $C$. Let $\rho$ and $\rho'$ be runs of $\mathcal{A}$ and $\mathcal{A}'$ on some $\alpha$. Then for all $i$, $\rho(i) \equiv \rho'(i)$.
+	\label{lem:general:cong_stays_in_merge}
+\end{lem}
+
+\begin{proof}
+	We use a proof by induction. For $i = 0$, we have $\rho(0) = q_0$ for some $q_0 \in Q$ and $\rho'(0) = r_{[q_0]_M}$. By choice of the representative, $q_0 \in M$ and $r_{[q_0]_M} \in M$ and thus $q_0 \sim r_{[q_0]_M}$.
+	
+	Now consider some $i+1 > 0$. Then $\rho'(i+1) = r_{[q]_M}$ for $q = \delta(\rho'(i), \alpha(i))$. By induction we know that $\rho(i) \sim \rho'(i)$ and thus $\delta(\rho(i), \alpha(i)) = \rho(i+1) \sim q$. Further, we know $q \sim r_{[q]_M}$ by the same argument as before. Together this lets us conclude in $\rho(i+1) \sim q \sim \rho'(i+1)$.
+\end{proof}
+
+
+\subsection{Reachability}
+
+\begin{defn}
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. We define the \emph{reachability order} $\preceq_\text{reach}^\mathcal{S}$ as $p \preceq_\text{reach}^\mathcal{S} q$ if and only if $q$ is reachable from $p$. 
+\end{defn}
+
+We want to note here that we always assume for all automata to only have one connected component, i.e. for all states $p$ and $q$, there is a state $r$ such that $p$ and $q$ are both reachable from $r$. In practice, most automata have an predefined initial state and a simple depth first search can be used to eliminate all unreachable states.
+
+\begin{lem}
+	$\preceq_\text{reach}^\mathcal{S}$ is a preorder.
+\end{lem}
+
+\begin{defn}
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. We call a relation $\preceq$ a \emph{total extension of reachability} if it is a minimal superset of $\preceq_\text{reach}^\mathcal{S}$ that is also a total preorder.
+	
+	For $p \preceq q$ and $q \preceq p$, we write $p \simeq q$.
+\end{defn}
+
+
+\subsection{Equivalence Relations}
+
+In general, we use the symbol $\equiv$ to denote equivalence relations, mostly between states of an automaton. The following is a comprehensive list of all relevant equivalence relations that we use.
+
+\begin{itemize}
+	\item Language equivalence, $\equiv_L$. Defined below.
+	\item Moore equivalence, $\equiv_M$. Defined below.
+	\item Schewe equivalence, $\equiv_\text{Sch}$. Defined in %TODO
+	\item Delayed simulation equivalence, $\equiv_\text{de}$. Defined in %TODO
+	\item Path refinement equivalence, $\equiv_\text{PR}$. Defined in %TODO
+	\item Threshold Moore equivalence, $\equiv_\text{TM}$. Defined in %TODO
+	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}$. Defined in %TODO
+\end{itemize}
+
+
+\begin{defn}
+	Let $\mathcal{A}$ be an $\omega$-automaton with state set $Q$. We define \emph{language equivalence} over $Q$ as $p \equiv_L q$ if and only if for all words $\alpha \in \Sigma^\omega$, $\mathcal{A}$ accepts $\alpha$ from $p$ iff $\mathcal{A}$ accepts $\alpha$ from $q$.
+\end{defn}
+
+
+\begin{lem}
+	$\equiv_L$ is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	It is obvious that $\equiv_L$ is an equivalence relation. For two states $p \equiv_L q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_L q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ that is accepted from $p'$ and rejected from $q'$ (or vice-versa). Then $a \cdot \alpha$ is rejected from $p$ and accepted from $q$ and thus $p \not\equiv_L q$.
+\end{proof}
+
+
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define \emph{Moore equivalence} over $Q$ as $p \equiv_M q$ if and only if for all words $w \in \Sigma^*$, $c(\delta^*(p, w)) = c(\delta^*(q, w))$.
+\end{defn}
+
+
+\begin{lem}
+	$\equiv_M$ is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	It is obvious that $\equiv_M$ is an equivalence relation. For two states $p \equiv_L q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_M q'$. Otherwise there is a word $w \in \Sigma^*$ such that $c(\delta^*(p', w)) \neq c(\delta^*(q', w))$. Then $c(\delta^*(p, aw)) \neq c(\delta^*(q, aw))$ and thus $p \not\equiv_M q$.
+\end{proof}

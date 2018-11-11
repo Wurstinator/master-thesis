@@ -27,17 +27,6 @@
 	\end{enumerate}
 \end{defn}
 
-\begin{lem}
-	Let $\mathcal{A}$ be a DPA. Let $\equiv$ be a congruence relation on $Q$ and let $R$ be a equivalence relation on $Q$ such that $R \subseteq\, \equiv$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $R$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on some $\alpha$. Then for all $i$, $\rho(i) \equiv \rho'(i)$.
-	\label{lem:tremoore:cong_stays_in_merge}
-\end{lem}
-
-\begin{proof}
-	We use a proof by induction. For $i = 0$, we have $\rho(0) = q_0$ and $\rho'(0) = r_{[q_0]_R}$. By choice of the representative, $(q_0, r_{[q_0]_R}) \in R$ and thus $q_0 \equiv r_{[q_0]_R}$.
-	
-	Now consider some $i+1 > 0$. Then $\rho'(i+1) = r_{[q]_R}$ for $q = \delta(\rho'(i), \alpha(i))$. By induction we know that $\rho(i) \equiv \rho'(i)$ and thus $\delta(\rho(i), \alpha(i)) = \rho(i+1) \equiv q$. Further, we know $q \equiv r_{[q]_R}$ by the same argument as before. Together this lets us conclude in $\rho(i+1) \equiv q \equiv \rho'(i+1)$.
-\end{proof}
-
 
 \begin{theorem}
 	Let $\mathcal{A}$ and $R$ as before and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. an equivalence class $\lambda$ of $\equiv_\text{TM}^R$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.

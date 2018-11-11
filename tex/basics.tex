@@ -1,85 +1,92 @@
 \chapter{Basic Definitions}
-The first chapter defines the fundamentals of this thesis and notation used later on.
+
+The first chapter defines fundamentals of this thesis and notation used later on.
 
 \section{General Mathematical Terms}
-We begin with a set theoretic approach to define the natural numbers.
+As our main focus is $\omega$-words, we will require a small extension of natural numbers into the transfinite realm.
+
+\subsection{Sets and Functions}
 \begin{defn}
-	The natural numbers $\mathbb{N} = \{0, 1, 2, 3, \dots\}$ are defined as follows: For every natural $n$, we set $n := \{0, \dots, n-1\}$. For example, $0 = \emptyset$, $1 = \{0\}$, $2 = \{0, 1\} = \{\emptyset, \{\emptyset\}\}$.
+	The \emph{natural numbers} $\mathbb{N} = \{0, 1, 2, \dots\}$ are the set of all non-negative integers. We define $0 := \emptyset$, $1 := \{0\}$, $2 := \{0, 1\}$, and so forth.
+	
+	The value $\omega$ denotes the \enquote{smallest} infinity, $\omega := \mathbb{N}$. For all natural numbers, we write $n < \omega$ and $\omega \not < \omega$. Also, we sometimes use the convention $n + \omega = \omega$.
+	
+	We denote the set $\mathbb{N} \cup \{\omega\}$ by $\mathbb{N}_\omega$.
 \end{defn}
 
-We can extend this definition to ordinal numbers up to $\omega$.
-
 \begin{defn}
-	We write $\omega = \mathbb{N}$. The set of \emph{ordinal numbers} (up to $\omega$) is $\omega \cup \{\omega\} = \{0, 1, 2, \dots, \omega\}$. For two ordinal numbers $\alpha, \beta$, we define $\alpha < \beta$ if and only if $\alpha \in \beta$. \\
-	For an ordinal $\alpha \in \omega$, we define $\alpha^+ = \alpha \cup \{\alpha\}$ as the successor of $\alpha$. If $\alpha = \beta^+$ for some ordinal $\beta$, we define $\alpha^- = \beta$. Otherwise, i.e. if $\alpha \in \{0, \omega\}$, we define $\alpha^- = \alpha$.
+	Let $X$ and $Y$ be two sets. We use the usual definition of union ($\cup$), intersection ($\cap$), and set difference ($\setminus$). If some domain ($X \subseteq D$) is clear in the context, we write $X^\complement = D \setminus X$.
+	
+	We use the cartesian product $X \times Y = \{ (x, y) \mid x \in X, y \in Y \}$.
+	
+	We write $X^Y$ for the set of all functions with domain $Y$ and range $X$. If we have a function $f : D \rightarrow \{0, 1\}$, then we sometimes implicitly use it as a set $X \subseteq D$ with $x \in X$ iff $f(x) = 1$. In particular, $2^Y$ is the powerset of $Y$.
 \end{defn}
 
 \begin{defn}
-	Let $\alpha, \beta$ be ordinal numbers. We need to consider the following special cases of ordinal arithmetic:
+	Let $f : D \rightarrow R$ be a function and let $X \subseteq D$ and $Y \subseteq R$. We describe by $f(X) = \{ f(x) \in R \mid x \in X\}$ and $f^{-1}(Y) = \{ x \in D \mid \exists y \in Y: f(x) = y \}$.
+\end{defn}
+
+\begin{defn}
+	Let $X \subseteq D$ be a set. For $D' \subseteq D$, we define $X \upharpoonright_{D'} = X \cap D$. In particular, we use this notation for relations, e.g. $R \subseteq \mathbb{N} \times \mathbb{N}$ and $R \upharpoonright_{\{0\} \times \mathbb{N}}$.
+	
+	For a function $f : D \rightarrow R$, we write $f \upharpoonright_{D'}$ for the function $f' : D' \rightarrow R, x \mapsto f(x)$.
+\end{defn}
+
+
+\subsection{Relations and Orders}
+\begin{defn}
+	Let $X$ be a set. We call a set $R \subseteq X \times X$ a \emph{relation} over $X$. $R$ is
 	\begin{itemize}
-		\item If $\alpha, \beta \in \mathbb{N}$, then $\alpha + \beta$ is defined as usual.
-		\item If $\alpha = \omega, \beta = 0$, then $\alpha + \beta = \omega$.
-		\item If $\alpha \in \mathbb{N}, \beta = \omega$, then $\alpha + \beta = \omega$.
+		\item \emph{reflexive}, if for all $x \in X$, $(x, x) \in R$.
+		\item \emph{irreflexive}, if for all $x \in X$, $(x, x) \notin R$.
+		\item \emph{symmetric}, if for all $(x, y) \in R$, also $(y, x) \in R$.
+		\item \emph{asymmetric}, if for all $(x, y) \in R$, $(y, x) \notin R$.
+		\item \emph{transitive}, if for all $(x, y), (y, z) \in R$, also $(x, z) \in R$.
+		\item \emph{total}, if for all $x, y \in X$, $(x, y) \in R$ or $(y, x) \in R$ is true.
 	\end{itemize}
-	In particular $1 + \alpha = \begin{cases}\alpha^+ & \text{if } \alpha < \omega \\ \omega & \text{if } \alpha = \omega\end{cases}$.
 	
-	For some $n \in \mathbb{N}$, we write $\alpha - n = \alpha$ if $n = 0$, and $\alpha - n = (\alpha^-) - (n-1)$ otherwise.
-\end{defn}
-
-\begin{defn}
-	Let $X$ and $Y$ be two sets. We define $X^Y$ as the set of all functions $f : Y \rightarrow X$.
-\end{defn}
-
-\begin{defn}
-	Let $X$ be a set. We denote the power set $\{ Y \mid Y \subseteq X \}$ by $\mathcal{P}(X)$.
-\end{defn}
-
-\begin{defn}
-	A \emph{partial order} on a set $X$ is a relation $< \subseteq X \times X$ which satisfies
+	We call $R$ 
 	\begin{itemize}
-		\item irreflexivity, i.e. $x \not< x$ for all $x \in X$, and
-		\item transitivity, i.e. if $x < y$ and $y < z$, then $x < z$.
+		\item a \emph{partial order}, if it is irreflexive, asymmetric, and transitive.
+		\item a \emph{total order}, if it is a partial order and total.
+		\item a \emph{preorder}, if it is reflexive and transitive.
+		\item a \emph{total preorder}, if it is a preorder and total.
+		\item an \emph{equivalence relation}, if it is a preorder and symmetric.
 	\end{itemize}
 	
-	$<$ is called a \emph{linear order} if additionally to that it satisfies totality, i.e. for all $x, y \in X$, either $x = y$, or $x < y$, or $y < x$.
+	If $R$ is a partial order or a preorder, we call an element $x \in X$ \emph{minimal} (w.r.t. $R$), if for all $y \in X$, $(y, x) \in R$ implies $(x, y) \in R$. Similarly, we call it \emph{maximal}, if for all $y \in X$, $(x, y) \in R$ implies $(y, x) \in R$. 
 	
-	$<$ is called a \emph{well order} if there is no infinitely descending sequence in $X$.
+	We call $x$ the \emph{minimum} of $R$ if for all $y \neq x$, $(y, x) \in R$. We write $x = \min_R X$.
 \end{defn}
-
 
 \begin{defn}
-	Let $f : X \rightarrow Y$ be a function and $X' \subseteq X$. We define $f(X') = \{y \in Y \mid \text{There is an } x \in X' \text{ such that } f(x) = y \text{.}\}$, and $f \upharpoonright_{X'} = g$, where $g : X' \rightarrow Y$ is a function with $g(x) = f(x)$.
+	Let $R$ be a partial order over $X$. We call a set $S \subseteq Y$ an \emph{extension of $R$ to $Y$} if $X \subseteq Y$, $R \subseteq S$, and $S$ is a partial order over $Y$. We use the same notation for total orders, preorders, and total preorders.
 \end{defn}
-
 
 \begin{defn}
-	Let $X, Y$ be sets. We define $X \overset{.}\cup Y = Z$ as the \emph{disjunct union} of $X$ and $Y$, which means we assume via renaming that $X \cap Y = \emptyset$.
+	Let $R$ be an equivalence relation over $X$. $R$ implicitly forms a partition of $X$ into \emph{equivalence classes}. For an element $x \in X$, we call $[x]_R := \{ y \in X \mid (x, y) \in R \}$ the equivalence class of $x$.
 \end{defn}
+
+
 
 
 
 \section{Words and Languages}
 \begin{defn}
-	A  non-empty set of symbols can be called \emph{alphabet} and will usually be denoted by a variable $\Sigma, \Gamma, \Pi$. \\
-	A finite \emph{word} (denoted by $w, v, u$) over an alphabet $\Sigma$ is a function $w : \{0, \dots, n-1\} \rightarrow \Sigma$ for some $n \in \mathbb{N}$. The \emph{length} of this word is $|w| = n$. The word $w$ with length $|w| = 0$ is called the \emph{empty word} $\varepsilon$. \\
-	This gives an alternative description of $\Sigma^n$: $\Sigma^n = \{ w : n \rightarrow \Sigma \mid w \text{ is a word of length } n \text{ over } \Sigma\}$. \\
-	Further, we define $\Sigma^* = \bigcup\limits_{n \in \mathbb{N}} \Sigma^n$ as the set of all words over $\Sigma$.\\
-	A \emph{language} (denoted by $L, K$) over an alphabet $\Sigma$ is a set $L \subseteq \Sigma^*$.
+	A non-empty set of symbols can be called an \emph{alphabet}, which we will denote by a variable $\Sigma$ most of the time. As symbols, we usually use lower case letters, i.e. $a$ or $b$.
+	
+	A \emph{finite word}, usually denoted by $u$, $v$, or $w$, over an alphabet $\Sigma$ is a function $w : n \rightarrow \Sigma$ for some $n$. We call $n$ the \emph{length} of $w$ and write $|w| = n$. The unique word of length $0$ is called \emph{empty word} and is written as $\varepsilon$.
+	
+	Given $\Sigma^n = \{ w \mid w \text{ is a word of length } n \text{ over } \Sigma \}$, we define $\Sigma^* = \bigcup\limits_{n \in \mathbb{N}} \Sigma^n$ as the set of all finite words over $\Sigma$. 
 \end{defn}
-
-\vspace*{10pt}
-We now repeat the extension of this definition for infinite words.
-\vspace*{10pt}
 
 \begin{defn}
-	An \emph{$\omega$-word} (denoted by $\alpha, \beta, \gamma$) over an alphabet $\Sigma$ is a function $\alpha : \mathbb{N} \rightarrow \Sigma$. The length of $\alpha$ is $|\alpha| = \omega = \mathbb{N}$. \\
-	Again, this can be used to describe $\Sigma^\omega$ as $\{w : \mathbb{N} \rightarrow \Sigma \mid w \text{ is an } \omega \text{-word over } \Sigma\}$.\\
-	An \emph{$\omega$-language} (denoted by $U, V$) over an alphabet $\Sigma$ is a set $L \subseteq \Sigma^\omega$.
+	An \emph{$\omega$-word}, usually denoted by $\alpha$ or $\beta$, over an alphabet $\Sigma$ is a function $\alpha : \omega \rightarrow \Sigma$. $\omega$ is the length of $\alpha$ and we write $|\alpha| = \omega$. The set $\Sigma^\omega$ then describes the set of all $\omega$-words over $\Sigma$. 
 \end{defn}
 
-\vspace*{10pt}
-We can now define the usual operations on words and languages. From now on, we always assume $\Sigma$ to be an arbitrary alphabet unless specified otherwise.
-\vspace*{10pt}
+\begin{defn}
+	A \emph{language} over an alphabet $\Sigma$ is a set of words $L \subseteq \Sigma^* \cup \Sigma^\omega$. In the context we use it should always be clear whether we are using finite words or $\omega$-words.
+\end{defn}
 
 \begin{defn}
 	Let $v, w \in \Sigma^*$ and $w_i \in \Sigma^*$ for all $i \in \mathbb{N}$ be words over $\Sigma$ and $\alpha \in \Sigma^\omega$ be an $\omega$-word over $\Sigma$.
@@ -111,12 +118,6 @@ We can now define the usual operations on words and languages. From now on, we a
 	\begin{align*}
 		\beta : \mathbb{N} \rightarrow \Sigma, i \mapsto w(i \mod |w|)
 	\end{align*}
-	
-	The \emph{concatenation} of a sequence $(w_i)_{i \in \mathbb{N}}$ (denoted by $\underset{i \in \mathbb{N}}{\circ} w_i$ or $w_0 \cdot \dots$) is an $\omega$-word $\alpha$ such that:
-	\begin{align*}
-		\alpha : \mathbb{N} \rightarrow \Sigma, i \mapsto w_j(x)
-	\end{align*}
-	where $x = i - \sum\limits_{k = 0}^{j-1} |w_k|$ and $j$ is the biggest number such that $x \geq 0$.
 \end{defn}
 
 \vspace{20pt}
@@ -130,145 +131,62 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 	The \emph{concatenation} of $L$ and $U$ is $L \cdot U = \{ \alpha \in \Sigma^\omega \mid \text{There are } w \in L \text{ and } \allowbreak \beta \in U \text{ such that } \alpha = w \cdot \beta\}$.\\
 	For some $n \in \mathbb{N}$, the \emph{$n$-iteration} of $L$ is $L^n = \{ w \in \Sigma^* \mid \text{There is } v \in L \text{ such that } w = v^n\}$.\\
 	The \emph{Kleene closure} of $L$ is $L^* = \bigcup\limits_{n \in \mathbb{N}} L^n$.\\
-	The \emph{$\omega$-iteration} of $L$ is $L^\omega = \{\alpha \in \Sigma^\omega \mid \text{There is a sequence } (w_i)_{i \in \mathbb{N}} \in L \text{ such that } \alpha = \underset{i \in \mathbb{N}}{\circ} w_i \}$.\\
-	The \emph{$\infty$-iteration} of $L$ is $L^\infty = L^* \cup L^\omega$.
 \end{defn}
 
 \begin{defn}
-	Let $w \in \Sigma^\infty$ be a word. For $0 \leq n, m < |w|$, we define $w[n,m] = w(n) \cdots w(m)$. \\
-	If $w \in \Sigma^*$ is finite, we define $\text{Tail}(w) = w[1,|w|-1]$ and $\text{Last}(w) = w(|w|-1)$. \\
-	If $w \in \Sigma^\omega$ is infinite, we also define $w[n, \omega] = \underset{i \geq n}{\circ} w(i)$ and $\text{Tail}(w) = w[1, \omega]$.
+	Let $w \in \Sigma^* \cup \Sigma^\omega$ be a word. We define a substring or subword of $w$ for some $n \leq m \leq |w|$ as $w[n, m] = w(n) \cdot w(n+1) \cdots w(m-1)$. In the case that $m = |w| = \omega$, it is simply $w[n, m] = w(n) \cdot w(n+1) \cdots$. Note that for $n = m$, we have $w[n, m] = \varepsilon$.
 \end{defn}
 
 \begin{defn}
-	The \emph{occurrence set} of a word $w \in \Sigma^\infty$ is the set of symbols which occur at least once in $w$. 
-	\begin{align*}
-	\text{Occ}(w) = \{ a \in \Sigma \mid \text{There is an } n \in |w| \text{ such that } w(n) = a \text{.}\}
-	\end{align*}
+	Let $v, w \in \Sigma^* \cup \Sigma^\omega$ be words. We call $v$ 
+	\begin{itemize}
+		\item a \emph{prefix} of $w$, if there is an $n \in \mathbb{N}_\omega$ with $v = w[0, n]$.
+		\item a \emph{suffix} of $w$, if there is an $n \in \mathbb{N}_\omega$ with $v = w[n, |w|]$.
+		\item an \emph{infix} of $w$, if there are $n, m \in \mathbb{N}_\omega$ with $v = w[n, m]$.
+	\end{itemize}
 \end{defn}
 
 \begin{defn}
-	The \emph{infinity set} of a word $w \in \Sigma^\infty$ is the set of symbols which occur infinitely often in $w$.
-	\begin{align*}
-	\text{Inf}(w) = \{ a \in \Sigma \mid \text{For every } n \in \mathbb{N} \text{ there is a } m > n \text{ such that } w(m) = a \text{.}\}
-	\end{align*}
-	Note that for finite alphabets, $\text{Inf}(w) = \emptyset$ iff $w \in \Sigma^*$.
+	The \emph{occurrence set} of a word $w \in \Sigma^* \cup \Sigma^\omega$ is the set of symbols which occur at least once in $w$. 
+	$$\text{Occ}(w) = \{ a \in \Sigma \mid \text{There is an } n \in |w| \text{ such that } w(n) = a \text{.}\}$$
+	
+	The \emph{infinity set} of a word $w \in \Sigma^\omega$ is the set of symbols which occur infinitely often in $w$.
+	$$\text{Inf}(w) = \{ a \in \Sigma \mid \text{For every } n \in \mathbb{N} \text{ there is a } m > n \text{ such that } w(m) = a \text{.}\}$$
 \end{defn}
-
 
 
 \section{Automata}
-In this work, we focus ourselves on the model of parity automata (abbreviated PA) (also known as Rabin chain automata). We now give three different but similar definitions of this structure, the classical model and two variations better suited for the upcoming constructions. 
-
-
 \begin{defn}
-	A \emph{standard parity automaton} is a tuple $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$, where
-	\begin{itemize}
-		\item $Q$ is the finite, nonempty set of states.
-		\item $\Sigma$ is the input alphabet.
-		\item $q_0 \in Q$ is the initial state.
-		\item $\delta : Q \times \Sigma \rightarrow \mathcal{P}(Q)$ is the transition function.
-		\item $c : Q \rightarrow \mathbb{N}$ is the priority function.
-	\end{itemize}
-	$\mathcal{A}$ is said to be \emph{deterministic} if for all $q \in Q, a \in \Sigma$, the transition is uniquely defined, i.e. $|\delta(q, a)| \leq 1$. In that case, we write $\delta(q, a) = \emptyset$ or $\delta(q, a) = p \in Q$.
+	Let $Q$ be a set, $\Sigma$ an alphabet, and $\delta : Q \times \Sigma \rightarrow Q$ a function. We call $\mathcal{S} = (Q, \Sigma, \delta)$ a \emph{deterministic transition structure}. We call $Q$ the states or state space.
 	
-	A \emph{run} of $\mathcal{A}$ on an $\omega$-word $\alpha \in \Sigma^\omega$ is a word $\rho \in Q^\omega$, such that $\rho(0) = q_0$ and for all $i > 0: \rho(i) \in \delta(\rho(i-1), \alpha(i))$. \\
-	The priorities of $\rho$ are $c(\rho) = \gamma \in \mathbb{N}^\omega$ such that $\gamma(i) = c(\rho(i))$. $\rho$ is \emph{accepting} if $\max \text{Inf}(c(\rho))$ is an even number.
-	
-	The language of $\mathcal{A}$, written $L(\mathcal{A}) \subseteq \Sigma^\omega$ is defined as the set of all $\omega$-words over $\Sigma$ which have an accepting run on $\mathcal{A}$. \\
-	$\mathcal{A}$ \emph{recognizes} or \emph{accepts} a language $U \subseteq \Sigma^\omega$ if $L(\mathcal{A}) = U$.
+	For $q \in Q$ and a word $w \in \Sigma^* \cup \Sigma^\omega$, we call $\rho \in Q^{1+|w|}$ the \emph{run} of $\mathcal{S}$ on $w$ starting in $q$ if $\rho(0) = q$ and for all $i$, $\rho(i+1) = \delta(\rho(i), w(i))$.
 \end{defn}
 
-
 \begin{defn}
-	A \emph{transition parity automaton} is a tuple $\mathcal{A} = (Q, \Sigma, q_0, \delta, c, F)$, where
-	\begin{itemize}
-		\item $Q$ is the finite, nonempty set of states.
-		\item $\Sigma$ is the input alphabet.
-		\item $q_0 \in Q$ is the initial state.
-		\item $\delta : Q \times \Sigma \rightarrow \mathcal{P}(Q)$ is the transition function.
-		\item $c : Q \times Q \rightarrow \mathbb{Z}$ is the priority function.
-		\item $F \subseteq Q$ is the set of accepting states.
-	\end{itemize}
-	Determinism of $\mathcal{A}$ is defined as for standard parity automata.
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. For a set $\Omega \subseteq Q^* \cup Q^\omega$, we say that $\mathcal{S}$ has acceptance condition $\Omega$.
 	
-	A \emph{run} of $\mathcal{A}$ on an $\infty$-word $w \in \Sigma^\infty$ is a word $\rho \in Q^{1 + |w|}$, such that $\rho(0) = q_0$ and for all $0 < i \leq |w|: \rho(i) \in \delta(\rho(i-1), \alpha(i))$. \\
-	The priorities of $\rho$ are $c(\rho) = \gamma \in \mathbb{N}^{|w|}$ such that $\gamma(i) = c(\rho(i), \rho(i+1))$. For an $\omega$-word, $\rho$ is \emph{accepting} if $\max \text{Inf}(c(\rho))$ is an even number. For a finite word, $\rho$ is \emph{accepting} if $\rho(|w|) \in F$.
-	
-	The language of $\mathcal{A}$, written $L(\mathcal{A}) \subseteq \Sigma^\infty$ is defined as the set of all $\infty$-words over $\Sigma$ which have an accepting run on $\mathcal{A}$. We define $L_*(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^*$ and $L_\omega(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^\omega$. \\
-	$\mathcal{A}$ \emph{recognizes} or \emph{accepts} a language $L \subseteq \Sigma^\infty$ if $L(\mathcal{A}) = L$.
-	
-	Regarding the transition function $\delta$, we also write $\delta(q, A) = \bigcup\limits_{a \in A} \delta(q, a)$ for some set of symbols $A \subseteq \Sigma$.
+	We say that a run $\rho$ of $\mathcal{A}$ on some $w \in \Sigma^*$ is \emph{accepting}, if $\rho \in \Omega$; otherwise, the run is \emph{rejecting}. In either case, we say that $\mathcal{A}$ accepts or rejects $w$. The \emph{language} of $\mathcal{A}$ with $\Omega$ is the set of all words and $\omega$-words that are accepted by $\mathcal{A}$. 
 \end{defn}
 
-
 \begin{defn}
-	An \emph{expression parity automaton} is a tuple $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$, where
-	\begin{itemize}
-		\item $Q$ is the finite, nonempty set of states.
-		\item $\Sigma$ is the input alphabet.
-		\item $q_0 \in Q$ is the initial state.
-		\item $\delta : Q \times Q \rightarrow \mathcal{R}eg_\infty[\Sigma]$ is the transition function, with $\infty$-regular expressions as labels.
-		\item $c : Q \rightarrow \mathbb{N}$ is the priority function.
-	\end{itemize}
-	
-	A \emph{run} of $\mathcal{A}$ on an $\infty$-word $w \in \Sigma^\infty$ is a word $\rho \in Q^{1 + |w|}$, such that $\rho(0) = q_0$ and there is a decomposition $w = \underset{i < |\rho|}{\circ} v_i$, with $v_i \in \begin{cases}\Sigma^* & \text{if } i+1 < |\rho| \\ \Sigma^\infty & \text{else} \end{cases}$, such that $v_i \in L(\delta(\rho(i), \rho(i+1)))$ for all  $i$. \\
-	The priorities of $\rho$ are $c(\rho) = \gamma \in \mathbb{N}^{|\rho|}$ such that $\gamma(i) = c(\rho(i))$. $\rho$ is accepting if $C = \emptyset$ or $\max C$ is even, where $C = \text{Inf}(c(\rho))$.
-	
-	The language of $\mathcal{A}$, written $L(\mathcal{A}) \subseteq \Sigma^\infty$ is defined as the set of all $\infty$-words over $\Sigma$ which have an accepting run on $\mathcal{A}$. We define $L_*(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^*$ and $L_\omega(\mathcal{A}) = L(\mathcal{A}) \cap \Sigma^\omega$. \\
-	$\mathcal{A}$ \emph{recognizes} or \emph{accepts} a language $L \subseteq \Sigma^\infty$ if $L(\mathcal{A}) = L$.
+	A \emph{deterministic finite automaton} (or DFA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, F)$, where $F \subseteq Q$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \rho(|\rho|+1) \in F \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$, we write $L(\mathcal{A})$.
 \end{defn}
 
-
-Every $\omega$-regular language can be recognized by a standard parity automaton, even a deterministic one. (see \cite{Thomas96}). The other two models are exactly as powerful.
-
-\begin{prop}
-	Let $U \subseteq \Sigma^\omega$ be an $\omega$-language. The following statements are equivalent:
-	\begin{itemize}
-		\item $U$ is regular.
-		\item There is a standard PA $\mathcal{A}$ with $L(\mathcal{A}) = U$.
-		\item There is a transition PA $\mathcal{A}$ with $L_\omega(\mathcal{A}) = U$.
-		\item There is an expression PA $\mathcal{A}$ with $L_\omega(\mathcal{A}) = U$.
-	\end{itemize}
-\end{prop}
-
-\begin{prop}
-	Let $L \subseteq \Sigma^\infty$ be an $\infty$-language. The following statements are equivalent:
-	\begin{itemize}
-		\item $L$ is regular.
-		\item There is a transition PA $\mathcal{A}$ with $L(\mathcal{A}) = L$.
-		\item There is an expression PA $\mathcal{A}$ with $L(\mathcal{A}) = L$.
-	\end{itemize}
-\end{prop}
-
-Most of the constructions are trivial and require at most $|Q|$ many additional states. The only step not as clear is the question on how to transform an expression PA to one of the other models. That will be part of a later chapter, when we discuss the conversion from automata to regular expressions. 
-
-
-
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c, F)$ and $\mathcal{A}' = (Q', \Sigma, q'_0, \delta', c', F')$ be transition parity automata. A function $f : Q \rightarrow Q'$ is an \emph{isomorphism} from $\mathcal{A}$ to $\mathcal{A}'$, if
-	\begin{itemize}
-		\item $f$ is bijective.
-		\item $f(q_0) = q'_0$.
-		\item For all $q \in Q$, for all $a \in \Sigma$: $\delta'(f(q), a) = \{f(p) \mid p \in \delta(q, a))\}$.
-		\item For all $q \in Q$: $q \in F$ if and only if $f(q) \in F'$.
-		\item There is a bijective, monotone function $n : \mathbb{Z} \rightarrow \mathbb{Z}$ (i.e. $x < y$ implies $n(x) < n(y)$) for which $n(x)$ is even if and only if $x$ is even, such that for all $q \in Q$ and $p \in \text{succ}(q)$: $c(p, q) = n(c(f(p), f(q)))$. (In particular, this can be satisfied by the identity function.)
-	\end{itemize}
+	A \emph{deterministic parity automaton} (or DPA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, c)$, where $c : Q \rightarrow \mathbb{N}$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \min \text{Inf}(c(\rho)) \text{ is even} \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$, we write $L(\mathcal{A})$.
 	
-	If an isomorphism from $\mathcal{A}$ to $\mathcal{A}'$ exists, $\mathcal{A}$ and $\mathcal{A}'$ are \emph{isomorphic} ($\mathcal{A} \cong \mathcal{A}'$).
+	We call the DPA a \emph{B\"uchi automaton} (or DBA) if $c(Q) \subseteq \{0, 1\}$. In that case, we use $F$ instead of $c$.
 \end{defn}
 
+\begin{defn}
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. We define $\delta^* : Q \times \Sigma^* \rightarrow Q$ as $\delta^*(q, \varepsilon) = q$ and $\delta^*(q, w \cdot a) = \delta(\delta^*(q, w), a)$.
+\end{defn}
 
-\begin{prop}
-	Let $\mathcal{A}$ and $\mathcal{A}'$ be transition parity automata. If $\mathcal{A} \cong \mathcal{A}'$, then $L(\mathcal{A}) = L(\mathcal{A}')$.
-\end{prop}
+\begin{defn}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define $c^* : Q \times \Sigma^* \rightarrow \mathbb{N}$ as $c^*(q, w) = c(\delta^*(q, w))$.
+\end{defn}
 
-\begin{proof}
-	$\mathcal{A} \cong \mathcal{A}'$, so let $f : Q \rightarrow Q'$ be an isomorphism from $\mathcal{A}$ to $\mathcal{A}'$. It is clear that $f^{-1}$ is also an isomorphism from $\mathcal{A}'$ to $\mathcal{A}$ and therefore, it suffices to show that $L(\mathcal{A}) \subseteq L(\mathcal{A}')$. Let $w \in L(\mathcal{A})$ and let $\rho$ be the run of $\mathcal{A}$ on $w$.
-	
-	We first show that $\rho' : |\rho| \rightarrow Q', i \mapsto f(\rho(i))$ is a valid run of $\mathcal{A}'$ on $w$. We do so using induction over $|w|$. For $|w| = 0$, this is clear because $\rho'(0) = q'_0 = f(q_0) = f(\rho(0))$. Otherwise, let $0 < |w|$. By the induction hypothesis, $\rho'[0, |w|-1]$ is a valid run of $\mathcal{A}'$ on $w[0, |w|-2]$. $\rho$ is a valid run of $\mathcal{A}$ on $w$, so $\rho(|w|) \in \delta(\rho(|w|-1), w(|w|-1))$. The definition of an isomorphism then implies that $\delta'(f(\rho(|w|-1)), w(|w|-1)) = \delta'(\rho'(|w|-1), w(|w|-1)) = \{f(p) \mid p \in \delta(\rho(|w|-1), w(|w|-1))\}$. In particular, $f(\rho(|w|)) = \rho'(|w|) \in \delta'(\rho'(|w|-1), w(|w|-1))$, which is what had to be shown.
-	
-	If $w \in \Sigma^*$, $\rho(|w|) \in F$. By definition, $\rho'(|w|) \in F'$, which means that $w \in L(\mathcal{A}')$.
-	
-	If $w \in \Sigma^\omega$, let $P$ be the priority set of $\rho$. $\max P$ must be even. By definition of the isomorphism, the priority set of $\rho'$ is $P' = \{n(x) \mid x \in P\}$ for a fitting function $n$. $n$ is monotone, so $(\max P) = \max P'$. Also, $\max P$ is even which means that $n(\max P) = \max P'$ must be even. Therefore, $w \in L(\mathcal{A}')$.
-\end{proof}
+\begin{defn}
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure and let $R \subseteq Q \times Q$ be an equivalence relation over $Q$. We call $R$ a \emph{congruence relation} if for all $(p, q) \in R$ and all $a \in \Sigma$, also $(\delta(p, a), \delta(q, a)) \in R$.
+\end{defn}
+

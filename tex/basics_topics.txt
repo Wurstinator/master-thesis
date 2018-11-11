@@ -1,0 +1,6 @@
+DPA
+1 + omega
+lambda_A = c(delta*)
+preorder -> (topological sorting of SCCs extended to states?)
+representative merge, quotient merge
+words [] notation

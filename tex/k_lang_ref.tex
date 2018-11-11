@@ -1,17 +1,6 @@
 
 \section{Congruence Path Refinement}
 
-In this section we present an algorithm that uses an existing congruence relation and refines it to the point where equivalent states can be \enquote{merged}.
-
-\begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $\equiv \,\subseteq Q \times Q$ be an equivalence relation on the state set. For every equivalence class $\kappa \subseteq Q$, let $r_\kappa \in \kappa$ be an arbitrary representative of that class. For a DPA $\mathcal{A}' = (Q', \Sigma, q'_0, \delta', c')$, we say that $\mathcal{A}'$ is a \emph{representative merge of $\mathcal{A}$ w.r.t. $\equiv$} if it satisfies the following:
-	\begin{itemize}
-		\item $Q' = \{ r_{[q]_\equiv} \subseteq Q \mid q \in Q \}$
-		\item $q'_0 = r_{[q_0]_\equiv}$
-		\item For all $q \in Q'$ and $a \in \Sigma$: $\delta'(q, a) = r_{[\delta(q, a)]_\equiv}$
-		\item $c' = c\upharpoonright_{Q'}$
-	\end{itemize}
-\end{defn}
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. Let $\lambda \subseteq Q$ be an equivalence class of $R$. We define $L_{\lambda \hookleftarrow}$ as the set of non-empty words $w$ such that for any $u \sqsubseteq w$, $(\delta(p, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton moves from $\lambda$ to $\lambda$ again.
