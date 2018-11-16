@@ -50,12 +50,28 @@ DPA ReadDPA(const std::string& filename) {
     return hoa::DPAFromHOA(&file);
 }
 
-unsigned int NontrivialLanguageClasses(const NPA& npa);
+unsigned int NontrivialLanguageClasses(const NPA&);
+bool IsPriorityNormalized(const NPA&);
+bool IsMooreMinimized(const NPA&);
 
 long NontrivialLanguageClasses(const DPA& dpa) {
     const EquivalenceRelation<state_t> language = LanguageEquivalentStates(dpa);
     return std::count_if(language.Classes().begin(), language.Classes().end(),
                          [](const EquivalenceRelation<state_t>::EquivClass& c) { return c.size() > 1; });
+}
+
+bool IsPriorityNormalized(const DPA& dpa) {
+    const std::map<state_t, parity_label_t> normalized_prios = NormalizePriorities(dpa);
+    for (state_t q : dpa.States())
+        if (dpa.GetLabel(q) != normalized_prios.at(q))
+            return false;
+    return true;
+}
+
+bool IsMooreMinimized(const DPA& dpa) {
+    DPA copy = dpa;
+    Hopcroft(&copy);
+    return dpa.States().size() == copy.States().size();
 }
 
 template<typename AutomatonT>
@@ -68,10 +84,13 @@ nlohmann::json AnalyzeAutomaton(const AutomatonT& automaton) {
     nlohmann::json json;
     json["states"] = automaton.States().size();
     json["priorities"] = automaton.AllLabels().size();
-    json["deterministic"] = is_deterministic_automaton;
+    json["is_deterministic"] = is_deterministic_automaton;
     json["sccs"] = StronglyConnectedComponents(automaton).sccs.size();
-    if (is_deterministic_automaton)
+    if (is_deterministic_automaton) {
         json["nontrivial_language_classes"] = NontrivialLanguageClasses(automaton);
+        json["is_priority_minimized"] = IsPriorityNormalized(automaton);
+        json["is_moore_minimized"] = IsMooreMinimized(automaton);
+    }
     return json;
 }
 
