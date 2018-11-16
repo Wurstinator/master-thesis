@@ -165,15 +165,17 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 \begin{defn}
 	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. For a set $\Omega \subseteq Q^* \cup Q^\omega$, we say that $\mathcal{S}$ has acceptance condition $\Omega$.
 	
-	We say that a run $\rho$ of $\mathcal{A}$ on some $w \in \Sigma^*$ is \emph{accepting}, if $\rho \in \Omega$; otherwise, the run is \emph{rejecting}. In either case, we say that $\mathcal{A}$ accepts or rejects $w$. The \emph{language} of $\mathcal{A}$ with $\Omega$ is the set of all words and $\omega$-words that are accepted by $\mathcal{A}$. 
+	We say that a run $\rho$ of $\mathcal{A}$ on some $w \in \Sigma^*$ is \emph{accepting}, if $\rho \in \Omega$; otherwise, the run is \emph{rejecting}. In either case, we say that $\mathcal{A}$ accepts or rejects $w$. 
+	
+	The \emph{language} of $\mathcal{A}$ with $\Omega$ from $q \in Q$ is the set of all words and $\omega$-words that are accepted by $\mathcal{A}$ from $q$.
 \end{defn}
 
 \begin{defn}
-	A \emph{deterministic finite automaton} (or DFA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, F)$, where $F \subseteq Q$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \rho(|\rho|+1) \in F \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$, we write $L(\mathcal{A})$.
+	A \emph{deterministic finite automaton} (or DFA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, F)$, where $F \subseteq Q$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \rho(|\rho|+1) \in F \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$ from $q$, we write $L(\mathcal{A}, q)$.
 \end{defn}
 
 \begin{defn}
-	A \emph{deterministic parity automaton} (or DPA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, c)$, where $c : Q \rightarrow \mathbb{N}$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \min \text{Inf}(c(\rho)) \text{ is even} \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$, we write $L(\mathcal{A})$.
+	A \emph{deterministic parity automaton} (or DPA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, c)$, where $c : Q \rightarrow \mathbb{N}$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \min \text{Inf}(c(\rho)) \text{ is even} \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$ from $q$, we write $L(\mathcal{A}, q)$.
 	
 	We call the DPA a \emph{B\"uchi automaton} (or DBA) if $c(Q) \subseteq \{0, 1\}$. In that case, we use $F$ instead of $c$.
 \end{defn}

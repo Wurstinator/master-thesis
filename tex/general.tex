@@ -15,6 +15,8 @@ In general, we use the symbol $\equiv$ to denote equivalence relations, mostly b
 	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}$. Defined in %TODO
 \end{itemize}
 
+Immediately we define the three first of these relations and show that they are computable.
+
 
 \subsubsection{Language Equivalence}
 
@@ -28,6 +30,14 @@ In general, we use the symbol $\equiv$ to denote equivalence relations, mostly b
 
 \begin{proof}
 	It is obvious that $\equiv_L$ is an equivalence relation. For two states $p \equiv_L q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_L q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ that is accepted from $p'$ and rejected from $q'$ (or vice-versa). Then $a \cdot \alpha$ is rejected from $p$ and accepted from $q$ and thus $p \not\equiv_L q$.
+\end{proof}
+
+\begin{lem}
+	Language equivalence of a given DPA can be computed in $\mathcal{O}(|Q|^2 \cdot |c(Q)|^2)$.
+\end{lem}
+
+\begin{proof}
+	The algorithm is based partially on \cite{HenzingerTelle1996}. %TODO
 \end{proof}
 
 
@@ -45,47 +55,41 @@ In general, we use the symbol $\equiv$ to denote equivalence relations, mostly b
 	It is obvious that $\equiv_M$ is an equivalence relation. For two states $p \equiv_\text{\Ankh} q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_\text{\Ankh} q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ such that $c^*(p', \alpha)$ and $c^*(q', \alpha)$ differ at infinitely many positions. Then $c^*(p, a \alpha)$ and $c^*(q, a \alpha)$ also differ at infinitely many positions and thus $p \not\equiv_\text{\Ankh} q$.
 \end{proof}
 
-\begin{lem}
-	Priority almost equivalence of a given DPA can be computed in quadratic time.
-\end{lem}
-
-\begin{proof}
-	%TODO
-\end{proof}
-
+The following definition is used as an intermediate step on the way to computing $\equiv_\text{\Ankh}$.
 
 \begin{defn}
-	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. We define the deterministic Büchi automaton $\mathcal{A} \intercal \mathcal{B} = (Q_1 \times Q_2, \Sigma, (q^1_0, q^2_0), \delta_\intercal, F_\intercal)$ with $\delta_\intercal((q_1, q_2), a) = (\delta_1(q_1, a), \delta_2(q_2, a))$. The transition structure is a common product automaton.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define the deterministic Büchi automaton $\mathcal{A} \intercal \mathcal{B} = (Q_1 \times Q_2, \Sigma, \delta_\intercal, F_\intercal)$ with $\delta_\intercal((q_1, q_2), a) = (\delta_1(q_1, a), \delta_2(q_2, a))$. The transition structure is a common product automaton.
 	
 	The final states are $F_\intercal = \{ (p, q) \in Q_1 \times Q_2 \mid c_1(p) \neq c_2(q) \}$, i.e. every pair of states at which the priorities differ. 
 \end{defn}
 
 \begin{lem}
-\label{lem:schewe:equiv_intercal}
-	Let $\mathcal{A} = (Q_1, \Sigma, q^1_0, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, q^2_0, \delta_2, c_2)$ be DPAs. $\mathcal{A}$ and $\mathcal{B}$ are priority almost-equivalent iff $L(\mathcal{A} \intercal \mathcal{B}) = \emptyset$. 
+	$\mathcal{A} \intercal \mathcal{B}$ can be computed in time $\mathcal{O}(|\mathcal{A}| \cdot |\mathcal{B}|)$.
+	\label{lem:general:intercal_runtime}
 \end{lem}
 
 \begin{proof}
-	For the first direction of implication, let $L(\mathcal{A} \intercal \mathcal{B}) \neq \emptyset$, so there is a word $\alpha$ accepted by that automaton. Let $(p_0, q_0) (p_1, q_1) \cdots$ be the accepting run on $\alpha$. Then $p_0 p_1 \cdots$ and $q_0 q_1 \cdots$ are the runs of $\mathcal{A}$ and $\mathcal{B}$ on $\alpha$ respectively. Whenever $(p_i, q_i) \in F_\intercal$, $p_i$ and $q_i$ have different priorities. As the run of the product automaton vists infinitely many accepting states, $\alpha$ is a witness for $\mathcal{A}$ and $\mathcal{B}$ being not priority almost-equivalent.
-	
-	For the second direction, let $\mathcal{A}$ and $\mathcal{B}$ be not priority almost-equivalent, so there is a witness $\alpha$ at which infinitely many positions differ in priority. Analogously to the first direction, this means that the run of $\mathcal{A} \intercal \mathcal{B}$ on the same word is accepting and therefore the language is not empty.
+	The definition already provides a rather straightforward description of how to compute $\mathcal{A} \intercal \mathcal{B}$. Each state only requires constant time (assuming that $\delta$ and $c$ can be evaluated in such) and has $|\mathcal{A}| \cdot |\mathcal{B}|$ many states.
 \end{proof}
 
 \begin{lem}
-	The priority almost-equivalence of a DPA $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}|^2)$.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. Two states $p_0 \in Q_1$ and $q_0 \in Q_2$ are priority almost-equivalent iff $L(\mathcal{A} \intercal \mathcal{B}, (p_0, q_0)) = \emptyset$. 
+	\label{lem:general:intercal_prioalmostequiv}
 \end{lem}
 
-
 \begin{proof}
-	The definition of $\mathcal{A} \intercal \mathcal{A}$ is a straightforward construction and can be done in quadratic time. By Lemma \ref{lem:schewe:equiv_intercal}, we know that $p$ and $q$ are priority almost-equivalent iff the language of $(\mathcal{A} \intercal \mathcal{A})_{(p,q)}$ is empty. 
-
-	The product automaton $\mathcal{A} \intercal \mathcal{A}$ itself can be computed in quadratic time. The SCCs of $\mathcal{A} \intercal \mathcal{A}$ can be computed in linear time in said automaton, i.e. in $\mathcal{O}(|\mathcal{A}|^2)$.
+	For the first direction of implication, let $L(\mathcal{A} \intercal \mathcal{B}, (p_0, q_0)) \neq \emptyset$, so there is a word $\alpha$ accepted by that automaton. Let $(p_0, q_0) (p_1, q_1) \cdots$ be the accepting run on $\alpha$. Then $p_0 p_1 \cdots$ and $q_0 q_1 \cdots$ are the runs of $\mathcal{A}$ and $\mathcal{B}$ on $\alpha$ respectively. Whenever $(p_i, q_i) \in F_\intercal$, $p_i$ and $q_i$ have different priorities. As the run of the product automaton vists infinitely many accepting states, $\alpha$ is a witness for $p_0$ and $q_0$ being not priority almost-equivalent.
 	
-	The language from a given starting state is non-empty iff a goal SCC is reachable, i.e. an SCC that contains an accepting state and is non-trivial. It is a rather simple procedure to collect these SCCs and as described in the proof of Lemma \ref{lem:schewe:schewe_aut_linear_time}, we can merge all of them into a single state $\hat{q}$ in $\mathcal{O}(|\mathcal{A}^2|)$.
-	
-	All that remains to be done is to find all states from which $\hat{q}$ is unreachable. This is easily done by using the transposed automaton of $\mathcal{A} \intercal \mathcal{A}$, which has all transition edges inverted, and performing a DFS starting in $\hat{q}$. States which are \textbf{not} found here correspond to priority almost-equivalent pairs.
+	For the second direction, let $p_0$ and $q_0$ be not priority almost-equivalent, so there is a witness $\alpha$ at which infinitely many positions differ in priority. Analogously to the first direction, this means that the run of $\mathcal{A} \intercal \mathcal{B}$ on the same word is accepting and therefore the language is not empty.
 \end{proof}
 
+\begin{cor}
+	Priority almost equivalence of a given DPA can be computed in quadratic time.
+\end{cor}
+
+\begin{proof}
+	By Lemma \ref{lem:general:intercal_runtime}, we can compute $\mathcal{A} \intercal \mathcal{A}$ in quadratic time. The emptiness problem for deterministic B\"uchi automata is solvable in linear time by checking reachability of loops that contain a state in $F$. 
+\end{proof}
 
 
 \subsubsection{Moore Equivalence}
@@ -107,7 +111,7 @@ In general, we use the symbol $\equiv$ to denote equivalence relations, mostly b
 \end{lem}
 
 \begin{proof}
-	%TODO
+	We refer to \cite{Hopcroft1971}. The given algorithm can be adapted to Moore automata without changing the complexity.
 \end{proof}
 
 
@@ -184,7 +188,7 @@ The following is a comprehensive list of all relevant merger functions that we u
 
 \begin{itemize}
 	\item Moore merger $\mu_M$. Defined below.
-	\item Schewe merger, $\mu_\text{Sch}^\sim$. Defined in %TODO
+	\item Schewe merger, $\mu_\text{Sch}^\sim$. Defined in section \ref{sect:schewe}.
 \end{itemize}
 
 \begin{defn}

@@ -12,6 +12,7 @@ struct Statistics {
     std::string input_file;
     size_t original_size;
     size_t number_of_sccs;
+    size_t number_of_colors;
     long milliseconds_taken;
     size_t new_size;
 };
