@@ -3,7 +3,21 @@ We first use this section to establish some general results that are used multip
 
 \subsection{Equivalence Relations}
 
-In general, we use the symbol $\equiv$ to denote equivalence relations, mostly between states of an automaton. The following is a comprehensive list of all relevant equivalence relations that we use.
+In general, we use the symbol $\equiv$ to denote equivalence relations, mostly between states of an automata. In general, we have automata $\mathcal{A}$ and $\mathcal{B}$ with states $p$ and $q$ from there respective state spaces. Our relations are then defined on $(\mathcal{A}, p) \equiv (\mathcal{B}, q)$.
+
+\begin{defn}
+	Assuming that $\mathcal{A}$ is a fixed automaton that is obvious in context and $p$ and $q$ are both states in $\mathcal{A}$, we shorten $(\mathcal{A}, p) \equiv (\mathcal{A}, q)$ to $p \equiv q$.
+	
+	Furthermore, we write $\mathcal{A} \equiv \mathcal{B}$ if for every $p$ in $\mathcal{A}$ there is a $q$ in $\mathcal{B}$ such that $(\mathcal{A}, p) \equiv (\mathcal{B}, q)$; and the same holds with $\mathcal{A}$ and $\mathcal{B}$ exchanged.
+\end{defn}
+
+\begin{defn}
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2)$ be deterministic transition structures and let $\sim \,\subseteq (\{\mathcal{A}\} \times Q_1) \times (\{\mathcal{B}\} \times Q_2)$ be an equivalence relation. We call $R$ a \emph{congruence relation} if for all $(\mathcal{A}, p) \sim (\mathcal{B}, q)$ and all $a \in \Sigma$, also $(\mathcal{A}, \delta_1(p, a)) \sim (\mathcal{B}, \delta_2(q, a))$.
+\end{defn}
+
+
+\vspace{5pt}
+The following is a comprehensive list of all relevant equivalence relations that we use.
 
 \begin{itemize}
 	\item Language equivalence, $\equiv_L$. Defined below.
@@ -21,15 +35,16 @@ Immediately we define the three first of these relations and show that they are 
 \subsubsection{Language Equivalence}
 
 \begin{defn}
-	Let $\mathcal{A}$ be an $\omega$-automaton with state set $Q$. We define \emph{language equivalence} over $Q$ as $p \equiv_L q$ if and only if for all words $\alpha \in \Sigma^\omega$, $\mathcal{A}$ accepts $\alpha$ from $p$ iff $\mathcal{A}$ accepts $\alpha$ from $q$.
+	Let $\mathcal{A}$ and $\mathcal{B}$ be $\omega$-automata. We define \emph{language equivalence} as $(\mathcal{A}, p) \equiv_L (\mathcal{B}, q)$ if and only if for all words $\alpha \in \Sigma^\omega$, $\mathcal{A}$ accepts $\alpha$ from $p$ iff $\mathcal{B}$ accepts $\alpha$ from $q$.
 \end{defn}
 
 \begin{lem}
 	$\equiv_L$ is a congruence relation.
+	\label{lem:general:L_congruence}
 \end{lem}
 
 \begin{proof}
-	It is obvious that $\equiv_L$ is an equivalence relation. For two states $p \equiv_L q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_L q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ that is accepted from $p'$ and rejected from $q'$ (or vice-versa). Then $a \cdot \alpha$ is rejected from $p$ and accepted from $q$ and thus $p \not\equiv_L q$.
+	It is obvious that $\equiv_L$ is an equivalence relation. For two states $(\mathcal{A}, p) \equiv_L (\mathcal{B}, q)$ and some successors $p' = \delta_1(p, a)$ and $q' = \delta_2(q, a)$, it must be true that $(\mathcal{A}, p') \equiv_L (\mathcal{B}, q')$. Otherwise there is a word $\alpha \in \Sigma^\omega$ that is accepted from $p'$ and rejected from $q'$ (or vice-versa). Then $a \cdot \alpha$ is rejected from $p$ and accepted from $q$ and thus $p \not\equiv_L q$.
 \end{proof}
 
 \begin{lem}
@@ -37,22 +52,29 @@ Immediately we define the three first of these relations and show that they are 
 \end{lem}
 
 \begin{proof}
-	The algorithm is based partially on \cite{HenzingerTelle1996}. %TODO
+	The algorithm is based partially on \cite{HenzingerTelle1996}.
+	
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be the DPA that we want to compute $\equiv_L$ on. We construct a labeled deterministic transition structure $\mathcal{B} = (Q \times Q, \Sigma, \delta', d)$ with $\delta'((p_1, p_2), a) = (\delta(p_1, a), \delta(p_2, a))$ and $d((p_1, p_2)) = (c(p_1), c(p_2)) \in \mathbb{N}^2$. Then, for every $i, j \in c(Q)$, let $\mathcal{B}_{i,j} = \mathcal{B} \upharpoonright_{Q_{i,j}}$ with $Q_{i,j} = \{ (p_1, p_2) \in Q \times Q \mid c(p_1) \geq i, c(p_2) \geq j \}$, i.e. remove all states which have first priority less than $i$ or second priority less than $j$.
+	
+	For each $i$ and $j$, let $S_{i,j} \subseteq 2^{Q \times Q}$ be the set of all SCCs in $\mathcal{B}_{i,j}$ and let $S = \bigcup_{i,j} S_{i,j}$. From this set $S$, remove all SCCs $s \subseteq Q \times Q$ in which the parity of the smallest priority in the first component differs from the parity of the smallest priority in the second component. The \enquote{filtered} set we call $S'$. For any two states $p, q \in Q$, $p \not\equiv_L q$ iff there is a pair $(p', q') \in \bigcup S'$ that is reachable from $(p, q)$ in $\mathcal{B}$.
+	
+	We omit the correctness proof of the algorithm here. Regarding the runtime, observe that $\mathcal{B}$ has size $\mathcal{O}(|Q|^2)$ and we create $\mathcal{O}(|c(Q)|^2)$ copies of it. All other steps like computing the SCCs can then be done in linear time in the size of the automata, which brings the total to $\mathcal{O}(|Q|^2 \cdot |c(Q)|^2)$.
 \end{proof}
 
 
 \subsubsection{Priority Almost Equivalence}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define \emph{priority almost equivalence} over $Q$ as $p \equiv_\text{\Ankh} q$ if and only if for all words $\alpha \in \Sigma^\omega$, $c^*(p, \alpha)$ and $c^*(q, \alpha)$ differ at only finitely many positions.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define \emph{priority almost equivalence} as $(\mathcal{A}, p) \equiv_\text{\Ankh} (\mathcal{B}, q)$ if and only if for all words $\alpha \in \Sigma^\omega$, $c_1^*(p, \alpha)$ and $c_2^*(q, \alpha)$ differ at only finitely many positions.
 \end{defn}
 
 \begin{lem}
 	Priority almost equivalence is a congruence relation.
+	\label{lem:general:Ankh_congruence}
 \end{lem}
 
-\begin{proof}
-	It is obvious that $\equiv_M$ is an equivalence relation. For two states $p \equiv_\text{\Ankh} q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_\text{\Ankh} q'$. Otherwise there is a word $\alpha \in \Sigma^\omega$ such that $c^*(p', \alpha)$ and $c^*(q', \alpha)$ differ at infinitely many positions. Then $c^*(p, a \alpha)$ and $c^*(q, a \alpha)$ also differ at infinitely many positions and thus $p \not\equiv_\text{\Ankh} q$.
+\begin{proof} 
+	It is obvious that $\equiv_\text{\Ankh}$ is an equivalence relation. For two states $(\mathcal{A}, p) \equiv_\text{\Ankh} (\mathcal{B}, q)$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $(\mathcal{A}, p') \equiv_\text{\Ankh} (\mathcal{B}, q')$. Otherwise there is a word $\alpha \in \Sigma^\omega$ such that $c_1^*(p', \alpha)$ and $c_2^*(q', \alpha)$ differ at infinitely many positions. Then $c_1^*(p, a \alpha)$ and $c_2^*(q, a \alpha)$ also differ at infinitely many positions and thus $(\mathcal{A}, p) \not\equiv_\text{\Ankh} (\mathcal{B}, q)$.
 \end{proof}
 
 The following definition is used as an intermediate step on the way to computing $\equiv_\text{\Ankh}$.
@@ -73,14 +95,14 @@ The following definition is used as an intermediate step on the way to computing
 \end{proof}
 
 \begin{lem}
-	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. Two states $p_0 \in Q_1$ and $q_0 \in Q_2$ are priority almost-equivalent iff $L(\mathcal{A} \intercal \mathcal{B}, (p_0, q_0)) = \emptyset$. 
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. $(\mathcal{A}, p) \equiv_\text{\Ankh} (\mathcal{B}, q)$ iff $L(\mathcal{A} \intercal \mathcal{B}, (p, q)) = \emptyset$. 
 	\label{lem:general:intercal_prioalmostequiv}
 \end{lem}
 
 \begin{proof}
-	For the first direction of implication, let $L(\mathcal{A} \intercal \mathcal{B}, (p_0, q_0)) \neq \emptyset$, so there is a word $\alpha$ accepted by that automaton. Let $(p_0, q_0) (p_1, q_1) \cdots$ be the accepting run on $\alpha$. Then $p_0 p_1 \cdots$ and $q_0 q_1 \cdots$ are the runs of $\mathcal{A}$ and $\mathcal{B}$ on $\alpha$ respectively. Whenever $(p_i, q_i) \in F_\intercal$, $p_i$ and $q_i$ have different priorities. As the run of the product automaton vists infinitely many accepting states, $\alpha$ is a witness for $p_0$ and $q_0$ being not priority almost-equivalent.
+	For the first direction of implication, let $L(\mathcal{A} \intercal \mathcal{B}, (p_0, q_0)) \neq \emptyset$, so there is a word $\alpha$ accepted by that automaton. Let $(p, q) (p_1, q_1) (p_2, q_2) \cdots$ be the accepting run on $\alpha$. Then $p p_1 \cdots$ and $q q_1 \cdots$ are the runs of $\mathcal{A}$ and $\mathcal{B}$ on $\alpha$ respectively. Whenever $(p_i, q_i) \in F_\intercal$, $p_i$ and $q_i$ have different priorities. As the run of the product automaton vists infinitely many accepting states, $\alpha$ is a witness for $p$ and $q$ being not priority almost-equivalent.
 	
-	For the second direction, let $p_0$ and $q_0$ be not priority almost-equivalent, so there is a witness $\alpha$ at which infinitely many positions differ in priority. Analogously to the first direction, this means that the run of $\mathcal{A} \intercal \mathcal{B}$ on the same word is accepting and therefore the language is not empty.
+	For the second direction, let $p$ and $q$ be not priority almost-equivalent, so there is a witness $\alpha$ at which infinitely many positions differ in priority. Analogously to the first direction, this means that the run of $\mathcal{A} \intercal \mathcal{B}$ on the same word is accepting and therefore the language is not empty.
 \end{proof}
 
 \begin{cor}
@@ -95,15 +117,16 @@ The following definition is used as an intermediate step on the way to computing
 \subsubsection{Moore Equivalence}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define \emph{Moore equivalence} over $Q$ as $p \equiv_M q$ if and only if for all words $w \in \Sigma^*$, $c(\delta^*(p, w)) = c(\delta^*(q, w))$.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define \emph{Moore equivalence} as $(\mathcal{A}, p) \equiv_M (\mathcal{B}, q)$ if and only if for all words $w \in \Sigma^*$, $c_1(\delta^*(p, w)) = c_2(\delta^*(q, w))$.
 \end{defn}
 
 \begin{lem}
 	$\equiv_M$ is a congruence relation.
+	\label{lem:general:M_congruence}
 \end{lem}
 
 \begin{proof}
-	It is obvious that $\equiv_M$ is an equivalence relation. For two states $p \equiv_M q$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $p' \equiv_M q'$. Otherwise there is a word $w \in \Sigma^*$ such that $c(\delta^*(p', w)) \neq c(\delta^*(q', w))$. Then $c(\delta^*(p, aw)) \neq c(\delta^*(q, aw))$ and thus $p \not\equiv_M q$.
+	It is obvious that $\equiv_M$ is an equivalence relation. For two states $(\mathcal{A}, p) \equiv_M (\mathcal{B}, q)$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $(\mathcal{A}, p') \equiv_M (\mathcal{B}, q')$. Otherwise there is a word $w \in \Sigma^*$ such that $c_1(\delta_1^*(p', w)) \neq c_2(\delta_2^*(q', w))$. Then $c_1(\delta_1^*(p, aw)) \neq c_2(\delta_2^*(q, aw))$ and thus $(\mathcal{A}, p) \not\equiv_M (\mathcal{B}, q)$.
 \end{proof}
 
 \begin{lem}
@@ -119,6 +142,7 @@ The following definition is used as an intermediate step on the way to computing
 
 \begin{lem}
 	$\equiv_M \,\subseteq\, \equiv_\text{\Ankh} \,\subseteq\, \equiv_L$
+	\label{lem:general:M_subs_Ankh_subs_L}
 \end{lem}
 
 \begin{proof}
@@ -188,20 +212,27 @@ The following is a comprehensive list of all relevant merger functions that we u
 
 \begin{itemize}
 	\item Moore merger $\mu_M$. Defined below.
-	\item Schewe merger, $\mu_\text{Sch}^\sim$. Defined in section \ref{sect:schewe}.
+	\item Skip merger, $\mu_\text{skip}^\sim$. Defined in section \ref{sect:skipper}.
 \end{itemize}
 
+
+\subsubsection{Moore merger}
 \begin{defn}
 	Let $\mathcal{A}$ be a DPA. The Moore merger $\mu_M$ is defined as $\mu_M : \mathfrak{C}(\equiv_M) \rightarrow 2^Q, \kappa \mapsto \kappa$.
 \end{defn}
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_M$. Then $\mathcal{A}$ and $\mathcal{A}'$ are language equivalent.
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_M$. Then $\mathcal{A}$ and $\mathcal{A}'$ are Moore equivalent.
+	\label{lem:general:moore_merge_keeps_mooreequiv}
 \end{lem}
 
 \begin{proof}
 	%TODO
 \end{proof}
+
+\begin{cor}
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_M$. Then $\mathcal{A}$ and $\mathcal{A}'$ are language equivalent.
+\end{cor}
 
 
 

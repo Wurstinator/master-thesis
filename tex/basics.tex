@@ -188,7 +188,3 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define $c^* : Q \times (\Sigma^* \cup \Sigma^\omega) \rightarrow (\mathbb{N}^* \cup \mathbb{N}^\omega)$ as $c^*(q, w) : 1+|w| \rightarrow \mathbb{N}, i \mapsto c(\delta^*(q, w[0, i]))$.
 \end{defn}
 
-\begin{defn}
-	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure and let $R \subseteq Q \times Q$ be an equivalence relation over $Q$. We call $R$ a \emph{congruence relation} if for all $(p, q) \in R$ and all $a \in \Sigma$, also $(\delta(p, a), \delta(q, a)) \in R$.
-\end{defn}
-

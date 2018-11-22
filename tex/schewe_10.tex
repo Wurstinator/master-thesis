@@ -2,7 +2,24 @@
 \section{Schewe}
 \label{sect:schewe}
 
-This section is based heavily on \cite{Schewe2010} and mostly adapts their results from B\"uchi to parity automata.
+This section is based heavily on \cite{Schewe2010} and partially adapts their results from B\"uchi to parity automata.
+
+\begin{defn}
+		Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\emptyset \neq C \subseteq M \subseteq Q$. Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be another DPA. We call $\mathcal{A}'$ a \emph{Schewe merge of $\mathcal{A}$ w.r.t. $M$ by candidates $C$} if it satisfies the following:
+	\begin{itemize}
+		\item There is a state $r_M \in C$ such that $Q' = (Q \setminus M) \cup \{r_M\}$.
+		\item $c' = c\upharpoonright_{Q'}$.
+		\item Let $p \in Q'$ and $\delta(p, a) = q$. If $q \in M$ or if $q \in C$ and $p$ is not reachable from $q$, then $\delta'(p, a) = r_M$. Otherwise, $\delta'(p, a) = q$. 
+	\end{itemize}
+\end{defn}
+
+The definition of a Schewe merge is almost identical to that of a representative merge. The only difference lies therein that some additional transitions are redirected to the representative: when a transition leads to a candidate that is not in $M$ while also moving to a different SCC.
+
+More redirection allows for better state space reduction in theory. 
+%TODO
+
+
+
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim \,\subseteq Q \times Q$ be a congruence relation on $\mathcal{A}$. Let $\preceq \,\subseteq Q \times Q$ be a total extension of $\preceq_\text{reach}^\mathcal{A}$. 
@@ -81,34 +98,41 @@ Now that we have established the definition and possible computation of the Sche
 
 \vspace{5pt}
 
-We have proven that the Schewe merger function can be used to refine congruence relations (such as $\equiv_\text{Ankh}$) that, by themselves are not strong enough criteria to allow for a merging of states, to the point that they can be used for state space reduction. A final result regarding this technique is adapted from \cite{Schewe2010} and shows a relation between this algorithm and priority almost equivalence.
-
-
+We have proven that the Schewe merger function can be used to refine congruence relations (such as $\equiv_\text{\Ankh}$) that, by themselves are not strong enough criteria to allow for a merging of states, to the point that they can be used for state space reduction. A final result regarding this technique is adapted from \cite{Schewe2010} and shows a relation between this algorithm and priority almost equivalence.
 
 \begin{lem}
-	Let $\sim \,=\, \equiv_\text{\Ankh}$ and let $\mathcal{S}'$ be a representative merge of $\mathcal{S}$ w.r.t. $\equiv_M$. There is no smaller DPA than $\mathcal{S}'$ that is priority almost equivalent to $\mathcal{A}$.
-\end{lem} %TODO
+	Let $\sim \,=\, \equiv_\text{\Ankh}$ and let $\mathcal{S}'$ be a representative merge of $\mathcal{S}$ w.r.t. $\mu_M$. There is no smaller DPA than $\mathcal{S}'$ that is priority almost equivalent to $\mathcal{A}$.
+\end{lem} 
 
 \begin{proof}
-	Let $\mathcal{B}$ be a DPA that is smaller than $\mathcal{S}'$. Our goal is to construct a word on which their priorities differ infinitely often.
+	Let $\mathcal{B}$ be a DPA that is smaller than $\mathcal{S}'$. Our goal is to show that $\mathcal{A} \not\equiv_\text{\Ankh} \mathcal{B}$.
 	
-	First of all, $\mathcal{B}$ must have \enquote{the same} $\sim$-equivalence classes as $\mathcal{S}'$, i.e. for all states $p$ in $\mathcal{S}'$, there is a state $q$ in $\mathcal{B}$ s.t. $\mathcal{B}_q$ and $\mathcal{S}'_p$ are priority almost-equivalent. If this would not be the case, there is a $p$ for which no such $q$ exists. As $\mathcal{S}'$ was minimized, $p$ is reachable by some word $w$. Whatever state $q$ is reached in $\mathcal{B}$ via $w$, $\mathcal{B}_q$ and $\mathcal{S}'_p$ are not priority almost-equivalent and there is some witness $\alpha$ for that. Hence, $w \alpha$ is a witness that $\mathcal{B}$ and $\mathcal{S}'$ are not priority almost-equivalent.
+	At first observe that $\mathcal{A} \equiv_\text{\Ankh} \mathcal{S}'$: $\mathcal{A}$ and $\mathcal{S}$ are priority almost equivalent as for every state in $\mathcal{A}$, there is an equivalent representative in $\mathcal{S}$. $\mathcal{S}$ and $\mathcal{S}'$ are Moore equivalent by Lemma \ref{lem:general:moore_merge_keeps_mooreequiv} and thus they are also priority almost equivalent by Lemma \ref{lem:general:M_subs_Ankh_subs_L}.
+
+	Assume that $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$ holds, so for all states in $\mathcal{S}'$, there is a a priority almost equivalent state in $\mathcal{B}$. We define a function $f$ that maps to each equivalence class of $\equiv_\text{\Ankh}$ in $\mathcal{S}'$ all states in $\mathcal{B}$ that are equivalent to it, i.e. if $\kappa \subseteq Q_{\mathcal{S}'}$ is an equivalence class, then $f(\kappa) = \{q \in Q_\mathcal{B} \mid \exists p \in \kappa: (\mathcal{S}', p) \equiv_\text{\Ankh} (\mathcal{B}, q) \}$. Note that $f(\kappa)$ can never be empty by the assumption of $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$.
 	
-	We define $f$ as a function that maps every $\sim$-equivalence class in $\mathcal{S}'$ to its respective class in $\mathcal{B}$. $\mathcal{B}$ has at least as many $\sim$-equivalence classes but less states than $\mathcal{S}'$, so there is a class $\mathfrak{c}$ in $\mathcal{S}'$ such that $f(\mathfrak{c})$ contains less elements than $\mathfrak{c}$.
+	As $\mathcal{B}$ is smaller than $\mathcal{S}'$, the pigeonhole principle applies and we can fix $\kappa$ to be one equivalence class such that $|f(\kappa)| < |\kappa|$.
 	
-	By Lemma \ref{lem:schewe:equiv_same_scc}, there is a unique SCC $C$ in $\mathcal{S}'$ in which all states in $\mathfrak{c}$ are contained. The same must be true for some SCC $D$ in $\mathcal{B}$ for the states in $f(\mathfrak{c})$. Otherwise we could apply the Schewe automaton construction to $\mathcal{B}$ which does not increase the number of states, is priority almost-equivalent to $\mathcal{B}$, and has this property.
+	By Lemma \ref{lem:schewe:equiv_same_scc}, there is an SCC $C$ in $\mathcal{S}'$ that contains all states in $\kappa$. Without loss of generality we can assume that likewise there is an SCC $D$ in $\mathcal{B}$ that contains $f(\kappa)$. If no such SCC would exist, we could simply apply the Schewe merger to $\mathcal{B}$ to find an automaton that is smaller than $\mathcal{S}'$ and does have this property.
 	
-	$C$ and $D$ must be non-trivial SCCs. If $C$ would be trivial, then $\mathfrak{c}$ would only contain one element and $f(\mathfrak{c})$ would be empty. Hence, one can force multiple visits to a state in $\mathfrak{c}$ in $\mathcal{S}'$. If $D$ would be trivial, this would not be possible and we could again find a seperating witness of the two automata.
+	$C$ and $D$ must be non-trivial SCCs: if $C$ would be trivial, $\kappa$ would contain only one element and $f(\kappa)$ would be empty. If $D$ would be trivial, $f(\kappa) = \{q\}$ would contain of only one state. Since $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$, there is a state $p \in \kappa \subseteq C$ in $\mathcal{S}'$ with $(\mathcal{S}', p) \equiv_\text{\Ankh} (\mathcal{B}, q)$. Since $C$ is not trivial, there is a word $w$ from which $\mathcal{S}'$ moves from $p$ back to $p$. $\mathcal{B}$ however, leaves $f(\kappa)$ with that word, as $D$ is trivial, so $q$ cannot reach itself again. This is a contradiction, as $\equiv_\text{\Ankh}$ is a congruence relation.
 	
-	We claim: There is a state $p \in \mathfrak{c}$ s.t. for all $q \in f(\mathfrak{c})$, there is a word $w_q \in \Sigma^*$ that is a witness for non-Moore equivalence of $\mathcal{B}_q$ and $\mathcal{S}'_r$ and $\mathcal{S}'$ does not leave $C$ when reading $w_q$ from $p$. Assume the opposite, i.e. for all $p \in \mathfrak{c}$, there is a $q_p \in f(\mathfrak{c})$ which does not satisfy said property. 
+	\vspace{5pt}
 	
-	As $|\mathfrak{c}| < |f(\mathfrak{c})|$, there are two states $p_1$ and $p_2$ such that $q_{p_1} = q_{p_2} =: q$. For both $i \in \{1,2\}$ and for each word $w \in \Sigma^*$, we have $\lambda_\mathcal{B}(q, w) = \lambda_{\mathcal{S}'}(p_i, w)$ or $\mathcal{S}'$ leaves the SCC $C$ when reading $w$ from $p_i$. If for both $i$ and all words $w$ the first case would apply, then $p_1$ and $p_2$ would be Moore-equivalent and would have been merged in the minimization process of $\mathcal{S}'$. Hence, there are $i$ (which we assume to be $i=1$ wlog) and $w$ such that $\lambda_\mathcal{B}(q, w) \neq \lambda_{\mathcal{S}'}(p_i, w)$ but $\mathcal{S}'_{p_i}$ leaves $C$ when reading $w$. Let this $w$ be minimal in length.
+	We claim that there is a state $p \in \kappa$ such that there is a family of words $(w_q)_{q \in Q_{\mathcal{B}}}$ such that $\mathcal{S}'$ does not leave $C$ reading these words from $p$ and $c_{\mathcal{S}'}(\delta_{\mathcal{S}'}^*(p, w)) \neq c_{\mathcal{B}}(\delta_{\mathcal{B}}^*(q, w))$. (in other words, $w_q$ is a witness for $p$ and $q$ being not Moore-equivalent.)
 	
-	Let $\rho$ and $\pi$ be the runs of $\mathcal{S}'$ from $p_1$ and $p_2$ via $w$. At some position $k$, $\rho$ leaves $C$. By Lemma \ref{lem:schewe:run_growing}, this means that a redirected transition was taken to $\rho(k+1) = r_{[\rho(k+1)]_\sim}$. $\sim$ is a congruence relation and $p_1 \sim p_2$, so $\pi(k+1) \sim \rho(k+1)$. As $p_1 \simeq p_2$ and $p_1 \prec r_{[\rho(k+1)]_\sim}$, we also have $p_2 \prec r_{[\rho(k+1)]_\sim}$ and $\pi(k+1) = \rho(k+1)$. As $w$ was chosen minimal in length, the priorities of the runs are equal everywhere except for $\delta^*_{\mathcal{S}'}(p_1, w)$ and $\delta^*_{\mathcal{S}'}(p_2, w)$. However, the runs converge at $k+1$ which means that they visit the same states from that point on. In particular, $\delta^*_{\mathcal{S}'}(p_1, w) = \delta^*_{\mathcal{S}'}(p_2, w)$.
+	Towards a contradiction, assume that the claim is false and that for every $p \in \kappa$, there is a state $q_p \in f(\kappa)$ that does not satisfy the property. As $|\kappa| > |f(\kappa)|$ we can again use the pigeonhole principle and obtain two states $p_1, p_2 \in \kappa$ such that $q_{p_1} = q_{p_2}$. We call this state $q := q_{p_1}$.
 	
-	We have thus proven that the described state $p \in \mathfrak{c}$ and the words $w_q \in \Sigma^*$ exist. We can use these to finally construct our witness $\alpha$. We define a sequence $(\alpha_n)_{n \in \mathbb{N}} \in \Sigma^*$ such that on $\alpha_n$, the runs of $\mathcal{S}'$ and $\mathcal{B}$ differ at least $n$ times in priority. Then $\alpha := \bigcup_n \alpha_n$ satisfies our requirements. Furthermore, we make sure that after reading $\alpha_n$, $\mathcal{S}'$ always stops in $p$.
+	For each word $w \in \Sigma^*$, $c_{\mathcal{S}'}^*(p_1, w) = c_{\mathcal{B}}^*(q, w)$ or $\mathcal{S}'$ leaves $C$ while reading $w$ from $p_1$. The same holds for $p_2$. If for all $w$ the first case would apply, then $c_{\mathcal{S}'}^*(p_1, w) = c_{\mathcal{S}'}^*(p_2, w)$ for all $w$ and thus $p_1 \equiv_M p_2$. This is impossible, as the two states would have been merged in the construction of $\mathcal{S}'$. Without loss of generality, we assume that $p_1$ breaks the pattern and there is a $w$ such that $c_{\mathcal{S}'}^*(p_1, w) \neq c_{\mathcal{B}}^*(q, w)$ but $\mathcal{S}'$ leaves $C$ when reading $w$ from $p_1$. Let this $w$ have minimal length.
 	
-	Every state in $\mathcal{S}'$ is reachable, so let $\alpha_0$ be a word that reaches $p$ from the initial state. Now assume that $\alpha_n$ was already defined. Let $q = \delta^*_\mathcal{B}(q_0^\mathcal{B}, \alpha_n)$. As $p \in \mathfrak{c}$, we can use the same argument as earlier to find $q \in f(\mathfrak{c})$. There is a suitable word $w_q$ that is a witness for Moore non-equivalence while staying in $C$. As we stay in $C$, there is also a word $u$ such that $\delta^*_{\mathcal{S}'}(p, w_q u) = p$. We set $\alpha_{n+1} := \alpha_n w_q u$. By choice of $w_q$, there is a position during the segment on $w_q u$ at which runs of $\mathcal{S}'$ and $\mathcal{B}$ differ in priority. By induction, $\alpha_{n+1}$ satisfies all our required properties.
+	Let $\rho_1$ and $\rho_2$ be the respective runs of $\mathcal{S}$ (note that we are using the automaton here that is not yet Moore-minimized) on $w$ from $p_1$ and $p_2$. At some point $k$, $\rho_1$ leaves $C$.
+	%TODO
+	
+	\vspace{5pt}
+	
+	We can use the claim that he have just shown to finish our overall proof. Fix an arbitrary $q_0 \in f(\kappa)$. We define a sequence of finite words $(\alpha_n)_{n \in \mathbb{N}}$ such that every $\alpha_n$ is a prefix of $\alpha_{n+1}$ and the runs of $\mathcal{S}'$ and $\mathcal{B}$ from $p$ and $q_0$ respectively differ in priority at least $n$ times. Then $\alpha := \bigcup_n \alpha_n$ is an $\omega$-word that is a witness for $(\mathcal{S}', p)$ and $(\mathcal{B}, q_0)$ not being priority almost equivalent.
+	
+	We make sure that after reading any $\alpha_n$ from $p$, $\mathcal{S}'$ moves back to $p$. Let $\alpha_0 := \varepsilon$ and assume for induction that $\alpha_n$ has already been defined. After reading $\alpha_0$, $\mathcal{S}'$ reaches $p$ and $\mathcal{B}$ reaches some $q$. If $q \notin f(\kappa)$, i.e. $(\mathcal{S}', p) \not\equiv_\text{\Ankh} (\mathcal{B}, q)$, there is a witness $\beta$ and we can simply set $\alpha := \alpha_n \beta$. Otherwise, $q \in f(\kappa)$. With the claim we have proven, we can find a word $w_q$ such that reading the word from $p$ and $q$ leads to states $p'$ and $q'$ that have different priorities but $p'$ is still in $C$. Thus, there is a word $u$ that leads back from $p'$ to $p$. We then set $\alpha_{n+1} := \alpha_n w_q u$. This finishes our proof.
 \end{proof}
 
 
