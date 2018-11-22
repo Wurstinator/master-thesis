@@ -113,8 +113,8 @@ set(AUTOMATON_HOA_INCLUDE ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_FILES} ${HOAFP_IN
 add_library(automaton ${AUTOMATON_INCLUDE})
 target_include_directories(automaton PRIVATE ${RANGEV3_DIR}/include)
 
-add_library(automaton_with_hoa ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE})
-target_include_directories(automaton_with_hoa PRIVATE ${RANGEV3_DIR}/include)
+add_library(automaton_with_hoa ${AUTOMATON_HOA_INCLUDE})
+target_include_directories(automaton_with_hoa PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(AUTOMATON_TESTS
         src/automaton/tests/test_automata.cpp
@@ -216,10 +216,10 @@ set(ITERATEDMOORE_INCLUDE ${ITERATEDMOORE_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCL
 add_library(iterated_moore ${ITERATEDMOORE_INCLUDE})
 target_include_directories(iterated_moore PRIVATE ${RANGEV3_DIR}/include)
 
-add_executable(iterated_moore_main ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_MAIN} src/iterated_moore/main_statistics.cpp src/iterated_moore/main_statistics.h)
+add_executable(iterated_moore_main ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_INCLUDE} ${MAST_COMMON_HDRS_MAIN} src/iterated_moore/main_statistics.cpp src/iterated_moore/main_statistics.h)
 target_include_directories(iterated_moore_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
-add_executable(iterated_moore_statistics ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_FILES} ${MAST_COMMON_HDRS_STAT} src/iterated_moore/main_statistics.cpp src/iterated_moore/main_statistics.h)
+add_executable(iterated_moore_statistics ${ITERATEDMOORE_INCLUDE} ${AUTOMATON_HOA_INCLUDE} ${MAST_COMMON_HDRS_STAT} src/iterated_moore/main_statistics.cpp src/iterated_moore/main_statistics.h)
 target_include_directories(iterated_moore_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(ITERATEDMOORE_TESTS
@@ -247,7 +247,7 @@ add_executable(path_refinement_main
         src/path_refinement/main_statistics.h
         src/path_refinement/main_statistics.cpp
         ${PATHREFIN_INCLUDE}
-        ${AUTOMATON_HOA_FILES}
+        ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(path_refinement_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
@@ -255,14 +255,14 @@ add_executable(path_refinement_statistics
         src/path_refinement/main_statistics.h
         src/path_refinement/main_statistics.cpp
         ${PATHREFIN_INCLUDE}
-        ${AUTOMATON_HOA_FILES}
+        ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_STAT})
 target_include_directories(path_refinement_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 add_executable(path_refinement_lambda_order
         src/path_refinement/main_lambda_order.cpp
         ${PATHREFIN_INCLUDE}
-        ${AUTOMATON_HOA_FILES})
+        ${AUTOMATON_HOA_INCLUDE})
 target_include_directories(path_refinement_lambda_order PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 set(PATHREFIN_TESTS
@@ -293,7 +293,7 @@ add_executable(tremoore_main
         src/threshold_moore/main_statistics.h
         src/threshold_moore/main_statistics.cpp
         ${TREMOORE_INCLUDE}
-        ${AUTOMATON_HOA_FILES}
+        ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(tremoore_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
@@ -301,7 +301,7 @@ add_executable(tremoore_statistics
         src/threshold_moore/main_statistics.h
         src/threshold_moore/main_statistics.cpp
         ${TREMOORE_INCLUDE}
-        ${AUTOMATON_HOA_FILES}
+        ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_STAT})
 target_include_directories(tremoore_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
@@ -331,7 +331,7 @@ add_executable(lsf_main
         src/lsf/main_statistics.h
         src/lsf/main_statistics.cpp
         ${LSF_INCLUDE}
-        ${AUTOMATON_HOA_FILES}
+        ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(lsf_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
@@ -339,6 +339,6 @@ add_executable(lsf_statistics
         src/lsf/main_statistics.h
         src/lsf/main_statistics.cpp
         ${LSF_INCLUDE}
-        ${AUTOMATON_HOA_FILES}
+        ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_STAT})
 target_include_directories(lsf_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)

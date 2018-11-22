@@ -1,6 +1,7 @@
 
 
 #include <algorithm>
+#include <functional>
 #include <cassert>
 
 namespace tollk {

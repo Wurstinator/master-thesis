@@ -78,9 +78,6 @@ tollk::automaton::parity_label_t MinParity(const tollk::automaton::ParityAutomat
 
 Statistics PerformConstructionMeasurement(const ConstructionExecutor& construction_executioner, const BaseOptions& options) {
     Statistics data{};
-    data.original_size = construction_executioner.GetInDPA().States().size();
-    data.number_of_sccs = CountSCCs(construction_executioner.GetInDPA());
-    data.number_of_colors = construction_executioner.GetInDPA().AllLabels().size();
     TimePoint time = TimeNow();
     const tollk::automaton::DPA final_dpa = construction_executioner.PerformConstruction(options);
     data.milliseconds_taken = TimeDiffMS(time, TimeNow());
@@ -93,9 +90,6 @@ Statistics PerformConstructionMeasurement(const ConstructionExecutor& constructi
 // Output
 void PrintCSV(const Statistics& stat) {
     std::cout << stat.input_file << ','
-              << stat.original_size << ','
-              << stat.number_of_sccs << ','
-              << stat.number_of_colors << ','
               << stat.milliseconds_taken << ','
               << stat.new_size
               << std::endl;
@@ -103,10 +97,7 @@ void PrintCSV(const Statistics& stat) {
 
 void PrintJSON(const Statistics& stat) {
     nlohmann::json j;
-    j["input_file"] = stat.input_file;
-    j["original_size"] = stat.original_size;
-    j["original_number_of_sccs"] = stat.number_of_sccs;
-    j["original_number_of_colors"] = stat.number_of_colors;
+    j["filename"] = stat.input_file;
     j["milliseconds"] = stat.milliseconds_taken;
     j["new_size"] = stat.new_size;
     std::cout << j << std::endl;

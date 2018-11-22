@@ -1,12 +1,9 @@
-
-import matplotlib.pyplot as pyplot
-import matplotlib.backends.backend_pdf as backend_pdf
-import numpy
 import json
 from enum import Enum
 
+import matplotlib.backends.backend_pdf as backend_pdf
 
-TITLE_FONTSIZE = 9
+from common_plots import *
 
 class DataType(Enum):
     GendetAP1 = 0,
@@ -53,135 +50,89 @@ class DataType(Enum):
         return alg_name + suffix
 
 
-
 # Reads a file of json objects.
 def filelines_to_json(filename):
     with open(filename, 'r') as file:
         return [json.loads(line) for line in file.readlines()]
 
+
+# Reads a text file in which each line is a JSON struct. The structs must have a (key) field which is used to initialize
+# a map to the rest of the values.
+def read_json_to_map(filename, key):
+    lines = filelines_to_json(filename)
+
+    def delkey(d, k):
+        c = dict(d)
+        del c[k]
+        return c
+
+    return {j[key]: delkey(j, key) for j in lines}
+
+
 # Reads all "relevant" files as JSON.
 def read_prefix_to_json(input_prefix):
     files = map(lambda d: 'raw/' + input_prefix + d.make_filename() + '.json', list(DataType))
-    data = map(lambda f: filelines_to_json(f), files)
+    data = map(lambda f: read_json_to_map(f, 'filename'), files)
     return dict(zip(list(DataType), data))
 
-# Plots time used as a function of the number of states.
-def plot_statenum_time(data, title, fit_func=None):
-    f = pyplot.figure()
-    x = [point['original_size'] for point in data]
-    y = [point['milliseconds'] / 1000 for point in data]
-    pyplot.plot(x, y, 'b.')
-    if fit_func is not None:
-        fit_params, covariance = scipy.optimize.curve_fit(fit_func, x, y)
-        pyplot.plot(sorted(x), fit_func(sorted(x), *fit_params), color='red')
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel('Number of states in the original automaton')
-    pyplot.ylabel('Time taken in seconds')
-    return f
 
-# Plots state reduction as a function of the number of states.
-def plot_statenum_statereduction(data, title):
-    f = pyplot.figure()
-    x = [point['original_size'] for point in data]
-    y = [point['original_size'] - point['new_size'] for point in data]
-    pyplot.plot(x, y, 'b.')
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel('Number of states in the original automaton')
-    pyplot.ylabel('Number of removed states')
-    return f
-
-# Plots state reduction as a function of the number of SCCs.
-def plot_sccnum_statereduction(data, title):
-    f = pyplot.figure()
-    x = [point['original_number_of_sccs'] for point in data]
-    y = [point['original_size'] - point['new_size'] for point in data]
-    pyplot.plot(x, y, 'b.')
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel('Number of SCCs in the original automaton')
-    pyplot.ylabel('Number of removed states')
-    return f
-
-# Plots state reduction as a function of the number of priorities.
-def plot_prionum_statereduction(data, title):
-    f = pyplot.figure()
-    x = [point['original_number_of_colors'] for point in data]
-    y = [point['original_size'] - point['new_size'] for point in data]
-    pyplot.plot(x, y, 'b.')
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel('Number of Priorities in the original automaton')
-    pyplot.ylabel('Number of removed states')
-    return f
-
-# Plots relative state reduction as a function of the number of states.
-def plot_statenum_statereductionrel(data, title):
-    f = pyplot.figure()
-    x = [point['original_size'] for point in data]
-    y = [(point['original_size'] - point['new_size'])/point['original_size'] for point in data]
-    pyplot.plot(x, y, 'b.')
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel('Number of states in the original automaton')
-    pyplot.ylabel('Relative number of removed states')
-    return f
-
-# Plots time used as a function of the number of states. Multiple sets are drawn here in different colors.
-def plot_time_comparison(datapoints, title, labels=None):
-    f = pyplot.figure()
-    nolabels = labels is None
-    if nolabels:
-        labels = ['' for _ in datapoints]
-    for data, label in zip(datapoints, labels):
-        x = [point['original_size'] for point in data]
-        y = [point['milliseconds']/1000 for point in data]
-        pyplot.plot(x, y, '.', label=label)
-    pyplot.xlabel('Number of states in the original automaton')
-    pyplot.ylabel('Time taken in seconds')
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    if not nolabels:
-        pyplot.legend(loc='upper left')
-    return f
-
-# Plots a histogram of the number of automata w.r.t relative state reduction.
-def plot_histogram_statereduction(data, title):
-    f = pyplot.figure()
-    x = [(point['original_size'] - point['new_size'])/point['original_size'] for point in data]
-    pyplot.hist(x, bins=10)
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel('Relative number of removed states')
-    pyplot.ylabel('Number of automata')
-    return f
-
-def fitting_function_1(xs, a, b, c):
-    return [numpy.asscalar(a*numpy.square(x) + b*numpy.log(x)*x + c*x) for x in xs]
-
-# Plots several figures and saves them all to a single PDF.
-def plot_dataset_to_pdf(data, filename, title):
-    pdf = backend_pdf.PdfPages(filename)
-    pdf.savefig(plot_statenum_time(data, title))
-    pdf.savefig(plot_statenum_statereduction(data, title))
-    pdf.savefig(plot_statenum_statereductionrel(data, title))
-    pdf.savefig(plot_sccnum_statereduction(data, title))
-    pdf.savefig(plot_prionum_statereduction(data, title))
-    pdf.savefig(plot_histogram_statereduction(data, title))
-    pdf.close()
-
-
-# Does a standard data analysis that consists of:
-# - Time for AP1 & AP2.
-# - State reduction (absolute) for AP1 & AP2.
-# - State reduction (relative) for AP1.
-# - State reduction to number of SCCs for AP1.
-# - Time comparison between AP1, AP2, and AP3; only for gendet.
-def general_analysis_v1(name, input_prefix, output_prefix):
-    data_dict = read_prefix_to_json(input_prefix)
+# Does a standard data analysis.
+def general_analysis_v1(name, output_prefix, dataset, rawstats):
     output_folder = 'analysis/' + output_prefix
 
-    for type, data in data_dict.items():
-        plot_dataset_to_pdf(data, output_folder + type.make_filename() + '.pdf', type.make_figure_title(name))
+    for type, data in dataset.items():
+        title = type.make_figure_title(name)
+        automata = set(data.keys()).intersection(rawstats.keys())
 
+        select_statenum = (lambda f: rawstats[f]['states'])
+        select_statered = (lambda f: rawstats[f]['states'] - data[f]['new_size'])
+        select_statered_relative = (lambda f: (rawstats[f]['states'] - data[f]['new_size']) / rawstats[f]['states'])
+        select_sccnum = (lambda f: rawstats[f]['sccs'])
+        select_prionum = (lambda f: rawstats[f]['priorities'])
+        select_time_seconds = (lambda f: data[f]['milliseconds'] / 1000)
+
+        alabel_automata = 'Number of automata'
+        alabel_statenum = 'Number of states in the original automaton'
+        alabel_statered = 'Number of removed states'
+        alabel_statered_relative = 'Relative number of removed states'
+        alabel_sccnum = 'Number of SCCs in the original automaton'
+        alabel_prionum = 'Number of priorities in the original automaton'
+        alabel_time_seconds = 'Time taken in seconds'
+
+        pdf = backend_pdf.PdfPages(output_folder + type.make_filename() + '.pdf')
+        pdf.savefig(plot_points(automata, select_statenum, select_time_seconds, title, alabel_statenum, alabel_time_seconds))
+        pdf.savefig(plot_points(automata, select_statenum, select_statered, title, alabel_statenum, alabel_statered))
+        pdf.savefig(plot_points(automata, select_statenum, select_statered_relative, title, alabel_statenum, alabel_statered_relative))
+        pdf.savefig(plot_points(automata, select_sccnum, select_statered_relative, title, alabel_sccnum, alabel_statered_relative))
+        pdf.savefig(plot_points(automata, select_prionum, select_statered_relative, title, alabel_prionum, alabel_statered_relative))
+        pdf.savefig(plot_histogram(automata, select_statered_relative, title, alabel_statered_relative, alabel_automata))
+        pdf.close()
 
     # Plot gendet: Time comparison for different ap.
     #title = 'Time for ' + name + ' construction on a random DPA with 3 priorities and different alphabets.'
-    #plot_time_comparison([gendet_ap1, gendet_ap2, gendet_ap3],
-    #                     title=title,
-    #                     filename='analysis/' + output_prefix + 'gendet_ap_compare_time.pdf',
-    #                     labels=['|Σ|=2', '|Σ|=4', '|Σ|=8'])
+    #f = plot_time_comparison([dataset[DataType.GendetAP1], dataset[DataType.GendetAP2], dataset[DataType.GendetAP3]],
+    #                     title=title, labels=['|Σ|=2', '|Σ|=4', '|Σ|=8'])
+    #f.savefig(output_folder + 'gendet_ap_compare_time.pdf')
+
+# Draws a point plot and returns the figure.
+# Each point corresponds to an element in [data]. Each such point is given to [x_select] and [y_select]
+# to obtain the x and y value for said point.
+def plot_points(data, x_select, y_select, title, xlabel, ylabel):
+    f = pyplot.figure()
+    x = [x_select(point) for point in data]
+    y = [y_select(point) for point in data]
+    pyplot.plot(x, y, 'b.')
+    pyplot.title(title, fontsize=TITLE_FONTSIZE)
+    pyplot.xlabel(xlabel)
+    pyplot.ylabel(ylabel)
+    return f
+
+# Draws a histogram by computing [select] on each point in [data].
+def plot_histogram(data, select, title, xlabel, ylabel):
+    f = pyplot.figure()
+    x = [select(f) for f in data]
+    pyplot.hist(x, bins=10)
+    pyplot.title(title, fontsize=TITLE_FONTSIZE)
+    pyplot.xlabel(xlabel)
+    pyplot.ylabel(ylabel)
+    return f
