@@ -31,6 +31,7 @@ The following is a comprehensive list of all relevant equivalence relations that
 
 Immediately we define the three first of these relations and show that they are computable.
 
+\vspace{5pt}
 
 \subsubsection{Language Equivalence}
 
@@ -61,6 +62,7 @@ Immediately we define the three first of these relations and show that they are 
 	We omit the correctness proof of the algorithm here. Regarding the runtime, observe that $\mathcal{B}$ has size $\mathcal{O}(|Q|^2)$ and we create $\mathcal{O}(|c(Q)|^2)$ copies of it. All other steps like computing the SCCs can then be done in linear time in the size of the automata, which brings the total to $\mathcal{O}(|Q|^2 \cdot |c(Q)|^2)$.
 \end{proof}
 
+\vspace{5pt}
 
 \subsubsection{Priority Almost Equivalence}
 
@@ -113,6 +115,7 @@ The following definition is used as an intermediate step on the way to computing
 	By Lemma \ref{lem:general:intercal_runtime}, we can compute $\mathcal{A} \intercal \mathcal{A}$ in quadratic time. The emptiness problem for deterministic B\"uchi automata is solvable in linear time by checking reachability of loops that contain a state in $F$. 
 \end{proof}
 
+\vspace{5pt}
 
 \subsubsection{Moore Equivalence}
 
@@ -177,12 +180,6 @@ The following definition is used as an intermediate step on the way to computing
 	A DPA $\mathcal{A}'$ is a representative merge of $\mathcal{A}$ w.r.t. $\mu$ if there is an enumeration $X_1, \dots, X_{|D|}$ of $D$ and a sequence of automata $\mathcal{A}_0, \dots, \mathcal{A}_{|D|}$ such that $\mathcal{A}_0 = \mathcal{A}$, $\mathcal{A}_{|D|} = \mathcal{A}'$ and every $\mathcal{A}_{i+1}$ is a representative merge of $\mathcal{A}_i$ w.r.t. $X_{i+1}$ by candidates $\mu(X_{i+1})$.
 \end{defn}
 
-A common special case of this are quotient automata that are often used in state space reduction. Given a congruence relation $\sim$, the quotient automaton w.r.t. $\sim$ is equivalent to a representative merge w.r.t. $\mu : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$.
-
-\begin{lem}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be an equivalence relation. A representative merge of $\mathcal{A}$ w.r.t. $\sim$ is a representative merge of $\mathcal{A}$ w.r.t. $\mu : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$.
-\end{lem}
-
 \vspace{5pt}
 
 The following Lemma formally proofs that this definition actually makes sense, as building representative merges is commutative if the merge sets are disjoint.
@@ -211,28 +208,34 @@ The following Lemma, while simple to prove, is interesting and will find use in 
 The following is a comprehensive list of all relevant merger functions that we use.
 
 \begin{itemize}
-	\item Moore merger $\mu_M$. Defined below.
+	\item Quotient merger, $\mu_\div^\sim$. Defined below.
+	\item Moore merger, $\mu_M$. Defined below.
 	\item Skip merger, $\mu_\text{skip}^\sim$. Defined in section \ref{sect:skipper}.
 \end{itemize}
 
+\vspace{5pt}
 
-\subsubsection{Moore merger}
+\subsubsection{Quotient merger}
 \begin{defn}
-	Let $\mathcal{A}$ be a DPA. The Moore merger $\mu_M$ is defined as $\mu_M : \mathfrak{C}(\equiv_M) \rightarrow 2^Q, \kappa \mapsto \kappa$.
+	Let $\sim$ be a congruence relation. We define the \emph{quotient merger} $\mu^\sim_\div : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$. 
 \end{defn}
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_M$. Then $\mathcal{A}$ and $\mathcal{A}'$ are Moore equivalent.
-	\label{lem:general:moore_merge_keeps_mooreequiv}
-\end{lem}
+\label{lem:general:congrel_prio_implies_moore}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Then $\mathcal{A}$ is Moore equivalent to every representative merge w.r.t. $\mu_\div^\sim$.
+\end{lem} 
 
-\begin{proof}
-	%TODO
+\begin{proof} 
+	Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be a representative merge. For every $q \in Q$, we prove that $(\mathcal{A}, q) \equiv_M (\mathcal{A}', r_{[q]_\sim})$. Since all states in $\mathcal{A}'$ are representatives of that form and every representative exists in $\mathcal{A}$ as well, this suffices to prove Moore equivalence.
+	
+	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting in $q$ and $r_{[q]_\sim}$. For every $i \in \mathbb{N}$, we have $\rho'(i) = [\rho(i)]_\sim$ and thus $c'(\rho'(i)) = c(\rho(i))$. Therefore, $\rho$ is accepting iff $\rho'$ is accepting.
 \end{proof}
 
-\begin{cor}
-	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_M$. Then $\mathcal{A}$ and $\mathcal{A}'$ are language equivalent.
-\end{cor}
+\begin{defn}
+	We define the special \emph{Moore merger} $\mu_M = \mu_\div^{\equiv_M}$.
+\end{defn}
+
+\vspace{5pt}
 
 
 

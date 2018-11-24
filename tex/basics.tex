@@ -171,6 +171,12 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 \end{defn}
 
 \begin{defn}
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. A \emph{strongly connected component}, or SCC, is a set $S \subseteq Q$ such that for all $p, q \in S$, there is a $w \in \Sigma^*$ with $\delta^*(p, w) = q$.
+	
+	An SCC $S$ is \emph{trivial} if it contains only one state $q$ and $\delta(q, a) \neq q$ for all $a \in \Sigma$.
+\end{defn}
+
+\begin{defn}
 	A \emph{deterministic finite automaton} (or DFA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, F)$, where $F \subseteq Q$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \rho(|\rho|+1) \in F \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$ from $q$, we write $L(\mathcal{A}, q)$.
 \end{defn}
 
