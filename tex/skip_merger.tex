@@ -55,7 +55,7 @@ Now that we have established the definition and possible computation of the skip
 
 \begin{lem}
 \label{lem:skip:run_suffix}
-	Let $\rho \in Q^\omega$ be an infinite run in $\mathcal{B}$ starting at a reachable state. Then $\rho$ has a suffix that is a run in $\mathcal{A}$.
+	Let $\rho \in Q^\omega$ be an infinite run in $\mathcal{B}$. Then $\rho$ has a suffix that is a run in $\mathcal{A}$.
 \end{lem} 
 
 \begin{proof}
@@ -67,6 +67,7 @@ Now that we have established the definition and possible computation of the skip
 
 \begin{theorem}
 	Let $\sim \,\subseteq\, \equiv_L$. Then $\mathcal{A}$ and $\mathcal{B}$ are language equivalent.
+\label{thm:skip:lang_equiv}
 \end{theorem}
 
 \begin{proof}
@@ -74,5 +75,4 @@ Now that we have established the definition and possible computation of the skip
 	
 	Let $w \in \Sigma^*$ be the prefix of $\alpha$ with $\alpha = w \beta$. By Lemma \ref{lem:general:cong_stays_in_merge}, we know that $\delta^*(q_0, w) \sim \delta^*_\mathcal{B}(q_0, w)$. Since every state is $\sim$-equivalent to its representative and $\sim$ is a congruence relation, we also know $\delta^*_\mathcal{B}(q_0, w) \sim \delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$. From $\delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$, the run $\pi$ accepts $\beta$ iff $\alpha \in L(\mathcal{B}, q_0)$. As $\sim$ implies language equivalence, the same must hold for $\delta^*_\mathcal{A}(q_0, w)$. Therefore, $\alpha \in L(\mathcal{A}, q_0)$ iff $\alpha \in L(\mathcal{B}, q_0)$.
 \end{proof}
-
 

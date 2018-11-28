@@ -9,95 +9,92 @@ This section is based heavily on \cite{Schewe2010} and partially adapts their re
 	\begin{itemize}
 		\item There is a state $r_M \in C$ such that $Q' = (Q \setminus M) \cup \{r_M\}$.
 		\item $c' = c\upharpoonright_{Q'}$.
-		\item Let $p \in Q'$ and $\delta(p, a) = q$. If $q \in M$ or if $q \in C$ and $p$ is not reachable from $q$, then $\delta'(p, a) = r_M$. Otherwise, $\delta'(p, a) = q$. 
+		\item Let $p \in Q'$ and $\delta(p, a) = q$. If $q \in M$ or if ($q \in C$ and $p$ is not reachable from $q$), then $\delta'(p, a) = r_M$. Otherwise, $\delta'(p, a) = q$. 
 	\end{itemize}
 \end{defn}
 
 The definition of a Schewe merge is almost identical to that of a representative merge. The only difference lies therein that some additional transitions are redirected to the representative: when a transition leads to a candidate that is not in $M$ while also moving to a different SCC.
 
-More redirection allows for better state space reduction in theory. 
-%TODO
-
-
-
+Using the Schewe merge instead of the representative merge does not actually remove any additional states from the automaton, it only provides a better \enquote{framework} for following algorithms such as the Moore reduction. Example %TODO
+shows that using a Schewe merge followed by another merge of $\mu_M$ creates a better end result.
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim \,\subseteq Q \times Q$ be a congruence relation on $\mathcal{A}$. Let $\preceq \,\subseteq Q \times Q$ be a total extension of $\preceq_\text{reach}^\mathcal{A}$. 
+	Let $\mathcal{A}$ be DPA with a merger function $\mu : D \rightarrow 2^Q$. For a representative merge $\mathcal{A}'$, we define the \emph{candidate relation} $\sim_\mathcal{C}^\mu$ as $p \sim_\mathcal{C}^\mu q$ iff there is a $C \in \mu(D)$ with $p, q \in C$.
 	
-	We define the \emph{Schewe merger function} $\mu_\text{Sch}^\sim : D \rightarrow 2^Q$ as follows: for each equivalence class $\kappa \in \mathfrak{C}(\sim)$, let $C_\kappa \subseteq \kappa$ be the of $\preceq$-maximal elements in $\kappa$. Let $M_\kappa = \kappa \setminus C_\kappa$. Then we have $D = \{ M_\kappa \mid \kappa \in \mathfrak{C}(\sim) \}$ and $\mu_\text{Sch}^\sim(M_\kappa) = C_\kappa$.
-	
-	We call a representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{Sch}^\sim$ a \emph{Schewe automaton}.
+	We say that $\mu$ is \emph{Schewe suitable} if for all representative merges $\mathcal{A}'$, $\sim_\mathcal{C}^\mu$ is a congruence relation, it implies language equivalence, and the reachability order restricted to any $\kappa \in \mathfrak{C}(\sim_\mathcal{C}^\mu)$ is an equivalence relation.
 \end{defn}
 
-The idea behind the Schewe merger is that whenever an equivalence class of $\sim$ is reached, the transition is redirected to another element of the same equivalence class that lies as \enquote{deep} in the automaton as possible.
 
 \begin{lem}
-\label{lem:schewe:schewe_aut_linear_time}
-	For a given $\mathcal{A}$ and $\sim$, $\mu_\text{Sch}^\sim$ can be computed in $\mathcal{O}(|\mathcal{A}|)$.
+	Let $\mathcal{A}$ be a DPA and $\mu : D \rightarrow 2^Q$ be a merger function that is Schewe suitable. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu$ and let $\mathcal{A}''$ be the Schewe merge that uses the same choice of representatives. For all $p \sim_\mathcal{C}^\mu q$, $\delta'(p, a) \sim_\mathcal{C}^\mu \delta''(q, a)$.
+	\label{lem:schewe:different_merges_still_congruent}
 \end{lem}
 
 \begin{proof}
-	As seen in Lemma \ref{lem:general:reach_topo_lintime}, $\preceq$ can be computed in linear time. Assuming that $\sim$ is given by a suitable data structure, each equivalence class can easily be accessed and $\preceq$-maximal elements can be found in linear time.
+	If $\delta''(q, a) = \delta'(q, a)$, then $\delta'(p, a) \sim_\mathcal{C}^\mu \delta'(q, a)$ because $\mu$ is Schewe suitable and the claim is true.
+	
+	Otherwise $\delta'(q, a) = q' \in \mu(M)$ for some $M$ and $q$ is not reachable from $q'$. Then $\delta''(q, a) = r_M$. By definition, $r_M \in \mu(M)$ as well. By definition of $\sim_\mathcal{C}^\mu$, $r_m \sim_\mathcal{C}^\mu q'$ and thus $\delta'(p, a) \sim_\mathcal{C}^\mu \delta'(q, a) \sim_\mathcal{C}^\mu \delta''(q, a)$.
 \end{proof}
 
-\vspace{10pt}
-
-Now that we have established the definition and possible computation of the Schewe merger function, we want to analyze its structure and prove its correctness. For the rest of this section, we use $\mathcal{A} = (Q, \Sigma, \delta, c)$ as a DPA, $\sim$ as a congruence relation, and $\mathcal{S} = (Q_\mathcal{S}, \Sigma, \delta_\mathcal{S}, c_\mathcal{S})$ as a Schewe automaton with $\mu_\text{Sch}^\sim$.
 
 \begin{lem}
-\label{lem:schewe:run_growing}
-	Let $\rho$ be a run on $\alpha$ in $\mathcal{S}$. Then for all $i$, $\rho(i) \preceq \rho(i+1)$.
-	Furthermore, we have $\rho(i) \prec \rho(i+1)$ if and only if $\rho(i) \prec r_{[\delta(\rho(i), \alpha(i))]_\sim}$.
+	Let $\mathcal{A}$ be a DPA and $\mu : D \rightarrow 2^Q$ be a merger function that is Schewe suitable. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu$ and let $\mathcal{A}''$ be the Schewe merge that uses the same choice of representatives. Every run of $\mathcal{A}''$ has a suffix that is a run of $\mathcal{A}'$.
+	\label{lem:schewe:merge_has_suffix_run}
 \end{lem}
 
 \begin{proof}
-	Let $i$ be an arbitrary index of the run. If $\rho(i)$ to $\rho(i+1)$ is also a transition in $\mathcal{A}$, then $\rho(i+1)$ is reachable from $\rho(i)$ in $\mathcal{A}$ and hence $\rho(i) \preceq \rho(i+1)$ by definition of the preorder. Otherwise the transition used was redirected in the construction. The way the redirection is defined, this implies $\rho(i) \prec \rho(i+1)$.
+	Let $K \subseteq \mathbb{N}$ be the set of positions at which $\mathcal{A}''$ uses a transition that is not in $\mathcal{A}'$. That is, given a run $\rho$ on $\alpha$, $\rho(k+1) \neq \delta'(\rho(k) \alpha(k))$ for all $k \in K$. If we can prove that $K$ is finite, then that means $\rho[\max K + 1, \omega]$ is a run in $\mathcal{A}'$.
 	
-	We move on to the second part of the lemma. If $\rho(i) \prec r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim}$, then the transition is redirected to $\rho(i+1) = r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim}$ and the statement holds. 
+	More precisely, we show that for every $\kappa \in \mathfrak{C}(\sim_\mathcal{C}^\mu)$, there is at most one $k \in K$ such that $\rho(k+1) \in \kappa$. Towards a contradiction assume the opposite, so there are $k < k'$ which both have this property. We label the positions in $K$ in ascending order and have $k = k_l$ and $k' = k_{l'}$ for some $l < l'$.
 	
-	For the other direction, let $\rho(i) \prec \rho(i+1)$ and assume towards a contradiction that $\rho(i) \not\prec r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim}$. This means that the transition was not redirected and $\rho(i+1) = \delta_\mathcal{A}(\rho(i), \alpha(i))$. Since $\preceq$ is total, we have $r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim} = r_{[\rho(i+1)]_\sim} \preceq \rho(i) \prec \rho(i+1)$ which contradicts the $\preceq$-maximality of representatives.
+	Consider $k_{l+1}$. By definition of the Schewe merge, $\delta'(\rho(k_{l+1}), \alpha(k_{l+1})) \not\preceq_\text{reach}^\mathcal{A} \rho(k_{l+1})$. By Lemma \ref{lem:schewe:different_merges_still_congruent}, we know that $(\delta')^*(\rho(k_{l+1}), \alpha[k_{l+1}, k_{l'}+1]) \sim_\mathcal{C}^\mu (\delta'')^*(\rho(k_{l+1}), \alpha[k_{l+1}, k_{l'}+1]) = \rho(k_{l'}+1)$. That means there is a state $r \in \kappa$ that is reachable from $\delta'(\rho(k_{l+1}), \alpha(k_{l+1}))$ in $\mathcal{A}$ and therefore from $\rho(k_l + 1)$ as well.
+	
+	Reachability order restricted to $\kappa$ is an equivalence relation, so $r$ and $\rho(k_l + 1)$ must lie in the same SCC in $\mathcal{A}'$. That however contradicts the fact that at position $k_{l+1}$ a redirected transition was taken.
 \end{proof}
 
+
 \begin{lem}
-\label{lem:schewe:equiv_same_scc}
-	Let $p, q \in Q_\mathcal{S}$. If $p \sim q$, then $p$ and $q$ lie in the same SCC. 
+	Let $\mathcal{A}$ be a DPA and $\mu : D \rightarrow 2^Q$ be a merger function that is Schewe suitable. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu$ that was built with representatives $R \subseteq Q$. If a Schewe merge $\mathcal{A}''$ is built with the same representatives, then $(\mathcal{A}', p) \equiv_L (\mathcal{A}'', q)$ for all $q \sim_\mathcal{C}^\mu q$.
+	\label{lem:schewe:schewe_suitable_works}
 \end{lem}
 
 \begin{proof}
-	It suffices to restrict ourselves to $q = r_{[q]_\sim} = r_{[p]_\sim}$. If we can prove the Lemma for this case, then the general statement follows by transitivity.
+	Let $\alpha \in \Sigma^\omega$ be some word. Let $\rho'$ be the run of $\mathcal{A}'$ on $\alpha$ starting in $p$ and let $\rho''$ be the run of $\mathcal{A}''$ on $\alpha$ starting in $q$. Let $k_1, \dots, k_n$ be the positions at which $\rho''$ uses a transition that is not present in $\mathcal{A}'$, i.e. $\rho''(k_i + 1) \neq \delta'(\rho(k_i), \alpha(k_i))$. By Lemma \ref{lem:schewe:merge_has_suffix_run}, this list must be finite. 
 	
-	Let $p_0$ be a state from which both $p$ and $q$ are reachable. Let $p_0 \cdots p_n$ be a minimal run of $\mathcal{S}$ that reaches $p$. By Lemma \ref{lem:schewe:run_growing}, we have $p_0 \preceq \dots \preceq p_n$. Whenever $p_i \prec p_{i+1}$, a redirected transition to the representative $r_{[p_{i+1}]_\sim} = p_{i+1}$ is taken. 
+	Our goal now is to prove $\rho'(k_i + 1) \sim_\mathcal{C}^\mu \rho''(k_i + 1)$ for all $i$. If that is true, then $\rho'(k_n + 1) \sim_\mathcal{C}^\mu \rho''(k_n + 1)$ in particular is true and therefore $\rho'(k_n + 1) \equiv_L \rho''(k_n + 1)$. By choice of $k_n$, $\rho''[k_n + 1, \omega]$ is also a run in $\mathcal{A}'$ which has the same acceptance as $\rho''$. Since the two states are language equivalent, this is also the same acceptance as $\rho'$.
 	
-	Let $k$ be the first position after which no redirected transition is taken anymore. For the first case, assume that $k < n$. Then $p_i \simeq r_{[p_{i+1}]_\sim}$ for all $i \geq k$. In particular, $p_{n-1} \simeq q$. Since $p_{n-1} \preceq p_n$, we also have $q \preceq p_n$. The representatives are chosen $\preceq$-maximal in their $\sim$-class, so $q \simeq p_n$.
-	
-	The second case is $k = n$. In that case, the transition from $p_{n-1}$ to $p_n$ is redirected and $p_n = r_{[p_n]_\sim} = q$.
+	Assume that for some $i$, $\rho'(k_j + 1) \sim_\mathcal{C}^\mu \rho''(k_j + 1)$ is true for all $j < i$. As $\sim_\mathcal{C}^\mu$ is a congruence relation in $\mathcal{A}'$, $\rho'(k_i) \sim_\mathcal{C}^\mu \rho''(k_i)$ and $\rho'(k_i + 1) = \delta'(\rho'(k_i), \alpha(k_i)) \sim_\mathcal{C}^\mu \delta'(\rho''(k_i), \alpha(k_i))$. By Lemma \ref{lem:schewe:different_merges_still_congruent}, $\delta'(\rho''(k_i), \alpha(k_i)) \sim \delta''(\rho''(k_i), \alpha(k_i)) = \rho''(k_i + 1)$.
 \end{proof}
 
 
 \begin{lem}
-\label{lem:schewe:run_suffix}
-	Let $\rho \in Q^\omega$ be an infinite run in $\mathcal{S}$ starting at a reachable state. Then $\rho$ has a suffix that is a run in $\mathcal{A}$.
-\end{lem} 
+	Let $\sim$ be a congruence relation that implies language equivalence. Then $\mu_\text{skip}^\sim$ is Schewe suitable.
+	\label{lem:schewe:skip_suitable}
+\end{lem}
 
 \begin{proof}
-	We show that only finitely often a redirected transition is used in $\rho$. Then, from some point on, only transitions that also exist in $\mathcal{A}$ are used. The suffix starting at this point is the run that we are looking for.
+	Let $\mathcal{A}'$ be a representative merge of a DPA $\mathcal{A}$ w.r.t. $\mu_\text{skip}^\sim$. We prove that $p \sim q$ iff $p \sim_\mathcal{C}^{\mu_\text{skip}^\sim} q$. The required properties then follow from the assumptions in the statement and from Lemma \ref{lem:skip:equiv_same_scc}.
 	
-	Let $\rho = p_0 p_1 \cdots$. By Lemma \ref{lem:schewe:run_growing}, we have $p_i \preceq p_{i+1}$ for all $i$ and $p_i \prec p_{i+1}$ whenever a redirected transition is taken. As $Q$ is finite, we can only move up in the order finitely often. This proves our claim.
+	We have $\text{dom}(\mu_\text{skip}^\sim) = D = \{M_\kappa \mid \kappa \in \mathfrak{C}(\sim)\}$ and $\mu_\text{skip}^\sim(M_\kappa) = C_\kappa \subseteq \kappa$. Thus, $p \sim_\mathcal{C}^{\mu_\text{skip}^\sim} q$ implies $p \sim q$.
+	
+	On the other hand, $\kappa = C_\kappa \cup M_\kappa$, so all states of $\kappa$ that remain in $\mathcal{A}'$ are $C_\kappa$ and thus lie in the same equivalence class of $\sim_\mathcal{C}^{\mu_\text{skip}^\sim}.$
 \end{proof}
 
 
-\begin{theorem}
-	Let $\sim \,\subseteq\, \equiv_L$. Then $\mathcal{A}$ and $\mathcal{S}$ are language equivalent.
-\end{theorem}
+\begin{cor}
+	Let $\mathcal{A}$ be a DPA and let $\sim$ be a congruence relation that implies language equivalence. For each Schewe merge $\mathcal{A}'$ of $\mathcal{A}$, $\mathcal{A} \equiv_L \mathcal{A}'$.
+\end{cor}
 
 \begin{proof}
-	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ be of $\mathcal{S}$ starting in $q_0$ on $\alpha$. By Lemma \ref{lem:schewe:run_suffix}, $\rho$ has a suffix $\pi$ which is a run segment of $\mathcal{A}$ on some suffix $\beta$ of $\alpha$. The acceptance condition of DPAs is prefix independent, so $\alpha \in L(\mathcal{S})$ iff $\rho$ is an accepting run iff $\pi$ is an accepting run. Since the priorities do not change during the construction, $\pi$ is accepting in $\mathcal{S}$ iff it is accepting in $\mathcal{A}$.
-	
-	Let $w \in \Sigma^*$ be the prefix of $\alpha$ with $\alpha = w \beta$. By Lemma \ref{lem:general:cong_stays_in_merge}, we know that $\delta^*(q_0, w) \sim \delta^*_\mathcal{S}(q_0, w)$. Since every state is $\sim$-equivalent to its representative and $\sim$ is a congruence relation, we also know $\delta^*_\mathcal{S}(q_0, w) \sim \delta^*_\mathcal{S}(r_{[q_0]_\sim}, w)$. From $\delta^*_\mathcal{S}(r_{[q_0]_\sim}, w)$, the run $\pi$ accepts $\beta$ iff $\alpha \in L(\mathcal{S})$. As $\sim$ implies language equivalence, the same must hold for $\delta^*_\mathcal{A}(q_0, w)$. Therefore, $\alpha \in L(\mathcal{A})$ iff $\alpha \in L(\mathcal{S})$.
+	Follows from Lemma \ref{lem:schewe:schewe_suitable_works}, Lemma \ref{lem:schewe:skip_suitable}, and Theorem \ref{thm:skip:lang_equiv}.
 \end{proof}
 
-\vspace{5pt}
 
+
+\newpage
+
+
+%TODO
 We have proven that the Schewe merger function can be used to refine congruence relations (such as $\equiv_\text{\Ankh}$) that, by themselves are not strong enough criteria to allow for a merging of states, to the point that they can be used for state space reduction. A final result regarding this technique is adapted from \cite{Schewe2010} and shows a relation between this algorithm and priority almost equivalence.
 
 \begin{lem}

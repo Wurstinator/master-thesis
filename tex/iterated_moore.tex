@@ -1,0 +1,106 @@
+
+\section{Iterated Moore Equivalence}
+\label{sect:imoore}
+
+Standard Moore equivalence was created to minimize Moore automata in which the priority of every state matters; in other words, the occurrence set of a given run is considered. Parity automata on the other hand only use the smaller infinity set. The idea of the upcoming approach is to use this relaxation to give the standard Moore equivalence more freedom and remove additional states.
+
+\begin{defn}
+	Let $\mathcal{A} = (P, \Sigma, \delta, c)$ and $\mathcal{B} = (Q, \Sigma, \varepsilon, d)$ be DPAs and $S \subseteq P$. We say that \emph{$\mathcal{A}$ prepends $S$ to $\mathcal{B}$} if 
+	\begin{itemize}
+		\item $Q \cap S = \emptyset$
+		\item $P = Q \cup S$
+		\item $\delta\upharpoonright_{Q \times \Sigma} = \varepsilon$
+		\item $c\upharpoonright_Q = d$
+	\end{itemize}
+	
+	We assume $S$ to be an SCC in these use cases, i.e. from every $s \in S$, every other $s' \in S$ is reachable in $\mathcal{A}$.
+\end{defn} 
+
+\begin{defn}
+\label{def:fwe:itmoore}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA with SCCs $\mathcal{S} \subseteq 2^Q$. Let $\preceq \,\subseteq \mathcal{S} \times \mathcal{S}$ be a total preorder on the SCCs such that $S \preceq S'$ implies that $S'$ is reachable from $S$. For the $i$-th element w.r.t. this order, we write $S_i$, i.e. $S_0 \prec S_1 \prec \dots \prec S_{|\mathcal{S}|}$. 
+	
+	For every state $q$ in $\mathcal{A}$, let $\text{SCC}(q)$ be the SCC of $q$ and let $\text{SCCi}(q)$ be the index of that SCC, i.e. $\text{SCC}(q) = S_{\text{SCCi}(q)}$. Let $\preceq_Q \,\subseteq Q \times Q$ be a total preorder on the states such that $q \preceq_Q q'$ implies $\text{SCCi}(q) \leq \text{SCCi}(q')$.
+	
+	We inductively define a sequence of automata $(\mathcal{B}_i)_{0 \leq i \leq |\mathcal{S}|}$. For every $i$, we write $\mathcal{B}_i = (Q_i, \Sigma, \delta_i, c_i)$.
+	
+	\begin{itemize}
+		\item The state sets are defined as $Q_i = \bigcup_{j=i}^{|\mathcal{S}|} S_j$.
+		\item The base case is $\mathcal{B}_{|\mathcal{S}|} = \mathcal{A}\upharpoonright_{S_{|\mathcal{S}|}}$.
+		\item Given that $\mathcal{B}_{i+1}$ is defined, let $\mathcal{B}'_i = (Q_i, \Sigma, q_0^{\prime i}, \delta_i, c'_i)$ be a DPA that prepends $S_i$ to $\mathcal{B}_{i+1}$ such that $\delta \upharpoonright_{Q_i \times \Sigma} = \delta_i$ and $c \upharpoonright_{S_i} = c'_i \upharpoonright_{S_i}$.
+		\item Let $M'_i$ be the Moore equivalence on $\mathcal{B}'_i$. If $S_i = \{q\}$ is a trivial SCC, $q$ is not $M'_i$-equivalent to any other state, and there is a $p \in Q_{i+1}$ such that for all $a \in \Sigma$ $(\delta'_i(q, a), \delta'_i(p, a)) \in M'_i$, then let $p_0$ be $\preceq_Q$-maximal among those $p$ and let $c_i(r) = \begin{cases} c_{i+1}(p_0) & \text{if } r = q \\ c_{i+1}(r) & \text{else} \end{cases}$. If any of the three conditions is false, simply set $c_i = c'_i$.
+	\end{itemize} 
+	
+	Let $M_i$ be the Moore equivalence on $\mathcal{B}_i$. We define $\equiv_{IM} \,:= M_0$ and call this the \emph{iterated Moore equivalence} of $\mathcal{A}$.
+\end{defn}
+
+At first, this definition might confuse when written down formally like this. %TODO example
+We continuously add the SCCs of $\mathcal{A}$ starting from the \enquote{back}. In addition to computing the usual Moore equivalence on our automaton, we also take trivial SCCs into special consideration; as their priority cannot appear infinitely often on any run, its value is effectively arbitrary. We can therefore perform extra steps to more liberally merge it with other states.
+
+In the upcoming statements we prove the important properties of iterated Moore equivalence.
+
+\begin{lem}
+\label{lem:itm:mset_stays_same}
+	Let variables be as in definition \ref{def:fwe:itmoore}. For all $i$ and all $p, q \in Q_{i+1}$, $(p, q) \in M'_i$ iff $(p, q) \in M_{i+1}$. For all $i$ and all $p, q \in Q_{i+1}$, $(p, q) \in M_i$ iff $(p, q) \in M'_i$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+\begin{theorem}
+	Let $\mathcal{A}$ be a DPA. Then $|\mathfrak{C}(\equiv_M)| \geq |\mathfrak{C}(\equiv_{IM})|$.
+\end{theorem}
+
+\begin{proof}
+	We use induction as in the construction of $\equiv_{IM}$. For every $i$, let $\mathcal{A}_i = \mathcal{A} \upharpoonright_{Q_i}$ and let $N_i$ be the Moore equivalence in $\mathcal{A}_i$. Our goal is to prove $|\mathfrak{C}(N_0)| \geq |\mathfrak{C}(M_0)|$. For $i = |\mathcal{S}|$, $B_i = A_i$, so $|\mathfrak{C}(N_i)| = |\mathfrak{C}(M_i)|$ is trivial.
+	
+	Now assume that $|\mathfrak{C}(N_i)| \geq |\mathfrak{C}(M_i)|$ is given. By Lemma \ref{lem:itm:mset_stays_same}, we know $N_{i-1} \cap (Q_i \times Q_i) = N_i$ and $M_{i-1} \cap (Q_i \times Q_i) = M_i$, as no state in $S_{i-1}$ is reachable from any state in $Q_i$. Now assume that $|\mathfrak{C}(N_{i-1})| < |\mathfrak{C}(M_{i-1})|$, so there is at least one new equivalence class added to $M_{i-1}$ that was not added in $N_{i-1}$. In other words, if we call this class $\kappa$, then $\kappa \cap M_i = \emptyset$ but $\kappa \cap N_i \neq \emptyset$. 
+	
+	We consider two cases. First, if $c_{i-1} = c'_{i-1}$, let $p \in \kappa \cap N_i$ and $q \in \kappa \cap S_{i-1}$, so $(p, q) \in N_{i-1}$ but $(p, q) \notin M_{i-1}$. %TODO
+\end{proof}
+
+
+\newpage
+
+\begin{theorem}
+	Let variables be defined as in definition \ref{def:fwe:itmoore} and let $\sim_M$ be the Moore equivalence of $\mathcal{A}$. Then $\sim_M \,\subseteq\, \sim_{IM}$.
+\end{theorem}
+
+\begin{proof}
+	Let $p, q$ be two states with $p \sim_M q$ but $p \not\sim_{IM} q$ such that $\max \{\text{SCCi}(p), \text{SCCi}(q)\}$ is maximal among all possible pairs; if there are multiple pairs with the highest value, choose a pair which has maximal $\min \{\text{SCCi}(p), \text{SCCi}(q)\}$ as well.
+	
+	Without loss of generality we can assume that $c_0(p) \neq c_0(q)$ as we can always find such a pair with the definition of Moore equivalence. Since $c(p) = c(q)$, at least one of the two states must have a different priority in $c_0$ compared to $c$. By symmetry, assume that state is $q$. $\{q\}$ must be a trivial SCC in $\mathcal{A}$. Let $q'$ be the $\preceq_Q$-maximal state s.t. $(\delta(q, a), \delta(q', a)) \in M'_{\text{SCCi}(q)}$ for all $a \in \Sigma$, that is the state whose priority was copied to $q$.
+	
+	We can make the assumption that $\text{SCCi}(q) > \text{SCCi}(p)$: if $c(p) \neq c_0(\text{SCCi}(p))$, then $\{p\}$ is a trivial SCC and the choice of the states is symmetric. Otherwise, if we would have $\text{SCCi}(p) > \text{SCCi}(q)$ and $c(p) = c_0(\text{SCCi}(p))$, then $(p, q) \in M_{\text{SCCi}(q)} \subseteq\, \sim_{IM}$. 
+	
+	Consider the case that $\text{SCC}(p)$ is a non-trivial SCC, so there is a non-empty word $w$ with $\delta^*(p, w) = p$. Because of the congruence property, we know $q \sim_M p \sim_M \delta^*(p, w) \sim_M \delta^*(q, w)$. As $\{q\}$ is a trivial SCC, $\text{SCCi}(\delta^*(q, w)) > \text{SCCi}(q)$. That means that every state that is $\sim_M$-equivalent to $\delta^*(q, w)$ must also be $\sim_{IM}$-equivalent to it; otherwise, the choice of $(p, q)$ as a pair with maximal value of $\text{SCCi}(q)$ would be contradicted. In particular, $q \sim_{IM} \delta(q, w) \sim_{IM} p$, which breaks our initial assumption.
+	\vspace{5pt}
+	
+	Finally, we look at the case that $\text{SCC}(p) = \{p\}$ is trivial. First, if $c(p) \neq c_0(p)$, then there must be a state $p'$ s.t. $(\delta(p, a), \delta(p', a)) \in M'_{\text{SCCi}(p)}$ for all $a \in \Sigma$; consider the $\preceq_Q$-maximal state that satisfies this. We can show that $p'$ must be the same as $q'$ and therefore $c_0(p) = c_0(q') = c_0(q)$, which would be a contradiction. The only possibility for this to be false is that there is an $a \in \Sigma$ such that $(\delta(p, a), \delta(p', a)) \in M'_{\text{SCCi}(p)}$ but $(\delta(p, a), \delta(q', a)) \notin M'_{\text{SCCi}(p)}$. Remember that $(\delta(q, a), \delta(q', a)) \in M'_{\text{SCCi}(p)}$ and $\delta(q, a) \sim_M \delta(p, a)$. If now $(\delta(p, a), \delta(q', a)) \notin M'_{\text{SCCi}(p)}$ would hold, then $(\delta(p, a), \delta(q, a)) \notin M'_{\text{SCCi}(p)} \subseteq M_0$, so $\delta(p, a) \not\sim_{IM} \delta(q, a)$. Since $\{q\}$ is a trivial SCC, $\text{SCCi}(q) < \text{SCCi}(\delta(p, a))$, meaning that the pair $(\delta(p, a), \delta(q, a))$ would contradict our choice of $(p, q)$.
+	
+	Second, if $c(p) = c_0(p)$, then there must be a state $p' \neq p$ s.t. $(p, p') \in M'_{\text{SCCi}(p)} \subseteq M_0$. Let that $p'$ be $\preceq_Q$-maximal. $\text{SCC}(p')$ cannot be a trivial SCC: note that $q \sim_{IM} q'$ and $p \sim_{IM} p'$. Furthermore, $\delta(p, a) \sim_{IM} \delta(q, a)$ for all $a$, as to not contradict the pair $(p, q)$. Put together this means $\delta(p', a) \sim_{IM} \delta(q', a)$ for all $a$ and therefore $c_0(p) = c_0(p') = c_0(q') = c_0(q)$.
+	
+	Hence, $\text{SCC}(p')$ is a non-trivial SCC. There is a non-empty word $w$ s.t. $\delta^*(p', w) = p'$. %TODO
+\end{proof}
+
+%TODO
+\begin{theorem}
+	For a DPA $\mathcal{A}$, $\bigslant{\mathcal{A}}{\sim_{IM}}$ is also a DPA with $L(\bigslant{\mathcal{A}}{\sim_{IM}}) = L(\mathcal{A})$.
+\end{theorem}
+
+\begin{proof}
+	From the definition of the $\mathcal{B}_i$ sequence in the construction of $\sim_{IM}$, it becomes clear that $\mathcal{B}_0$ and $\mathcal{A}$ are isomorphic up to the priority function at some trivial SCCs. As those priorities are only seen finitely often anyway, they do not impact the acceptance of a word. 
+\end{proof}
+
+\vspace{0.6cm}
+Another nice and maybe surprising result is the relation of iterated Moore equivalence to delayed simulation.
+
+\begin{theorem}
+	Let $\mathcal{A}$ be a DPA. Then $\equiv_\text{de} \,\subseteq\, \sim_{IM}$.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+

@@ -156,6 +156,7 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 
 
 \section{Automata}
+
 \begin{defn}
 	Let $Q$ be a set, $\Sigma$ an alphabet, and $\delta : Q \times \Sigma \rightarrow Q$ a function. We call $\mathcal{S} = (Q, \Sigma, \delta)$ a \emph{deterministic transition structure}. We call $Q$ the states or state space.
 	
@@ -192,5 +193,9 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define $c^* : Q \times (\Sigma^* \cup \Sigma^\omega) \rightarrow (\mathbb{N}^* \cup \mathbb{N}^\omega)$ as $c^*(q, w) : 1+|w| \rightarrow \mathbb{N}, i \mapsto c(\delta^*(q, w[0, i]))$.
+\end{defn}
+
+\begin{defn}
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure and $P \subseteq Q$. We define $\mathcal{S} \upharpoonright_P = (P, \Sigma, \delta')$ as a transition structure in which $\delta'$ might only be a partial function. We set $\delta'(p, a) = \delta(p, a)$ if $\delta(p, a) \in P$, or undefined otherwise.
 \end{defn}
 

@@ -1,5 +1,6 @@
 
 \section{Fritz \& Wilke}
+\label{sect:fritzwilke}
 
 \subsection{Delayed Simulation Game}
 In this section we consider delayed simulation games and variants thereof on DPAs. This approach is based on the paper \cite{FritzWilke06}, which considered the games for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
@@ -243,6 +244,17 @@ Together with Lemma \ref{lem:general:congrel_prio_implies_moore}, this allows fo
 	In $\mathcal{A}'$, $\mu_\text{de}$ is the same as $\mu^{\equiv_\text{de}}_\div$. The fact that representative merges of $\mathcal{A}'$ w.r.t. $\mu_\text{de}$ preserve language follows from Lemma \ref{lem:general:congrel_prio_implies_moore}.
 \end{proof}
 
+\vspace{10pt}
+
+Finally, we provide a quick analysis of the computational effort for delayed simulation.
+
+\begin{theorem}
+	For a given DPA $\mathcal{A}$, $\equiv_\text{de}$ can be computed in $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$.
+\end{theorem}
+
+\begin{proof}
+	$\mathcal{A}_\text{de}$ is of size $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. Building it is a straight-forward construction. Once the delayed simulation automaton is built, we have to solve the universal problem, i.e. find all states from which all words are accepted. For DBAs this can be done in linear time with depth search or similar algorithms.
+\end{proof}
 
 
 
@@ -304,84 +316,9 @@ As the definition is so similar to the original delayed simulation, most results
 	We know $k_0 = l_0$ by definition. For the sake of induction, we look at position $i+1$. If neither $p_i$ nor $q_i$ change their SCC in this step, the statement follows from lemma \ref{lem:fritzwilke:gamma_mono}. Otherwise, $l_{i+1} = \checkmark \geq_\checkmark k_{i+1}$.
 \end{proof}
 
-The real difference comes up when looking at theorem \ref{thm:fritzwilke:combine_priorities}. If we consider again the example given in figure \ref{fig:fritzwilke:reset_oblig_example}, if that theorem would hold the same for $\equiv_\text{deR}$ we could assign both states the priority $0$, which would then make the automaton accept every word. This is obviously not the same as the original automaton, so this statement deserves some additional inspection.
-
-\begin{lem}
-\label{lem:fritzwilke:deR_equiv_states_same_minpri} 
-	Let $\mathcal{A}$ be a DPA and let $\pi$ and $\rho$ be runs of $\mathcal{A}$ on the same word but starting at different states.
-	Let $\text{off}_\pi$ and $\text{off}_\rho$ be the positions after which $\pi$ and $\rho$ respectively only stay in one single SCC. Let $\text{off} = \max \{\text{off}_\pi, \text{off}_\rho\}$. If $\pi(0) \equiv_\text{deR} \rho(0)$, then $\min \text{Occ}(c(\pi[\text{off},\omega])) = \min \text{Occ}(c(\rho[\text{off},\omega]))$.
-\end{lem}
-
-\begin{proof}
-	Let $k = \min \text{Occ}(c(\pi[\text{off},\omega]))$ and $l = \min \text{Occ}(c(\rho[\text{off},\omega]))$. Assume towards a contradiction without loss of generality that $k < l$. Let $\alpha$ be the word that is read by the two runs.
-	
-	If $k$ is even, let $\sigma$ be the run of $\mathcal{A}_\text{de}(\pi(0), \rho(0))$ on $\alpha$. Let $n \geq \text{off}$ be a position at which $c(\pi(n)) = k$. We claim that for all $i \geq n$, the third component of $\sigma(i)$ is $k$.
-	
-	At $\sigma(n)$, this must be true because $k < l \leq c(\rho(n))$ and thus $c(\rho(n)) \not\preceq_p c(\pi(n))$. At all positions after $n$, it can never occur that $c(\rho(i)) \leq k$ or that $c(\pi(i))$ is odd and smaller than $k$. There is also never a change in SCCs anymore, by choice of $n$. The rest follows from the definition of $\gamma$.
-	
-	If $k$ is odd, we can argue similarly on the run of $\mathcal{A}_\text{de}(\rho(0), \pi(0))$. As soon as $c(\pi)$ reaches its minimum, the third component of the run will never change again.
-\end{proof}
-
-
-\begin{theorem} 
-\label{thm:fritzwilke:deR_combine_priorities}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $p, q \in Q$ with $p \equiv_\text{de} q$ and $c(p) < c(q)$. Define $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(s) = \begin{cases} c(p) & \text{if } s = q \\ c(s) & \text{else} \end{cases}$. If $\{p\}$ is not a trivial SCC in $\mathcal{A}$, then $\mathcal{A} \equiv_L \mathcal{A}'$.
-\end{theorem}
-
-\begin{proof} %TODO
-	Let $q_0 \in Q$ be an arbitrary state. We show that $L(\mathcal{A}, q_0) = L(\mathcal{A}', q_0)$.
-	
-	First, consider the case that $c(p)$ is an even number. The parity of each state is at least as good in $\mathcal{A}'$ as it is in $\mathcal{A}$, so $L(\mathcal{A}, q_0) \subseteq L(\mathcal{A}', q_0)$. For the other direction, assume there is an $\alpha \in L(\mathcal{A}', q_0) \setminus L(\mathcal{A}, q_0)$, so the respective run $\rho \in Q^\omega$ is accepting in $\mathcal{A}'$ but not in $\mathcal{A}$. 
-	
-	For this to be true, $\rho$ must visit $q$ infinitely often and $c'(q)$ must be the lowest priority that occurs infinitely often; otherwise, the run would have the same acceptance in both automata. Thus, there is a finite word $w \in \Sigma^*$ such that from $q$, $\mathcal{A}$ reaches again $q$ via $w$ and inbetween only priorities greater than $c'(q)$ are seen.
-	
-	Now consider the word $w^\omega$ and the run $\pi_q$ of $\mathcal{A}$ on said word starting in $q$. With the argument above, we know that the minimal priority occuring in $c(\pi_q)$ is greater than $c'(q)$. If we take the run $\pi_p$ on $w^\omega$ starting at $p$ though, we find that this run sees priority $c(p) = c'(q)$ at the very beginning. This contradicts Lemma \ref{lem:fritzwilke:equiv_states_same_minpri}, as $p \equiv_\text{de} q$. Thus, the described $\alpha$ cannot exist. 
-	
-	If $c(p)$ is an odd number, a very similar argumentation can be applied with the roles of $\mathcal{A}$ and $\mathcal{A}'$ reversed. We omit this repetition.
-\end{proof}
-
-
-\begin{lem}
-\label{lem:fritzwilke:trivial_scc_dont_matter}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\{s\} \subseteq Q$ be a trivial SCC in $\mathcal{A}$. For any arbitrary $k \in \mathbb{N}$, let $\mathcal{A}' = (Q, \Sigma, \delta, c')$ be another DPA with $c' \upharpoonright_{Q \setminus \{s\}} = c \upharpoonright_{Q \setminus \{s\}}$ and $c'(s) = k$. Then $\mathcal{A} \equiv_L \mathcal{A}'$.
-\end{lem}
-
-\begin{proof}
-	Let $q \in Q$ be any state. We show that $L(\mathcal{A}, q) = L(\mathcal{A}', q)$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ starting in $q$ on some $\alpha \in \Sigma^\omega$. As $s$ lies in a trivial SCC, the runs visit that state at most once. Therefore, $\text{Inf} c(\rho) = \text{Inf} c'(\rho')$ and the runs have the same acceptance.
-\end{proof}
-
 \vspace{5pt}
-Using these results, we can now define a suitable merger function for delayed simulation with resets. 
 
-\begin{defn}
-	We define the \emph{delayed simulation merger with resets} $\mu_\text{deR} : \mathfrak{C}(\equiv_\text{deR}) \rightarrow 2^Q$ as follows: Let $T \subseteq Q$ be the set of states that are in trivial SCCs. For every equivalence class $\kappa$ of $\equiv_\text{deR}$, we set $\mu_\text{deR}(\kappa) = c(\min c^{-1}(\kappa \setminus T))$.
-\end{defn}
-
-\begin{cor}
-	Let $\mathcal{A}$ be a DPA. Then $\mathcal{A}$ is language equivalent to every representative merge w.r.t. $\mu_\text{de}$.
-\end{cor}
-
-\begin{proof}
-	With Theorem \ref{thm:fritzwilke:combine_priorities}, we can construct a language equivalent $\mathcal{A}' = (Q, \Sigma, \delta, c')$ such that for all $\kappa \in \mathfrak{C}(\equiv_\text{de})$, all states in $\kappa$ have the same priority in $c'$. Every representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{de}$ is a representative merge of $\mathcal{A}'$ w.r.t. $\mu_\text{de}$.
-	
-	In $\mathcal{A}'$, $\mu_\text{de}$ is the same as $\mu^{\equiv_\text{de}}_\div$. The fact that representative merges of $\mathcal{A}'$ w.r.t. $\mu_\text{de}$ preserve language follows from Lemma \ref{lem:general:congrel_prio_implies_moore}.
-\end{proof}
-
-\vspace{10pt}
-
-Finally, we provide a quick analysis of the computational effort for delayed simulation.
-
-\begin{theorem}
-	For a given DPA $\mathcal{A}$, $\equiv_\text{de}$ and $\equiv_\text{deR}$ can be computed in $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$.
-\end{theorem}
-
-\begin{proof}
-	$\mathcal{A}_\text{de}$ and $\mathcal{A}_\text{deR}$ are of size $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. Building $\mathcal{A}_\text{de}$ is straight-forward and $\mathcal{A}_\text{deR}$ also only requires additional information about the SCCs of $\mathcal{A}$, which can be computed in linear time.
-	
-	Once the delayed simulation automata are built, we have to solve the universal problem, i.e. find all states from which all words are accepted. For DBAs this can be done in linear time with depth search or similar algorithms.
-\end{proof}
-
-
+Unfortunately, Theorem \ref{thm:fritzwilke:combine_priorities} does not translate easily to $\equiv_\text{deR}$. In fact, we were not able to find a characterization for a merger function except for the option to only merge states within single SCCs. Then, however, using the skip merger in combination with normal delayed simulation yields a result just as good.
 
 
 
