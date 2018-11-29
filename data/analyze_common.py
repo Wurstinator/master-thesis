@@ -1,4 +1,4 @@
-import json
+
 from enum import Enum
 
 import matplotlib.backends.backend_pdf as backend_pdf
@@ -50,24 +50,6 @@ class DataType(Enum):
         return alg_name + suffix
 
 
-# Reads a file of json objects.
-def filelines_to_json(filename):
-    with open(filename, 'r') as file:
-        return [json.loads(line) for line in file.readlines()]
-
-
-# Reads a text file in which each line is a JSON struct. The structs must have a (key) field which is used to initialize
-# a map to the rest of the values.
-def read_json_to_map(filename, key):
-    lines = filelines_to_json(filename)
-
-    def delkey(d, k):
-        c = dict(d)
-        del c[k]
-        return c
-
-    return {j[key]: delkey(j, key) for j in lines}
-
 
 # Reads all "relevant" files as JSON.
 def read_prefix_to_json(input_prefix):
@@ -113,26 +95,3 @@ def general_analysis_v1(name, output_prefix, dataset, rawstats):
     #f = plot_time_comparison([dataset[DataType.GendetAP1], dataset[DataType.GendetAP2], dataset[DataType.GendetAP3]],
     #                     title=title, labels=['|Σ|=2', '|Σ|=4', '|Σ|=8'])
     #f.savefig(output_folder + 'gendet_ap_compare_time.pdf')
-
-# Draws a point plot and returns the figure.
-# Each point corresponds to an element in [data]. Each such point is given to [x_select] and [y_select]
-# to obtain the x and y value for said point.
-def plot_points(data, x_select, y_select, title, xlabel, ylabel):
-    f = pyplot.figure()
-    x = [x_select(point) for point in data]
-    y = [y_select(point) for point in data]
-    pyplot.plot(x, y, 'b.')
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel(xlabel)
-    pyplot.ylabel(ylabel)
-    return f
-
-# Draws a histogram by computing [select] on each point in [data].
-def plot_histogram(data, select, title, xlabel, ylabel):
-    f = pyplot.figure()
-    x = [select(f) for f in data]
-    pyplot.hist(x, bins=10)
-    pyplot.title(title, fontsize=TITLE_FONTSIZE)
-    pyplot.xlabel(xlabel)
-    pyplot.ylabel(ylabel)
-    return f

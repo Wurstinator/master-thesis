@@ -50,14 +50,14 @@ DPA ReadDPA(const std::string& filename) {
     return hoa::DPAFromHOA(&file);
 }
 
-unsigned int NontrivialLanguageClasses(const NPA&);
+EquivalenceRelation<state_t> LanguageClasses(const NPA&);
+
 bool IsPriorityNormalized(const NPA&);
+
 bool IsMooreMinimized(const NPA&);
 
-long NontrivialLanguageClasses(const DPA& dpa) {
-    const EquivalenceRelation<state_t> language = LanguageEquivalentStates(dpa);
-    return std::count_if(language.Classes().begin(), language.Classes().end(),
-                         [](const EquivalenceRelation<state_t>::EquivClass& c) { return c.size() > 1; });
+EquivalenceRelation<state_t> LanguageClasses(const DPA& dpa) {
+    return LanguageEquivalentStates(dpa);
 }
 
 bool IsPriorityNormalized(const DPA& dpa) {
@@ -87,7 +87,16 @@ nlohmann::json AnalyzeAutomaton(const AutomatonT& automaton) {
     json["is_deterministic"] = is_deterministic_automaton;
     json["sccs"] = StronglyConnectedComponents(automaton).sccs.size();
     if (is_deterministic_automaton) {
-        json["nontrivial_language_classes"] = NontrivialLanguageClasses(automaton);
+        const EquivalenceRelation<state_t> language = LanguageClasses(automaton);
+        json["nontrivial_language_classes"] = std::count_if(language.Classes().begin(), language.Classes().end(),
+                                                            [](const EquivalenceRelation<state_t>::EquivClass& c) {
+                                                                return c.size() > 1;
+                                                            });
+        json["average_language_class_size"] = std::accumulate(language.Classes().begin(), language.Classes().end(), 0,
+                                                              [](size_t i,
+                                                                 const EquivalenceRelation<state_t>::EquivClass& c) {
+                                                                  return i + c.size();
+                                                              }) / static_cast<double>(language.Classes().size());
         json["is_priority_minimized"] = IsPriorityNormalized(automaton);
         json["is_moore_minimized"] = IsMooreMinimized(automaton);
     }

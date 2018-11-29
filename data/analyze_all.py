@@ -26,7 +26,7 @@ for dir in directories.values():
 
 names = {
     'schewe': 'Schewe',
-    'fritzwilke': 'Fritz & Wilke',
+    'fritzwilke': 'Delayed Simulation',
     'iterated_moore': 'Iterated Moore',
     'path_refinement': 'Path Refinement',
     'tremoore': 'Treshold Moore',
