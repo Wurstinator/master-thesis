@@ -342,3 +342,10 @@ add_executable(lsf_statistics
         ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_STAT})
 target_include_directories(lsf_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+
+
+# Simple Langeq
+
+add_executable(simplelange_main src/simple_langeq/main_statistics.h src/simple_langeq/main_statistics.cpp ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(simplelange_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
