@@ -1,36 +1,132 @@
 \section{Threshold Moore}
 \begin{defn}
-	Let $x, y, n \in \mathbb{N}$. We write $x =^{\leq n} y$ if $x = y$ or $x, y > n$.
-
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. For $k \in c(Q)$, we define $\equiv_M^{\leq k} \subseteq Q \times Q$ as a relation, such that $p \equiv_M^{\leq k} q$ if and only if for all $w \in \Sigma^*$, $c(\delta^*(p, w)) =^{\leq k} c(\delta^*(q, w))$. We call $\equiv_M^{\leq k}$ the \emph{$k$-threshold Moore equivalence}.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. For a set $K \subseteq \mathbb{N}$, we define the \emph{priority threshold} of $\mathcal{A}$ as $\mathcal{T}(\mathcal{A}, K) := (Q, \Sigma, \delta, c')$ with $c'(q) = \begin{cases} c(q) & \text{if } c(q) \notin K \\ \max c(Q) + 1 & \text{else} \end{cases}$.
+	
+	For a relation $\sim$, we define $\mathcal{T}(\sim, K) :=\, \approx$ as $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ iff $(\mathcal{T}(\mathcal{A}, K), p) \sim (\mathcal{T}(\mathcal{B}, K), q)$.
 \end{defn}
 
 \begin{lem}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $\mathcal{A}' = (Q, \Sigma, q_0, \delta, c')$ with $c'(q) = \min \{k+1, c(q)\}$. Then $\equiv_M^{\leq k}$ of $\mathcal{A}$ is equal to $\equiv_M$ of $\mathcal{A}'$.
-	\label{lem:tremoore:mleq_is_actually_just_moore}
+	If $\sim$ is an equivalence relation, then so is $\mathcal{T}(\sim, K)$. If $\sim$ is a congruence relation, then so is $\mathcal{T}(\sim, K)$.
 \end{lem}
 
 \begin{proof}
-	Follows directly from the definition of $=^{\leq k}$.
+	%TODO
 \end{proof}
 
-\begin{cor}
-	$\equiv_M^{\leq k}$ is a congruence relation.
-\end{cor}
+\begin{defn}
+	We set $\equiv_M^{\leq k} \,:= \mathcal{T}(\equiv_M, \{ n \in \mathbb{N} \mid n > k \})$.
+\end{defn}
+
+\vspace{5pt}
 
 \begin{defn}
-	Let $\mathcal{A}$ be a DPA and let $R$ be an equivalence relation on the state space that implies language equivalence. We define a relation $\equiv_\text{TM}^R$ such that $p \equiv_\text{TM} q$ if and only if all of the following are satisfied:
+	Let $\mathcal{A}$ and $\mathcal{B}$ be DPAs and let $\sim$ be an equivalence relation that implies language equivalence. We define a relation $\equiv_\text{TM}^\sim$ such that $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{B}, q)$ if and only if all of the following are satisfied:
 	\begin{enumerate}
-		\item $c(p) = c(q)$
-		\item $p \equiv_M^{\leq c(p)} q$
-		\item $(p, q) \in R$
+		\item $c_1(p) = c_2(q)$
+		\item $(\mathcal{A}, p) \equiv_M^{\leq c(p)} (\mathcal{B}, q)$
+		\item $(\mathcal{A}, p) \sim (\mathcal{B}, q)$
 	\end{enumerate}
 \end{defn}
 
+\vspace{5pt}
+
+We can notice that merging classes of $\equiv_\text{TM}^\sim$ in a specific order is a valid language-preserving operation. This is then used to define a fitting merger function. For this next part, let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM})$ be a set of states in $\mathcal{A}$. By definition of $\equiv^\sim_\text{TM}$, all states in this class have a unique priority $k$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$.
+
+\begin{lem}
+	For all $q \in Q'$, $(\mathcal{A}, q) \sim (\mathcal{A}', q)$.
+	\label{lem:tremoore:merge_keep_sim}
+\end{lem}
+
+\begin{proof} 
+	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
+	
+	By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_L (\mathcal{A}, \rho'(i))$ and $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$. Now there are two cases: if $c(\rho)$ sees infinitely many priorities of at most $k$, then $c(\rho')$ sees the same priorities at the same positions and thus $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c(\rho'))$. By definition of a representative merge, $c(\rho') = c'(\rho')$.
+	
+	 Otherwise there is a position $n$ from which $c(\rho)$ only is greater than $k$ and therefore the same is true for $c(\rho')$. That means reading $\alpha[n,\omega]$ from $\rho'(n)$ in either $\mathcal{A}$ or $\mathcal{A}'$ yields the same run which has the same acceptance as $\rho$.
+\end{proof}
+
+\begin{lem}
+	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv_M^{\leq k} (\mathcal{A}', q)$.
+	\label{lem:tremoore:merge_keep_tmoore}
+\end{lem}
+
+\begin{proof} %TODO
+	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
+	
+	By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$ which especially means that for all $i$, $c(\rho(i)) =^{\leq k} c(\rho'(i))$. Since $c(\rho'(i)) = c'(\rho'(i))$, that also implies $c(\rho(i)) =^{\leq k} c'(\rho'(i))$ which means that $(\mathcal{A}, q) \equiv_M^{\leq k} (\mathcal{A}', q)$.
+\end{proof}
+
+\begin{lem}
+	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv^\sim_\text{TM} (\mathcal{A}', q)$.
+\end{lem}
+
+\begin{proof}
+	Representative merges never change priorities assigned to states. Together with Lemma \ref{lem:tremoore:merge_keep_sim} and Lemma \ref{lem:tremoore:merge_keep_tmoore}, this already finishes the proof.
+\end{proof}
+
+\begin{cor}
+	For all $p, q \in Q'$, $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}, q)$ iff $(\mathcal{A}', p) \equiv^\sim_\text{TM} (\mathcal{A}', q)$.
+\end{cor}
+
+\vspace{10pt}
+
+\begin{defn}
+	Let $\mathcal{A}$ be a DPA and let $\sim$ be an equivalence relation that implies language equivalence. We define the \emph{Threshold Moore merger function} $\mu_\text{TM}^\sim := \mu_\div^{\equiv^\sim_\text{TM}}$.
+\end{defn}
 
 \begin{theorem}
-	Let $\mathcal{A}$ and $R$ as before and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. an equivalence class $\lambda$ of $\equiv_\text{TM}^R$. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
+	Let $\mathcal{A}$ be a DPA and let $\sim$ be an equivalence relation that implies language equivalence. Every representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{TM}^\sim$ is language equivalent to $\mathcal{A}$.
 \end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+\newpage
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM})$ be a set of states in $\mathcal{A}$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$. For all $p \in Q$, $q \in Q'$ and $a \in \Sigma$, if $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}', q)$, then $(\mathcal{A}, \delta(p, a)) \equiv^\sim_\text{TM} (\mathcal{A}', \delta'(q, a))$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM})$ be a set of states in $\mathcal{A}$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$. Let $k$ be the priority of the states in $\kappa$ which is unique by definition of $\equiv^\sim_\text{TM}$. For all states $p$ and $q$ with priority at most $l := \min \{c(p), c(q)\} \leq k$, $(\mathcal{A}, p) \equiv^{\leq l}_M (\mathcal{A}, q)$ iff $(\mathcal{A}', p) \equiv^{\leq l}_M (\mathcal{A}', q)$.
+\end{lem}
+
+\begin{proof}
+	By induction on $w \in \Sigma^*$, we prove that for all 
+\end{proof}
+
+
+
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM})$ be a set of states in $\mathcal{A}$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$. Let $k$ be the priority of the states in $\kappa$ which is unique by definition of $\equiv^\sim_\text{TM}$. For all states $p$ and $q$ with priority at most $k$, $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}, q)$ iff $(\mathcal{A}', p) \equiv^\sim_\text{TM} (\mathcal{A}', q)$.
+\end{lem}
+
+\begin{proof}
+	By definition of representative merges, the priority of states does not change. Thus, $c(p) = c'(p)$.
+\end{proof}
+
+\vspace{10pt}
+
+\begin{defn}
+	Let $\mathcal{A}$ be a DPA and let $\sim$ be an equivalence relation that implies language equivalence. We define the \emph{Threshold Moore merger function} $\mu_\text{TM}^\sim := \mu_\div^{\equiv^\sim_\text{TM}}$.
+\end{defn}
+
+\begin{theorem}
+	A representative merge of a DPA $\mathcal{A}$ w.r.t. $\mu_\text{TM}^\sim$ is language equivalent to $\mathcal{A}$.
+\end{theorem}
+
+\newpage
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM})$ be a set of states in $\mathcal{A}$. For all representative merges $\mathcal{A}'$ of $\mathcal{A}$ w.r.t $\kappa$ and all $q \in Q'$, $(\mathcal{A}, q) \equiv_L (\mathcal{A}', q)$.
+\end{lem}
 
 \begin{proof}
 	Let $q \in Q'$ be a state in the representative merge and let $\alpha \in \Sigma^\omega$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
@@ -41,7 +137,7 @@
 \begin{lem}
 	Let $\mathcal{A}$ be a DPA and let $p$ and $q$ be two states with $p \equiv_M q$. We construct $\mathcal{A}'$ from $\mathcal{A}$ by redirecting all transitions to $p$ to $q$ instead. Then for all states $r \neq p$ and all words $w$, $c(\delta^*(r, w)) = c'(\delta^{\prime *}(r, w))$.
 	\label{lem:tremoore:moore_redirect_is_ok}
-\end{lem}
+\end{lem} %TODO
 
 \begin{proof}
 	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $w$ starting in $r$. If $\rho$ never visits $p$, then $\rho = \rho'$ and the proof is done. Otherwise, let $n$ be the last position at which $\rho(n) = p$. Then $\rho'(n) = q$. Since $p \equiv_M q$, $c(\delta^*(p, u)) = c(\delta^*(q, u))$ for all $u \in \Sigma^*$ and especially for $u = w[n, |w|]$. Since $n$ was chosen as the last position where $p$ is visited, $\delta^*(q, u) = \delta^{\prime *}(q, u)$ and therefore $c(\delta^*(p, u)) = c'(\delta^{\prime *}(q, u))$ which finishes the proof.
@@ -49,11 +145,14 @@
 
 \begin{lem}
 	Let $\mathcal{A}$ and $R$ as before and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. an equivalence class $\lambda$ of $\equiv_\text{TM}^R$. Let $k$ be the priority of the states in $\lambda$ and let $\equiv_M^{\leq l}$ and $\equiv_M^{\unlhd l}$ be the $l$-threshold Moore equivalences of $\mathcal{A}$ and $\mathcal{A}'$. If $l \leq k$, then $\equiv_M^{\leq l}$ and $\equiv_M^{\unlhd l}$ are the same.
-\end{lem}
+\end{lem} %TODO
 
 \begin{proof}
 	A representative merge w.r.t. $\lambda$ can be seen as a repeated redirection of transitions, meaning that Lemma \ref{lem:tremoore:moore_redirect_is_ok} applies. Together with Lemma \ref{lem:tremoore:mleq_is_actually_just_moore}, that already finishes our proof.
 \end{proof}
+
+\vspace{10pt}
+
 
 On the other hand, figures \ref{} show that if $l > k$, the $l$-threshold Moore equivalence can both grow or shrink during the merge step. %TODO
 

@@ -1,6 +1,6 @@
 HOA: v1
 States: 5
-Start: 0
+Start: 1
 AP: 1 "a1" 
 acc-name: parity min even 2
 Acceptance: 2 Inf(0) | (Fin(1))

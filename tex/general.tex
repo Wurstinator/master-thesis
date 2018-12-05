@@ -196,7 +196,7 @@ The following Lemma formally proofs that this definition actually makes sense, a
 The following Lemma, while simple to prove, is interesting and will find use in multiple proofs of correctness later on.
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA. Let $\sim$ be a congruence relation on $Q$ and let $M \subseteq Q$ such that for all $x, y \in M$, $x \sim y$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M$ by candidates $C$. Let $\rho$ and $\rho'$ be runs of $\mathcal{A}$ and $\mathcal{A}'$ on some $\alpha$. Then for all $i$, $\rho(i) \equiv \rho'(i)$.
+	Let $\mathcal{A}$ be a DPA. Let $\sim$ be a congruence relation on $Q$ and let $M \subseteq Q$ such that for all $x, y \in M$, $x \sim y$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M$ by candidates $C$. Let $\rho$ and $\rho'$ be runs of $\mathcal{A}$ and $\mathcal{A}'$ on some $\alpha$. Then for all $i$, $(\mathcal{A}, \rho(i)) \sim (\mathcal{A}, \rho'(i))$.
 	\label{lem:general:cong_stays_in_merge}
 \end{lem}
 
@@ -205,6 +205,8 @@ The following Lemma, while simple to prove, is interesting and will find use in 
 	
 	Now consider some $i+1 > 0$. Then $\rho'(i+1) = r_{[q]_M}$ for $q = \delta(\rho'(i), \alpha(i))$. By induction we know that $\rho(i) \sim \rho'(i)$ and thus $\delta(\rho(i), \alpha(i)) = \rho(i+1) \sim q$. Further, we know $q \sim r_{[q]_M}$ by the same argument as before. Together this lets us conclude in $\rho(i+1) \sim q \sim \rho'(i+1)$.
 \end{proof}
+
+\vspace{10pt}
 
 The following is a comprehensive list of all relevant merger functions that we use.
 
@@ -223,14 +225,25 @@ The following is a comprehensive list of all relevant merger functions that we u
 \end{defn}
 
 \begin{lem}
-\label{lem:general:congrel_prio_implies_moore}
+\label{lem:general:congrel_prio_implies_moore1}
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_\div^\sim$. For all $q \in Q'$, $(\mathcal{A}, q) \equiv_M (\mathcal{A}', q)$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+	
+	Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be a representative merge. For every $q \in Q$, we prove that $(\mathcal{A}, q) \equiv_M (\mathcal{A}', r_{[q]_\sim})$. Since all states in $\mathcal{A}'$ are representatives of that form and every representative exists in $\mathcal{A}$ as well, this suffices to prove Moore equivalence.
+	
+	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting in $q$ and $r_{[q]_\sim}$. For every $i \in \mathbb{N}$, we have $\rho'(i) = [\rho(i)]_\sim$ and thus $c'(\rho'(i)) = c(\rho(i))$. Therefore, $\rho$ is accepting iff $\rho'$ is accepting.
+\end{proof}
+
+\begin{lem}
+\label{lem:general:congrel_prio_implies_moore2}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Then $\mathcal{A}$ is Moore equivalent to every representative merge w.r.t. $\mu_\div^\sim$.
 \end{lem} 
 
 \begin{proof} 
-	Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be a representative merge. For every $q \in Q$, we prove that $(\mathcal{A}, q) \equiv_M (\mathcal{A}', r_{[q]_\sim})$. Since all states in $\mathcal{A}'$ are representatives of that form and every representative exists in $\mathcal{A}$ as well, this suffices to prove Moore equivalence.
-	
-	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting in $q$ and $r_{[q]_\sim}$. For every $i \in \mathbb{N}$, we have $\rho'(i) = [\rho(i)]_\sim$ and thus $c'(\rho'(i)) = c(\rho(i))$. Therefore, $\rho$ is accepting iff $\rho'$ is accepting.
+	By Lemma \ref{lem:general:congrel_prio_implies_moore1}, we have $(\mathcal{A}, q) \equiv_M (\mathcal{A}', q)$ for all $q \in Q'$. On the other hand, for all $q \in Q \setminus Q'$, there is a representative $r_{[q]_\sim} \in Q'$. We have $q \sim r_{[q]_\sim}$ and thus $q \equiv_M r_{[q]_\sim}$ and therefore also $(\mathcal{A}, q) \equiv_M (\mathcal{A}, r_{[q]_\sim}) \equiv_M (\mathcal{A}', r_{[q]_\sim})$.
 \end{proof}
 
 \begin{defn}
@@ -298,7 +311,7 @@ An interesting property that parity automata can have is being \emph{normalized}
 
 Algorithm \ref{alg:general:normalize_c} shows how an equivalent normalized priority function can be computed in $\mathcal{O}(|Q| \cdot |c(Q)|)$. The algorithm is a slight adaption of that presented in \cite{CartonMaceiras99}, which is why we will not go into further details here and just refer to the original source.
 
-\begin{algorithm}
+\begin{algorithm}[h!] %TODO
   \caption{Normalizing the priority function of a DPA.}
   \label{alg:general:normalize_c}
   \begin{algorithmic}[1]
