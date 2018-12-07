@@ -25,9 +25,10 @@ The following is a comprehensive list of all relevant equivalence relations that
 	\item Priority almost equivalence, $\equiv_\text{\Ankh}$. Defined below.
 	\item Delayed simulation equivalence, $\equiv_\text{de}$. Defined in section \ref{sect:fritzwilke}.
 	\item Delayed simulation equivalence with resets, $\equiv_\text{deR}$. Defined in section \ref{sect:fritzwilke}.
-	\item Path refinement equivalence, $\equiv_\text{PR}$. Defined in %TODO
-	\item Threshold Moore equivalence, $\equiv_\text{TM}$. Defined in %TODO
-	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}$. Defined in %TODO
+	\item Iterated Moore equivalence, $\equiv_\text{IM}$. Defined in section \ref{sect:imoore}.
+	\item Path refinement equivalence, $\equiv_\text{PR}$. Defined in section \ref{sect:pr}.
+	\item Threshold Moore equivalence, $\equiv_\text{TM}^\sim$. Defined in section \ref{sect:tm}.
+	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}^{k,\sim}$. Defined in section \ref{sect:lsf}.
 \end{itemize}
 
 Immediately we define the three first of these relations and show that they are computable.
@@ -176,7 +177,11 @@ The following definition is used as an intermediate step on the way to computing
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\mu : D \rightarrow (2^\mathcal{Q} \setminus \emptyset)$ be a function for some $D \subseteq 2^Q$. If all sets in $D$ are pairwise disjoint and for all $X \in D$, $\mu(X) \subseteq X$, we call $\mu$ a \emph{merger function}. 
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\mu : D \rightarrow (2^\mathcal{Q} \setminus \emptyset)$ be a function for some $D \subseteq 2^Q$. We call $\mu$ a \emph{merger function} if 
+	\begin{itemize}
+		\item all sets in $D$ are pairwise disjoint; and
+		\item for $U = \bigcup D$ and all sets $X \in D$, $\mu(X) \cap (U \setminus X) = \emptyset$
+	\end{itemize}
 	
 	A DPA $\mathcal{A}'$ is a representative merge of $\mathcal{A}$ w.r.t. $\mu$ if there is an enumeration $X_1, \dots, X_{|D|}$ of $D$ and a sequence of automata $\mathcal{A}_0, \dots, \mathcal{A}_{|D|}$ such that $\mathcal{A}_0 = \mathcal{A}$, $\mathcal{A}_{|D|} = \mathcal{A}'$ and every $\mathcal{A}_{i+1}$ is a representative merge of $\mathcal{A}_i$ w.r.t. $X_{i+1}$ by candidates $\mu(X_{i+1})$.
 \end{defn}
@@ -192,6 +197,9 @@ The following Lemma formally proofs that this definition actually makes sense, a
 \begin{proof}
 	By choosing the same representative $r_{M_1}$ and $r_{M_2}$ in the merges, this is a simple application of the definition.
 \end{proof}
+
+
+\vspace{10pt}
 
 The following Lemma, while simple to prove, is interesting and will find use in multiple proofs of correctness later on.
 
@@ -215,6 +223,9 @@ The following is a comprehensive list of all relevant merger functions that we u
 	\item Moore merger, $\mu_M$. Defined below.
 	\item Skip merger, $\mu_\text{skip}^\sim$. Defined in section \ref{sect:skipper}.
 	\item Delayed simulation merger, $\mu_\text{de}$. Defined in section \ref{sect:fritzwilke}.
+	\item Path refinement metger %TODO
+	\item Treshold Moore merger, $\mu_\text{TM}^\sim$. Defined in section \ref{sect:tm}.
+	\item Labeled SCC Filter merger, $\mu_\text{LSF}^{k,\sim}$. Defined in section \ref{sect:lsf}.
 \end{itemize}
 
 \vspace{5pt}
@@ -224,26 +235,16 @@ The following is a comprehensive list of all relevant merger functions that we u
 	Let $\sim$ be a congruence relation. We define the \emph{quotient merger} $\mu^\sim_\div : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$. 
 \end{defn}
 
-\begin{lem}
-\label{lem:general:congrel_prio_implies_moore1}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_\div^\sim$. For all $q \in Q'$, $(\mathcal{A}, q) \equiv_M (\mathcal{A}', q)$.
-\end{lem}
-
-\begin{proof}
-	%TODO
-	
-	Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be a representative merge. For every $q \in Q$, we prove that $(\mathcal{A}, q) \equiv_M (\mathcal{A}', r_{[q]_\sim})$. Since all states in $\mathcal{A}'$ are representatives of that form and every representative exists in $\mathcal{A}$ as well, this suffices to prove Moore equivalence.
-	
-	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting in $q$ and $r_{[q]_\sim}$. For every $i \in \mathbb{N}$, we have $\rho'(i) = [\rho(i)]_\sim$ and thus $c'(\rho'(i)) = c(\rho(i))$. Therefore, $\rho$ is accepting iff $\rho'$ is accepting.
-\end{proof}
 
 \begin{lem}
-\label{lem:general:congrel_prio_implies_moore2}
+\label{lem:general:congrel_prio_implies_moore}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Then $\mathcal{A}$ is Moore equivalent to every representative merge w.r.t. $\mu_\div^\sim$.
 \end{lem} 
 
-\begin{proof} 
-	By Lemma \ref{lem:general:congrel_prio_implies_moore1}, we have $(\mathcal{A}, q) \equiv_M (\mathcal{A}', q)$ for all $q \in Q'$. On the other hand, for all $q \in Q \setminus Q'$, there is a representative $r_{[q]_\sim} \in Q'$. We have $q \sim r_{[q]_\sim}$ and thus $q \equiv_M r_{[q]_\sim}$ and therefore also $(\mathcal{A}, q) \equiv_M (\mathcal{A}, r_{[q]_\sim}) \equiv_M (\mathcal{A}', r_{[q]_\sim})$.
+\begin{proof} %TODO check
+	Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be a representative merge. For every $q \in Q$, we prove that $(\mathcal{A}, q) \equiv_M (\mathcal{A}', r_{[q]_\sim})$. Since all states in $\mathcal{A}'$ are representatives of that form and every representative exists in $\mathcal{A}$ as well, this suffices to prove Moore equivalence.
+	
+	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting in $q$ and $r_{[q]_\sim}$. For every $i \in \mathbb{N}$, we have $\rho'(i) = [\rho(i)]_\sim$ and thus $c'(\rho'(i)) = c(\rho(i))$. Therefore, $\rho$ is accepting iff $\rho'$ is accepting.
 \end{proof}
 
 \begin{defn}

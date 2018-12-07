@@ -12,14 +12,14 @@ In this section we consider delayed simulation games and variants thereof on DPA
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define the \emph{delayed simulation automaton} $\mathcal{A}_\text{de}(p, q) = (Q_\text{de}, \Sigma, \delta_\text{de}, F_\text{de})$ with starting state $q_0^\text{de}(p, q) = (p, q, \gamma(c(p), c(q), \checkmark))$, which is a deterministic Büchi automaton, as follows.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define the \emph{delayed simulation automaton} $(\mathcal{A},\mathcal{B})_\text{de}(p, q) = (Q_\text{de}, \Sigma, \delta_\text{de}, F_\text{de})$ with starting state $q_0^\text{de}(p, q) = (p, q, \gamma(c_1(p), c_2(q), \checkmark))$, which is a deterministic Büchi automaton, as follows.
 	
 	\begin{itemize}
-		\item $Q_\text{de} = Q \times Q \times (\text{img}(c) \cup \{ \checkmark \})$, i.e. the states are given as triples in which the first two components are states from $\mathcal{A}$ and the third component is either a priority from $\mathcal{A}$ or $\checkmark$.
+		\item $Q_\text{de} = Q_1 \times Q_2 \times (c_1(Q_1) \cup c_2(Q_2) \cup \{ \checkmark \})$, i.e. the states are given as triples in which the first two components are states from $\mathcal{A}$ and the third component is either a priority from $\mathcal{A}$ or $\mathcal{B}$ or $\checkmark$.
 		\item The alphabet remains $\Sigma$.
-		\item $\delta_\text{de}( (p, q, k), a ) = ( p', q', \gamma(c(p'), c(q'), k)$, where $p' = \delta(p, a)$, $q' = \delta(q, a)$, and $\gamma$ is the same function as used in the initial state. The first two components behave like a regular product automaton.
-		\item $F_\text{de} = Q \times Q \times \{ \checkmark \}$.
-		\item The starting state is a triple $(p, q, \gamma(c(p), c(q), \checkmark))$, where $p, q \in Q$ are parameters given to the automaton, and $\gamma$ is defined below.
+		\item $\delta_\text{de}( (p, q, k), a ) = ( p', q', \gamma(c_1(p'), c_2(q'), k)$, where $p' = \delta_1(p, a)$, $q' = \delta_2(q, a)$, and $\gamma$ is the same function as used in the initial state. The first two components behave like a regular product automaton.
+		\item $F_\text{de} = Q_1 \times Q_2 \times \{ \checkmark \}$.
+		\item The starting state is a triple $(p, q, \gamma(c_1(p), c_2(q), \checkmark))$, where $p, q \in Q$ are parameters given to the automaton, and $\gamma$ is defined below.
 	\end{itemize}
 	
 	$\gamma : \mathbb{N} \times \mathbb{N} \times (\mathbb{N} \cup \{\checkmark\}) \rightarrow \mathbb{N} \cup \{\checkmark\}$ is the update function of the third component and defines the \enquote{obligations} as they are called in \cite{}. It is defined as 
@@ -28,18 +28,20 @@ In this section we consider delayed simulation games and variants thereof on DPA
 		\checkmark & \text{if } j \text{ is even and } j \leq_\checkmark k \text{ and } j \preceq_\text{p} i \\
 		\min_{\leq_\checkmark} \{ i,j,k \} & \text{else}
 	\end{cases} $$
+	
+	If $\mathcal{A} = \mathcal{B}$, we simply write $\mathcal{A}_\text{de}$ for the delayed simulation automaton.
 \end{defn}
 
 
 \begin{defn}
-	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}_\text{de}$ be the delayed simulation automaton of $\mathcal{A}$. We say that a state $p$ $de$-simulates a state $q$ if $L(\mathcal{A}_\text{de}(p, q), q_0^\text{de}(p, q)) = \Sigma^\omega$. In that case we write $p \leq_\text{de} q$. If also $q \leq_\text{de} p$ holds, we write $p \equiv_\text{de} q$.
+	We say that $(\mathcal{A}, p)$ $de$-simulates $(\mathcal{B}, q)$ if $L((\mathcal{A}, \mathcal{B})_\text{de}(p, q), q_0^\text{de}(p, q)) = \Sigma^\omega$. In that case we write $(\mathcal{A}, p) \leq_\text{de} (\mathcal{B}, q)$. If also $(\mathcal{B}, q) \leq_\text{de} (\mathcal{A}, p)$ holds, we write $(\mathcal{A}, p) \equiv_\text{de} (\mathcal{B}, q)$.
 \end{defn}
 
 
 
 \vspace{1cm}
 \subsubsection*{$\boldsymbol{\equiv_\text{de}}$ is a congruence relation.}
-Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of our original DPA. The first step towards this goal is to show that the result is actually a well-defined DPA, by proving that the relation is a congruence.
+Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of our original DPA. The first step towards this goal is to show that the result is actually a well-defined DPA, by proving that the relation is a congruence. For reduce clutter in the proofs, we only consider the case $\mathcal{A} = \mathcal{B}$ here but all arguments easily translate to the case of two different automata.
 
 \begin{lem}
 \label{lem:fritzwilke:gamma_mono}
@@ -109,7 +111,7 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 
 \begin{lem}
 \label{lem:fritzwilke:de_order_reftran}
-	Let $\mathcal{A}$ be a DPA. Then $\leq_\text{de}$ is reflexive and transitive.
+	$\leq_\text{de}$ is reflexive and transitive.
 \end{lem}
 
 \begin{proof}
@@ -137,7 +139,7 @@ Our overall goal is to use $\equiv_\text{de}$ to build a quotient automaton of o
 \end{proof}
 
 \begin{theorem}
-	Let $\mathcal{A}$ be a DPA. Then $\equiv_\text{de}$ is a congruence relation.
+	$\equiv_\text{de}$ is a congruence relation.
 \end{theorem}
 
 \begin{proof}
@@ -150,18 +152,19 @@ We want to mention here that $\equiv_\text{de}$ is actually an equivalence relat
 
 
 
+
 \vspace{1cm}
 \subsubsection*{Alternative characterization}
 Having described several properties of $\leq_\text{de}$ and $\equiv_\text{de}$ in the previous part, we briefly want to give an alternative description in corollary \ref{cor:fritzwilke:equivde_alternative} of what it means for two states to be de-simulation equivalent. The intention is to give a more intuitive understanding as well as provide a framework to make future proofs more comfortable.
 
 \begin{lem}
 \label{lem:fritzwilke:preceq_alternative}
-	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \preceq_\text{de} q$ if and only if the following property holds for all $w \in \Sigma^*$: 
+	$(\mathcal{A}, p) \leq_\text{de} (\mathcal{B}, q)$ if and only if the following property holds for all $w \in \Sigma^*$: 
 	
-	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. If $c(p')$ is even and $c(p') < c(q')$, then every path from $q'$ eventually reaches a priority at most $c(p')$. On the other hand, if $c(q')$ is odd and $c(q') < c(p')$, then every path from $p'$ eventually reaches a priority at most $c(q')$.
+	Let $p' = \delta_1^*(p, w)$ and $q' = \delta_2^*(q, w)$. If $c_1(p')$ is even and $c_1(p') < c_2(q')$, then every path from $q'$ eventually reaches a priority at most $c_1(p')$. On the other hand, if $c_2(q')$ is odd and $c_2(q') < c_1(p')$, then every path from $p'$ eventually reaches a priority at most $c_2(q')$.
 \end{lem}
 
-\begin{proof}
+\begin{proof} %TODO
 	\textbf{If} We show the contrapositive. Let $p \not\preceq_\text{de} q$, so there is a word $\alpha \notin L(\mathcal{A}_\text{de}(p, q))$ with the run of $\mathcal{A}_\text{de}(p, q)$ being $(p_0, q_0, k_0) (p_1, q_1, k_1) \dots$. By Lemma \ref{lem:fritzwilke:n0_exists}, there is a position $n$ such that $k_i$ does not change anymore for $i \geq n$. We define $w = \alpha[0, n_0]$ and $\beta = \alpha[n_0+1, ]$ (so $\alpha = w\beta$) and claim that $w$ is a valid counterexample for the right-side property.
 	
 	The first case is: $c(p') < c(q')$ and $c(p')$ is even. \\
@@ -181,13 +184,15 @@ Having described several properties of $\leq_\text{de}$ and $\equiv_\text{de}$ i
 	The second case, $c(q') < c(p')$ and $c(q')$ is odd, works almost identically so we omit the proof here.
 \end{proof}
 
+\vspace{5pt}
+
 While this characterization of $\preceq_\text{de}$ seems arbitrary, it allows for an easier definition of $\equiv_\text{de}$ as is seen in the following statement.
 
 \begin{cor}
 \label{cor:fritzwilke:equivde_alternative}
-	Let $\mathcal{A}$ be a DPA with states $p, q \in Q$. Then $p \equiv_\text{de} q$ if and only if the following holds for all words $w \in \Sigma^*$:
+	$(\mathcal{A}, p) \equiv_\text{de} (\mathcal{B}, q)$ if and only if the following property holds for all $w \in \Sigma^*$: 
 	
-	Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. Every run that starts in $p'$ or $q'$ eventually sees a priority less than or equal to $\min \{c(p'), c(q')\}$.
+	Let $p' = \delta_1^*(p, w)$ and $q' = \delta_2^*(q, w)$. Every run that starts in $p'$ or $q'$ eventually sees a priority less than or equal to $\min \{c_1(p'), c_2(q')\}$.
 \end{cor}
 
 

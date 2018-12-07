@@ -1,12 +1,14 @@
 \section{Threshold Moore}
+\label{sect:tm}
+
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. For a set $K \subseteq \mathbb{N}$, we define the \emph{priority threshold} of $\mathcal{A}$ as $\mathcal{T}(\mathcal{A}, K) := (Q, \Sigma, \delta, c')$ with $c'(q) = \begin{cases} c(q) & \text{if } c(q) \notin K \\ \max c(Q) + 1 & \text{else} \end{cases}$.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. For a set $K \subseteq \mathbb{N}$, we define the \emph{priority threshold} of $\mathcal{A}$ as $\mathcal{T}(\mathcal{A}, >k) := (Q, \Sigma, \delta, c')$ with $c'(q) = \begin{cases} c(q) & \text{if } c(q) \leq k \\ k + 1 & \text{else} \end{cases}$.
 	
-	For a relation $\sim$, we define $\mathcal{T}(\sim, K) :=\, \approx$ as $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ iff $(\mathcal{T}(\mathcal{A}, K), p) \sim (\mathcal{T}(\mathcal{B}, K), q)$.
+	For a relation $\sim$, we define $\mathcal{T}(\sim, >k) :=\, \approx$ as $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ iff $(\mathcal{T}(\mathcal{A}, >k), p) \sim (\mathcal{T}(\mathcal{B}, >k), q)$.
 \end{defn}
 
 \begin{lem}
-	If $\sim$ is an equivalence relation, then so is $\mathcal{T}(\sim, K)$. If $\sim$ is a congruence relation, then so is $\mathcal{T}(\sim, K)$.
+	If $\sim$ is an equivalence relation, then so is $\mathcal{T}(\sim, >k)$. If $\sim$ is a congruence relation, then so is $\mathcal{T}(\sim, >k)$.
 \end{lem}
 
 \begin{proof}
@@ -14,8 +16,16 @@
 \end{proof}
 
 \begin{defn}
-	We set $\equiv_M^{\leq k} \,:= \mathcal{T}(\equiv_M, \{ n \in \mathbb{N} \mid n > k \})$.
+	We set $\equiv_M^{\leq k} \,:= \mathcal{T}(\equiv_M, >k)$.
 \end{defn}
+
+\begin{lem}
+	For two numbers $x, y \in \mathbb{N}$, let $x =^{\leq k} y$ iff $x = y$ or $\min \{x, y\} > k$. Then $(\mathcal{A}, p) \equiv_M^{\leq k} (\mathcal{B}, q)$ iff for all $w \in \Sigma^*$, $c_1(\delta_1^*(p, w)) =^{\leq k} c_2(\delta_2^*(q, w))$.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
 
 \vspace{5pt}
 
@@ -28,123 +38,26 @@
 	\end{enumerate}
 \end{defn}
 
-
-\begin{defn}
-	Let $\sim$ be an equivalence relation. We write $\sim^{\leq k} := \mathcal{T}(\sim, \{n \in \mathbb{N} \mid n > k\})$. We call $\sim$ \emph{TM-suitable} if it satisfies the following: 
-	
-	Let $\mathcal{A}$ be a DPA and let $\lambda \subseteq \kappa \in \mathfrak{C}(\sim)$ such that all states in $\lambda$ share the same priority $k$. For all representative merges $\mathcal{A}'$ of $\mathcal{A}$ w.r.t. $\lambda$, for all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \sim^{\leq c(q)} (\mathcal{A}', q)$.
-	
-	Furthermore, for all representative merges $\mathcal{A}''$ of $\mathcal{T}(\mathcal{A}, \{n \in \mathbb{N} \mid n > k\})$ w.r.t. $\lambda$, for all words $\alpha \in \Sigma^\omega$ and all runs $\rho$ and $\rho''$ of $\mathcal{A}$ and $\mathcal{A}''$ on that word starting in the same state such that $\min \text{Inf}(c(\rho)) \leq k$, $\rho$ and $\rho''$ have the same acceptance. %TODO
-\end{defn}
-
-
-
-
-
-\vspace{20pt}
-
-\begin{lem}
-	$\equiv_M$ is TM-suitable.
-\end{lem}
-
-\begin{proof}
-	Let $\mathcal{A}$ be a DPA and let $\lambda \subseteq \kappa \in \mathfrak{C}(\sim)$ such that all states in $\lambda$ share the same priority $k$.
-	
-	For the first part, let $\mathcal{A}'$ of $\mathcal{A}$ w.r.t. $\lambda$ and $q \in Q'$ with $c(q) \leq k$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$ which especially means that for all $i$, $c(\rho(i)) =^{\leq k} c(\rho'(i))$. Since $c(\rho'(i)) = c'(\rho'(i))$, that also implies $c(\rho(i)) =^{\leq k} c'(\rho'(i))$ which means that $(\mathcal{A}, q) \equiv_M^{\leq k} (\mathcal{A}', q)$.
-	
-	For the second part, let $\mathcal{A}''$ be a representativ merge of $\mathcal{T}(\mathcal{A}, \{n \in \mathbb{N} \mid n > k\})$ w.r.t. $\lambda$. Let $\alpha \in \Sigma^\omega$ with runs $\rho$ and $\rho''$ of the two automata on $\alpha$ starting in some $q \in Q''$ such that $\min \text{Inf}(c(\rho)) \leq k$. Again by Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$. In particular, whenever $\min \text{Inf}(c(\rho))$ or $\min \text{Inf}(c''(\rho''))$ is seen, the same is true for the other run. That is why $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c''(\rho''))$ and the two runs have the same acceptance.
-\end{proof}
-
-
-\vspace{25pt}
-
-\begin{defn}
-	Let $\mathcal{A}$ and $\mathcal{B}$ be DPAs. Let $\sim$ be an equivalence relation that implies language equivalence and let $\approx$ be an equivalence relation that is TM suitable. We define a relation $\equiv_\text{TM}^{\sim, \approx}$ such that $(\mathcal{A}, p) \equiv^{\sim, \approx}_\text{TM} (\mathcal{B}, q)$ if and only if all of the following are satisfied:
-	\begin{enumerate}
-		\item $c_1(p) = c_2(q)$
-		\item $(\mathcal{A}, p) \approx^{\leq c(p)} (\mathcal{B}, q)$
-		\item $(\mathcal{A}, p) \sim (\mathcal{B}, q)$
-	\end{enumerate}
-\end{defn}
-
-
-We can notice that merging classes of $\equiv_\text{TM}^{\sim, \approx}$ in a specific order is a valid language-preserving operation. This is then used to define a fitting merger function. For this next part, let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^{\sim, \approx}_\text{TM})$ be a set of states in $\mathcal{A}$. By definition of $\equiv^{\sim, \approx}_\text{TM}$, all states in this class have a unique priority $k$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$.
-
-\begin{lem}
-	For all $q \in Q'$, $(\mathcal{A}, q) \sim (\mathcal{A}', q)$.
-	\label{lem:tremoore:merge_keep_sim}
-\end{lem}
-
-\begin{proof} 
-	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
-	
-	By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_L (\mathcal{A}, \rho'(i))$ and $(\mathcal{A}, \rho(i)) \approx^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$. If $c(\rho)$ sees infinitely many priorities of at most $k$, then %TODO
-	
-	 Now there are two cases: if $c(\rho)$ sees infinitely many priorities of at most $k$, then $c(\rho')$ sees the same priorities at the same positions and thus $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c(\rho'))$. By definition of a representative merge, $c(\rho') = c'(\rho')$.
-	
-	 Otherwise there is a position $n$ from which $c(\rho)$ only is greater than $k$ and therefore the same is true for $c(\rho')$. That means reading $\alpha[n,\omega]$ from $\rho'(n)$ in either $\mathcal{A}$ or $\mathcal{A}'$ yields the same run which has the same acceptance as $\rho$.
-\end{proof}
-
-\begin{lem}
-	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \approx^{\leq k} (\mathcal{A}', q)$.
-	\label{lem:tremoore:merge_keep_tmoore}
-\end{lem}
-
-\begin{proof} 
-	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
-	
-	By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$ which especially means that for all $i$, $c(\rho(i)) =^{\leq k} c(\rho'(i))$. Since $c(\rho'(i)) = c'(\rho'(i))$, that also implies $c(\rho(i)) =^{\leq k} c'(\rho'(i))$ which means that $(\mathcal{A}, q) \equiv_M^{\leq k} (\mathcal{A}', q)$.
-\end{proof}
-
-\begin{lem}
-	Let $L \subseteq K \subseteq \mathbb{N}$. Then $\mathcal{T}(\equiv_M, K) \subseteq \mathcal{T}(\equiv_M, L)$.
-	\label{lem:tremoore:moore_less_thresh_is_subset}
-\end{lem}
-
-\begin{proof}
-	%TODO
-\end{proof}
-
-\begin{lem}
-	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv^\sim_\text{TM} (\mathcal{A}', q)$.
-	\label{lem:tremoore:merge_keep_tm}
-\end{lem}
-
-\begin{proof}
-	Representative merges never change priorities assigned to states. Together with Lemma \ref{lem:tremoore:merge_keep_sim}, Lemma \ref{lem:tremoore:merge_keep_tmoore}, and Lemma \ref{lem:tremoore:moore_less_thresh_is_subset} this already finishes the proof.
-\end{proof}
-
-\begin{lem}
-	For all $p, q \in Q'$ with $\min \{c(p), c(q)\} \leq k$, $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}, q)$ iff \linebreak $(\mathcal{A}', p) \equiv^\sim_\text{TM} (\mathcal{A}', q)$.
-	\label{lem:tremoore:merge_changes_only_higher}
-\end{lem}
-
-\begin{proof}
-	If $c(p) = c(q) \leq k$: By Lemma \ref{lem:tremoore:merge_keep_tm}, we know that $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}', p)$ and $(\mathcal{A}, q) \equiv^\sim_\text{TM} (\mathcal{A}', q)$. If now $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}, q)$ holds, then also $(\mathcal{A}', p) \equiv^\sim_\text{TM} (\mathcal{A}', q)$ and vice versa.
-	
-	If $c(p) \neq c(q)$, then also $c'(p) \neq c'(q)$ and we have both $(\mathcal{A}, p) \not\equiv^\sim_\text{TM} (\mathcal{A}, q)$ and $(\mathcal{A}', p) \not\equiv^\sim_\text{TM} (\mathcal{A}', q)$.
-\end{proof}
-
-\newpage
-
-
-
-\vspace{25pt}
+\vspace{5pt}
 
 We can notice that merging classes of $\equiv_\text{TM}^\sim$ in a specific order is a valid language-preserving operation. This is then used to define a fitting merger function. For this next part, let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM})$ be a set of states in $\mathcal{A}$. By definition of $\equiv^\sim_\text{TM}$, all states in this class have a unique priority $k$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$.
 
 \begin{lem}
-	For all $q \in Q'$, $(\mathcal{A}, q) \sim (\mathcal{A}', q)$.
-	\label{lem:tremoore:merge_keep_sim}
+	For all $q \in Q'$, $(\mathcal{A}, q) \equiv_L (\mathcal{A}', q)$.
+	\label{lem:tremoore:merge_keep_lang}
 \end{lem}
 
 \begin{proof} 
-	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
+	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on some $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
 	
 	By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_L (\mathcal{A}, \rho'(i))$ and $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$. Now there are two cases: if $c(\rho)$ sees infinitely many priorities of at most $k$, then $c(\rho')$ sees the same priorities at the same positions and thus $\min \text{Inf}(c(\rho)) = \min \text{Inf}(c(\rho'))$. By definition of a representative merge, $c(\rho') = c'(\rho')$.
 	
 	 Otherwise there is a position $n$ from which $c(\rho)$ only is greater than $k$ and therefore the same is true for $c(\rho')$. That means reading $\alpha[n,\omega]$ from $\rho'(n)$ in either $\mathcal{A}$ or $\mathcal{A}'$ yields the same run which has the same acceptance as $\rho$.
 \end{proof}
+
+\vspace{10pt}
+
+The research becomes more interesting if you fix $\sim$ to be the complete language equivalence $\equiv_L$, which is what we consider for the next Lemmas.
 
 \begin{lem}
 	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv_M^{\leq k} (\mathcal{A}', q)$.
@@ -152,38 +65,42 @@ We can notice that merging classes of $\equiv_\text{TM}^\sim$ in a specific orde
 \end{lem}
 
 \begin{proof} 
-	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $\rho$ is accepting iff $\rho'$ is accepting.
+	Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha \in \Sigma^\omega$ starting from $q$. We claim that $c(\rho(i)) =^{\leq k} c'(\rho'(i))$ for all $i$ which then proves the Lemma.
 	
-	By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$ which especially means that for all $i$, $c(\rho(i)) =^{\leq k} c(\rho'(i))$. Since $c(\rho'(i)) = c'(\rho'(i))$, that also implies $c(\rho(i)) =^{\leq k} c'(\rho'(i))$ which means that $(\mathcal{A}, q) \equiv_M^{\leq k} (\mathcal{A}', q)$.
+	By Lemma \ref{lem:general:cong_stays_in_merge}, $(\mathcal{A}, \rho(i)) \equiv_M^{\leq k} (\mathcal{A}, \rho'(i))$ for all $i$ which especially means that for all $i$, $c(\rho(i)) =^{\leq k} c(\rho'(i))$. Since $c(\rho'(i)) = c'(\rho'(i))$, that also implies $c(\rho(i)) =^{\leq k} c'(\rho'(i))$.
 \end{proof}
 
 \begin{lem}
-	Let $L \subseteq K \subseteq \mathbb{N}$. Then $\mathcal{T}(\equiv_M, K) \subseteq \mathcal{T}(\equiv_M, L)$.
+	Let $l \leq k \in \mathbb{N}$. Then $\equiv_M^{\leq k} \,\subseteq\, \equiv_M^{\leq l}$.
 	\label{lem:tremoore:moore_less_thresh_is_subset}
 \end{lem}
 
 \begin{proof}
-	%TODO
-\end{proof}
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be two DPAs. Let $\mathcal{A}^{\leq l} = \mathcal{T}(\mathcal{A}, > l)$ and $\mathcal{A}^{\leq k}$, $\mathcal{B}^{\leq l}$, and $\mathcal{B}^{\leq k}$ analogously.
+	
+	Let $(\mathcal{A}, p) \not\equiv_M^{\leq l} (\mathcal{B}, q)$, so there is a word $w \in \Sigma^*$ such that $c_1^{\leq l}(p') \neq c_2^{\leq l}(q')$, where $p' = \delta_1^*(p, w)$ and $q' = \delta_2^*(q, w)$. This means at least one of $c_1(p')$ and $c_2(q')$ is at most $l$, as otherwise both these values would be set to $l+1$. Due to symmetry, we can assume that $c_1(p')$ is that value.
+	
+	As $l \leq k$, $c_1^{\leq k}(p') = c_1^{\leq l}(p')$ and $c_2^{\leq k}(q') \geq c_2^{\leq l}(q')$, so $c_1^{\leq k}(p') \neq c_2^{\leq k}(q')$ and thus $(\mathcal{A}, p) \not\equiv_M^{\leq k} (\mathcal{B}, q)$.
+\end{proof} 
 
 \begin{lem}
-	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv^\sim_\text{TM} (\mathcal{A}', q)$.
+	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$.
 	\label{lem:tremoore:merge_keep_tm}
 \end{lem}
 
 \begin{proof}
-	Representative merges never change priorities assigned to states. Together with Lemma \ref{lem:tremoore:merge_keep_sim}, Lemma \ref{lem:tremoore:merge_keep_tmoore}, and Lemma \ref{lem:tremoore:moore_less_thresh_is_subset} this already finishes the proof.
+	Representative merges never change priorities assigned to states. Together with Lemma \ref{lem:tremoore:merge_keep_lang}, Lemma \ref{lem:tremoore:merge_keep_tmoore}, and Lemma \ref{lem:tremoore:moore_less_thresh_is_subset} this already finishes the proof.
 \end{proof}
 
 \begin{lem}
-	For all $p, q \in Q'$ with $\min \{c(p), c(q)\} \leq k$, $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}, q)$ iff \linebreak $(\mathcal{A}', p) \equiv^\sim_\text{TM} (\mathcal{A}', q)$.
+	For all $p, q \in Q'$ with $\min \{c(p), c(q)\} \leq k$, $(\mathcal{A}, p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}, q)$ iff \linebreak $(\mathcal{A}', p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$.
 	\label{lem:tremoore:merge_changes_only_higher}
 \end{lem}
 
 \begin{proof}
-	If $c(p) = c(q) \leq k$: By Lemma \ref{lem:tremoore:merge_keep_tm}, we know that $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}', p)$ and $(\mathcal{A}, q) \equiv^\sim_\text{TM} (\mathcal{A}', q)$. If now $(\mathcal{A}, p) \equiv^\sim_\text{TM} (\mathcal{A}, q)$ holds, then also $(\mathcal{A}', p) \equiv^\sim_\text{TM} (\mathcal{A}', q)$ and vice versa.
+	If $c(p) = c(q) \leq k$: By Lemma \ref{lem:tremoore:merge_keep_tm}, we know that $(\mathcal{A}, p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', p)$ and $(\mathcal{A}, q) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$. If now $(\mathcal{A}, p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}, q)$ holds, then also $(\mathcal{A}', p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$ and vice versa.
 	
-	If $c(p) \neq c(q)$, then also $c'(p) \neq c'(q)$ and we have both $(\mathcal{A}, p) \not\equiv^\sim_\text{TM} (\mathcal{A}, q)$ and $(\mathcal{A}', p) \not\equiv^\sim_\text{TM} (\mathcal{A}', q)$.
+	If $c(p) \neq c(q)$, then also $c'(p) \neq c'(q)$ and we have both $(\mathcal{A}, p) \not\equiv^{\equiv_L}_\text{TM} (\mathcal{A}, q)$ and $(\mathcal{A}', p) \not\equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$.
 \end{proof}
 
 \vspace{10pt}
@@ -193,32 +110,52 @@ We can notice that merging classes of $\equiv_\text{TM}^\sim$ in a specific orde
 \end{defn}
 
 \begin{theorem}
-	Let $\mathcal{A}$ be a DPA and let $\sim$ be an equivalence relation that implies language equivalence. Every representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{TM}^\sim$ is language equivalent to $\mathcal{A}$.
+	Every representative merge of a DPA $\mathcal{A}$ w.r.t. $\mu_\text{TM}^{\equiv_L}$ is language equivalent to $\mathcal{A}$.
 \end{theorem}
 
 \begin{proof}
-	Let $\kappa_1, \dots, \kappa_m$ be an enumeration of $\mathfrak{C}(\equiv^\sim_\text{TM})$ such that the (unique) priority of states in $\kappa_i$ is $k_i$ and $k_1, \dots, k_m$ is a descending series.
-	
-	If we build a representative merge of $\mathcal{A}$ w.r.t. $\kappa_1$ by candidates $_1$, we obtain some DPA $\mathcal{A}_1$. By Lemma \ref{lem:tremoore:merge_changes_only_higher}, for all $i > 1$, the states in $\kappa_i$ are still pairwise $\equiv^\sim_\text{TM}$ equivalent. Moreover, $\kappa_i$ is an $\equiv^\sim_\text{TM}$ equivalence class in $\mathcal{A}_1$.
-	
-	That means we can continue building representative merges in order of the enumeration and our previous results apply. In the end, we obtain a DPA $\mathcal{A}'$ that is language equivalent to $\mathcal{A}$ by Lemma \ref{lem:tremoore:merge_keep_sim}.
+	Building a representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{TM}^{\equiv_L}$ implicitly builds multiple representative merges $\mathcal{A}_0, \dots, \mathcal{A}_m$, where $\mathcal{A}_{i+1}$ is a representative merge of $\mathcal{A}_i$ w.r.t. some $\kappa_i$. By Lemma \ref{lem:tremoore:merge_changes_only_higher}, for all $j > i$, the states in $\kappa_j$ are still pairwise $\equiv^{\equiv_L}_\text{TM}$ equivalent. Moreover, $\kappa_{i+1}$ is an $\equiv^{\equiv_L}_\text{TM}$ equivalence class in $\mathcal{A}_i$. That means we can continue building representative merges in order of the enumeration and our previous results apply. In the end, we obtain a DPA $\mathcal{A}'$ that is language equivalent to $\mathcal{A}$ by Lemma \ref{lem:tremoore:merge_keep_lang}.
 \end{proof}
 
-\newpage
 
 
+\subsection{Different Thresholds}
 
+An interesting question to ask ourselves is whether changing $\equiv_M$ in the definition of $\equiv_\text{TM}^\sim$ to a weaker relation still offers the same qualities, especially the language equivalence. One might especially look for a set of properties that a general equivalence relation $\sim'$ has to satisfy so that we can replace $\equiv_M$. As it turns out, this is not easy to do.
 
+In fact, figure \ref{fig:tremoore:desim_counterex1} displays an automaton that shows that replacing $\equiv_M$ by $\equiv_\text{de}$ will not preserve language when used in a merge. For this purpose we will call this variation of $\equiv_\text{Tde}$ instead and fix $\sim \,=\, \equiv_L$ to be the complete language equivalence.
 
+The equivalence classes are $\mathfrak{C}(\equiv_\text{Tde}) = \{ \{q_0, q_2\}, \{q_1\}, \{q_3\} \}$, which means the automaton shown in figure \ref{fig:tremoore:desim_counterex2} is a representative merge. However, this automaton rejects every word which is not the case for the original.
 
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state] (0)           	{$q_0$,\{2\}};
+  \node[state] (1) [right=of 0] {$q_1$,\{1\}};
+  \node[state] (2) [right=of 1] {$q_2$,\{2\}};
+  \node[state] (3) [right=of 2] {$q_3$,\{0\}};
+  \path[->] (0) edge node [above] {a} (1)
+            (1) edge node [above] {a} (2)
+            (2) edge [bend left] node [above] {a} (3)
+            (3) edge [bend left] node [above] {a} (2);
+\end{tikzpicture}
+\caption{Example automaton which shows that using $\equiv_\text{de}$ for $\equiv_\text{TM}$ will not work.}
+\label{fig:tremoore:desim_counterex1}
+\end{figure}
 
-
-
-
-
-
-
-
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state] (1)           	{$q_1$,\{1\}};
+  \node[state] (0) [right=of 1] {$q_0$,\{2\}};
+  \node[state] (3) [right=of 0] {$q_3$,\{0\}};
+  \path[->] (0) edge [bend left] node [above] {a} (1)
+            (1) edge [bend left] node [above] {a} (0)
+            (3) edge node [above] {a} (0);
+\end{tikzpicture}
+\caption{Example automaton which shows that using $\equiv_\text{de}$ for $\equiv_\text{TM}$ will not work.}
+\label{fig:tremoore:desim_counterex2}
+\end{figure}
 
 
 
