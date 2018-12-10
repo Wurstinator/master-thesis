@@ -2,8 +2,10 @@
 \section{Congruence Path Refinement}
 \label{sect:pr}
 
+Before we present the path refinement method, note that it takes a special case as it is only defined for state pairs within one DPA, not between different automata.
+
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. Let $\lambda \subseteq Q$ be an equivalence class of $R$. We define $L_{\lambda \hookleftarrow}$ as the set of non-empty words $w$ such that for any $u \sqsubseteq w$, $(\delta(p, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton moves from $\lambda$ to $\lambda$ again.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. Let $\lambda \subseteq Q$ be an equivalence class of $R$. We define $L_{\lambda \hookleftarrow}$ as the set of non-empty words $w$ such that for all $q \in \lambda$ and all $u \sqsubseteq w$, $(\delta(q, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton moves from $\lambda$ to $\lambda$ again.
 	
 	Let $f_\text{PR} : 2^{\lambda \times \lambda} \rightarrow 2^{\lambda \times \lambda}$ be a function such that $(p, q) \in f(X)$  iff for all $w \in L_{\lambda \hookleftarrow}$, $(\delta^*(p, w), \delta^*(q, w)) \in X$.
 	Then let $X_0 \subseteq \lambda \times \lambda$ such that $(p, q) \in X_0$ iff for all $w \in L_{\lambda \hookleftarrow}$, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$, i.e. the minimal priority when moving from $p$ or $q$ to $\lambda$ again is the same.
@@ -15,16 +17,31 @@
 	\end{itemize}
 \end{defn}
 
+$\lambda$ being an equivalence class of $R$, a congruence relation, is required for the definition of $L_{\lambda \hookleftarrow}$ to be consistent.
+
+\vspace{5pt}
+
+\begin{lem}
+	$\equiv_\text{PR}^\lambda$ is an equivalence relation.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
 \begin{defn}
-	Let $\mathcal{A}$ be a DPA. We define the \emph{path refinement merger} %TODO remove R and change to \lambda \subseteq Q 
+	Let $\mathcal{A}$ be a DPA. We define the \emph{path refinement merger} as $\mu_\text{PR}^\lambda : D \rightarrow 2^Q$ with $D = \{ \kappa \in \mathfrak{C}(\equiv_\text{PR}^\lambda, \mathcal{A}) \mid \kappa \subseteq \lambda \}$ and $\mu_\text{PR}^\lambda(\kappa) = \{ q \in \kappa \mid c(q) = \min c(\kappa) \}$.
 \end{defn}
 
+\vspace{10pt}
+
 \begin{theorem}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation that implies language equivalence. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^\lambda$ for some equivalence class $\lambda$ of $R$ such that each representative $r_\kappa$ is chosen to have minimal priority. Then $L(\mathcal{A}) = L(\mathcal{A}')$.
+	Let $\mathcal{A}'$ be a representative merge of a DPA $\mathcal{A}$ w.r.t $\mu_\text{PR}^\lambda$. If all states in $\lambda$ are pairwise language equivalent, then $(\mathcal{A}, q) \equiv_L (\mathcal{A}', q)$ for all $q \in Q'$.
+	\label{thm:pr:preserves_language}
 \end{theorem}
 
 \begin{proof} 
-	Let $\alpha \in \Sigma^\omega$ be a word with runs $\rho \in Q^\omega$ and $\rho' \in (Q')^\omega$ of $\mathcal{A}$ and $\mathcal{A}'$ respectively. Let $k_0, \dots \in \mathbb{N}$ be exactly those positions (in order) at which $\rho$ reaches $\lambda$, and analogously $k'_0, \dots$ for $\rho'$.
+	Let $\alpha \in \Sigma^\omega$ be a word with runs $\rho \in Q^\omega$ and $\rho' \in (Q')^\omega$ of $\mathcal{A}$ and $\mathcal{A}'$ respectively, starting in the same state. Let $k_0, \dots \in \mathbb{N}$ be exactly those positions (in order) at which $\rho$ reaches $\lambda$, and analogously $k'_0, \dots$ for $\rho'$. 
 
 	\vspace{5pt}
 	\textbf{Claim 1}: For every $i$, $k_i = k'_i$ and $\rho(k_i) \equiv_\text{PR}^\lambda \rho'(k_i)$. \\
@@ -35,18 +52,18 @@
 	\vspace{5pt}
 	\textbf{Claim 2}: If $\lambda$ only occurs finitely often in $\rho$ and $\rho'$, then $\rho$ is accepting iff $\rho'$ is accepting. 
 	
-	Let $k_n \in \mathbb{N}$ be the last position at which $\rho(k_n)$ and $\rho'(k_n)$ are in $\lambda$. From this point on, $\rho'[k_n, \omega]$ is also a valid run of $\mathcal{A}$ on $\alpha[k_n, \omega]$. $\rho(k_n), \rho'(k_n) \in \lambda$, so $(\rho(k_n), \rho'(k_n)) \in R$. As $R$ implies language equivalence, reading $\alpha[k_n, \omega]$ from either state in $\mathcal{A}$ leads to the same acceptance status. This also means that $\rho'(k_n)$ has the same acceptance status as $\rho(k_n)$.
+	Let $k_n \in \mathbb{N}$ be the last position at which $\rho(k_n)$ and $\rho'(k_n)$ are in $\lambda$. From this point on, $\rho'[k_n, \omega]$ is also a valid run of $\mathcal{A}$ on $\alpha[k_n, \omega]$. As states in $\lambda$ are language equivalent, reading $\alpha[k_n, \omega]$ from either state $\rho(k_n)$ or $\rho'(k_n)$ in $\mathcal{A}$ leads to the same acceptance status. This also means that $\rho'(k_n)$ has the same acceptance status as $\rho(k_n)$.
 	
 	\vspace{5pt}
 	\textbf{Claim 3}: If $\lambda$ occurs infinitely often in $\rho$ and $\rho'$, then $\rho$ is accepting iff $\rho'$ is accepting. 
 	
-	We show that for all $i$, $\min \text{Occ}(c(\rho[k_i, k_{i+1}+1]))$ and $\min \text{Occ}(c'(\rho'[k_i, k_{i+1}+1]))$ are the same. The claim then follows immediately. 
+	We abbreviate $\text{Occ}(c(\rho[x, y])) = O[x, y]$ and $\text{Occ}(c(\rho'[x, y])) = O'[x, y]$. $c$ and $c'$ map all states to the same values by definition of the merge, so $c'(\rho'(i))$ and $c(\rho'(i))$ are the same.
 	
-	Directly observe that $c'(\rho'[k_i, k_{i+1}+1]) = c(\rho'[k_i, k_{i+1}+1])$ and that $\min \text{Occ}(c(\rho[k_i, k_{i+1}+1])) = \min \text{Occ}(c(\rho'[k_i, k_{i+1}] \cdot \delta(\rho'(k_{i+1} - 1), \alpha(k_{i+1})))$ because $\rho(k_i) \equiv_\text{PR}^\lambda \rho'(k_i)$.
+	First, observe that for all $i$, $\min O[k_i, k_{i+1} + 1] \geq \min O'[k_i, k_{i+1} + 1]$: By definition of $\equiv_\text{PR}^\lambda$, all states within an equivalence class visit the same minimal priority on their way from $\lambda$ back to $\lambda$ (in $\mathcal{A}$). In particular, $\rho(k_i)$ and $\rho'(k_i)$ do. That means $\min O[k_i, k_{i+1} + 1] = \min O'[k_i, k_{i+1}] \cup c(p_{i+1})$, where $p_{i+1} = \delta(\rho'(k_{i+1}), \alpha(k_{i+1}))$. By choice of the candidates of the merge, $c(p_{i+1}) \geq c(\rho'(k_{i+1}))$, so $\min O'[k_i, k_{i+1}] \cup c(p_{i+1}) \geq \min O'[k_i, k_{i+1} + 1]$. We can extend this to $\min \text{Inf}(c(\rho)) \geq \min \text{Inf}(c(\rho'))$.
 	
-	Now $\text{Occ}(c(\rho[k_i, k_{i+1}+1])) = \text{Occ}(c(\rho[k_i, k_{i+1}])) \cup \{c(\rho(k_{i+1}))\}$ and $\text{Occ}(c(\rho'[k_i, k_{i+1}] \cdot \delta(\rho'(k_{i+1} - 1), \alpha(k_{i+1}))) = \text{Occ}(c(\rho[k_i, k_{i+1}])) \cup \{c(\delta(\rho'(k_{i+1} - 1), \alpha(k_{i+1})))\}$.
+	Now assume that there is a priority $l$ in $c(\rho')$ that occurs infinitely often but only finitely often in $c(\rho)$. Let this priority be minimal and let $k_m$ be a position with $c(\rho'(k_m)) = l$ but $l$ never occurs in $c(\rho)$ at or after position $k_m$.
 	
-	The rest of the claim follows because $c(\rho'(k_i)) = c(\rho'(k_{i+1})) \leq \delta(\rho'(k_{i+1}, \alpha(k_{i+1}))$.
+	We still have $\rho(k_m) \equiv_\text{PR}^\lambda \rho'(k_m)$, so $\min O[k_m, k_{m+1} + 1]$ and $\min O'[k_m, k_{m+1}] \cup \{c(p_{m+1})\}$ must be the same. Obviously, $l$ is an element of $O'[k_m, k_{m+1}]$, so a priority at most as high as $l$ is visited in $\rho[k_m, k_{m+1} + 1]$. This happens every time $l$ is seen in $c(\rho')$, so $l > \min \text{Inf}(c(\rho'))$. As $l$ was the smallest priority that differs between the two infinity sets, their minimum must be the same.
 \end{proof}
 
 
@@ -101,8 +118,7 @@ The definition of path refinement that we introduced is useful for the proofs of
 \end{proof}
 
 \vspace{5pt}
-%TODO
-The differences between different $\mathcal{G}_\text{PR}^{R,\lambda}$ for different $\lambda$ are minor and the question whether the accepted language is universal boils down to a simple question of reachability. Thus, $\equiv_\text{PR}^R$ can be computed in $\mathcal{O}(|\mathcal{G}_\text{PR}^{R,\lambda}|)$ which is $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$.
+The automaton $\mathcal{G}_\text{PR}^{R,\lambda}$ has size $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. For each class $\lambda$, the problem of universal language has to be solved which is solved by reachability in linear time. Thus, $\equiv_\text{PR}^\lambda$ can be computed in time $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$ but has to be repeated for every different $\lambda$.
 
 
 
@@ -129,7 +145,7 @@ The computation presented in the previous section was a straight-forward descrip
 		\item For every $p, q \in \lambda$ and $l, k \in c(Q)$, $((p, l, l'), (q, k, k')) \in V$ iff $l' = k'$.
 	\end{itemize}
 	
-	The congruence refinement of $V$ is then called $V_M$. %TODO
+	The congruence refinement of $V$ is then called $V_M$.
 	
 	We abbreviate the state $(q, c(q), k)$ for any $q \in \lambda$ and $k \in c(Q)$ by $\iota_q^k$.
 \end{defn}
@@ -232,17 +248,20 @@ The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \
 
 
 
-\subsection{Further notes}
-\subsubsection{Order of equivalence classes}
-We can consider state reduction via path refinement as a function: $\text{PR}(\mathcal{A}, \lambda) = \mathcal{A}'$, which is a representative merge of $\mathcal{A}$ w.r.t. $\equiv_\text{PR}^\lambda$. For a congruence relation $R$, let $\lambda_1, \dots \lambda_n$ be an enumeration of all the equivalence classes. To achieve even better reduction, we can simply repeat the algorithm as $f(f(\dots f(\mathcal{A}, \lambda_1) \dots , \lambda_{n-1}), \lambda_n)$.
+\subsection{Multiple merges}
+So far, we always considered $\mu_\text{PR}^\lambda$ for some fixed equivalence class $\lambda$. However, building this merger only touches states in $\lambda$; all other states of the automaton remain as before. 
 
-The automaton displayed in figure \ref{fig:pr:example_lambda_order} is an example for a case where this order matters. Assume our relation has four classes, $\{q_1, q_5\}$, $\{q_2, q_3\}$, $\{q_4\}$, and $\{q_0\}$. Equivalence classes of size 1 cannot cause any state reduction, so we focus on $\lambda_1 = \{q_1, q_5\}$ and $\lambda_2 = \{q_2, q_3\}$.
+From Theorem \ref{thm:pr:preserves_language}, we can deduce that if $R$ is a congruence relation that implies language equivalence on $\mathcal{A}$, then $R \cap (Q' \times Q')$ is the same on a representative merge $\mathcal{A}'$ (w.r.t. $\mu_\text{PR}^\lambda$). This tells us that we can simply \enquote{reuse} the relation $R$, or rather its equivalence classes, to compute the path refinement relation for different $\lambda$ and sequentially built their merges. The upcoming example shows that this can provide further state reduction and more importantly that the order that the equivalence classes are considered in matters.
 
-Consider $\text{PR}(\mathcal{A}, \lambda_1)$. From $q_1$, there is a path back to $\lambda_1$ again that only visits priority 1, namely $q_1 q_3 q_4 q_5$. That is impossible from $q_5$, as the first step always leads to $q_0$ with priority 0. Hence, no merge will occur in this step.
+The automaton displayed in figure \ref{fig:pr:example_lambda_order} has six states. Assume our relation has four classes, $\{q_1, q_5\}$, $\{q_2, q_3\}$, $\{q_4\}$, and $\{q_0\}$. Equivalence classes of size 1 cannot cause any state reduction, so we focus on $\lambda_1 = \{q_1, q_5\}$ and $\lambda_2 = \{q_2, q_3\}$.
 
-$\text{PR}(\mathcal{A}, \lambda_2)$ will cause a merge: from the pair $(q_2, q_3)$, every path back to $\lambda_2$ will either move through $q_2$ or $q_0$ and thus have the minimal priority 0. The resulting automaton is shown in figure \ref{fig:pr:example_lambda_order2}.
+Consider $\mathcal{A}_1$, a representative merge w.r.t. $\mu_\text{PR}^{\lambda_1}$. From $q_1$, there is a path back to $\lambda_1$ again that only visits priority 1, namely $q_1 q_3 q_4 q_5$. That is impossible from $q_5$, as the first step always leads to $q_0$ with priority 0. Hence, no merge will occur in this step.
 
-Now look at $\text{PR}(\text{PR}(\mathcal{A}, \lambda_2), \lambda_1)$. As $q_3$ does not exist anymore, the path $q_1 q_3 q_4 q_5$ becomes $q_1 q_2 q_4 q_5$ with minimal priority of 0. In fact, now $q_1$ and $q_5$ can be merged, unlike before.
+On the other hand consider $\mathcal{A}_2$, a representative merge w.r.t. $\mu_\text{PR}^{\lambda_2}$. From the pair $(q_2, q_3)$, every path back to $\lambda_2$ will either move through $q_2$ or $q_0$ and thus have the minimal priority 0. The resulting automaton is shown in figure \ref{fig:pr:example_lambda_order2}.
+
+Now look at $\mathcal{A}_{21}$, a representative merge of $\mathcal{A}_2$ w.r.t. $\mu_\text{PR}^{\lambda_1}$. As $q_3$ does not exist anymore, the path $q_1 q_3 q_4 q_5$ becomes $q_1 q_2 q_4 q_5$ with minimal priority of 0. In fact, now $q_1$ and $q_5$ can be merged, unlike before.
+
+We were not able to find an easy heuristic to determine which order of classes gives the best reduction. One could of course repeat the reduction process over and over until no change is made anymore but that would bring the worst case runtime to about cubic in the number of states.
 
 
 \begin{figure}
@@ -290,9 +309,6 @@ Now look at $\text{PR}(\text{PR}(\mathcal{A}, \lambda_2), \lambda_1)$. As $q_3$ 
 \caption{Automaton from figure \ref{fig:pr:example_lambda_order} after merging $q_2$ and $q_3$.}
 \label{fig:pr:example_lambda_order2}
 \end{figure}
-
-We were not able to find an easy heuristic to determine which order of classes gives the best reduction. One could of course repeat the reduction process over and over until no change is made anymore but that would bring the worst case runtime to about cubic in the number of states.
-
 
 
 

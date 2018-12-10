@@ -15,8 +15,51 @@ This section is based heavily on \cite{Schewe2010} and partially adapts their re
 
 The definition of a Schewe merge is almost identical to that of a representative merge. The only difference lies therein that some additional transitions are redirected to the representative: when a transition leads to a candidate that is not in $M$ while also moving to a different SCC.
 
-Using the Schewe merge instead of the representative merge does not actually remove any additional states from the automaton, it only provides a better \enquote{framework} for following algorithms such as the Moore reduction. Example %TODO
-shows that using a Schewe merge followed by another merge of $\mu_M$ creates a better end result.
+Using the Schewe merge instead of the representative merge does not actually remove any additional states from the automaton, it only provides a better \enquote{framework} for following algorithms such as the Moore reduction. Example figure \ref{fig:schewe:example_useful1} shows that using a Schewe merge followed by another merge of $\mu_M$ creates a better end result.
+
+The automaton has six states. Regarding Moore equivalence, every state builds a singleton class. For priority almost equivalence, the classes are $\{q_0, q_1\}$, $\{q_2, q_4\}$, and $\{q_3\}$. As all states within one equivalence class lie in the same SCC, a representative merge w.r.t. $\mu_\text{skip}^{\equiv_\text{\Ankh}}$ will not change the number of states. However, a Schewe merge w.r.t. $\mu_\text{skip}^{\equiv_\text{\Ankh}}$ can result in figure \ref{fig:schewe:example_useful2}. Now, $q_0$ and $q_1$ are actually Moore equivalent and could be merged with $\mu_M$.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,1$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \node[state]           (2) [above=of 0]   {$q_2,1$};
+  \node[state]           (3) [right=of 2]   {$q_3,1$};
+  \node[state]           (4) [right=of 3]   {$q_4,0$};
+  \path[->] (0) edge [bend left] node [above] {a} (1)
+  			(0) edge node [left] {b} (2)
+            (1) edge [bend left] node [below] {a} (0)
+            (1) edge node [below] {b} (4)
+            (2) edge [bend left] node [above] {a,b} (3)
+            (3) edge [bend left] node [below] {a} (2)
+            (3) edge [bend left] node [above] {b} (4)
+            (4) edge [bend left] node [below] {a,b} (3);
+\end{tikzpicture}
+\caption{Example to show the effect of a Schewe merge.}
+\label{fig:schewe:example_useful1}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,1$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \node[state]           (2) [above=of 0]   {$q_2,1$};
+  \node[state]           (3) [right=of 2]   {$q_3,1$};
+  \node[state]           (4) [right=of 3]   {$q_4,0$};
+  \path[->] (0) edge [bend left] node [above] {a} (1)
+  			(0) edge node [left] {b} (2)
+            (1) edge [bend left] node [below] {a} (0)
+            (1) edge node [right] {b} (2)
+            (2) edge [bend left] node [above] {a,b} (3)
+            (3) edge [bend left] node [below] {a} (2)
+            (3) edge [bend left] node [above] {b} (4)
+            (4) edge [bend left] node [below] {a,b} (3);
+\end{tikzpicture}
+\caption{Automaton from figure \ref{fig:schewe:example_useful1} after Schewe merge.}
+\label{fig:schewe:example_useful2}
+\end{figure}
 
 \begin{defn}
 	Let $\mathcal{A}$ be DPA with a merger function $\mu : D \rightarrow 2^Q$. For a representative merge $\mathcal{A}'$, we define the \emph{candidate relation} $\sim_\mathcal{C}^\mu$ as $p \sim_\mathcal{C}^\mu q$ iff there is a $C \in \mu(D)$ with $p, q \in C$.
@@ -82,48 +125,43 @@ shows that using a Schewe merge followed by another merge of $\mu_M$ creates a b
 
 
 \begin{cor}
-	Let $\mathcal{A}$ be a DPA and let $\sim$ be a congruence relation that implies language equivalence. For each Schewe merge $\mathcal{A}'$ of $\mathcal{A}$, $\mathcal{A} \equiv_L \mathcal{A}'$.
+	Let $\mathcal{A}$ be a DPA and let $\sim$ be a congruence relation that implies language equivalence. For each Schewe merge $\mathcal{A}'$ of $\mathcal{A}$ w.r.t. $\mu_\text{skip}^\sim$, $\mathcal{A} \equiv_L \mathcal{A}'$.
 \end{cor}
 
 \begin{proof}
 	Follows from Lemma \ref{lem:schewe:schewe_suitable_works}, Lemma \ref{lem:schewe:skip_suitable}, and Theorem \ref{thm:skip:lang_equiv}.
 \end{proof}
 
+\vspace{10pt}
 
-
-\newpage
-
-
-%TODO
-We have proven that the Schewe merger function can be used to refine congruence relations (such as $\equiv_\text{\Ankh}$) that, by themselves are not strong enough criteria to allow for a merging of states, to the point that they can be used for state space reduction. A final result regarding this technique is adapted from \cite{Schewe2010} and shows a relation between this algorithm and priority almost equivalence.
+For our final proof in this section we want to adapt a result from \cite{Schewe2010} to show a special relation between Schewe merges and priority almost equivalence.
 
 \begin{lem}
-	Let $\sim \,=\, \equiv_\text{\Ankh}$ and let $\mathcal{S}'$ be a representative merge of $\mathcal{S}$ w.r.t. $\mu_M$. There is no smaller DPA than $\mathcal{S}'$ that is priority almost equivalent to $\mathcal{A}$.
+	Let $\mathcal{A}$ be a DPA, $\mathcal{S}$ be a Schewe merge of $\mathcal{A}$ w.r.t. $\mu_\text{skip}^{\equiv_\text{\Ankh}}$, and $\mathcal{S}'$ be a representative merge of $\mathcal{S}$ w.r.t. $\mu_M$. There is no smaller DPA than $\mathcal{S}'$ that is priority almost equivalent to $\mathcal{A}$.
 \end{lem} 
 
 \begin{proof}
 	Let $\mathcal{B}$ be a DPA that is smaller than $\mathcal{S}'$. Our goal is to show that $\mathcal{A} \not\equiv_\text{\Ankh} \mathcal{B}$.
 	
-	At first observe that $\mathcal{A} \equiv_\text{\Ankh} \mathcal{S}'$: $\mathcal{A}$ and $\mathcal{S}$ are priority almost equivalent as for every state in $\mathcal{A}$, there is an equivalent representative in $\mathcal{S}$. $\mathcal{S}$ and $\mathcal{S}'$ are Moore equivalent by Lemma \ref{lem:general:moore_merge_keeps_mooreequiv} and thus they are also priority almost equivalent by Lemma \ref{lem:general:M_subs_Ankh_subs_L}.
+	At first observe that $\mathcal{A} \equiv_\text{\Ankh} \mathcal{S}'$: $\mathcal{A}$ and $\mathcal{S}$ are priority almost equivalent as for every state in $\mathcal{A}$, there is an equivalent representative in $\mathcal{S}$. $\mathcal{S}$ and $\mathcal{S}'$ are Moore equivalent by Lemma \ref{lem:general:congrel_prio_implies_moore} and thus they are also priority almost equivalent by Theorem \ref{thm:general:M_subs_Ankh_subs_L}.
 
-	Assume that $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$ holds, so for all states in $\mathcal{S}'$, there is a a priority almost equivalent state in $\mathcal{B}$. We define a function $f$ that maps to each equivalence class of $\equiv_\text{\Ankh}$ in $\mathcal{S}'$ all states in $\mathcal{B}$ that are equivalent to it, i.e. if $\kappa \subseteq Q_{\mathcal{S}'}$ is an equivalence class, then $f(\kappa) = \{q \in Q_\mathcal{B} \mid \exists p \in \kappa: (\mathcal{S}', p) \equiv_\text{\Ankh} (\mathcal{B}, q) \}$. Note that $f(\kappa)$ can never be empty by the assumption of $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$.
+	Assume that $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$ holds, so for all states in $\mathcal{S}'$, there is a a priority almost equivalent state in $\mathcal{B}$. We define a function $f$ that maps to each equivalence class of $\equiv_\text{\Ankh}$ in $\mathcal{S}'$ all states in $\mathcal{B}$ that are equivalent to it, i.e. for $\kappa \in \mathfrak{C}(\equiv_\text{\Ankh}, \mathcal{S'})$ then $f(\kappa) = \{q \in Q_\mathcal{B} \mid \exists p \in \kappa: (\mathcal{S}', p) \equiv_\text{\Ankh} (\mathcal{B}, q) \}$. Note that $f(\kappa)$ can never be empty by the assumption of $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$.
 	
 	As $\mathcal{B}$ is smaller than $\mathcal{S}'$, the pigeonhole principle applies and we can fix $\kappa$ to be one equivalence class such that $|f(\kappa)| < |\kappa|$.
 	
-	By Lemma \ref{lem:schewe:equiv_same_scc}, there is an SCC $C$ in $\mathcal{S}'$ that contains all states in $\kappa$. Without loss of generality we can assume that likewise there is an SCC $D$ in $\mathcal{B}$ that contains $f(\kappa)$. If no such SCC would exist, we could simply apply the Schewe merger to $\mathcal{B}$ to find an automaton that is smaller than $\mathcal{S}'$ and does have this property.
+	There is an SCC $C$ in $\mathcal{S}'$ that contains all states in $\kappa$ (argumentation is done similar to Lemma \ref{lem:skip:equiv_same_scc}). Without loss of generality we can assume that likewise there is an SCC $D$ in $\mathcal{B}$ that contains $f(\kappa)$. If no such SCC would exist, we could simply apply the Schewe merger to $\mathcal{B}$ to find an automaton that is smaller than $\mathcal{S}'$ and does have this property.
 	
 	$C$ and $D$ must be non-trivial SCCs: if $C$ would be trivial, $\kappa$ would contain only one element and $f(\kappa)$ would be empty. If $D$ would be trivial, $f(\kappa) = \{q\}$ would contain of only one state. Since $\mathcal{S}' \equiv_\text{\Ankh} \mathcal{B}$, there is a state $p \in \kappa \subseteq C$ in $\mathcal{S}'$ with $(\mathcal{S}', p) \equiv_\text{\Ankh} (\mathcal{B}, q)$. Since $C$ is not trivial, there is a word $w$ from which $\mathcal{S}'$ moves from $p$ back to $p$. $\mathcal{B}$ however, leaves $f(\kappa)$ with that word, as $D$ is trivial, so $q$ cannot reach itself again. This is a contradiction, as $\equiv_\text{\Ankh}$ is a congruence relation.
 	
 	\vspace{5pt}
 	
-	We claim that there is a state $p \in \kappa$ such that there is a family of words $(w_q)_{q \in Q_{\mathcal{B}}}$ such that $\mathcal{S}'$ does not leave $C$ reading these words from $p$ and $c_{\mathcal{S}'}(\delta_{\mathcal{S}'}^*(p, w)) \neq c_{\mathcal{B}}(\delta_{\mathcal{B}}^*(q, w))$. (in other words, $w_q$ is a witness for $p$ and $q$ being not Moore-equivalent.)
+	We claim that there is a state $p \in \kappa$ such that there is a family of words $(w_q)_{q \in f(\kappa)}$ such that $\mathcal{S}'$ does not leave $C$ reading these words from $p$ and $c_{\mathcal{S}'}(\delta_{\mathcal{S}'}^*(p, w)) \neq c_{\mathcal{B}}(\delta_{\mathcal{B}}^*(q, w))$. (in other words, $w_q$ is a witness for $p$ and $q$ being not Moore-equivalent.)
 	
 	Towards a contradiction, assume that the claim is false and that for every $p \in \kappa$, there is a state $q_p \in f(\kappa)$ that does not satisfy the property. As $|\kappa| > |f(\kappa)|$ we can again use the pigeonhole principle and obtain two states $p_1, p_2 \in \kappa$ such that $q_{p_1} = q_{p_2}$. We call this state $q := q_{p_1}$.
 	
-	For each word $w \in \Sigma^*$, $c_{\mathcal{S}'}^*(p_1, w) = c_{\mathcal{B}}^*(q, w)$ or $\mathcal{S}'$ leaves $C$ while reading $w$ from $p_1$. The same holds for $p_2$. If for all $w$ the first case would apply, then $c_{\mathcal{S}'}^*(p_1, w) = c_{\mathcal{S}'}^*(p_2, w)$ for all $w$ and thus $p_1 \equiv_M p_2$. This is impossible, as the two states would have been merged in the construction of $\mathcal{S}'$. Without loss of generality, we assume that $p_1$ breaks the pattern and there is a $w$ such that $c_{\mathcal{S}'}^*(p_1, w) \neq c_{\mathcal{B}}^*(q, w)$ but $\mathcal{S}'$ leaves $C$ when reading $w$ from $p_1$. Let this $w$ have minimal length.
+	For each word $w \in \Sigma^*$, $c_{\mathcal{S}'}(\delta^*_{\mathcal{S'}}(p_1, w)) = c_{\mathcal{B}}(\delta^*_{\mathcal{B}}(q, w))$ or $\mathcal{S}'$ leaves $C$ while reading $w$ from $p_1$. The same holds for $p_2$. As $p_1$ and $p_2$ are distinct states in $\mathcal{S}'$, they cannot be Moore equivalent. That means there has to be a word $u$ with $c_{\mathcal{S}'}(\delta^*_{\mathcal{S'}}(p_1, u)) \neq c_{\mathcal{S}'}(\delta^*_{\mathcal{S'}}(p_2, u))$. However, $\mathcal{S}'$ cannot leave $C$ while reading $u$ from $p_1$; if it did, it would reach a class $\lambda$ and the transition would lead to the representative $r_\lambda$. As $\equiv_\text{\Ankh}$ is a congruence relation, reading $u$ from $p_2$ would lead to $r_\lambda$ at the same position, so from that point on the two runs would be exactly the same.
 	
-	Let $\rho_1$ and $\rho_2$ be the respective runs of $\mathcal{S}$ (note that we are using the automaton here that is not yet Moore-minimized) on $w$ from $p_1$ and $p_2$. At some point $k$, $\rho_1$ leaves $C$.
-	%TODO
+	Hence, $p'_1 = \delta_{\mathcal{S}'}^*(p_1, u)$ and $p'_2 = \delta_{\mathcal{S}'}^*(p_2, u)$ are still in $C$ and $c_{\mathcal{S}'}(p'_1) \neq c_{\mathcal{S}'}(p'_2)$. That means at least one of these values must be different to $c_{\mathcal{B}}(\delta_{\mathcal{B}}^*(q, u))$, which contradicts our assumption.
 	
 	\vspace{5pt}
 	

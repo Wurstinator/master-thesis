@@ -12,11 +12,32 @@ In general, we use the symbol $\equiv$ to denote equivalence relations, mostly b
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2)$ be deterministic transition structures and let $\sim \,\subseteq (\{\mathcal{A}\} \times Q_1) \times (\{\mathcal{B}\} \times Q_2)$ be an equivalence relation. We call $R$ a \emph{congruence relation} if for all $(\mathcal{A}, p) \sim (\mathcal{B}, q)$ and all $a \in \Sigma$, also $(\mathcal{A}, \delta_1(p, a)) \sim (\mathcal{B}, \delta_2(q, a))$.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2)$ be deterministic transition structures and let $\sim$ be an equivalence relation. We call $\sim$ a \emph{congruence relation} if for all $(\mathcal{A}, p) \sim (\mathcal{B}, q)$ and all $a \in \Sigma$, also $(\mathcal{A}, \delta_1(p, a)) \sim (\mathcal{B}, \delta_2(q, a))$.
 \end{defn}
 
+\begin{defn}
+	Let $\sim$ be an equivalence relation. We define the \emph{congruence refinement} of $\sim$ as $\approx$ with $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ iff for all $w \in \Sigma^*$, $(\mathcal{A}, \delta_1^*(p, w)) \sim (\mathcal{B}, \delta_2(q, w))$.
+\end{defn}
 
-\vspace{5pt}
+\begin{lem}
+	For a given equivalence relation $\sim$, the congruence refinement of $\sim$ is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+\begin{lem}
+	For a given equivalence relation $\sim$, the congruence refinement on a single automaton $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}| \cdot \log |\mathcal{A}|)$.
+	\label{lem:general:congref_in_nlogn}
+\end{lem}
+
+\begin{proof}
+	We refer to \cite{Hopcroft1971}, which describes a special case where $p \sim q$ iff $c(p) = c(q)$.
+\end{proof}
+
+
+\vspace{15pt}
 The following is a comprehensive list of all relevant equivalence relations that we use.
 
 \begin{itemize}
@@ -126,21 +147,18 @@ The following definition is used as an intermediate step on the way to computing
 \end{defn}
 
 \begin{lem}
+	Moore equivalence is the congruence refinement of $\sim$ with $(\mathcal{A}, p) \sim (\mathcal{B}, q)$ iff $c(p) = c(q)$.
+\end{lem}
+
+\begin{cor}
 	$\equiv_M$ is a congruence relation.
-	\label{lem:general:M_congruence}
-\end{lem}
+	\label{cor:general:M_congruence}
+\end{cor}
 
-\begin{proof}
-	It is obvious that $\equiv_M$ is an equivalence relation. For two states $(\mathcal{A}, p) \equiv_M (\mathcal{B}, q)$ and some successors $p' = \delta(p, a)$ and $q' = \delta(q, a)$, it must be true that $(\mathcal{A}, p') \equiv_M (\mathcal{B}, q')$. Otherwise there is a word $w \in \Sigma^*$ such that $c_1(\delta_1^*(p', w)) \neq c_2(\delta_2^*(q', w))$. Then $c_1(\delta_1^*(p, aw)) \neq c_2(\delta_2^*(q, aw))$ and thus $(\mathcal{A}, p) \not\equiv_M (\mathcal{B}, q)$.
-\end{proof}
-
-\begin{lem}
+\begin{cor}
 	Moore equivalence of a given DPA can be computed in log-linear time.
-\end{lem}
+\end{cor}
 
-\begin{proof}
-	We refer to \cite{Hopcroft1971}. The given algorithm can be adapted to Moore automata without changing the complexity.
-\end{proof}
 
 
 \vspace{10pt}
