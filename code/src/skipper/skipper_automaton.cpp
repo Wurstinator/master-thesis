@@ -11,11 +11,20 @@
 
 namespace tollk {
 
+
+void RemoveUnreachableStates(automaton::DPA* automaton) {
+    const std::unordered_set<automaton::state_t> reachable = automaton::ReachableStates(*automaton, automaton->InitialState());
+    const std::vector<automaton::state_t> states = automaton->States();
+    for (automaton::state_t q : states)
+        if (reachable.find(q) == reachable.end())
+            automaton->RemoveState(q);
+}
+
 void SkipperAutomaton(automaton::DPA* automaton) {
     using namespace tollk::automaton;
 
     // Compute priority almost-equivalent states.
-    const EquivalenceRelation<state_t> almost_equivalent_states = PriorityAlmostEquivalence(*automaton);
+    const EquivalenceRelation<state_t> almost_equivalent_states = LanguageEquivalentStates(*automaton);
 
     // Merge the SCCs and compute a topological sorting on them.
     NondeterministicAutomaton merged_sccs = NondeterministicAutomaton::FromTransitionAutomaton(*automaton);
@@ -50,6 +59,8 @@ void SkipperAutomaton(automaton::DPA* automaton) {
                     automaton->SetSucc(p, s, representative);
         }
     }
+
+    RemoveUnreachableStates(automaton);
 }
 
 

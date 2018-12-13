@@ -12,7 +12,6 @@ std::string SkipperConstructionExecutor::ConstructionName() const {
 automaton::DPA SkipperConstructionExecutor::PerformConstruction(const BaseOptions& options_) const {
     automaton::DPA dpa = *this->in_dpa;
     tollk::SkipperAutomaton(&dpa);
-    tollk::automaton::Hopcroft(&dpa);
     return dpa;
 }
 

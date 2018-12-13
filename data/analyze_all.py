@@ -6,6 +6,7 @@ from common_plots import filelines_to_json
 
 
 directories = {
+    'hopcroft': 'hopcroft/',
     'skipper': 'skipper/',
     'schewe': 'schewe/',
     'fritzwilke': 'fritzwilke/',
@@ -28,6 +29,7 @@ for dir in directories.values():
             raise
 
 names = {
+    'hopcroft': 'Hopcroft',
     'skipper': 'Skip Merger',
     'schewe': 'Schewe',
     'fritzwilke': 'Delayed Simulation',

@@ -149,6 +149,17 @@ set(MAST_COMMON_HDRS_STAT
 add_executable(rawstats src/rawstats.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE})
 target_include_directories(rawstats PRIVATE range-v3/include ${HOAFP_DIR}/include)
 
+
+# Hopcroft
+set(HOPCROFT_INCLUDE ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE} ${NBAUTILS_INCLUDE})
+
+add_executable(hopcroft_main src/hopcroft/main_statistics.h src/hopcroft/main_statistics.cpp ${HOPCROFT_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(hopcroft_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+add_executable(hopcroft_statistics src/hopcroft/main_statistics.h src/hopcroft/main_statistics.cpp ${HOPCROFT_INCLUDE} ${MAST_COMMON_HDRS_STAT})
+target_include_directories(hopcroft_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+
 # Skipper
 
 set(SKIPPER_HDRS
