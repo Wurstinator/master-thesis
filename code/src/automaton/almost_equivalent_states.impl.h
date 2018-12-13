@@ -1,14 +1,14 @@
 
 
-#include "../automaton/is_specialization_base_of.h"
-#include "../automaton/parity.h"
-#include "../automaton/util.h"
+#include "is_specialization_base_of.h"
+#include "parity.h"
+#include "util.h"
 
 
 namespace tollk {
+namespace automaton {
 
-
-template <typename AutomatonT>
+template<typename AutomatonT>
 tollk::EquivalenceRelation<tollk::automaton::state_t> PriorityAlmostEquivalence(const AutomatonT& automaton) {
     using namespace ::tollk::automaton;
 
@@ -40,5 +40,5 @@ tollk::EquivalenceRelation<tollk::automaton::state_t> PriorityAlmostEquivalence(
 }
 
 
-
+}
 }

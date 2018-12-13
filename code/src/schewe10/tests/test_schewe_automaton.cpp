@@ -1,6 +1,6 @@
 
 #include "catch.hpp"
-#include "../schewe_automaton.h"
+#include "../../skipper/skipper_automaton.h"
 #include "../../automaton/parity.h"
 #include "../../automaton/util.h"
 

@@ -80,6 +80,7 @@ set(AUTOMATON_FILES
         src/automaton/nondeterministic_automaton.h
         src/automaton/nondeterministic_automaton.cpp
         src/automaton/labelled_automaton.h
+        src/automaton/labelled_automaton.impl.h
         src/automaton/util.h
         src/automaton/transition_util.h
         src/automaton/transition_util.impl.h
@@ -90,7 +91,8 @@ set(AUTOMATON_FILES
         src/automaton/parity.cpp
         src/automaton/parity.h
         src/automaton/is_specialization_base_of.h
-        src/automaton/labelled_automaton.impl.h)
+        src/automaton/almost_equivalent_states.h
+        src/automaton/almost_equivalent_states.impl.h)
 
 set(AUTOMATON_HOA_FILES
         src/automaton/hoa/hoa_io.h
@@ -121,7 +123,8 @@ set(AUTOMATON_TESTS
         src/automaton/tests/helper_functions.h
         src/automaton/tests/test_hoa.cpp
         src/automaton/tests/test_parity_util.cpp
-        src/automaton/tests/test_transition_util.cpp)
+        src/automaton/tests/test_transition_util.cpp
+        src/automaton/tests/test_almost_equivalent_states.cpp)
 
 add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE} ${AUTOMATON_TESTS} ${Catch2_HDRS})
 target_include_directories(test_automaton PRIVATE range-v3/include ${CATCH2_DIR}/single_include ${HOAFP_DIR}/include)
@@ -146,11 +149,23 @@ set(MAST_COMMON_HDRS_STAT
 add_executable(rawstats src/rawstats.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE})
 target_include_directories(rawstats PRIVATE range-v3/include ${HOAFP_DIR}/include)
 
+# Skipper
+
+set(SKIPPER_HDRS
+        src/skipper/skipper_automaton.h
+        src/skipper/skipper_automaton.cpp)
+
+set(SKIPPER_INCLUDE ${SKIPPER_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE} ${NBAUTILS_INCLUDE})
+
+add_executable(skipper_main src/skipper/main_statistics.h src/skipper/main_statistics.cpp ${SKIPPER_INCLUDE} ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(skipper_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+add_executable(skipper_statistics src/skipper/main_statistics.h src/skipper/main_statistics.cpp ${SKIPPER_INCLUDE} ${MAST_COMMON_HDRS_STAT})
+target_include_directories(skipper_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
 # Schewe10
 
 set(SCHEWE10_HDRS
-        src/schewe10/almost_equivalent_states.h
-        src/schewe10/almost_equivalent_states.impl.h
         src/schewe10/schewe_automaton.h
         src/schewe10/schewe_automaton.cpp)
 
@@ -167,7 +182,6 @@ target_include_directories(schewe_statistics PRIVATE ${RANGEV3_DIR}/include ${HO
 
 
 set(SCHEWE10_TESTS
-        src/schewe10/tests/test_almost_equivalent_states.cpp
         src/schewe10/tests/test_main.cpp
         src/schewe10/tests/test_schewe_automaton.cpp)
 

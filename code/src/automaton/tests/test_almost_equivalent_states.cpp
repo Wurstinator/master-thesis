@@ -1,12 +1,13 @@
 
 #include "catch.hpp"
 #include "../almost_equivalent_states.h"
-#include "../../automaton/parity.h"
+#include "../parity.h"
+#include "../../util/equivalence_relation.h"
 
 tollk::automaton::DPA sven_example();
 
 TEST_CASE("Compute alm.eq. states of an example automaton provided by Sven Schewe") {
-    const tollk::EquivalenceRelation<tollk::automaton::state_t> relation = tollk::PriorityAlmostEquivalence(sven_example());
+    const tollk::EquivalenceRelation<tollk::automaton::state_t> relation = tollk::automaton::PriorityAlmostEquivalence(sven_example());
     REQUIRE(relation.Classes().size() == 3);
     CHECK(relation.IsEquiv(0, 0));
     CHECK(relation.IsEquiv(0, 1));
@@ -50,7 +51,7 @@ TEST_CASE("Test PriorityAlmostEquivalence.") {
     dpa.SetLabel(0, 2);
     dpa.SetLabel(1, 2);
     dpa.SetLabel(2, 1);
-    const tollk::EquivalenceRelation<tollk::automaton::state_t> relation = tollk::PriorityAlmostEquivalence(dpa);
+    const tollk::EquivalenceRelation<tollk::automaton::state_t> relation = tollk::automaton::PriorityAlmostEquivalence(dpa);
     REQUIRE(relation.Classes().size() == 2);
     CHECK(relation.IsEquiv(0, 0));
     CHECK(relation.IsEquiv(0, 1));

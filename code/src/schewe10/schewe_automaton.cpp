@@ -1,7 +1,7 @@
 
 #include "schewe_automaton.h"
 
-#include "almost_equivalent_states.h"
+#include "../automaton/almost_equivalent_states.h"
 #include "../automaton/util.h"
 #include <set>
 #include <unordered_set>
