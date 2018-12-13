@@ -1,5 +1,7 @@
-\section{Threshold Moore}
-\label{sect:tm}
+\chapter{Threshold Moore}
+\label{chap:tm}
+
+\section{Theory}
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. For a set $K \subseteq \mathbb{N}$, we define the \emph{priority threshold} of $\mathcal{A}$ as $\mathcal{T}(\mathcal{A}, >k) := (Q, \Sigma, \delta, c')$ with $c'(q) = \begin{cases} c(q) & \text{if } c(q) \leq k \\ k + 1 & \text{else} \end{cases}$.
@@ -12,7 +14,7 @@
 \end{lem}
 
 \begin{proof}
-	%TODO
+	This follows directly by plugging in definitions. For example, assume that $\approx \,= \mathcal{T}(\sim, >k)$ is not symmetric, so $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ but $(\mathcal{B}, q) \not\approx (\mathcal{A}, p)$. Then $(\mathcal{T}(\mathcal{A}, >k), p) \sim (\mathcal{T}(\mathcal{B}, >k), q)$ but $(\mathcal{T}(\mathcal{B}, >k), q) \not\sim (\mathcal{T}(\mathcal{A}, >k), p)$ and thus $\sim$ is not symmetric either.
 \end{proof}
 
 \begin{defn}
@@ -24,7 +26,7 @@
 \end{lem}
 
 \begin{proof}
-	%TODO
+	$(\mathcal{A}, p) \equiv_M^{\leq k} (\mathcal{B}, q)$ is true iff $(\mathcal{T}(\mathcal{A}, >k), p) \equiv_M (\mathcal{T}(\mathcal{B}, >k), q)$ iff for all $w \in \Sigma^*$, $c'_1(\delta_1^*(p, w)) = c'_2(\delta_2^*(q, w)$. If we compare definitions, it becomes clear that $c'_1(x) = c'_2(y)$ iff $c_1(x) =^{\leq k} c_2(y)$.
 \end{proof}
 
 \vspace{5pt}
@@ -117,9 +119,14 @@ The research becomes more interesting if you fix $\sim$ to be the complete langu
 	Building a representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{TM}^{\equiv_L}$ implicitly builds multiple representative merges $\mathcal{A}_0, \dots, \mathcal{A}_m$, where $\mathcal{A}_{i+1}$ is a representative merge of $\mathcal{A}_i$ w.r.t. some $\kappa_i$. By Lemma \ref{lem:tremoore:merge_changes_only_higher}, for all $j > i$, the states in $\kappa_j$ are still pairwise $\equiv^{\equiv_L}_\text{TM}$ equivalent. Moreover, $\kappa_{i+1}$ is an $\equiv^{\equiv_L}_\text{TM}$ equivalence class in $\mathcal{A}_i$. That means we can continue building representative merges in order of the enumeration and our previous results apply. In the end, we obtain a DPA $\mathcal{A}'$ that is language equivalent to $\mathcal{A}$ by Lemma \ref{lem:tremoore:merge_keep_lang}.
 \end{proof}
 
+\section{Computation}
+%TODO
 
 
-\subsection{Different Thresholds}
+\section{Efficiency}
+%TODO
+
+\section{Different Thresholds}
 
 An interesting question to ask ourselves is whether changing $\equiv_M$ in the definition of $\equiv_\text{TM}^\sim$ to a weaker relation still offers the same qualities, especially the language equivalence. One might especially look for a set of properties that a general equivalence relation $\sim'$ has to satisfy so that we can replace $\equiv_M$. As it turns out, this is not easy to do.
 

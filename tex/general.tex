@@ -1,7 +1,4 @@
-\section{General Results}
-We first use this section to establish some general results that are used multiple times in the upcoming proofs.
-
-\subsection{Equivalence Relations}
+\section{Equivalence Relations}
 
 In general, we use the symbol $\equiv$ to denote equivalence relations, mostly between states of an automata. In general, we have automata $\mathcal{A}$ and $\mathcal{B}$ with states $p$ and $q$ from there respective state spaces. Our relations are then defined on $(\mathcal{A}, p) \equiv (\mathcal{B}, q)$.
 
@@ -24,7 +21,7 @@ In general, we use the symbol $\equiv$ to denote equivalence relations, mostly b
 \end{lem}
 
 \begin{proof}
-	%TODO
+	Assume towards a contradiction that there are $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ such that $(\mathcal{A}, \delta_1(p, a)) \not\approx (\mathcal{B}, \delta_2(q, a))$. Thus, there is a $w \in \Sigma^*$ with $(\mathcal{A}, \delta_1^*(\delta_1(p, a), w)) \not\sim (\mathcal{B}, \delta_2(\delta_2(q, a), w))$. This means $(\mathcal{A}, \delta_1^*(p, aw)) \not\sim (\mathcal{B}, \delta_2(q, aw))$ and therefore $(\mathcal{A}, p) \not\approx (\mathcal{B}, q)$.
 \end{proof}
 
 \begin{lem}
@@ -56,7 +53,7 @@ Immediately we define the three first of these relations and show that they are 
 
 \vspace{5pt}
 
-\subsubsection{Language Equivalence}
+\subsection{Language Equivalence}
 
 \begin{defn}
 	Let $\mathcal{A}$ and $\mathcal{B}$ be $\omega$-automata. We define \emph{language equivalence} as $(\mathcal{A}, p) \equiv_L (\mathcal{B}, q)$ if and only if for all words $\alpha \in \Sigma^\omega$, $\mathcal{A}$ accepts $\alpha$ from $p$ iff $\mathcal{B}$ accepts $\alpha$ from $q$.
@@ -87,7 +84,7 @@ Immediately we define the three first of these relations and show that they are 
 
 \vspace{5pt}
 
-\subsubsection{Priority Almost Equivalence}
+\subsection{Priority Almost Equivalence}
 
 \begin{defn}
 	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define \emph{priority almost equivalence} as $(\mathcal{A}, p) \equiv_\text{\Ankh} (\mathcal{B}, q)$ if and only if for all words $\alpha \in \Sigma^\omega$, $c_1^*(p, \alpha)$ and $c_2^*(q, \alpha)$ differ at only finitely many positions.
@@ -140,7 +137,7 @@ The following definition is used as an intermediate step on the way to computing
 
 \vspace{5pt}
 
-\subsubsection{Moore Equivalence}
+\subsection{Moore Equivalence}
 
 \begin{defn}
 	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define \emph{Moore equivalence} as $(\mathcal{A}, p) \equiv_M (\mathcal{B}, q)$ if and only if for all words $w \in \Sigma^*$, $c_1(\delta^*(p, w)) = c_2(\delta^*(q, w))$.
@@ -157,6 +154,7 @@ The following definition is used as an intermediate step on the way to computing
 
 \begin{cor}
 	Moore equivalence of a given DPA can be computed in log-linear time.
+	\label{cor:general:M_loglin}
 \end{cor}
 
 
@@ -181,7 +179,7 @@ The following definition is used as an intermediate step on the way to computing
 
 
 
-\subsection{Representative Merge}
+\section{Representative Merge}
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\emptyset \neq C \subseteq M \subseteq Q$. Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be another DPA. We call $\mathcal{A}'$ a \emph{representative merge of $\mathcal{A}$ w.r.t. $M$ by candidates $C$} if it satisfies the following:
@@ -248,7 +246,7 @@ The following is a comprehensive list of all relevant merger functions that we u
 
 \vspace{5pt}
 
-\subsubsection{Quotient merger}
+\subsection{Quotient merger}
 \begin{defn}
 	Let $\sim$ be a congruence relation. We define the \emph{quotient merger} $\mu^\sim_\div : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$. 
 \end{defn}
@@ -259,15 +257,61 @@ The following is a comprehensive list of all relevant merger functions that we u
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim$ be a congruence relation such that $p \sim q$ implies $c(p) = c(q)$. Then $\mathcal{A}$ is Moore equivalent to every representative merge w.r.t. $\mu_\div^\sim$.
 \end{lem} 
 
-\begin{proof} %TODO check
+\begin{proof} 
 	Let $\mathcal{A}' = (Q', \Sigma, \delta', c')$ be a representative merge. For every $q \in Q$, we prove that $(\mathcal{A}, q) \equiv_M (\mathcal{A}', r_{[q]_\sim})$. Since all states in $\mathcal{A}'$ are representatives of that form and every representative exists in $\mathcal{A}$ as well, this suffices to prove Moore equivalence.
 	
 	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ on $\alpha$ starting in $q$ and $r_{[q]_\sim}$. For every $i \in \mathbb{N}$, we have $\rho'(i) = [\rho(i)]_\sim$ and thus $c'(\rho'(i)) = c(\rho(i))$. Therefore, $\rho$ is accepting iff $\rho'$ is accepting.
 \end{proof}
 
+
+
+\subsection{Moore merger}
 \begin{defn}
 	We define the special \emph{Moore merger} $\mu_M = \mu_\div^{\equiv_M}$.
 \end{defn}
+
+\begin{lem}
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu_M$. Then $\mathcal{A} \equiv_L \mathcal{A}'$.
+\end{lem}
+
+\begin{proof}
+	Directly implied by Lemma \ref{lem:general:congrel_prio_implies_moore} and Theorem \ref{thm:general:M_subs_Ankh_subs_L}.
+\end{proof}
+
+\vspace{5pt}
+
+In figure \ref{fig:general:empirical_moore_size_hist}, the efficiency of $\mu_M$ on different types of automata is shown. On the \textsf{gendet} and \textsf{detnbaut} classes, barely any state reduction is achieved. \textsf{gendet} lacks patterns in its automata and \textsf{detnbaut} already has certain minimization techniques applied during generation. \textsf{detspot} on the other hand shows some small but noticeable reduction. In figure \ref{fig:general:empirical_moore_reduct_abs}, we can see that the number of removed states is roughly proportional to the number of total states, which is no big surprise.
+
+As is to be expected from Corollary \ref{cor:general:M_loglin} and confirmed in figure \ref{fig:skip:empirical_moore_time}, the Moore merger is very easy to compute.
+
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/hopcroft/gendet_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/hopcroft/detspot_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/hopcroft/detnbaut_ap1.pdf} 
+		\caption{Relative state reduction of different automata using $\mu_M$.}
+		\label{fig:general:empirical_moore_size_hist}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/hopcroft/gendet_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/hopcroft/detspot_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/hopcroft/detnbaut_ap1.pdf} 
+		\caption{Time of the relative state reduction of different automata using $\mu_M$.}
+		\label{fig:skip:empirical_moore_time}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[page=2,height=.4\textheight]{../data/analysis/hopcroft/detspot_ap1.pdf} 
+	\caption{Relative state reduction of \textsf{detspot} automata using $\mu_M$.}
+	\label{fig:general:empirical_moore_reduct_abs}
+\end{figure}
+
+
 
 \vspace{5pt}
 
@@ -275,7 +319,7 @@ The following is a comprehensive list of all relevant merger functions that we u
 
 
 
-\subsection{Reachability}
+\section{Reachability}
 
 \begin{defn}
 	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. We define the \emph{reachability order} $\preceq_\text{reach}^\mathcal{S}$ as $p \preceq_\text{reach}^\mathcal{S} q$ if and only if $q$ is reachable from $p$. 
@@ -307,7 +351,7 @@ We want to note here that we always assume for all automata to only have one con
 
 
 
-\subsection{Changing Priorities}
+\section{Changing Priorities}
 As we mentioned earlier, state reduction of DPAs is difficult and minimization is an NP-hard problem. Priorities of states on the other hand are generally easier to modify. A few of these possibilities are considered in this section.
 
 \begin{lem}
@@ -330,7 +374,7 @@ An interesting property that parity automata can have is being \emph{normalized}
 
 Algorithm \ref{alg:general:normalize_c} shows how an equivalent normalized priority function can be computed in $\mathcal{O}(|Q| \cdot |c(Q)|)$. The algorithm is a slight adaption of that presented in \cite{CartonMaceiras99}, which is why we will not go into further details here and just refer to the original source.
 
-\begin{algorithm}[h!] %TODO
+\begin{algorithm}[h!]
   \caption{Normalizing the priority function of a DPA.}
   \label{alg:general:normalize_c}
   \begin{algorithmic}[1]
@@ -372,7 +416,6 @@ Algorithm \ref{alg:general:normalize_c} shows how an equivalent normalized prior
   \end{algorithmic}
 \end{algorithm}
 
-\newpage %TODO
 
 
 

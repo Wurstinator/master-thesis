@@ -1,7 +1,10 @@
 
-\section{Delayed Simulation}
-\label{sect:fritzwilke}
-In this section we consider delayed simulation and variants thereof on DPAs. This approach is based on the paper \cite{FritzWilke06}, which considered the games for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
+\chapter{Delayed Simulation}
+\label{chap:fritzwilke}
+
+\section{Theory}
+
+In this part we consider delayed simulation and variants thereof on DPAs. This approach is based on the paper \cite{FritzWilke06}, which considered the games for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
 
 \begin{defn}
 	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. For $\alpha \in \Sigma^\omega$, we write $(\mathcal{A}, p) \leq_\text{de}^\alpha (\mathcal{B}, q)$ iff the following holds:
@@ -58,7 +61,7 @@ We move on to establishing $\equiv_\text{de}$ as a \enquote{good} relation for o
 \end{lem}
 
 \begin{proof}
-	Let $\pi(0) = p$ and $\rho(0) = q$. Assume towards a contradiction that $\min \text{Occ}(c(\pi)) < \min \text{Occ}(c(\rho))$. Let $k = \min \text{Occ}(c(\pi))$ and let $n$ be the first position at which $c(\pi(n)) = k$. Let $p' = \pi(n)$ and $q' = \rho(n)$. These two states are reachable from $p$ and $q$ respectively with the word $\alpha[0,n]$.
+	Let $\pi(0) = p$ and $\rho(0) = q$. Assume towards a contradiction that the statement is false and $\min \text{Occ}(c(\pi)) < \min \text{Occ}(c(\rho))$. Let $k = \min \text{Occ}(c(\pi))$ and let $n$ be the first position at which $c(\pi(n)) = k$. Let $p' = \pi(n)$ and $q' = \rho(n)$. These two states are reachable from $p$ and $q$ respectively with the word $\alpha[0,n]$.
 	
 	By Lemma \ref{lem:fritzwilke:equivde_alternative}, the run $\rho[n,\omega]$ must eventually see a priority at most $k$ which contradicts the assumption.
 \end{proof}
@@ -100,9 +103,8 @@ Together with Lemma \ref{lem:general:congrel_prio_implies_moore}, this allows fo
 \end{proof}
 
 
-\vspace{10pt}
 
-\subsection{Computing Delayed Simulation}
+\section{Computation}
 So far we have given a definition of $\equiv_\text{de}$ that provides no obvious way of how to compute that relation. For that we can use delayed simulation games as described in \cite{FritzWilke06}.
 
 \begin{defn}
@@ -130,7 +132,7 @@ So far we have given a definition of $\equiv_\text{de}$ that provides no obvious
 	
 	If $\mathcal{A} = \mathcal{B}$, we simply write $\mathcal{A}_\text{de}$ for the delayed simulation automaton.
 	
-	Furthermore, for states $p$ in $\mathcal{A}$ and $q$ in $\mathcal{B}$, we define an initial state $q_0^\text{de}(p, q) = (p, q, \gamma(c_1(p), c_2(q), \checkmark))$.
+	Furthermore, for states $p$ in $\mathcal{A}$ and $q$ in $\mathcal{B}$, we define an initial state $$q_0^\text{de}(p, q) = (p, q, \gamma(c_1(p), c_2(q), \checkmark))$$
 \end{defn}
 
 \begin{lem}
@@ -178,7 +180,12 @@ So far we have given a definition of $\equiv_\text{de}$ that provides no obvious
 
 
 
-\subsection{Resetting obligations} 
+\section{Efficiency}
+%TODO
+
+
+
+\section{Resetting obligations} 
 In the delayed simulation automaton, \enquote{obligations} correspond to good priorities that the first state has accumulated or bad priorities that the second state has accumulated and the need for the respective other state to compensate in some way. The intuitive idea behind this concept is that an obligation that cannot be compensated, stands for an infinite run in which the acceptance differs between the two states that are being compared. The issue with the original definition is that obligations carry over, even if they can only be caused finitely often. This is demonstrated in figure \ref{fig:fritzwilke:reset_oblig_example}; the two states could be merged into one, but they are not $\equiv_\text{de}$-equivalent as can be seen in the delayed simulation automaton in figure \ref{fig:fritzwilke:reset_oblig_example_dea}.
 
 \begin{figure}
@@ -222,13 +229,26 @@ As the definition is so similar to the original delayed simulation, most results
 \end{theorem}
 
 \begin{lem}
+\label{lem:fritzwilke:gamma_mono}
+	$\gamma$ is monotonous in the third component, i.e. if $k \leq_\checkmark k'$, then $\gamma(i, j, k) \leq_\checkmark \gamma(i, j, k')$ for all $i, j \in \mathbb{N}$.
+\end{lem}
+
+\begin{proof}
+	We consider each case in the definition of $\gamma$. If $i$ is odd, $i \leq_\checkmark k$ and $j \preceq_\text{p} i$, then also $i \leq_\checkmark k'$ and $\gamma(i, j, k) = \gamma(i, j, k') = \checkmark$.
+	
+	If $j$ is even, $j \leq_\checkmark k$ and $j \preceq_\text{p} i$, then also $j \leq_\checkmark k'$ and $\gamma(i, j, k) = \gamma(i, j, k') = \checkmark$.
+	
+	Otherwise, $\gamma(i, j, k) = \min \{i, j, k\}$ and $\gamma(i, j, k') = \min \{i, j, k'\}$. Since $k \leq_\checkmark k'$, $\gamma(i, j, k) \leq_\checkmark \gamma(i, j, k')$.
+\end{proof}
+
+\begin{lem}
 	$\leq_\text{de} \;\subseteq\; \leq_\text{deR}$.
 \end{lem}
 
 \begin{proof} 
 	Consider the two simulation automata $\mathcal{A}_\text{de}(p, q)$ and $\mathcal{A}_\text{deR}(p, q)$ and let $\alpha \in \Sigma^\omega$ be an arbitrary word. Let $(p_i, q_i, k_i)_{i \in \mathbb{N}}$ and $(p_i, q_i, l_i)_{i \in \mathbb{N}}$ be the runs of these two automata on $\alpha$. We claim that $k_i \leq_\checkmark l_i$ at every position. Then, since $L(\mathcal{A}_\text{de}(p, q), q_0^\text{de}(p, q)) = \Sigma^\omega$, both runs must be accepting.
 	
-	We know $k_0 = l_0$ by definition. For the sake of induction, we look at position $i+1$. If neither $p_i$ nor $q_i$ change their SCC in this step, the statement follows from lemma \ref{lem:fritzwilke:gamma_mono}. Otherwise, $l_{i+1} = \checkmark \geq_\checkmark k_{i+1}$.
+	We know $k_0 = l_0$ by definition. For the sake of induction, we look at position $i+1$. If neither $p_i$ nor $q_i$ change their SCC in this step, the statement follows from Lemma \ref{lem:fritzwilke:gamma_mono}. Otherwise, $l_{i+1} = \checkmark \geq_\checkmark k_{i+1}$.
 \end{proof}
 
 \vspace{5pt}

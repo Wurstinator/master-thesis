@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass[oneside]{book}
 
 % PACKAGES
 \usepackage[german,english]{babel}
@@ -76,9 +76,33 @@
 
 \include{introduction}
 
-%\include{basics}
 
-\include{Theory}
+\chapter{Basics}
+In the first chapter, we define basics notations and conventions and present some data of our empirical testing environment used to collect practical data of each approach.
+In the second chapter, we establish some theoretical ground work that will be used by the rest of the thesis.
+After that, we present several algorithms for state space reduction, split into one chapter for each such procedure. Each such chapter is made up of at least three sections. The first section describes the idea and definition of the algorithm and proofs well behaving properties. The second section covers how to actually compute the reduction and provides a short run time analysis. The third section shows practical data to analyze \enquote{real world} usefulness. Potential other sections contain variants or extensions of the original procedure as well as potential open questions.
+
+\input{basics}
+\vspace{1cm}
+\input{exp_rawstats} %TODO
+
+\chapter{General Theory}
+\input{general}
+
+
+\input{skip_merger}
+
+\input{fritz_wilke_06}
+
+\input{iterated_moore}
+
+\input{k_lang_ref}
+
+\input{moore_ltk}
+
+\input{lsf}
+
+\input{schewe_10}
 
 %\include{Empirical}
 

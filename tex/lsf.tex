@@ -1,5 +1,7 @@
-\section{Labeled SCC Filter}
-\label{sect:lsf}
+\chapter{Labeled SCC Filter}
+\label{chap:lsf}
+
+\section{Theory}
 
 \begin{defn}
 	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs, $k \in \mathbb{N}$, and $\sim$ be an equivalence relation that implies language equivalence. We define a relation $\equiv_\text{LSF}^{k,\sim}$ such that $(\mathcal{A}, p) \equiv_\text{LSF}^{k,\sim} (\mathcal{B}, q)$ holds if and only if $(\mathcal{A}, p) \equiv_M^{\leq k} (\mathcal{B}, q)$ and $(\mathcal{A}, p) \sim (\mathcal{B}, q)$.
@@ -18,7 +20,7 @@
 \end{lem}
 
 \begin{proof}
-	%TODO
+	By Lemma \ref{lem:tremoore:moore_less_thresh_is_subset}, we have $\equiv_M^{\leq k} \,\subseteq\, \equiv_M^{\leq l}$. Thus, $\equiv_\text{LSF}^{k,\sim}$ is an intersection of two sets which are respective subsets of the sets that intersect $\equiv_M^{\leq l}$.
 \end{proof}
 
 \begin{defn}
@@ -30,7 +32,7 @@
 \end{defn}
 
 
-\vspace{10pt}
+\vspace{5pt}
 
 \begin{lem}
 	Let $\mathcal{A}$ be a DPA and $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim})$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M_\kappa$ by candidates $C_\kappa$. Then $(\mathcal{A}, p) \equiv_L (\mathcal{A}', p)$ for all $p$.
@@ -101,12 +103,16 @@ A final result to show how versatile the LSF merge is is captured by the followi
 \end{theorem}
 
 \begin{proof}
-	%TODO
+	First, note that $\equiv_\text{LSF}^{-1,\sim}$ is equivalent to $\sim$, as $\equiv_M^{\leq -1}$ is true for all pairs. Since $\mathcal{A} \upharpoonright^c_{> -1}$ is the same as $\mathcal{A}$, the definitions align.
 \end{proof}
 
 
+\section{Computation}
+%TODO
 
 
+\section{Efficiency}
+%TODO
 
 
 

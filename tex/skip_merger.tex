@@ -1,6 +1,9 @@
 
-\section{Skip Merger}
-\label{sect:skipper}
+\chapter{Skip Merger}
+\label{chap:skipper}
+
+\section{Theory}
+The skip merger we introduce now uses the rather simple idea that if we consider classes of language equivalent states, then we only need to use the \enquote{last} SCC of those states and can remove all that come before.
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim \,\subseteq Q \times Q$ be a congruence relation on $\mathcal{A}$. Let $\preceq \,\subseteq Q \times Q$ be a total extension of $\preceq_\text{reach}^\mathcal{A}$. 
@@ -8,20 +11,9 @@
 	We define the \emph{skip merger function} $\mu_\text{skip}^\sim : D \rightarrow 2^Q$ as follows: for each equivalence class $\kappa \in \mathfrak{C}(\sim)$, let $C_\kappa \subseteq \kappa$ be the of $\preceq$-maximal elements in $\kappa$. Let $M_\kappa = \kappa \setminus C_\kappa$. Then we have $D = \{ M_\kappa \mid \kappa \in \mathfrak{C}(\sim) \}$ and $\mu_\text{skip}^\sim(M_\kappa) = C_\kappa$.
 \end{defn}
 
-The idea behind the skip merger is that whenever an equivalence class of $\sim$ is reached, the transition is redirected to another element of the same equivalence class that lies as \enquote{deep} in the automaton as possible.
-
-\begin{lem}
-\label{lem:skip:skip_aut_linear_time}
-	For a given $\mathcal{A}$ and $\sim$, $\mu_\text{skip}^\sim$ can be computed in $\mathcal{O}(|\mathcal{A}|)$.
-\end{lem}
-
-\begin{proof}
-	As seen in Lemma \ref{lem:general:reach_topo_lintime}, $\preceq$ can be computed in linear time. Assuming that $\sim$ is given by a suitable data structure, each equivalence class can easily be accessed and $\preceq$-maximal elements can be found in linear time.
-\end{proof}
-
 \vspace{5pt}
 
-Now that we have established the definition and possible computation of the skip merger function, we want to analyze its structure and prove its correctness. For the rest of this section, we use $\mathcal{A} = (Q, \Sigma, \delta, c)$ as a DPA, $\sim$ as a congruence relation, and $\mathcal{B} = (Q_\mathcal{B}, \Sigma, \delta_\mathcal{B}, c_\mathcal{B})$ as a representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{skip}^\sim$.
+Now that we have established the definition of the merger, we want to analyze its structure and prove its correctness. For the rest of this section, we use $\mathcal{A} = (Q, \Sigma, \delta, c)$ as a DPA, $\sim$ as a congruence relation, and $\mathcal{B} = (Q_\mathcal{B}, \Sigma, \delta_\mathcal{B}, c_\mathcal{B})$ as a representative merge of $\mathcal{A}$ w.r.t. $\mu_\text{skip}^\sim$.
 
 \begin{lem}
 \label{lem:skip:run_growing}
@@ -76,3 +68,42 @@ Now that we have established the definition and possible computation of the skip
 	Let $w \in \Sigma^*$ be the prefix of $\alpha$ with $\alpha = w \beta$. By Lemma \ref{lem:general:cong_stays_in_merge}, we know that $\delta^*(q_0, w) \sim \delta^*_\mathcal{B}(q_0, w)$. Since every state is $\sim$-equivalent to its representative and $\sim$ is a congruence relation, we also know $\delta^*_\mathcal{B}(q_0, w) \sim \delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$. From $\delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$, the run $\pi$ accepts $\beta$ iff $\alpha \in L(\mathcal{B}, q_0)$. As $\sim$ implies language equivalence, the same must hold for $\delta^*_\mathcal{A}(q_0, w)$. Therefore, $\alpha \in L(\mathcal{A}, q_0)$ iff $\alpha \in L(\mathcal{B}, q_0)$.
 \end{proof}
 
+
+
+
+\section{Computation}
+
+\begin{lem}
+\label{lem:skip:skip_aut_linear_time}
+	For a given $\mathcal{A}$ and $\sim$, $\mu_\text{skip}^\sim$ can be computed in $\mathcal{O}(|\mathcal{A}|)$.
+\end{lem}
+
+\begin{proof}
+	As seen in Lemma \ref{lem:general:reach_topo_lintime}, $\preceq$ can be computed in linear time. Assuming that $\sim$ is given by a suitable data structure, each equivalence class can easily be accessed and $\preceq$-maximal elements can be found in linear time.
+\end{proof}
+
+
+
+
+
+\section{Efficiency}
+%TODO
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/skipper/gendet_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/skipper/detspot_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/skipper/detnbaut_ap1.pdf} 
+		\caption{Relative state reduction of different automata using $\mu_\text{skip}^{\equiv_\text{\Ankh}}$.}
+		\label{fig:skip:empirical_size_hist}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=2,height=.3\textheight]{../data/analysis/skipper/gendet_ap1.pdf} 
+		\includegraphics[page=2,height=.3\textheight]{../data/analysis/skipper/detspot_ap1.pdf} 
+		\includegraphics[page=2,height=.3\textheight]{../data/analysis/skipper/detnbaut_ap1.pdf} 
+		\caption{Relative state reduction of different automata using $\mu_\text{skip}^{\equiv_\text{\Ankh}}$.}
+		\label{fig:skip:empirical_reduct_abs}
+	\end{minipage}
+\end{figure}

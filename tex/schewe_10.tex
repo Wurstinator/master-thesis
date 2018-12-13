@@ -1,6 +1,8 @@
 
-\section{Schewe}
-\label{sect:schewe}
+\chapter{Schewe}
+\label{chap:schewe}
+
+\section{Theory}
 
 This section is based heavily on \cite{Schewe2010} and partially adapts their results from B\"uchi to parity automata.
 
@@ -110,6 +112,8 @@ The automaton has six states. Regarding Moore equivalence, every state builds a 
 \end{proof}
 
 
+\section{Skip Merger}
+
 \begin{lem}
 	Let $\sim$ be a congruence relation that implies language equivalence. Then $\mu_\text{skip}^\sim$ is Schewe suitable.
 	\label{lem:schewe:skip_suitable}
@@ -170,6 +174,15 @@ For our final proof in this section we want to adapt a result from \cite{Schewe2
 	We make sure that after reading any $\alpha_n$ from $p$, $\mathcal{S}'$ moves back to $p$. Let $\alpha_0 := \varepsilon$ and assume for induction that $\alpha_n$ has already been defined. After reading $\alpha_0$, $\mathcal{S}'$ reaches $p$ and $\mathcal{B}$ reaches some $q$. If $q \notin f(\kappa)$, i.e. $(\mathcal{S}', p) \not\equiv_\text{\Ankh} (\mathcal{B}, q)$, there is a witness $\beta$ and we can simply set $\alpha := \alpha_n \beta$. Otherwise, $q \in f(\kappa)$. With the claim we have proven, we can find a word $w_q$ such that reading the word from $p$ and $q$ leads to states $p'$ and $q'$ that have different priorities but $p'$ is still in $C$. Thus, there is a word $u$ that leads back from $p'$ to $p$. We then set $\alpha_{n+1} := \alpha_n w_q u$. This finishes our proof.
 \end{proof}
 
+
+
+\section{Computation}
+%TODO
+
+
+
+\section{Efficiency}
+%TODO
 
 
 

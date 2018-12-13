@@ -1,13 +1,15 @@
 
-\section{Congruence Path Refinement}
-\label{sect:pr}
+\chapter{Congruence Path Refinement}
+\label{chap:pr}
+
+\section{Theory}
 
 Before we present the path refinement method, note that it takes a special case as it is only defined for state pairs within one DPA, not between different automata.
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation on the state space. Let $\lambda \subseteq Q$ be an equivalence class of $R$. We define $L_{\lambda \hookleftarrow}$ as the set of non-empty words $w$ such that for all $q \in \lambda$ and all $u \sqsubseteq w$, $(\delta(q, u), q) \in R$ iff $u \in \{\varepsilon, w\}$. In other words, the set contains all minimal words by which the automaton moves from $\lambda$ to $\lambda$ again.
 	
-	Let $f_\text{PR} : 2^{\lambda \times \lambda} \rightarrow 2^{\lambda \times \lambda}$ be a function such that $(p, q) \in f(X)$  iff for all $w \in L_{\lambda \hookleftarrow}$, $(\delta^*(p, w), \delta^*(q, w)) \in X$.
+	Let $f_\text{PR} : 2^{\lambda \times \lambda} \rightarrow 2^{\lambda \times \lambda}$ be a function such that $(p, q) \in f_\text{PR}(X)$  iff for all $w \in L_{\lambda \hookleftarrow}$, $(\delta^*(p, w), \delta^*(q, w)) \in X$.
 	Then let $X_0 \subseteq \lambda \times \lambda$ such that $(p, q) \in X_0$ iff for all $w \in L_{\lambda \hookleftarrow}$, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$, i.e. the minimal priority when moving from $p$ or $q$ to $\lambda$ again is the same.
 	
 	Using both, we set $X_{i+1} = f_\text{PR}(X_i)$. $f_\text{PR}$ is monotone w.r.t. $\subseteq$, so there is an $X_n = X_{n+1}$ by Kleene's fixed point theorem. We define the \emph{path refinement of $\lambda$}, called $\equiv_\text{PR}^\lambda$, as
@@ -26,7 +28,9 @@ $\lambda$ being an equivalence class of $R$, a congruence relation, is required 
 \end{lem}
 
 \begin{proof}
-	%TODO
+	The disjoint union of two equivalence relations is an equivalence relation, so we only focus on $\lambda$ here; it is obvious that $\equiv_\text{PR}^\lambda$ is an equivalence relation on $Q \setminus \lambda$.
+	
+	We can actually observe that every $X_i$ is an equivalence relation. For $X_0$ this is true as that relation is solely defined by equivalence of values. Then by induction it easily follows if $X$ is an equivalence relation that $f_\text{PR}(X)$ is one as well.
 \end{proof}
 
 \begin{defn}
@@ -67,7 +71,8 @@ $\lambda$ being an equivalence class of $R$, a congruence relation, is required 
 \end{proof}
 
 
-\subsection{Algorithmic Definition}
+
+\section{Computation}
 The definition of path refinement that we introduced is useful for the proofs of correctness. It however does not provide one with a way to actually compute the relation. That is why we now provide an alternative definition that yields the same results but is more algorithmic in nature.
 
 \begin{defn}
@@ -78,7 +83,8 @@ The definition of path refinement that we introduced is useful for the proofs of
 		\item The initial state we use is $q_0^\text{PR}(p, q) = (p, q, \eta_k(c(p), c(q), \checkmark), \eta_x(c(p), c(q), \checkmark, =))$
 		\item $\delta^\lambda_\text{PR}((p, q, k, x), a) = \begin{cases}
 			(p', q', \eta_k(c(p'), c(q'), k), \eta_x(c(p'), c(q'), k, x)) & \text{if } p' \notin \lambda \\
-			q_0^\text{PR}(p', q') & \text{if } p' \in \lambda \text{ and } (\eta_x(c(p'), c(q'), k, x) =\, =) \\
+			q_0^\text{PR}(p', q') & \text{if } p' \in \lambda \text{ and } \\ 
+			& \quad (\eta_x(c(p'), c(q'), k, x) =\, =) \\
 			\perp & \text{else}
 		\end{cases}$ \\
 			where $p' = \delta(p, a)$ and $q' = \delta(q, a)$. \\
@@ -122,7 +128,7 @@ The automaton $\mathcal{G}_\text{PR}^{R,\lambda}$ has size $\mathcal{O}(|Q|^2 \c
 
 
 
-\subsection{Alternative Algorithmic Definition}
+\section{Faster Computation}
 The computation presented in the previous section was a straight-forward description of $\equiv_\text{PR}^\lambda$ in an algorithmic way. We can reduce the complexity of that computation by taking a more indirect route, as we will see now.
 
 \begin{defn}
@@ -246,9 +252,11 @@ The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \
 
 
 
+\section{Efficiency}
+%TODO
 
 
-\subsection{Multiple merges}
+\section{Multiple Merges}
 So far, we always considered $\mu_\text{PR}^\lambda$ for some fixed equivalence class $\lambda$. However, building this merger only touches states in $\lambda$; all other states of the automaton remain as before. 
 
 From Theorem \ref{thm:pr:preserves_language}, we can deduce that if $R$ is a congruence relation that implies language equivalence on $\mathcal{A}$, then $R \cap (Q' \times Q')$ is the same on a representative merge $\mathcal{A}'$ (w.r.t. $\mu_\text{PR}^\lambda$). This tells us that we can simply \enquote{reuse} the relation $R$, or rather its equivalence classes, to compute the path refinement relation for different $\lambda$ and sequentially built their merges. The upcoming example shows that this can provide further state reduction and more importantly that the order that the equivalence classes are considered in matters.
