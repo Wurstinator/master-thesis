@@ -99,7 +99,7 @@ The automaton has six states. Regarding Moore equivalence, every state builds a 
 
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA and $\mu : D \rightarrow 2^Q$ be a merger function that is Schewe suitable. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu$ that was built with representatives $R \subseteq Q$. If a Schewe merge $\mathcal{A}''$ is built with the same representatives, then $(\mathcal{A}', p) \equiv_L (\mathcal{A}'', q)$ for all $q \sim_\mathcal{C}^\mu q$.
+	Let $\mathcal{A}$ be a DPA and $\mu : D \rightarrow 2^Q$ be a merger function that is Schewe suitable. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\mu$ that was built with representatives $R \subseteq Q$. If a Schewe merge $\mathcal{A}''$ is built with the same representatives, then $(\mathcal{A}', p) \equiv_L (\mathcal{A}'', q)$ for all $p \sim_\mathcal{C}^\mu q$.
 	\label{lem:schewe:schewe_suitable_works}
 \end{lem}
 
@@ -188,8 +188,26 @@ For our final proof in this section we want to adapt a result from \cite{Schewe2
 
 
 \section{Efficiency}
-%TODO
+Figures \ref{fig:schewe:empirical_size_hist} and \ref{fig:schewe:empirical_reduct_rel} show the effect of building Schewe merges w.r.t. the skip merger. After the Schewe merge was constructed, we also built a representative merge w.r.t. $\mu_M$ to see the difference of the Schewe merge compared to a normal representative merge. Unfortunately, the reduction is barely any better than that achieved by building a merge w.r.t. $\mu_M$ directly (figure \ref{fig:general:empirical_moore_size_hist}). The reasoning here is the same as that which was given in chapter \ref{chap:skipper} already to explain the bad results of $\mu_\text{skip}^\sim$: our testing automata contain only few SCCs in general which limits the potential of a Schewe merge.
 
 
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/schewe/gendet_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/schewe/detspot_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/schewe/detnbaut_ap1.pdf} 
+		\caption{State reduction of different automata using $\mu_\text{skip}^{\equiv_\text{\Ankh}}$.}
+		\label{fig:schewe:empirical_size_hist}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=2,height=.3\textheight]{../data/analysis/schewe/gendet_ap1.pdf} 
+		\includegraphics[page=2,height=.3\textheight]{../data/analysis/schewe/detspot_ap1.pdf} 
+		\includegraphics[page=2,height=.3\textheight]{../data/analysis/schewe/detnbaut_ap1.pdf} 
+		\caption{Relative state reduction of different automata using $\mu_\text{skip}^{\equiv_\text{\Ankh}}$.}
+		\label{fig:schewe:empirical_reduct_rel}
+	\end{minipage}
+\end{figure}
 
 

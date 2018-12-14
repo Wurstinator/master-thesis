@@ -119,9 +119,27 @@ A final result to show how versatile the LSF merge is is captured by the followi
 \end{proof}
 
 
-\section{Efficiency}
-%TODO
+\section{Efficiency} %TODO
+Figures \ref{fig:lsf:empirical_size_hist} and \ref{fig:lsf:empirical_reduct_rel} show the relative reduction achieved by the LSF merger. We used the result of 
 
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/lsf/gendet_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/lsf/detspot_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/lsf/detnbaut_ap1.pdf} 
+		\caption{State reduction of different automata using $\mu_\text{LSF}^{k,\sim}$.}
+		\label{fig:lsf:empirical_size_hist}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/lsf/gendet_ap1.pdf} 
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/lsf/detspot_ap1.pdf} 
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/lsf/detnbaut_ap1.pdf} 
+		\caption{Relative state reduction of different automata using $\mu_\text{LSF}^{k,\sim}$.}
+		\label{fig:lsf:empirical_reduct_rel}
+	\end{minipage}
+\end{figure}
 
 
 

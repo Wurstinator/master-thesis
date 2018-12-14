@@ -253,7 +253,65 @@ The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \
 
 
 \section{Efficiency}
-%TODO
+For the analysis of efficiency, we performed the merge w.r.t. $\mu_\text{PR}^\lambda$ for all $\lambda \in \mathfrak{C}(R, \mathcal{A})$. In general, we used $R = \equiv_L$. As usual, figures \ref{fig:pr:empirical_size_hist} and \ref{fig:pr:empirical_reduct_rel} show that \textsf{gendet} is not susceptible for state space reduction. The path refinement merger shows great promise on \textsf{detspot} and \textsf{detnbaut} though, frequently achieving reduction rates of over 20\%. 
+
+Figure \ref{fig:pr:empirical_time} displays the run time required for the entire reduction procedure. We can see that it is one of the slower algorithms, similar to delayed simulation. This is, however, not due to the path refinement itself but rather due to the computation of $\equiv_L$ which we use for its equivalence classes.
+
+%TODO safra reference
+The generation of \textsf{detnbaut} also implicitly outputs a relation that implies language equivalence which has to be computed for the determination regardless. We can therefore use that relation without any additional cost. As can be seen in figure \ref{fig:pr:empirical_safra_size_hist} and \ref{fig:pr:empirical_safra_reduct_rel}, using this relation still leads to a relative reduction of about 5 to 15\%. The run time graph also more closely resembles a linear function and is only a fraction of what is required to compute $\equiv_L$ (figure \ref{fig:pr:empirical_safra_time}).
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/path_refinement/gendet_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/path_refinement/detspot_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/path_refinement/detnbaut_ap1.pdf} 
+		\caption{State reduction of different automata using $\mu_\text{PR}^\lambda$.}
+		\label{fig:pr:empirical_size_hist}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/path_refinement/gendet_ap1.pdf} 
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/path_refinement/detspot_ap1.pdf} 
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/path_refinement/detnbaut_ap1.pdf} 
+		\caption{Relative state reduction of different automata using $\mu_\text{PR}^\lambda$.}
+		\label{fig:pr:empirical_reduct_rel}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/path_refinement/gendet_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/path_refinement/detspot_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/path_refinement/detnbaut_ap1.pdf} 
+		\caption{Time of the state reduction of different automata using $\mu_\text{PR}^\lambda$.}
+		\label{fig:pr:empirical_time}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[page=6,height=.4\textheight]{../data/analysis/path_refinement/detnbaut_safra_ap1.pdf} 
+	\caption{State reduction of different automata using $\mu_\text{PR}^\lambda$.}
+	\label{fig:pr:empirical_safra_size_hist}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[page=3,height=.4\textheight]{../data/analysis/path_refinement/detnbaut_safra_ap1.pdf} 
+	\caption{State reduction of different automata using $\mu_\text{PR}^\lambda$.}
+	\label{fig:pr:empirical_safra_reduct_rel}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[page=1,height=.4\textheight]{../data/analysis/path_refinement/detnbaut_safra_ap1.pdf} 
+	\caption{State reduction of different automata using $\mu_\text{PR}^\lambda$.}
+	\label{fig:pr:empirical_safra_time}
+\end{figure}
+
+
 
 
 \section{Multiple Merges}

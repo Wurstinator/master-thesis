@@ -140,7 +140,43 @@ The research becomes more interesting if you fix $\sim$ to be the complete langu
 
 
 \section{Efficiency}
-%TODO
+Figures \ref{fig:tremoore:empirical_size_hist} and \ref{fig:tremoore:empirical_reduct_rel} show that, unfortunately, the Threshold Moore merger only has very little effect on the \textsf{gendet} and \textsf{detnbaut} data sets. Comparing the results for \textsf{detspot} to those of $\mu_M$ in figure \ref{fig:general:empirical_moore_size_hist} shows that there is not much gain here either. Even though the results of the reduction are disappointing, it still requires us to compute some kind of relation $\sim$; in our case we used $\equiv_L$ again, which also had a noticeable impact on the run time as can be seen in figure \ref{fig:tremoore:empirical_time}.
+
+Like for the path refinement merger, we could use the internal equivalence relation of \textsf{detnbaut} to eliminate the need of explicitly calculating $\sim$. However, as we already barely achieved any reduction with $\equiv_L$ and \enquote{worse} relations only decrease the amount of reduction, this step seems obsolete.
+
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/threshold_moore/gendet_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/threshold_moore/detspot_ap1.pdf} 
+		\includegraphics[page=6,height=.3\textheight]{../data/analysis/threshold_moore/detnbaut_ap1.pdf} 
+		\caption{State reduction of different automata using $\mu_\text{TM}^{\equiv_L}$.}
+		\label{fig:tremoore:empirical_size_hist}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/threshold_moore/gendet_ap1.pdf} 
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/threshold_moore/detspot_ap1.pdf} 
+		\includegraphics[page=3,height=.3\textheight]{../data/analysis/threshold_moore/detnbaut_ap1.pdf} 
+		\caption{Relative state reduction of different automata using $\mu_\text{TM}^{\equiv_L}$.}
+		\label{fig:tremoore:empirical_reduct_rel}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/threshold_moore/gendet_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/threshold_moore/detspot_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/threshold_moore/detnbaut_ap1.pdf} 
+		\caption{Time for state reduction of different automata using $\mu_\text{TM}^{\equiv_L}$.}
+		\label{fig:tremoore:empirical_time}
+	\end{minipage}
+\end{figure}
+
+
+
 
 \section{Different Thresholds}
 

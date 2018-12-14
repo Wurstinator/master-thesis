@@ -41,12 +41,12 @@ The following is a comprehensive list of all relevant equivalence relations that
 	\item Language equivalence, $\equiv_L$. Defined below.
 	\item Moore equivalence, $\equiv_M$. Defined below.
 	\item Priority almost equivalence, $\equiv_\text{\Ankh}$. Defined below.
-	\item Delayed simulation equivalence, $\equiv_\text{de}$. Defined in section \ref{sect:fritzwilke}.
-	\item Delayed simulation equivalence with resets, $\equiv_\text{deR}$. Defined in section \ref{sect:fritzwilke}.
-	\item Iterated Moore equivalence, $\equiv_\text{IM}$. Defined in section \ref{sect:imoore}.
-	\item Path refinement equivalence, $\equiv_\text{PR}$. Defined in section \ref{sect:pr}.
-	\item Threshold Moore equivalence, $\equiv_\text{TM}^\sim$. Defined in section \ref{sect:tm}.
-	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}^{k,\sim}$. Defined in section \ref{sect:lsf}.
+	\item Delayed simulation equivalence, $\equiv_\text{de}$. Defined in chapter \ref{chap:fritzwilke}.
+	\item Delayed simulation equivalence with resets, $\equiv_\text{deR}$. Defined in chapter \ref{chap:fritzwilke}.
+	\item Iterated Moore equivalence, $\equiv_\text{IM}$. Defined in chapter \ref{chap:imoore}.
+	\item Path refinement equivalence, $\equiv_\text{PR}$. Defined in chapter \ref{chap:pr}.
+	\item Threshold Moore equivalence, $\equiv_\text{TM}^\sim$. Defined in chapter \ref{chap:tm}.
+	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}^{k,\sim}$. Defined in chapter \ref{chap:lsf}.
 \end{itemize}
 
 Immediately we define the three first of these relations and show that they are computable.
@@ -244,11 +244,11 @@ The following is a comprehensive list of all relevant merger functions that we u
 \begin{itemize}
 	\item Quotient merger, $\mu_\div^\sim$. Defined below.
 	\item Moore merger, $\mu_M$. Defined below.
-	\item Skip merger, $\mu_\text{skip}^\sim$. Defined in section \ref{sect:skipper}.
-	\item Delayed simulation merger, $\mu_\text{de}$. Defined in section \ref{sect:fritzwilke}.
-	\item Path refinement merger, $\mu_\text{PR}^\lambda$. Defined in section \ref{sect:pr}.
-	\item Treshold Moore merger, $\mu_\text{TM}^\sim$. Defined in section \ref{sect:tm}.
-	\item Labeled SCC Filter merger, $\mu_\text{LSF}^{k,\sim}$. Defined in section \ref{sect:lsf}.
+	\item Skip merger, $\mu_\text{skip}^\sim$. Defined in chapter \ref{chap:skipper}.
+	\item Delayed simulation merger, $\mu_\text{de}$. Defined in chapter \ref{chap:fritzwilke}.
+	\item Path refinement merger, $\mu_\text{PR}^\lambda$. Defined in chapter \ref{chap:pr}.
+	\item Treshold Moore merger, $\mu_\text{TM}^\sim$. Defined in chapter \ref{chap:tm}.
+	\item Labeled SCC Filter merger, $\mu_\text{LSF}^{k,\sim}$. Defined in chapter \ref{chap:lsf}.
 \end{itemize}
 
 \vspace{5pt}
@@ -289,7 +289,7 @@ The following is a comprehensive list of all relevant merger functions that we u
 
 In figure \ref{fig:general:empirical_moore_size_hist}, the efficiency of $\mu_M$ on different types of automata is shown. On the \textsf{gendet} and \textsf{detnbaut} classes, barely any state reduction is achieved. \textsf{gendet} lacks patterns in its automata and \textsf{detnbaut} already has certain minimization techniques applied during generation. \textsf{detspot} on the other hand shows some small but noticeable reduction. In figure \ref{fig:general:empirical_moore_reduct_abs}, we can see that the number of removed states is roughly proportional to the number of total states, which is no big surprise.
 
-As is to be expected from Corollary \ref{cor:general:M_loglin} and confirmed in figure \ref{fig:skip:empirical_moore_time}, the Moore merger is very easy to compute.
+As is to be expected from Corollary \ref{cor:general:M_loglin} and confirmed in figure \ref{fig:general:empirical_moore_time}, the Moore merger is very easy to compute.
 
 
 \begin{figure}
@@ -298,7 +298,7 @@ As is to be expected from Corollary \ref{cor:general:M_loglin} and confirmed in 
 		\includegraphics[page=6,height=.3\textheight]{../data/analysis/hopcroft/gendet_ap1.pdf} 
 		\includegraphics[page=6,height=.3\textheight]{../data/analysis/hopcroft/detspot_ap1.pdf} 
 		\includegraphics[page=6,height=.3\textheight]{../data/analysis/hopcroft/detnbaut_ap1.pdf} 
-		\caption{Relative state reduction of different automata using $\mu_M$.}
+		\caption{State reduction of different automata using $\mu_M$.}
 		\label{fig:general:empirical_moore_size_hist}
 	\end{minipage}
 	\hfill
@@ -306,15 +306,15 @@ As is to be expected from Corollary \ref{cor:general:M_loglin} and confirmed in 
 		\includegraphics[page=1,height=.3\textheight]{../data/analysis/hopcroft/gendet_ap1.pdf} 
 		\includegraphics[page=1,height=.3\textheight]{../data/analysis/hopcroft/detspot_ap1.pdf} 
 		\includegraphics[page=1,height=.3\textheight]{../data/analysis/hopcroft/detnbaut_ap1.pdf} 
-		\caption{Time of the relative state reduction of different automata using $\mu_M$.}
-		\label{fig:skip:empirical_moore_time}
+		\caption{Time of the state reduction of different automata using $\mu_M$.}
+		\label{fig:general:empirical_moore_time}
 	\end{minipage}
 \end{figure}
 
 \begin{figure}
 	\centering
 	\includegraphics[page=2,height=.4\textheight]{../data/analysis/hopcroft/detspot_ap1.pdf} 
-	\caption{Relative state reduction of \textsf{detspot} automata using $\mu_M$.}
+	\caption{State reduction of \textsf{detspot} automata using $\mu_M$.}
 	\label{fig:general:empirical_moore_reduct_abs}
 \end{figure}
 

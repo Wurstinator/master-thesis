@@ -87,7 +87,7 @@ Now that we have established the definition of the merger, we want to analyze it
 
 
 \section{Efficiency}
-%TODO
+As we can see in figures \ref{fig:skip:empirical_size_hist} and \ref{fig:skip:empirical_reduct_abs}, barely any reduction occurs using the skip merger function, even when using the \enquote{best} equivalence relation $\equiv_L$. This can be explained by the restrictive nature of the procedure and the fact that our testing automata are in general well connected. For two states to be merged, they have to lie in different SCCs, meaning that the fewer SCCs an automaton has, the less likely it is to be affected by the skip merger. As we saw in figure \ref{exp:fig:rawstats_sccs}, most automata have less than three different SCCs. 
 
 \begin{figure}
 	\centering
@@ -95,7 +95,7 @@ Now that we have established the definition of the merger, we want to analyze it
 		\includegraphics[page=6,height=.3\textheight]{../data/analysis/skipper/gendet_ap1.pdf} 
 		\includegraphics[page=6,height=.3\textheight]{../data/analysis/skipper/detspot_ap1.pdf} 
 		\includegraphics[page=6,height=.3\textheight]{../data/analysis/skipper/detnbaut_ap1.pdf} 
-		\caption{Relative state reduction of different automata using $\mu_\text{skip}^{\equiv_\text{\Ankh}}$.}
+		\caption{State reduction of different automata using $\mu_\text{skip}^{\equiv_L}$.}
 		\label{fig:skip:empirical_size_hist}
 	\end{minipage}
 	\hfill
@@ -103,7 +103,7 @@ Now that we have established the definition of the merger, we want to analyze it
 		\includegraphics[page=2,height=.3\textheight]{../data/analysis/skipper/gendet_ap1.pdf} 
 		\includegraphics[page=2,height=.3\textheight]{../data/analysis/skipper/detspot_ap1.pdf} 
 		\includegraphics[page=2,height=.3\textheight]{../data/analysis/skipper/detnbaut_ap1.pdf} 
-		\caption{Relative state reduction of different automata using $\mu_\text{skip}^{\equiv_\text{\Ankh}}$.}
+		\caption{State reduction of different automata using $\mu_\text{skip}^{\equiv_L}$.}
 		\label{fig:skip:empirical_reduct_abs}
 	\end{minipage}
 \end{figure}

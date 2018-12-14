@@ -1,8 +1,8 @@
 
 #include "catch.hpp"
-#include "../../skipper/skipper_automaton.h"
 #include "../../automaton/parity.h"
 #include "../../automaton/util.h"
+#include "../schewe_automaton.h"
 
 tollk::automaton::DPA sven_example();
 

@@ -3,11 +3,16 @@ import os
 import subprocess
 import argparse
 
+constr_choices = ['schewe10', 'fritzwilke06', 'iterated_moore', 'path_refinement', 'tremoore', 'lsf', 'skipper', 'hopcroft']
+
 def parse_args():
     parser = argparse.ArgumentParser()
-    constr_choices = ['schewe10', 'fritzwilke06', 'fritzwilke06_reset', 'iterated_moore', 'path_refinement', 'tremoore', 'lsf', 'skipper', 'hopcroft']
-    parser.add_argument('-c', dest='construction', help='Type of construction to perform on the input.', choices=constr_choices)
+
+    parser.add_argument('-c', dest='construction', help='Type of construction to perform on the input.', choices=constr_choices + ['all'], required=True)
     parser.add_argument('-t', dest='timeout', help='Timeout for each individual automaton.', type=int)
+    parser.add_argument('--scommon', dest='scommon', help='Test the gendet, detnbaut, and detspot automata', action='store_true')
+    parser.add_argument('--snbaut', dest='snbaut', help='Test the detnbaut special cases with Safra.', action='store_true')
+    parser.add_argument('--sspecial', dest='sspecial', help='Test the special classes of automata.', action='store_true')
     return parser.parse_args()
 
 
@@ -30,38 +35,59 @@ statistics_py = {
     'path_refinement': 'path_refinement_statistics.py',
     'tremoore': 'tremoore_statistics.py',
     'lsf': 'lsf_statistics.py',
-    'schewe10': 'schewe_statistics.py'
+    'schewe10': 'schewe10_statistics.py'
 }
+
+
+def perform_experiments(construction, requested_sets, timeout):
+    # Make directorties
+    try:
+        os.makedirs(directories[construction])
+    except os.error as e:
+        pass
+
+    # Set up commands
+    timeout_str = '' if timeout is None else '-t {}'.format(timeout)
+    commands = []
+    if 'common' in requested_sets:
+        common = ['python {} {} -o {}gendet_ap1.json "../../../data/automata/gendet/ap1/*/*.hoa"',
+        'python {} {} -o {}gendet_ap2.json "../../../data/automata/gendet/ap2/*/*.hoa"',
+        'python {} {} -o {}gendet_ap3.json "../../../data/automata/gendet/ap3/*/*.hoa"',
+        'python {} {} -o {}detnbaut_ap1.json "../../../data/automata/detnbaut/ap1/*/*.hoa"',
+        'python {} {} -o {}detnbaut_ap2.json "../../../data/automata/detnbaut/ap2/*/*.hoa"',
+        'python {} {} -o {}detspot_ap1.json "../../../data/automata/detspot/ap1/*/*.hoa"',
+        'python {} {} -o {}detspot_ap2.json "../../../data/automata/detspot/ap2/*/*.hoa"']
+        for cmd in common:
+            commands.append(cmd.format(statistics_py[construction], timeout_str, directories[construction]))
+
+    if 'nbaut' in requested_sets and construction == 'path_refinement':
+        commands.append('python path_refinement_statistics.py -t {} -o ../../../data/raw/path_refinement/detnbaut_special_ap1.json --nbautils "../../../data/automata/detnbaut/ap1/*/*"'.format(timeout_str))
+        commands.append('python path_refinement_statistics.py -t {} -o ../../../data/raw/path_refinement/detnbaut_special_ap2.json --nbautils "../../../data/automata/detnbaut/ap2/*/*"'.format(timeout_str))
+
+    if 'special' in requested_sets:
+        commands.append('python {} {} -o {}maxmichelle.json "../../../data/automata/special/maxmichelle*"'.format(statistics_py[construction], timeout_str, directories[construction]))
+
+    # Run commands
+    for cmd in commands:
+        print(cmd)
+        subprocess.run(cmd, shell=True)
+
+
+def parse_requested_sets(args):
+    rs = []
+    if args.scommon:
+        rs.append('common')
+    if args.snbaut:
+        rs.append('nbaut')
+    if args.sspecial:
+        rs.append('special')
+    return rs
+
 
 args = parse_args()
 
-# Make directorties
-try:
-    os.makedirs(directories[args.construction])
-except os.error as e:
-    pass
-
-# Run experiments
-commands = [
-    'python {} -t {} -o {}gendet_ap1.json "../../../data/automata/gendet/ap1/*/*.hoa"',
-    'python {} -t {} -o {}gendet_ap2.json "../../../data/automata/gendet/ap2/*/*.hoa"',
-    'python {} -t {} -o {}gendet_ap3.json "../../../data/automata/gendet/ap3/*/*.hoa"',
-    'python {} -t {} -o {}detnbaut_ap1.json "../../../data/automata/detnbaut/ap1/*/*.hoa"',
-    'python {} -t {} -o {}detnbaut_ap2.json "../../../data/automata/detnbaut/ap2/*/*.hoa"',
-    'python {} -t {} -o {}detspot_ap1.json "../../../data/automata/detspot/ap1/*/*.hoa"',
-    'python {} -t {} -o {}detspot_ap2.json "../../../data/automata/detspot/ap2/*/*.hoa"',
-    'python {} -t {} -o {}maxmichelle.json "../../../data/automata/special/maxmichelle*"'
-]
-
-for cmd in commands:
-    cmd_formatted = cmd.format(statistics_py[args.construction], args.timeout, directories[args.construction])
-    print(cmd_formatted)
-    subprocess.run(cmd_formatted, shell=True)
-
-if (args.construction == 'path_refinement'):
-    cmd = 'python path_refinement_statistics.py -t {} -o ../../../data/raw/path_refinement/detnbaut_special_ap1.json --nbautils "../../../data/automata/detnbaut/ap1/*/*"'.format(args.timeout)
-    print(cmd)
-    subprocess.run(cmd, shell=True)
-    cmd = 'python path_refinement_statistics.py -t {} -o ../../../data/raw/path_refinement/detnbaut_special_ap2.json --nbautils "../../../data/automata/detnbaut/ap2/*/*"'.format(args.timeout)
-    print(cmd)
-    subprocess.run(cmd, shell=True)
+if args.construction == 'all':
+    for c in constr_choices:
+        perform_experiments(c, parse_requested_sets(args), args.timeout)
+else:
+    perform_experiments(args.construction, parse_requested_sets(args), args.timeout)

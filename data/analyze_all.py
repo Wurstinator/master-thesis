@@ -1,8 +1,7 @@
 
-from analyze_common import read_prefix_to_json, read_json_to_map, general_analysis_v1
+from analyze_common import read_prefix_to_json, read_json_to_map, general_analysis_v1, analysis_sub
 import os
 import errno
-from common_plots import filelines_to_json
 
 
 directories = {
@@ -44,12 +43,18 @@ for algo in names:
 
 
 # Path Refinement Safra Special
-# Plot detnbaut special ap1
-#detnbaut_ap1_safra = filelines_to_json('raw/path_refinement/detnbaut_special_ap1.json')
-#title = 'Path Refinement state reduction on a DPA with |Σ|=2 that was created by nbautils from an NBA, using the Safra relation.'
-#plot_dataset_to_pdf(detnbaut_ap1_safra, 'analysis/path_refinement/detnbaut_safra_ap1.pdf', title)
+data = read_json_to_map('raw/path_refinement/detnbaut_special_ap1.json', 'filename')
+analysis_sub(
+    'analysis/path_refinement/detnbaut_safra_ap1.pdf',
+    'Path Refinement state reduction on a DPA with |Σ|=2 that was created by nbautils from an NBA, using the Safra relation.',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
 
-# Plot detnbaut special ap2
-#detnbaut_ap2_safra = filelines_to_json('raw/path_refinement/detnbaut_special_ap1.json')
-#title = 'Path Refinement state reduction on a DPA with |Σ|=4 that was created by nbautils from an NBA, using the Safra relation.'
-#plot_dataset_to_pdf(detnbaut_ap2_safra, 'analysis/path_refinement/detnbaut_safra_ap2.pdf', title)
+data = read_json_to_map('raw/path_refinement/detnbaut_special_ap2.json', 'filename')
+analysis_sub(
+    'analysis/path_refinement/detnbaut_safra_ap2.pdf',
+    'Path Refinement state reduction on a DPA with |Σ|=4 that was created by nbautils from an NBA, using the Safra relation.',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
