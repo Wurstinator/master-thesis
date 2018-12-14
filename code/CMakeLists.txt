@@ -130,6 +130,16 @@ add_executable(test_automaton src/automaton/tests/test_main.cpp ${AUTOMATON_INCL
 target_include_directories(test_automaton PRIVATE range-v3/include ${CATCH2_DIR}/single_include ${HOAFP_DIR}/include)
 
 
+# automaton/automata
+# Generates special classes of "worst case" automata and outputs them in HOA format.
+set(AUTOMATON_AUTOMATA_FILES
+        src/automaton/automata/max_michelle.cpp
+        src/automaton/automata/max_michelle.h)
+
+add_executable(generate_worst_automata src/automaton/automata/generate_worst_automata.cpp ${AUTOMATON_AUTOMATA_FILES} ${AUTOMATON_HOA_INCLUDE})
+target_include_directories(generate_worst_automata PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+
 # transition->state based converter
 add_executable(transition_based_converter src/transition_based_converter.cpp ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_INCLUDE})
 target_include_directories(transition_based_converter PRIVATE range-v3/include ${HOAFP_DIR}/include)
