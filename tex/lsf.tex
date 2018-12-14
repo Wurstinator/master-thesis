@@ -108,7 +108,15 @@ A final result to show how versatile the LSF merge is is captured by the followi
 
 
 \section{Computation}
-%TODO
+\begin{lem}
+	For a given DPA $\mathcal{A}$ and equivalence relation $\sim$, $\mu_\text{LSF}^{k,\sim}$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q|)$.
+\end{lem}
+
+\begin{proof}
+	By Lemma \ref{lem:tremoore:kmoore_loglin} we can compute $\equiv_M^{\leq k}$ in $\mathcal{O}(|Q| \cdot \log |Q|)$. Merging that relation with $\sim$ is possible in linear time, given a suitable data structure, and gives us $\equiv_\text{LSF}^{k,\sim}$.
+	
+	To construct $\mu_\text{LSF}^{k,\sim}$ from $\equiv_\text{LSF}^{k,\sim}$, the only non-trivial computation is that of $C_\kappa^k$. Building $\preceq_k$ is possible in linear time by Lemma \ref{lem:general:reach_topo_lintime}. Given that ordering, the computation of $C_\kappa^k$ and $M_\kappa^k$ is a constant time operation for every $\kappa$.
+\end{proof}
 
 
 \section{Efficiency}

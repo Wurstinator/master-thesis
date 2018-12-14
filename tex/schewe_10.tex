@@ -177,7 +177,13 @@ For our final proof in this section we want to adapt a result from \cite{Schewe2
 
 
 \section{Computation}
-%TODO
+\begin{lem}
+	Given a DPA $\mathcal{A}$ and a merger function $\mu : D \rightarrow 2^Q$ in suitable data structures, a Schewe merge of $\mathcal{A}$ w.r.t. $\mu$ can be computed in linear time.
+\end{lem}
+
+\begin{proof}
+	In addition to the argumentation provided in Lemma \ref{lem:general:repmerge_lintime}, a Schewe merge has the additional question of \enquote{is $p$ reachable from $q$}. This can be answered in linear time by computing the SCCs of the automaton once and using a lookup table to provide constant time queries.
+\end{proof}
 
 
 

@@ -120,7 +120,23 @@ The research becomes more interesting if you fix $\sim$ to be the complete langu
 \end{proof}
 
 \section{Computation}
-%TODO
+\begin{lem}
+	For a given DPA, $\equiv_M^{\leq k}$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q|)$.
+	\label{lem:tremoore:kmoore_loglin}
+\end{lem}
+
+\begin{proof}
+	Computing $\mathcal{T}(\mathcal{A}, >k)$ can clearly be done in linear time. The rest follows from Corollary \ref{cor:general:M_loglin}.
+\end{proof}
+
+\begin{lem}
+	For a given $\mathcal{A}$ and equivalence relation $\sim$, $\mu_\text{TM}^\sim$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q| \cdot |c(Q)|)$.
+\end{lem}
+
+\begin{proof}
+	First, we compute $\equiv_M^{\leq k}$ for all $k \in c(Q)$. This can be done in $\mathcal{O}(|Q| \cdot \log |Q| \cdot |c(Q)|)$ by Lemma \ref{lem:tremoore:kmoore_loglin}. After that, we build the restriction of $\equiv_M^{\leq k}$ to $c^{-1}(k)$ for every $k$ and then again find the union of all those sets. Both steps can be done in linear time. Finally, the result of this operation has to be intersected with $\sim$ which is also possible in linear time given a suitable data structure for $\sim$. This then gives us $\equiv_\text{TM}^\sim$. As $\mu_\text{TM}^\sim$ is a simple quotient merger, there is no additional work to be done.
+\end{proof}
+
 
 
 \section{Efficiency}

@@ -158,7 +158,6 @@ The following definition is used as an intermediate step on the way to computing
 \end{cor}
 
 
-
 \vspace{10pt}
 
 \begin{theorem}
@@ -214,6 +213,14 @@ The following Lemma formally proofs that this definition actually makes sense, a
 	By choosing the same representative $r_{M_1}$ and $r_{M_2}$ in the merges, this is a simple application of the definition.
 \end{proof}
 
+\begin{lem}
+	Given a DPA $\mathcal{A}$ and a merger function $\mu : D \rightarrow 2^Q$ in suitable data structures, a representative merge of $\mathcal{A}$ w.r.t. $\mu$ can be computed in linear time.
+	\label{lem:general:repmerge_lintime}
+\end{lem}
+
+\begin{proof}
+	If for each $q \in Q$, we can find the $M \in D$ with $q \in M$ in constant time, and are also able to evaluate $\mu(M)$ in constant time (e.g. with a hash map), then building the representative merge comes down to iterating over all states in the automaton and checking their status in the sets in $D$ or their candidates. This can be done in linear time.
+\end{proof}
 
 \vspace{10pt}
 
