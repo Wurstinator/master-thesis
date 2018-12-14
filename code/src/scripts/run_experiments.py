@@ -49,7 +49,8 @@ commands = [
     'python {} -t {} -o {}detnbaut_ap1.json "../../../data/automata/detnbaut/ap1/*/*.hoa"',
     'python {} -t {} -o {}detnbaut_ap2.json "../../../data/automata/detnbaut/ap2/*/*.hoa"',
     'python {} -t {} -o {}detspot_ap1.json "../../../data/automata/detspot/ap1/*/*.hoa"',
-    'python {} -t {} -o {}detspot_ap2.json "../../../data/automata/detspot/ap2/*/*.hoa"'
+    'python {} -t {} -o {}detspot_ap2.json "../../../data/automata/detspot/ap2/*/*.hoa"',
+    'python {} -t {} -o {}maxmichelle.json "../../../data/automata/special/maxmichelle*"'
 ]
 
 for cmd in commands:
