@@ -16,7 +16,8 @@ import progressbar
 
 # How many priorities the DPAs should have, if the option to generate them
 # directly with spot is chosen.
-GENDET_PRIORITIES = 4
+GENDET_PRIORITIES_MIN = 3
+GENDET_PRIORITIES_MAX = 5
 
 # Time in seconds after which a generation process is terminated forcefully.
 GEN_TIMEOUT = 60
@@ -83,8 +84,8 @@ def parse_args():
 
     group_generation = parser.add_mutually_exclusive_group(required=True)
     group_generation.add_argument('--grand', action='store_true', dest='generate_random',
-                                  help='Uses Spot library to generate a random DPA with {} priorities.'.format(
-                                      GENDET_PRIORITIES))
+                                  help='Uses Spot library to generate a random DPA with {}..{} priorities.'.format(
+                                      GENDET_PRIORITIES_MIN, GENDET_PRIORITIES_MAX))
     group_generation.add_argument('--gnbaut', action='store_true', dest='determinize_nbautils',
                                   help='Uses Spot library to generate a random NBA and determinize it with nbautils.')
     group_generation.add_argument('--gspot', action='store_true', dest='determinize_spot',
@@ -131,8 +132,8 @@ def run_process_for_time(command, timeout=None, outfile=subprocess.PIPE):
 # an automaton with 'goal_num_of_states' states or similar.
 def generate_one_automaton(filename, args):
     if args.generate_random:
-        cmd = 'randaut {} -Q{}..{} -D -A \'parity min even {}\' --colored -S --seed={}'
-        cmd = cmd.format(atomic_propositions(args.ap), args.min_states, args.max_states, GENDET_PRIORITIES,
+        cmd = 'randaut {} -Q{}..{} -D -A \'parity min even {}..{}\' --colored -S --seed={}'
+        cmd = cmd.format(atomic_propositions(args.ap), args.min_states, args.max_states, GENDET_PRIORITIES_MIN, GENDET_PRIORITIES_MAX,
                          random.randint(0, 1000000))
         with open(filename, 'w') as file:
             gen_result = run_process_for_time(cmd, outfile=file)
