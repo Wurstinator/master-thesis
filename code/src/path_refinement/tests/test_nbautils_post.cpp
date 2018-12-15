@@ -1,6 +1,6 @@
 
 #include "catch.hpp"
-#include "../nbautils_post.h"
+#include "../../automaton/hoa/nbautils_post.h"
 
 TEST_CASE("Test NbautilsEquivalence.") {
     std::map<tollk::automaton::state_t, std::string> labels;

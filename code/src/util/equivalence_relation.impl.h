@@ -42,7 +42,19 @@ void EquivalenceRelation<T>::AddConnection(const T& x, const T& y) {
             relation[x] = relation[y] = classes.size() - 1;
         }
     }
-};
+}
+
+template<typename T>
+void EquivalenceRelation<T>::Remove(const T& x) {
+    const ClassIndex index = relation.at(x);
+    classes[index].erase(x);
+    if (classes[index].empty()) {
+        classes.erase(std::next(classes.begin(), index));
+        for (std::pair<const T, ClassIndex>& kv_pair : relation)
+            if (kv_pair.second > index)
+                kv_pair.second -= 1;
+    }
+}
 
 
 template<typename T>

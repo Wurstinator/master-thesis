@@ -29,17 +29,17 @@ EquivalenceRelation<state_t> _gtk_relation(const DPA& automaton, parity_label_t 
     return result;
 }
 
-EquivalenceRelation<state_t> LSFBaseRelation(const DPA& automaton, parity_label_t k) {
+EquivalenceRelation<state_t> LSFBaseRelation(const DPA& automaton, parity_label_t k, const EquivalenceRelation<state_t>& sim) {
     return EquivalenceRelation<state_t>::Intersection(
             EquivalenceRelation<state_t>::Intersection(
-                    LanguageEquivalentStates(automaton),
+                    sim,
                     Moore_LTK(automaton, k)
             ),
             _gtk_relation(automaton, k)
             );
 }
 
-std::unordered_map<state_t, std::unordered_set<state_t>> LSFMergeClasses(const DPA& automaton, parity_label_t k) {
+std::unordered_map<state_t, std::unordered_set<state_t>> LSFMergeClasses(const DPA& automaton, parity_label_t k, const EquivalenceRelation<state_t>& sim) {
     // Build the subautomaton limited to states with priority greater than k and find its SCCs.
     NPA gtk_subautomaton = NPA::FromDeterministic(automaton);
     Subautomaton(&gtk_subautomaton, _gtk_states(gtk_subautomaton, k));
@@ -59,7 +59,7 @@ std::unordered_map<state_t, std::unordered_set<state_t>> LSFMergeClasses(const D
 
     // Iterate through all equivalence classes from the base relation.
     std::unordered_map<state_t, std::unordered_set<state_t>> result;
-    const EquivalenceRelation<state_t> base_relation = LSFBaseRelation(automaton, k);
+    const EquivalenceRelation<state_t> base_relation = LSFBaseRelation(automaton, k, sim);
     for (const EquivalenceRelation<state_t>::EquivClass& clas : base_relation.Classes()) {
         // Skip if the class contains only one element.
         if (clas.size() == 1)
@@ -82,8 +82,8 @@ std::unordered_map<state_t, std::unordered_set<state_t>> LSFMergeClasses(const D
 }
 
 
-void LSFPerformMerge(DPA* automaton, parity_label_t k) {
-    const std::unordered_map<state_t, std::unordered_set<state_t>> merge_classes = LSFMergeClasses(*automaton, k);
+void LSFPerformMerge(DPA* automaton, parity_label_t k, const EquivalenceRelation<state_t>& sim) {
+    const std::unordered_map<state_t, std::unordered_set<state_t>> merge_classes = LSFMergeClasses(*automaton, k, sim);
     for (const std::pair<const state_t, std::unordered_set<state_t>>& kv_pair : merge_classes) {
         const state_t representative = kv_pair.first;
         const std::unordered_set<state_t>& clas = kv_pair.second;

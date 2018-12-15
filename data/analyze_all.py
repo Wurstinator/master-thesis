@@ -42,7 +42,7 @@ for algo in names:
     general_analysis_v1(names[algo], directories[algo], datasets[algo], rawstats)
 
 
-# Path Refinement Safra Special
+# Safra Special
 data = read_json_to_map('raw/path_refinement/detnbaut_special_ap1.json', 'filename')
 analysis_sub(
     'analysis/path_refinement/detnbaut_safra_ap1.pdf',
@@ -55,6 +55,22 @@ data = read_json_to_map('raw/path_refinement/detnbaut_special_ap2.json', 'filena
 analysis_sub(
     'analysis/path_refinement/detnbaut_safra_ap2.pdf',
     'Path Refinement state reduction on a DPA with |Σ|=4 that was created by nbautils from an NBA, using the Safra relation.',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
+
+data = read_json_to_map('raw/lsf/detnbaut_special_ap1.json', 'filename')
+analysis_sub(
+    'analysis/lsf/detnbaut_safra_ap1.pdf',
+    'LSF state reduction on a DPA with |Σ|=2 that was created by nbautils from an NBA, using the Safra relation.',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
+
+data = read_json_to_map('raw/lsf/detnbaut_special_ap2.json', 'filename')
+analysis_sub(
+    'analysis/lsf/detnbaut_safra_ap2.pdf',
+    'LSF state reduction on a DPA with |Σ|=4 that was created by nbautils from an NBA, using the Safra relation.',
     set(data.keys()).intersection(rawstats.keys()),
     data,
     rawstats)

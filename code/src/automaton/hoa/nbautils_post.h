@@ -6,8 +6,8 @@
  * state labels is used to compute a relation on the states that implies language equivalence.
  */
 
-#include "../util/equivalence_relation.h"
-#include "../automaton/finite_automaton.h"
+#include "../../util/equivalence_relation.h"
+#include "../finite_automaton.h"
 #include <map>
 
 namespace tollk {

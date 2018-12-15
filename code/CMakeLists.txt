@@ -107,7 +107,9 @@ set(AUTOMATON_HOA_FILES
         src/automaton/hoa/boolean_evaluation.h
         src/automaton/hoa/hoa_io.impl.h
         src/automaton/hoa/transition_labeled_pa_consumer.cpp
-        src/automaton/hoa/transition_labeled_pa_consumer.h)
+        src/automaton/hoa/transition_labeled_pa_consumer.h
+        src/automaton/hoa/nbautils_post.h
+        src/automaton/hoa/nbautils_post.cpp)
 
 set(AUTOMATON_INCLUDE ${AUTOMATON_FILES} ${UTIL_INCLUDE})
 set(AUTOMATON_HOA_INCLUDE ${AUTOMATON_INCLUDE} ${AUTOMATON_HOA_FILES} ${HOAFP_INCLUDE})
@@ -271,7 +273,9 @@ set(PATHREFIN_HDRS
         src/path_refinement/path_refinement_automaton.h
         src/path_refinement/path_refinement_automaton.cpp
         src/path_refinement/path_refinement.h
-        src/path_refinement/path_refinement.cpp src/path_refinement/visit_graph.h src/path_refinement/visit_graph.cpp src/path_refinement/nbautils_post.h src/path_refinement/nbautils_post.cpp)
+        src/path_refinement/path_refinement.cpp
+        src/path_refinement/visit_graph.h
+        src/path_refinement/visit_graph.cpp)
 
 set(PATHREFIN_INCLUDE ${PATHREFIN_HDRS} ${AUTOMATON_INCLUDE} ${UTIL_INCLUDE})
 

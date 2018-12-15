@@ -50,25 +50,28 @@ def perform_experiments(construction, requested_sets, timeout):
     timeout_str = '' if timeout is None else '-t {}'.format(timeout)
     commands = []
     if 'common' in requested_sets:
-        common = ['python {} {} -o {}gendet_ap1.json "../../../data/automata/gendet/ap1/*/*.hoa"',
-        'python {} {} -o {}gendet_ap2.json "../../../data/automata/gendet/ap2/*/*.hoa"',
-        'python {} {} -o {}gendet_ap3.json "../../../data/automata/gendet/ap3/*/*.hoa"',
-        'python {} {} -o {}detnbaut_ap1.json "../../../data/automata/detnbaut/ap1/*/*.hoa"',
-        'python {} {} -o {}detnbaut_ap2.json "../../../data/automata/detnbaut/ap2/*/*.hoa"',
-        'python {} {} -o {}detspot_ap1.json "../../../data/automata/detspot/ap1/*/*.hoa"',
-        'python {} {} -o {}detspot_ap2.json "../../../data/automata/detspot/ap2/*/*.hoa"']
-        for cmd in common:
-            commands.append(cmd.format(statistics_py[construction], timeout_str, directories[construction]))
+        commands += [
+            'python {} {} -o {}gendet_ap1.json "../../../data/automata/gendet/ap1/*/*.hoa"',
+            'python {} {} -o {}gendet_ap2.json "../../../data/automata/gendet/ap2/*/*.hoa"',
+            'python {} {} -o {}gendet_ap3.json "../../../data/automata/gendet/ap3/*/*.hoa"',
+            'python {} {} -o {}detnbaut_ap1.json "../../../data/automata/detnbaut/ap1/*/*.hoa"',
+            'python {} {} -o {}detnbaut_ap2.json "../../../data/automata/detnbaut/ap2/*/*.hoa"',
+            'python {} {} -o {}detspot_ap1.json "../../../data/automata/detspot/ap1/*/*.hoa"',
+            'python {} {} -o {}detspot_ap2.json "../../../data/automata/detspot/ap2/*/*.hoa"'
+        ]
 
-    if 'nbaut' in requested_sets and construction == 'path_refinement':
-        commands.append('python path_refinement_statistics.py -t {} -o ../../../data/raw/path_refinement/detnbaut_special_ap1.json --nbautils "../../../data/automata/detnbaut/ap1/*/*"'.format(timeout_str))
-        commands.append('python path_refinement_statistics.py -t {} -o ../../../data/raw/path_refinement/detnbaut_special_ap2.json --nbautils "../../../data/automata/detnbaut/ap2/*/*"'.format(timeout_str))
+    if 'nbaut' in requested_sets and construction in ['path_refinement', 'lsf']:
+        commands += [
+            'python {} {} -o {}detnbaut_special_ap1.json --nbautils "../../../data/automata/detnbaut/ap1/*/*"',
+            'python {} {} -o {}detnbaut_special_ap2.json --nbautils "../../../data/automata/detnbaut/ap2/*/*"'
+        ]
 
     if 'special' in requested_sets:
-        commands.append('python {} {} -o {}maxmichelle.json "../../../data/automata/special/maxmichelle*"'.format(statistics_py[construction], timeout_str, directories[construction]))
+        commands.append('python {} {} -o {}maxmichelle.json "../../../data/automata/special/maxmichelle*"')
 
     # Run commands
-    for cmd in commands:
+    for unformat_cmd in commands:
+        cmd = unformat_cmd.format(statistics_py[construction], timeout_str, directories[construction])
         print(cmd)
         subprocess.run(cmd, shell=True)
 

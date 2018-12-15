@@ -1,7 +1,7 @@
 
 
 #include "main_statistics.h"
-#include "nbautils_post.h"
+#include "../automaton/hoa/nbautils_post.h"
 #include "visit_graph.h"
 #include "path_refinement.h"
 

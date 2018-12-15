@@ -27,6 +27,9 @@ public:
     // relation, their classes are merged. (note that the two elements can be the same to create a new singleton class)
     void AddConnection(const T& x, const T& y);
 
+    // Removes an element from the relation. If its equivalence class contained no other state, that class is deleted.
+    void Remove(const T& x);
+
     // Merges two given equivalence classes.
     void MergeClasses(const EquivClass& c1, const EquivClass& c2);
 
