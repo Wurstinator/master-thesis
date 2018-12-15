@@ -25,13 +25,13 @@ def generate_set(method, ap, qmin, qmax, n):
 
 
 state_sets = [ #(qmin, qmax, n)
-    (1, 10, 50),
-    (11, 20, 50),
-    (21, 40, 40),
-    (41, 60, 30),
-    (61, 90, 20),
-    (91, 120, 15),
-    (121, 160, 10)
+    (1, 10, 25),
+    (11, 20, 40),
+    (21, 40, 55),
+    (41, 60, 70),
+    (61, 90, 55),
+    (91, 120, 40),
+    (121, 160, 25)
 ]
 
 for method in ['gendet', 'detspot', 'detnbaut']:
@@ -41,6 +41,6 @@ for method in ['gendet', 'detspot', 'detnbaut']:
             generate_set(method, ap, *ssn)
 
 
-generate_set('detnbaut', 1, 161, 200,  10)
-generate_set('detnbaut', 1, 201, 300,   5)
-generate_set('detnbaut', 1, 301, 400,   5)
+generate_set('detnbaut', 1, 161, 200, 20)
+generate_set('detnbaut', 1, 201, 300, 20)
+generate_set('detnbaut', 1, 301, 400, 20)

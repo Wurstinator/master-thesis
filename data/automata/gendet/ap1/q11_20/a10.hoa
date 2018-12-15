@@ -1,0 +1,70 @@
+HOA: v1
+States: 20
+Start: 0
+AP: 1 "a1"
+acc-name: parity min even 3
+Acceptance: 3 Inf(0) | (Fin(1) & Inf(2))
+properties: trans-labels explicit-labels state-acc colored complete
+properties: deterministic
+--BODY--
+State: 0 {1}
+[0] 17
+[!0] 11
+State: 1 {2}
+[0] 19
+[!0] 6
+State: 2 {2}
+[0] 12
+[!0] 18
+State: 3 {1}
+[0] 19
+[!0] 11
+State: 4 {2}
+[!0] 13
+[0] 14
+State: 5 {2}
+[0] 18
+[!0] 15
+State: 6 {2}
+[0] 10
+[!0] 9
+State: 7 {2}
+[0] 4
+[!0] 12
+State: 8 {0}
+[!0] 7
+[0] 2
+State: 9 {1}
+[!0] 9
+[0] 5
+State: 10 {1}
+[!0] 9
+[0] 1
+State: 11 {1}
+[0] 8
+[!0] 7
+State: 12 {1}
+[!0] 9
+[0] 3
+State: 13 {0}
+[!0] 14
+[0] 16
+State: 14 {1}
+[0] 16
+[!0] 10
+State: 15 {2}
+[0] 16
+[!0] 14
+State: 16 {1}
+[0] 13
+[!0] 7
+State: 17 {0}
+[0] 0
+[!0] 17
+State: 18 {1}
+[!0] 19
+[0] 5
+State: 19 {2}
+[0] 5
+[!0] 9
+--END--

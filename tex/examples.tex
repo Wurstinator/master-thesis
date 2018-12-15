@@ -1,0 +1,225 @@
+
+\chapter{Examples}
+
+\section{Skip merger}
+Figure \ref{fig:examples:skip1} shows an automaton. If we use $\sim = \equiv_L$, then both states are $\sim$-equivalent. As $q_0$ is not reachable from $q_1$, the skip merger can remove $q_0$ to get to the automaton in figure \ref{fig:examples:skip2}.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \path[->] (0) edge node [above] {a} (1)
+  			(1) edge [loop right] node {a} (1);
+\end{tikzpicture}
+\caption{Example for the skip merger.}
+\label{fig:examples:skip1}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \path[->] (1) edge [loop right] node {a} (1);
+\end{tikzpicture}
+\caption{Example for the skip merger.}
+\label{fig:examples:skip2}
+\end{figure}
+
+
+
+\section{Delayed Simulation}
+Figure \ref{fig:examples:desim1} shows an automaton. The entire delayed simulation automaton is of size 75, so we only consider one pair of states for the example. To determine whether $q_0 \leq_\text{de} q_1$ is true, we need the part of $\mathcal{A}_\text{de}$ that is displayed in figure \ref{fig:examples:desim2}. The question to check is whether from $(q_0, q_1, \checkmark)$, every word is accepted. 
+
+As we can see, the run induced by $ba^\omega$ ends in the loop $(q_3, q_3, 0) (q_2, q_2, 0)$ which is not accepting. Thus, $q_0 \not\leq^{ba^\omega}_\text{de} q_1$ and therefore $q_0 \not\leq_\text{de} q_1$. This coincides with the definition of delayed simulation: if the run starting in $q_0$ once sees priority 0, afterwards neither run will see that priority again, as they are stuck in the loop $q_3 q_2$.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,1$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \node[state]           (2) [above=of 0]   {$q_2,1$};
+  \node[state]           (3) [right=of 2]   {$q_3,1$};
+  \node[state]           (4) [right=of 3]   {$q_4,0$};
+  \path[->] (0) edge [bend left] node [above] {a} (1)
+  			(0) edge node [left] {b} (2)
+            (1) edge [bend left] node [below] {a} (0)
+            (1) edge node [below] {b} (4)
+            (2) edge [bend left] node [above] {a,b} (3)
+            (3) edge [bend left] node [below] {a} (2)
+            (3) edge [bend left] node [above] {b} (4)
+            (4) edge [bend left] node [below] {a,b} (3);
+\end{tikzpicture}
+\caption{Example for the delayed simulation merger.}
+\label{fig:examples:desim1}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,initial text=]
+  \node[state,accepting] (0)			    {$q_0,q_1,\checkmark$};
+  \node[state,accepting] (1) [right=of 0]   {$q_2,q_4,\checkmark$};
+  \node[state,accepting] (2) [right=of 1]   {$q_3,q_3,\checkmark$};
+  \node[state] 			 (3) [below=of 0]   {$q_1,q_0,\checkmark$};
+  \node[state] 			 (4) [right=of 3]   {$q_4,q_2,0$};
+  \node[state] 			 (5) [right=of 4]   {$q_3,q_3,0$};
+  \node[state,accepting] (6) [right=of 5]   {$q_4,q_4,\checkmark$};
+  \node[state] 			 (7) [below=of 5]   {$q_2,q_2,0$};
+  \node[state,accepting] (8) [above right=of 2]   {$q_2,q_2,\checkmark$};
+  \path[->] (0) edge node [above] {a} (1)
+  			(0) edge [bend left] node [right] {b} (3)
+            (1) edge node [above] {a,b} (2)
+            (2) edge [bend left] node [above] {a} (6)
+            (2) edge [bend left] node [above] {b} (8)
+            (3) edge node [above] {a} (4)
+            (3) edge [bend left] node [left] {b} (0)
+            (4) edge node [above] {a,b} (5)
+            (5) edge [bend left] node [right] {a} (7)
+            (5) edge node [above] {b} (6)
+            (6) edge [bend left] node [left] {a,b} (2)
+            (7) edge [bend left] node [left] {a,b} (5)
+            (8) edge [bend left] node [left] {a,b} (2);
+\end{tikzpicture}
+\caption{Example for the delayed simulation merger. (Delayed simulation game)}
+\label{fig:examples:desim2}
+\end{figure}
+
+
+
+\section{Iterated Moore}
+Figure \ref{fig:examples:im1} shows our example automaton for $\mu_{IM}$. We have $q_0 \not\equiv_M q_1$, as the two states have different priorities. With iterated Moore equivalence, we actually have $q_0 \equiv_{IM} q_1$:
+
+First, we choose our order of SCCs as $S_0 = \{q_0\}$ and $S_1 = \{q_1\}$. $\mathcal{B}_1$ then has only one state $q_1$ with the transition to itself. $\mathcal{B}'_0$ is then the same automaton as $\mathcal{A}$. $S_0$ is a trivial SCC, it is not $M'_0$-equivalent to any other state and $(\delta'_0(q_0, a), \delta'_0(q_1, a)) \in M'_0$ for all $a$. Therefore, $c_0(q_0)$ is set to $1$ and we have $(q_0, q_1) \in M_0$. This results in figure \ref{fig:examples:im2}.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \path[->] (0) edge node [above] {a} (1)
+            (1) edge [loop right] node [right] {a} (1);
+\end{tikzpicture}
+\caption{Example for the iterated Moore merger.}
+\label{fig:examples:im1}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (1)   {$q_1,1$};
+  \path[->] (1) edge [loop right] node [right] {a} (1);
+\end{tikzpicture}
+\caption{Example for the iterated Moore merger.}
+\label{fig:examples:im2}
+\end{figure}
+
+
+\section{Path Refinement}
+We use the same example automaton as for delayed simulation, \ref{fig:examples:desim1}. $\equiv_L$ has the three equivalence classes $\{q_0, q_1\}$, $\{q_2, q_4\}$, and $\{q_3\}$. We choose to merge by $\lambda = \{q_2, q_4\}$.
+
+Figure \ref{fig:examples:pr1} displays the transition structure $\mathcal{A}^\lambda_\text{visit}$. The relation $V$ then consists of three equivalence classes: $\{(q_3, 1, \perp), (q_3, 0, \perp)\}$, $\{(q_2, 1, 0), (q_4, 0, 0)\}$, and $\{(q_2, 1, 1), (q_4, 0, 1)\}$. We are interested in the question whether $\iota_{q_2}^1 = (q_2, 1, 1)$ and $\iota_{q_4}^1 = (q_4, 0, 1)$ are equivalent.
+
+Unfortunately, $V_M$, the congruence refinement of $V$, actually only contains singleton classes, so $q_2 \not\equiv_\text{PR}^\lambda q_4$. This is because $\delta_\text{visit}^*(\iota_{q_2}^1, aa) = (q_2, 1, 1)$ and $\delta_\text{visit}^*(\iota_{q_4}^1, aa) = (q_2, 1, 0)$, which is not a pair in $V$. 
+
+This shows that by reading $aa$ from $q_2$, the automaton reaches back to $\lambda$ and visits priorities of at least 1. On the other hand, from $q_4$ reading $aa$ sees priority 0 once.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,on grid,initial text=]
+  \node[state]           (0)                {$q_2,1,0$};
+  \node[state]           (1) [right=of 0]   {$q_3,0,\perp$};
+  \node[state]           (2) [below=of 0]   {$q_3,1,\perp$};
+  \node[state]           (3) [right=of 2]   {$q_4,0,0$};
+  \node[state]           (4) [left=of 2]   {$q_2,1,1$};
+  \node[state]           (5) [right=of 1]   {$q_4,0,1$};
+  \path[->] (0) edge node [left] {a,b} (2)
+  			(1) edge node [above] {a} (0)
+  			(1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [above] {a} (4)
+  			(2) edge node [above] {b} (3)
+  			(3) edge [bend left] node [left] {a,b} (1)
+  			(4) edge [bend left] node [above] {a,b} (2)
+  			(5) edge node [above] {a,b} (1);
+\end{tikzpicture}
+\caption{Example for the path refinement merger.}
+\label{fig:examples:pr1}
+\end{figure}
+
+
+\section{Threshold Moore}
+Figure \ref{fig:examples:tm1} shows an example DPA. All states are language equivalent; to be specific, they all accept the language $\Sigma^* b^\omega$. If we consider $\equiv_M^{\leq 0}$, we find that $q_0 \equiv_M^{\leq 0} q_1$ and therefore also $q_0 \equiv_\text{TM}^{\equiv_L} q_1$.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [right=of 0]   {$q_2,1$};
+  \node[state]           (2) [below=of 0]   {$q_1,0$};
+  \node[state]           (3) [below=of 1]   {$q_3,2$};
+  \path[->] (0) edge node [above] {a} (1)
+  			(0) edge node [above] [above] {b} (3)
+  			(1) edge [bend left] node [right] {a} (3)
+  			(1) edge [loop right] node {b} (1)
+  			(2) edge node [above] {a} (3)
+  			(2) edge node [below] {b} (1)
+  			(3) edge [bend left] node [right] {a} (1)
+  			(3) edge [loop right] node {b} (3);
+\end{tikzpicture}
+\caption{Example for the Threshold Moore merger.}
+\label{fig:examples:tm1}
+\end{figure}
+
+
+\section{LSF} %TODO desim?
+For the LSF merger, we use figure \ref{fig:examples:lsf1} as an example. As parameters, we choose $\sim = \equiv_L$ and $k = 1$. 
+
+All states are language equivalent: from any state, the language $(\Sigma^* a)^\omega$ is accepted. Also, $q_1 \equiv_M^{\leq 1} q_3$ and $q_2 \equiv_M^{\leq 1} q_4$. Thus, the equivalence classes of $\equiv_\text{LSF}^{1, \equiv_L}$ are $\{q_0\}$, $\{q_1, q_3\}$, and $\{q_2, q_4\}$.
+
+One possible choice for $\preceq_k$ is $q_1 \simeq_k q_2 \prec_k q_3 \simeq_k q_4$. Thus, we can merge these states and obtain  what is shown in figure \ref{fig:examples:lsf2}.
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [below left=of 0]   {$q_1,2$};
+  \node[state]           (2) [below right=of 0]   {$q_3,4$};
+  \node[state]           (3) [below=of 1]   {$q_2,3$};
+  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \path[->] (0) edge [bend left] node [below] {a} (2)
+  			(0) edge [bend left] node [above] {b} (1)
+  			(1) edge [bend left] node [above] {a} (0)
+  			(1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [below] {a} (0)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(3) edge [bend left] node [left] {a} (1)
+  			(3) edge [loop left] node [left] {b} (3)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\caption{Example for the LSF merger.}
+\label{fig:examples:lsf1}
+\end{figure}
+
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (2) [below=of 0]   {$q_3,4$};
+  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \path[->] (0) edge [bend left] node [right] {a,b} (2)
+  			(2) edge [bend left] node [left] {a} (0)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\caption{Example for the LSF merger.}
+\label{fig:examples:lsf2}
+\end{figure}
+

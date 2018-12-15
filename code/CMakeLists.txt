@@ -310,8 +310,8 @@ set(PATHREFIN_TESTS
         src/path_refinement/tests/test_visit_equality.cpp
         src/path_refinement/tests/test_nbautils_post.cpp)
 
-add_executable(test_path_refinement ${PATHREFIN_INCLUDE} ${PATHREFIN_TESTS} ${Catch2_HDRS})
-target_include_directories(test_path_refinement PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
+add_executable(test_path_refinement ${PATHREFIN_INCLUDE} ${PATHREFIN_TESTS} ${AUTOMATON_HOA_INCLUDE} ${Catch2_HDRS})
+target_include_directories(test_path_refinement PRIVATE ${CATCH2_DIR}/single_include range-v3/include ${HOAFP_DIR}/include)
 
 
 
