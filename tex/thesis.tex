@@ -75,10 +75,7 @@
 
 \begin{document}
 
-\tableofcontents
-
-\include{introduction}
-
+\include{preamble}
 
 \chapter{Basics}
 In the first chapter, we define basics notations and conventions and present some data of our empirical testing environment used to collect practical data of each approach.
@@ -88,6 +85,8 @@ After that, we present several algorithms for state space reduction, split into 
 \input{basics}
 \vspace{1cm}
 \input{exp_rawstats} 
+
+
 
 \chapter{General Theory}
 \input{general}
@@ -107,17 +106,16 @@ After that, we present several algorithms for state space reduction, split into 
 
 \input{schewe_10}
 
-
 \begin{appendices}
 \input{examples}
 \end{appendices}
 
+\newpage\null\thispagestyle{empty}\newpage
 %\nocite{*}
 \bibliography{citations}
 \bibliographystyle{plain}
+\newpage\null\thispagestyle{empty}\newpage
 
-
-%\clearpage\null\thispagestyle{empty}\newpage
 
 \end{document}
 
