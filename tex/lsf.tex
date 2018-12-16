@@ -143,6 +143,46 @@ Figures \ref{fig:lsf:empirical_size_hist} and \ref{fig:lsf:empirical_reduct_rel}
 
 
 
+\section{Different Thresholds}
+
+As we did for $\equiv_\text{TM}^\sim$, the question whether we can use a more relaxed relation instead of $\equiv_M^{\leq k}$ arises. For example, we could define $\equiv^{k,\sim}_\text{deLSF}$ to use $\equiv_\text{de}^{\leq k}$ instead and $\mu^{k,\sim}_\text{deLSF}$ analogously. As it turns out, this variant has similar issues as the same approach for $\equiv_\text{TM}^\sim$.
+
+We can use the same example as before, which is again displayed in figure \ref{fig:lsf:desim_counterex1}. The equivalence classes of $\equiv_\text{deLSF}^{1,\equiv_L}$ are $\{ \{q_0, q_2\}, \{q_1\}, \{q_3\} \}$. We can therefore merge $\kappa = \{q_0, q_2\}$ according to the defined rules. In $\mathcal{A} \upharpoonright^c_{> 1}$, $q_0$ and $q_2$ are not connected so we can remove either state and merge it into the other. That means figure \ref{fig:lsf:desim_counterex2} is a representative merge. However, this automaton rejects every word which is not the case for the original.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state] (0)           	{$q_0$,\{2\}};
+  \node[state] (1) [right=of 0] {$q_1$,\{1\}};
+  \node[state] (2) [right=of 1] {$q_2$,\{2\}};
+  \node[state] (3) [right=of 2] {$q_3$,\{0\}};
+  \path[->] (0) edge node [above] {a} (1)
+            (1) edge node [above] {a} (2)
+            (2) edge [bend left] node [above] {a} (3)
+            (3) edge [bend left] node [above] {a} (2);
+\end{tikzpicture}
+\caption{Example automaton which shows that using $\equiv_\text{de}$ for $\equiv_\text{LSF}$ will not work.}
+\label{fig:lsf:desim_counterex1}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state] (1)           	{$q_1$,\{1\}};
+  \node[state] (0) [right=of 1] {$q_0$,\{2\}};
+  \node[state] (3) [right=of 0] {$q_3$,\{0\}};
+  \path[->] (0) edge [bend left] node [above] {a} (1)
+            (1) edge [bend left] node [above] {a} (0)
+            (3) edge node [above] {a} (0);
+\end{tikzpicture}
+\caption{Example automaton which shows that using $\equiv_\text{de}$ for $\equiv_\text{LSF}$ will not work.}
+\label{fig:lsf:desim_counterex2}
+\end{figure}
+
+
+
+
+
 
 
 

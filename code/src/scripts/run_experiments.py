@@ -1,5 +1,6 @@
 
 import os
+import os.path
 import subprocess
 import argparse
 
@@ -13,6 +14,7 @@ def parse_args():
     parser.add_argument('--scommon', dest='scommon', help='Test the gendet, detnbaut, and detspot automata', action='store_true')
     parser.add_argument('--snbaut', dest='snbaut', help='Test the detnbaut special cases with Safra.', action='store_true')
     parser.add_argument('--sspecial', dest='sspecial', help='Test the special classes of automata.', action='store_true')
+    parser.add_argument('--overwrite', dest='overwrite', help='Overwrite existing files. If not set, data sets for which the output file exists already are skipped.', action='store_true')
     return parser.parse_args()
 
 
@@ -48,32 +50,37 @@ def perform_experiments(construction, requested_sets, timeout):
 
     # Set up commands
     timeout_str = '' if timeout is None else '-t {}'.format(timeout)
-    commands = []
+    commands = {}
     if 'common' in requested_sets:
-        commands += [
-            'python {} {} -o {}gendet_ap1.json "../../../data/automata/gendet/ap1/*/*.hoa"',
-            'python {} {} -o {}gendet_ap2.json "../../../data/automata/gendet/ap2/*/*.hoa"',
-            'python {} {} -o {}gendet_ap3.json "../../../data/automata/gendet/ap3/*/*.hoa"',
-            'python {} {} -o {}detnbaut_ap1.json "../../../data/automata/detnbaut/ap1/*/*.hoa"',
-            'python {} {} -o {}detnbaut_ap2.json "../../../data/automata/detnbaut/ap2/*/*.hoa"',
-            'python {} {} -o {}detspot_ap1.json "../../../data/automata/detspot/ap1/*/*.hoa"',
-            'python {} {} -o {}detspot_ap2.json "../../../data/automata/detspot/ap2/*/*.hoa"'
-        ]
+        commands.update({
+            'gendet_ap1.json': 'python {} {} -o {} "../../../data/automata/gendet/ap1/*/*.hoa"',
+            'gendet_ap2.json': 'python {} {} -o {} "../../../data/automata/gendet/ap2/*/*.hoa"',
+            'gendet_ap3.json': 'python {} {} -o {} "../../../data/automata/gendet/ap3/*/*.hoa"',
+            'detnbaut_ap1.json': 'python {} {} -o {} "../../../data/automata/detnbaut/ap1/*/*.hoa"',
+            'detnbaut_ap2.json': 'python {} {} -o {} "../../../data/automata/detnbaut/ap2/*/*.hoa"',
+            'detspot_ap1.json': 'python {} {} -o {} "../../../data/automata/detspot/ap1/*/*.hoa"',
+            'detspot_ap2.json': 'python {} {} -o {} "../../../data/automata/detspot/ap2/*/*.hoa"'
+        })
 
     if 'nbaut' in requested_sets and construction in ['path_refinement', 'lsf']:
-        commands += [
-            'python {} {} -o {}detnbaut_special_ap1.json --nbautils "../../../data/automata/detnbaut/ap1/*/*"',
-            'python {} {} -o {}detnbaut_special_ap2.json --nbautils "../../../data/automata/detnbaut/ap2/*/*"'
-        ]
+        commands.update({
+            'detnbaut_special_ap1.json': 'python {} {} -o {} --nbautils "../../../data/automata/detnbaut/ap1/*/*"',
+            'detnbaut_special_ap2.json': 'python {} {} -o {} --nbautils "../../../data/automata/detnbaut/ap2/*/*"'
+        })
 
     if 'special' in requested_sets:
-        commands.append('python {} {} -o {}maxmichelle.json "../../../data/automata/special/maxmichelle*"')
+        commands.update({'maxmichel.json': 'python {} {} -o {} "../../../data/automata/special/maxmichelle*"'})
 
     # Run commands
-    for unformat_cmd in commands:
-        cmd = unformat_cmd.format(statistics_py[construction], timeout_str, directories[construction])
+    for fname, unformat_cmd in commands.items():
+        cmd = unformat_cmd.format(statistics_py[construction], timeout_str, '{}')
+        outfile = directories[construction] + fname
+        cmd = cmd.format(outfile)
         print(cmd)
-        subprocess.run(cmd, shell=True)
+        if not os.path.isfile(outfile):
+            subprocess.run(cmd, shell=True)
+        else:
+            print('Skipped. {} already exists.'.format(outfile))
 
 
 def parse_requested_sets(args):

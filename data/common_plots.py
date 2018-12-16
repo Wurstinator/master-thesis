@@ -59,15 +59,19 @@ def plot_points(data, x_select, y_select, title, xlabel, ylabel):
 # Draws a histogram by computing [select] on each point in [data].
 def plot_histogram(data, select, title, xlabel, ylabel, singlebins=False, maxx=None):
     f = pyplot.figure()
-    x = [select(f) for f in data]
+    xs = [select(f) for f in data]
+    allint = all(map(lambda x: isinstance(x, int), xs))
     if maxx is not None:
-        x = [y for y in x if y <= maxx]
+        xs = [y for y in xs if y <= maxx]
     if singlebins:
-        counts, bins, patches = pyplot.hist(x, bins=range(int(math.floor(min(x))), int(math.ceil(max(x))) + 2))
+        counts, bins, patches = pyplot.hist(xs, bins=range(int(math.floor(min(xs))), int(math.ceil(max(xs))) + 2))
         pyplot.xticks([(x + y) / 2 for x, y in zip(bins, bins[1:])], [int(x) for x in bins])
     else:
-        counts, bins, patches = pyplot.hist(x)
-        pyplot.xticks(bins)
+        counts, bins, patches = pyplot.hist(xs)
+        if allint:
+            pyplot.xticks(bins, ['%d' % b for b in bins])
+        else:
+            pyplot.xticks(bins, ['%.2f' % b for b in bins])
     pyplot.title(title, fontsize=TITLE_FONTSIZE)
     pyplot.xlabel(xlabel)
     pyplot.ylabel(ylabel)

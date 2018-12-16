@@ -6,13 +6,13 @@ import errno
 
 directories = {
     'hopcroft': 'hopcroft/',
-    'skipper': 'skipper/',
+    #'skipper': 'skipper/',
     'schewe': 'schewe/',
     'fritzwilke': 'fritzwilke/',
     'iterated_moore': 'iterated_moore/',
     'path_refinement': 'path_refinement/',
     'tremoore': 'threshold_moore/',
-    'lsf': 'lsf/'
+    #'lsf': 'lsf/'
 }
 
 datasets = {t: read_prefix_to_json(directories[t]) for t in directories}
@@ -29,13 +29,13 @@ for dir in directories.values():
 
 names = {
     'hopcroft': 'Hopcroft',
-    'skipper': 'Skip Merger',
+    #'skipper': 'Skip Merger',
     'schewe': 'Schewe',
     'fritzwilke': 'Delayed Simulation',
     'iterated_moore': 'Iterated Moore',
     'path_refinement': 'Path Refinement',
     'tremoore': 'Treshold Moore',
-    'lsf': 'LSF'
+    #'lsf': 'LSF'
 }
 
 for algo in names:

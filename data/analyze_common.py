@@ -13,7 +13,7 @@ class DataType(Enum):
     DetNbautAP2 = 4,
     DetSpotAP1 = 5,
     DetSpotAP2 = 6,
-    MaxMichelle = 7
+    MaxMichel = 7
 
     # From a given data type, returns the filename
     def make_filename(self):
@@ -31,8 +31,8 @@ class DataType(Enum):
             return 'detspot_ap1'
         elif self == DataType.DetSpotAP2:
             return 'detspot_ap2'
-        elif self == DataType.MaxMichelle:
-            return 'maxmichelle'
+        elif self == DataType.MaxMichel:
+            return 'maxmichel'
 
     # From a given data type, returns the figure title
     def make_figure_title(self, alg_name):
@@ -50,8 +50,8 @@ class DataType(Enum):
             suffix = ' state reduction on a DPA with |Σ|=2 that was created by Spot from an NBA.'
         elif self == DataType.DetSpotAP2:
             suffix = ' state reduction on a DPA with |Σ|=4 that was created by Spot from an NBA.'
-        elif self == DataType.MaxMichelle:
-            suffix = ' state reduction on the Max Michelle DBA.'
+        elif self == DataType.MaxMichel:
+            suffix = ' state reduction on the Max Michel DBA.'
         return alg_name + suffix
 
 
