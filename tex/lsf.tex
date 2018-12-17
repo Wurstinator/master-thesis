@@ -120,7 +120,9 @@ A final result to show how versatile the LSF merge is is captured by the followi
 
 
 \section{Efficiency} %TODO
-Figures \ref{fig:lsf:empirical_size_hist} and \ref{fig:lsf:empirical_reduct_rel} show the relative reduction achieved by the LSF merger. We iteratively applied $\mu_\text{LSF}^{k,\equiv_L}$ with ascending $k$. For the \textsf{detspot} data set, a decent %TODO
+Figures \ref{fig:lsf:empirical_size_hist} and \ref{fig:lsf:empirical_reduct_rel} show the relative reduction achieved by the LSF merger. We iteratively applied $\mu_\text{LSF}^{k,\equiv_L}$ with ascending $k$. For the \textsf{detspot} data set, a decent reduction of frequently above 10\%, sometimes up to 55\%, was achieved. For \textsf{detnbaut}, the best case was about 21\%, not considering outliers. As before, the explicit computation of $\equiv_L$ dominates the run time (figure \ref{fig:lsf:empirical_time}).
+
+Again, we are able to use the equivalence relation given by nbautils instead of $\equiv_L$. This brings down the run time by a margin (figure \ref{fig:lsf:empirical_safra_time}). Unfortunately, the reduction gain already was in the lower numbers with $\equiv_L$ and is reduced further by weakening the relation. Figures \ref{fig:lsf:empirical_safra_size_hist} and \ref{fig:lsf:empirical_safra_reduct_rel} show that a reduction of more than 2\% are the exception rather than the rule.
 
 \begin{figure}
 	\centering
@@ -141,6 +143,38 @@ Figures \ref{fig:lsf:empirical_size_hist} and \ref{fig:lsf:empirical_reduct_rel}
 	\end{minipage}
 \end{figure}
 
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/lsf/gendet_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/lsf/detspot_ap1.pdf} 
+		\includegraphics[page=1,height=.3\textheight]{../data/analysis/lsf/detnbaut_ap1.pdf} 
+		\caption{Time for state reduction of different automata using $\mu_\text{LSF}^{k,\equiv_L}$.}
+		\label{fig:lsf:empirical_time}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[page=6,height=.4\textheight]{../data/analysis/lsf/detnbaut_safra_ap1.pdf} 
+	\caption{State reduction of different automata using $\mu_\text{LSF}^{k,\sim}$.}
+	\label{fig:lsf:empirical_safra_size_hist}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[page=3,height=.4\textheight]{../data/analysis/lsf/detnbaut_safra_ap1.pdf} 
+	\caption{State reduction of different automata using $\mu_\text{LSF}^{k,\sim}$.}
+	\label{fig:lsf:empirical_safra_reduct_rel}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[page=1,height=.4\textheight]{../data/analysis/lsf/detnbaut_safra_ap1.pdf} 
+	\caption{State reduction of different automata using $\mu_\text{LSF}^{k,\sim}$.}
+	\label{fig:lsf:empirical_safra_time}
+\end{figure}
 
 
 \section{Different Thresholds}

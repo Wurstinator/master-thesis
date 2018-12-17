@@ -30,6 +30,10 @@ public:
     // Removes an element from the relation. If its equivalence class contained no other state, that class is deleted.
     void Remove(const T& x);
 
+    // Removes all elements from the relation that are not in a given range.
+    template <typename RngT>
+    void RestrictDomain(RngT&& new_domain);
+
     // Merges two given equivalence classes.
     void MergeClasses(const EquivClass& c1, const EquivClass& c2);
 

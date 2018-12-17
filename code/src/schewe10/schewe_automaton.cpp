@@ -11,14 +11,15 @@
 
 namespace tollk {
 
+using namespace automaton;
+
 // Computes a Schewe automaton of a given deterministic (!) parity automaton. The function performs minimization neither
 // before nor after the construction.
 void ScheweAutomaton(automaton::DPA* automaton) {
-    using namespace tollk::automaton;
+    ScheweAutomaton(automaton, PriorityAlmostEquivalence(*automaton));
+}
 
-    // Compute priority almost-equivalent states.
-    const EquivalenceRelation<state_t> almost_equivalent_states = PriorityAlmostEquivalence(*automaton);
-
+void ScheweAutomaton(automaton::DPA* automaton, const EquivalenceRelation<state_t>& equiv_relation) {
     // Merge the SCCs and compute a topological sorting on them.
     NondeterministicAutomaton merged_sccs = NondeterministicAutomaton::FromTransitionAutomaton(*automaton);
     SCCCollection automaton_sccs;
@@ -33,9 +34,9 @@ void ScheweAutomaton(automaton::DPA* automaton) {
         }
     }
 
-    // For each equivalence class (priority almost-equivalence), find an element that is minimal w.r.t. the ordering.
+    // For each equivalence class, find an element that is minimal w.r.t. the ordering.
     std::map<EquivalenceRelation<automaton::state_t>::EquivClass, state_t> representatives;
-    for (const EquivalenceRelation<automaton::state_t>::EquivClass& clas : almost_equivalent_states.Classes()) {
+    for (const EquivalenceRelation<automaton::state_t>::EquivClass& clas : equiv_relation.Classes()) {
         const auto compare_topological = [&state_sorting](state_t lhs, state_t rhs) {
             return state_sorting[lhs] > state_sorting[rhs];
         };
@@ -46,7 +47,7 @@ void ScheweAutomaton(automaton::DPA* automaton) {
     for (state_t p : automaton->States()) {
         for (symbol_t s : automaton->Symbols()) {
             const state_t q = automaton->Succ(p, s);
-            const state_t representative = representatives[almost_equivalent_states.GetClass(q)];
+            const state_t representative = representatives[equiv_relation.GetClass(q)];
             if (state_sorting[p] > state_sorting[representative])
                 automaton->SetSucc(p, s, representative);
         }

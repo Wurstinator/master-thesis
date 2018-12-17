@@ -58,6 +58,18 @@ void EquivalenceRelation<T>::Remove(const T& x) {
 
 
 template<typename T>
+template <typename RngT>
+void EquivalenceRelation<T>::RestrictDomain(RngT&& new_domain) {
+    const std::vector<T> current_domain = Domain();
+    std::set<T> domain_diff(current_domain.begin(), current_domain.end());
+    for (const T& x : new_domain)
+        domain_diff.erase(x);
+    for (const T& x : domain_diff)
+        Remove(x);
+}
+
+
+template<typename T>
 void EquivalenceRelation<T>::MergeClasses(const EquivalenceRelation::EquivClass& c1,
                                           const EquivalenceRelation::EquivClass& c2) {
     ClassIndex index1 = GetClassIndex(*c1.begin());

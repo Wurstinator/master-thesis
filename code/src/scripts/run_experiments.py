@@ -4,7 +4,7 @@ import os.path
 import subprocess
 import argparse
 
-constr_choices = ['schewe10', 'fritzwilke06', 'iterated_moore', 'path_refinement', 'tremoore', 'lsf', 'skipper', 'hopcroft']
+constr_choices = ['schewe10', 'fritzwilke06', 'iterated_moore', 'path_refinement', 'tremoore', 'lsf', 'skipper', 'hopcroft', 'everything']
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -26,7 +26,8 @@ directories = {
     'path_refinement': '../../../data/raw/path_refinement/',
     'tremoore': '../../../data/raw/threshold_moore/',
     'lsf': '../../../data/raw/lsf/',
-    'schewe10': '../../../data/raw/schewe/'
+    'schewe10': '../../../data/raw/schewe/',
+    'everything': '../../../data/raw/everything/',
 }
 
 statistics_py = {
@@ -37,7 +38,8 @@ statistics_py = {
     'path_refinement': 'path_refinement_statistics.py',
     'tremoore': 'tremoore_statistics.py',
     'lsf': 'lsf_statistics.py',
-    'schewe10': 'schewe10_statistics.py'
+    'schewe10': 'schewe10_statistics.py',
+    'everything': 'everything_statistics.py',
 }
 
 

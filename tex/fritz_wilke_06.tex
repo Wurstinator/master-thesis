@@ -180,8 +180,9 @@ So far we have given a definition of $\equiv_\text{de}$ that provides no obvious
 
 
 
+
 \section{Efficiency}
-Figures \ref{fig:fritzwilke:empirical_size_hist} and \ref{fig:fritzwilke:empirical_reduct_rel} show that at least on the \textsf{detspot} and \textsf{detnbaut} data sets, some state reduction is achieved. We can see that for all input sizes of automata, reduction via delayed simulation saves up to 60\% on \textsf{detspot} and up to 35\% on \textsf{detnbaut}, with the lower bound seemingly rising as the number of states grows.
+Figures \ref{fig:fritzwilke:empirical_size_hist} and \ref{fig:fritzwilke:empirical_reduct_rel} show that at least on the \textsf{detspot} and \textsf{detnbaut} data sets, some state reduction is achieved. We can see that for all input sizes of automata, reduction via delayed simulation saves up to 50\% on \textsf{detspot} and up to 60\% on \textsf{detnbaut}, with the average slowly rising as the number of states grows.
 
 Unfortunately, the quadratic run time in the number of states can clearly be seen to have effect in figure \ref{fig:fritzwilke:empirical_runtime}. Already automata with a hundred states can require a run time of over a minute.
 
@@ -219,6 +220,25 @@ Unfortunately, the quadratic run time in the number of states can clearly be see
 
 
 
+\section{Relation to Moore equivalence}
+\begin{lem}
+	$\equiv_M \,\subseteq\, \equiv_\text{de}$
+\end{lem}
+
+\begin{proof}
+	Let $(\mathcal{A}, p) \equiv_M (\mathcal{B}, q)$ and let $p' = \delta_1^*(p, w)$ and $q' = \delta_2^*(q, w)$ for some $w$. As $\equiv_M$ is a congruence relation, $(\mathcal{A}, p') \equiv_M (\mathcal{B}, q')$ and therefore $c_1(p') = c_2(q')$. Thus, every run that starts in $p'$ or $q'$ immediately sees a priority of at most $\min \{c_1(p'), c_2(q')\}$.
+\end{proof}
+
+
+\begin{lem}
+	For DPAs which are $c$-normalized and contain no trivial SCCs, $\equiv_\text{de} \,\subseteq\, \equiv_M$.
+\end{lem}
+
+\begin{proof}
+	Assume towards a contradiction that there is a pair $p \equiv_\text{de} q$ but $p \not\equiv_M q$. Thus, there is a $w \in \Sigma^*$ with $c(p') \neq c(q')$, where $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. As $\equiv_\text{de}$ is a congruence relation, $p' \equiv_\text{de} q'$. Without loss of generality, assume $c(p') < c(q')$.
+	
+	As $\mathcal{A}$ is $c$-normalized, there is a word $u$ such that $\delta^*(q', u) = q'$ and the lowest priority visited on that path is $c(q')$. Thus, reading $u^\omega$ from $q'$ induces a path that never sees a priority of $c(p')$ or lower. This means $p \not\equiv_\text{de} q'$.
+\end{proof}
 
 
 \section{Resetting obligations} 

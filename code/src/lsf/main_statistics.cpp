@@ -42,11 +42,7 @@ automaton::DPA LSFConstructionExecutor::PerformConstruction(const BaseOptions& o
         EquivalenceRelation<automaton::state_t> sim;
         if (options.use_nbautils_labels) {
             sim = NbautilsEquivalence(this->stateLabels);
-            std::set<state_t> removed_states(original_states.begin(), original_states.end());
-            for (state_t q : dpa.States())
-                removed_states.erase(q);
-            for (state_t q : removed_states)
-                sim.Remove(q);
+            sim.RestrictDomain(dpa.States());
         } else {
             sim = LanguageEquivalentStates(dpa);
         }

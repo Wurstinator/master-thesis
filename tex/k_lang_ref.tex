@@ -253,7 +253,7 @@ The automaton has size $|\mathcal{A}^\lambda_\text{visit}| \in \mathcal{O}(|Q| \
 
 
 \section{Efficiency}
-For the analysis of efficiency, we performed the merge w.r.t. $\mu_\text{PR}^\lambda$ for all $\lambda \in \mathfrak{C}(R, \mathcal{A})$. In general, we used $R = \equiv_L$. As usual, figures \ref{fig:pr:empirical_size_hist} and \ref{fig:pr:empirical_reduct_rel} show that \textsf{gendet} is not susceptible for state space reduction. The path refinement merger shows great promise on \textsf{detspot} and \textsf{detnbaut} though, frequently achieving reduction rates of over 20\%. 
+For the analysis of efficiency, we performed the merge w.r.t. $\mu_\text{PR}^\lambda$ for all $\lambda \in \mathfrak{C}(R, \mathcal{A})$ in succession. In general, we used $R = \equiv_L$. As usual, figures \ref{fig:pr:empirical_size_hist} and \ref{fig:pr:empirical_reduct_rel} show that \textsf{gendet} is not susceptible for state space reduction. The path refinement merger shows great promise on \textsf{detspot} and \textsf{detnbaut} though, frequently achieving reduction rates of over 20\%. 
 
 Figure \ref{fig:pr:empirical_time} displays the run time required for the entire reduction procedure. We can see that it is one of the slower algorithms, similar to delayed simulation. This is, however, not due to the path refinement itself but rather due to the computation of $\equiv_L$ which we use for its equivalence classes.
 

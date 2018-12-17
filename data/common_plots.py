@@ -42,6 +42,21 @@ def plot_time_comparison(datapoints, title, labels=None):
         pyplot.legend(loc='upper left')
     return f
 
+# Draws a point plot and returns the figure.
+# Each point corresponds to an element in [data]. Each such point is given to [x_select] and [y_select]
+# to obtain the x and y value for said point.
+def plot_multipoints(datas, x_selects, y_selects, title, xlabel, ylabel, linelabels):
+    f = pyplot.figure()
+    for data, x_select, y_select, linelabel in zip(datas, x_selects, y_selects, linelabels):
+        x = [x_select(point) for point in data]
+        y = [y_select(point) for point in data]
+        pyplot.plot(x, y, '.', label=linelabel)
+        pyplot.title(title, fontsize=TITLE_FONTSIZE)
+        pyplot.xlabel(xlabel)
+        pyplot.ylabel(ylabel)
+    pyplot.legend(loc='upper left')
+    return f
+
 
 # Draws a point plot and returns the figure.
 # Each point corresponds to an element in [data]. Each such point is given to [x_select] and [y_select]
@@ -69,6 +84,7 @@ def plot_histogram(data, select, title, xlabel, ylabel, singlebins=False, maxx=N
     else:
         counts, bins, patches = pyplot.hist(xs)
         if allint:
+            bins = list(set([int(b) for b in bins]))
             pyplot.xticks(bins, ['%d' % b for b in bins])
         else:
             pyplot.xticks(bins, ['%.2f' % b for b in bins])

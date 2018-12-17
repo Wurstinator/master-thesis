@@ -73,9 +73,9 @@ Unfortunately, we were not able to find or prove any relation between iterated M
 
 
 \section{Efficiency}
-Figure \ref{fig:imoore:empirical_size_hist} shows that the iterated Moore merger actually performs a decent job at reducing the number of states in \textsf{detspot} and \textsf{detnbaut}, even when compared to the normal Moore merger in figure \ref{fig:general:empirical_moore_size_hist}. However, the absolute number of removed states actually stays rather low and consequently the automata that witness a large relative reduction have a small number of states to begin with. This can be seen in figure \ref{fig:imoore:empirical_reduct_abs}: \textsf{detnbaut} rarely has more than 10 states removed, and \textsf{detspot} stays within a similar range of reduction as figure \ref{fig:general:empirical_moore_reduct_abs}, with the exception of a few outliers.
+Figure \ref{fig:imoore:empirical_size_hist} shows that the iterated Moore merger actually performs an acceptable job (considering its low complexity) at reducing the number of states in \textsf{detspot} and \textsf{detnbaut}, even when compared to the normal Moore merger in figure \ref{fig:general:empirical_moore_size_hist}. However, the absolute number of removed states actually stays rather low for \textsf{detnbaut} and consequently the automata that witness a large relative reduction have a small number of states to begin with. This can be seen in figure \ref{fig:imoore:empirical_reduct_abs}: \textsf{detnbaut} rarely has more than 10 states removed, and \textsf{detspot} stays within a similar range of reduction as figure \ref{fig:general:empirical_moore_reduct_abs}, with the exception of a few outliers.
 
-This result is to be expected. As figure \ref{fig:rawstats:rawstats_sccs} showed, very few automata contain more than five SCCs. The iterated Moore procedure can only exceed the normal Moore quotient by using trivial SCCs.
+This result is to be expected. As figure \ref{fig:rawstats:rawstats_sccs} showed, few automata contain more than three SCCs. The iterated Moore procedure can only exceed the normal Moore quotient by using trivial SCCs.
 
 As predicted by the theoretical complexity of the algorithm, figure \ref{fig:imoore:empirical_time} confirms that the iterated Moore merger is fast to apply, only reaching a run time of one second at 200 states.
 

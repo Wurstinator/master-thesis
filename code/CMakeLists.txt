@@ -388,3 +388,35 @@ target_include_directories(lsf_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP
 
 add_executable(simplelange_main src/simple_langeq/main_statistics.h src/simple_langeq/main_statistics.cpp ${MAST_COMMON_HDRS_MAIN})
 target_include_directories(simplelange_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+
+
+
+# EVERYTHING
+
+set(EVERYTHING_INCLUDE
+        ${AUTOMATON_INCLUDE}
+        ${SKIPPER_INCLUDE}
+        ${SCHEWE10_INCLUDE}
+        ${FRITZWILKE06_INCLUDE}
+        ${ITERATEDMOORE_INCLUDE}
+        ${PATHREFIN_INCLUDE}
+        ${TREMOORE_INCLUDE}
+        ${LSF_INCLUDE})
+
+add_executable(everything_main
+        src/everything/main_statistics.h
+        src/everything/main_statistics.cpp
+        ${EVERYTHING_INCLUDE}
+        ${AUTOMATON_HOA_INCLUDE}
+        ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(everything_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+
+add_executable(everything_statistics
+        src/everything/main_statistics.h
+        src/everything/main_statistics.cpp
+        ${EVERYTHING_INCLUDE}
+        ${AUTOMATON_HOA_INCLUDE}
+        ${MAST_COMMON_HDRS_STAT})
+target_include_directories(everything_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
