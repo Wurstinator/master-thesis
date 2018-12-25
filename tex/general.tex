@@ -1,40 +1,18 @@
 \section{Equivalence Relations}
 
-In general, we use the symbol $\equiv$ to denote equivalence relations, mostly between states of an automata. In general, we have automata $\mathcal{A}$ and $\mathcal{B}$ with states $p$ and $q$ from there respective state spaces. Our relations are then defined on $(\mathcal{A}, p) \equiv (\mathcal{B}, q)$.
+In general, we use symbols $\equiv$, $\sim$, and $\approx$ to denote equivalence relations, mostly between states of an automata. We have already defined the meaning of a general equivalence relation. The type most frequent in this thesis is that which compares pairs of automata and states.
 
-\begin{defn}
-	Assuming that $\mathcal{A}$ is a fixed automaton that is obvious in context and $p$ and $q$ are both states in $\mathcal{A}$, we shorten $(\mathcal{A}, p) \equiv (\mathcal{A}, q)$ to $p \equiv q$.
+For example, we generally consider two automata or transition structures $\mathcal{A} = (Q_1, \Sigma, \delta_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2)$ with states $p \in Q_1$ and $q \in Q_2$ and consider the question $(\mathcal{A}, p) \equiv (\mathcal{B}, q)$.
+
+Assuming that $\mathcal{A}$ is a fixed automaton that is obvious in context and $p$ and $q$ are both states in $\mathcal{A}$, we shorten $(\mathcal{A}, p) \equiv (\mathcal{A}, q)$ to $p \equiv q$.
 	
-	Furthermore, we write $\mathcal{A} \equiv \mathcal{B}$ if for every $p$ in $\mathcal{A}$ there is a $q$ in $\mathcal{B}$ such that $(\mathcal{A}, p) \equiv (\mathcal{B}, q)$; and the same holds with $\mathcal{A}$ and $\mathcal{B}$ exchanged.
-\end{defn}
+Furthermore, we write $\mathcal{A} \equiv \mathcal{B}$ if for every $p$ in $\mathcal{A}$ there is a $q$ in $\mathcal{B}$ such that $(\mathcal{A}, p) \equiv (\mathcal{B}, q)$; and the same holds with $\mathcal{A}$ and $\mathcal{B}$ exchanged.
 
 \begin{defn}
-	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2)$ be deterministic transition structures and let $\sim$ be an equivalence relation. We call $\sim$ a \emph{congruence relation} if for all $(\mathcal{A}, p) \sim (\mathcal{B}, q)$ and all $a \in \Sigma$, also $(\mathcal{A}, \delta_1(p, a)) \sim (\mathcal{B}, \delta_2(q, a))$.
+	Given an equivalence relation on states, we use the notation $$\mathfrak{C}(\sim, \mathcal{A}) = \{ \{ p \in Q \mid p \sim q \} \mid q \in Q \}$$ for the set of equivalence classes in $\mathcal{A}$.
 \end{defn}
 
-\begin{defn}
-	Let $\sim$ be an equivalence relation. We define the \emph{congruence refinement} of $\sim$ as $\approx$ with $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ iff for all $w \in \Sigma^*$, $(\mathcal{A}, \delta_1^*(p, w)) \sim (\mathcal{B}, \delta_2(q, w))$.
-\end{defn}
-
-\begin{lem}
-	For a given equivalence relation $\sim$, the congruence refinement of $\sim$ is a congruence relation.
-\end{lem}
-
-\begin{proof}
-	Assume towards a contradiction that there are $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ such that $(\mathcal{A}, \delta_1(p, a)) \not\approx (\mathcal{B}, \delta_2(q, a))$. Thus, there is a $w \in \Sigma^*$ with $(\mathcal{A}, \delta_1^*(\delta_1(p, a), w)) \not\sim (\mathcal{B}, \delta_2(\delta_2(q, a), w))$. This means $(\mathcal{A}, \delta_1^*(p, aw)) \not\sim (\mathcal{B}, \delta_2(q, aw))$ and therefore $(\mathcal{A}, p) \not\approx (\mathcal{B}, q)$.
-\end{proof}
-
-\begin{lem}
-	For a given equivalence relation $\sim$, the congruence refinement on a single automaton $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}| \cdot \log |\mathcal{A}|)$.
-	\label{lem:general:congref_in_nlogn}
-\end{lem}
-
-\begin{proof}
-	We refer to \cite{Hopcroft1971}, which describes a special case where $p \sim q$ iff $c(p) = c(q)$.
-\end{proof}
-
-
-\vspace{15pt}
+\vspace{10pt}
 The following is a comprehensive list of all relevant equivalence relations that we use.
 
 \begin{itemize}
@@ -49,14 +27,48 @@ The following is a comprehensive list of all relevant equivalence relations that
 	\item Labeled SCC filter equivalence, $\equiv_\text{LSF}^{k,\sim}$. Defined in chapter \ref{chap:lsf}.
 \end{itemize}
 
-Immediately we define the three first of these relations and show that they are computable.
+\vspace{5pt}
+
+\subsection{Congruence Relations}
+\begin{defn}
+	Let $\sim$ be an equivalence relation. We call $\sim$ a \emph{congruence relation} if for all $(\mathcal{A}, p) \sim (\mathcal{B}, q)$ and all $a \in \Sigma$, also $(\mathcal{A}, \delta_1(p, a)) \sim (\mathcal{B}, \delta_2(q, a))$.
+\end{defn}
+
+\begin{defn}
+	Let $\sim$ be an equivalence relation. We define the \emph{congruence refinement} of $\sim$ as $\approx$ with $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ iff for all $w \in \Sigma^*$, $(\mathcal{A}, \delta_1^*(p, w)) \sim (\mathcal{B}, \delta^*_2(q, w))$.
+\end{defn}
+
+\begin{lem}
+	For a given equivalence relation $\sim$, the congruence refinement of $\sim$ is a congruence relation.
+\end{lem}
+
+\begin{proof}
+	Assume towards a contradiction that there are $(\mathcal{A}, p) \approx (\mathcal{B}, q)$ such that $(\mathcal{A}, \delta_1(p, a)) \not\approx (\mathcal{B}, \delta_2(q, a))$. Thus, there is a $w \in \Sigma^*$ with $(\mathcal{A}, \delta_1^*(\delta_1(p, a), w)) \not\sim (\mathcal{B}, \delta_2(\delta_2(q, a), w))$. This means $(\mathcal{A}, \delta_1^*(p, aw)) \not\sim (\mathcal{B}, \delta_2(q, aw))$ and therefore $(\mathcal{A}, p) \not\approx (\mathcal{B}, q)$.
+\end{proof}
+
+\begin{lem}
+	Let $\sim$ be an equivalence relation and let $\approx$ be its congruence refinement. Then $\approx \,\subseteq\, \sim$.
+\end{lem}
+
+\begin{proof}
+	If $(\mathcal{A}, p) \approx (\mathcal{B}, q)$, then $(\mathcal{A}, \delta_1^*(p, w)) \sim (\mathcal{B}, \delta^*_2(q, w))$ for all $w$, in particular $w = \varepsilon$.
+\end{proof}
+
+\begin{lem}
+	For a given equivalence relation $\sim$, the congruence refinement on a single automaton $\mathcal{A}$ can be computed in $\mathcal{O}(|\mathcal{A}| \cdot \log |\mathcal{A}|)$.
+	\label{lem:general:congref_in_nlogn}
+\end{lem}
+
+\begin{proof}
+	We refer to \cite{Hopcroft1971}, which describes a special case where $p \sim q$ iff $c(p) = c(q)$.
+\end{proof}
 
 \vspace{5pt}
 
 \subsection{Language Equivalence}
 
 \begin{defn}
-	Let $\mathcal{A}$ and $\mathcal{B}$ be $\omega$-automata. We define \emph{language equivalence} as $(\mathcal{A}, p) \equiv_L (\mathcal{B}, q)$ if and only if for all words $\alpha \in \Sigma^\omega$, $\mathcal{A}$ accepts $\alpha$ from $p$ iff $\mathcal{B}$ accepts $\alpha$ from $q$.
+	Let $\mathcal{A}$ and $\mathcal{B}$ be $\omega$-automata. We define \emph{language equivalence} as $(\mathcal{A}, p) \equiv_L (\mathcal{B}, q)$ if and only if $L(\mathcal{A}, p) = L(\mathcal{B}, q)$.
 \end{defn}
 
 \begin{lem}
@@ -102,9 +114,9 @@ Immediately we define the three first of these relations and show that they are 
 The following definition is used as an intermediate step on the way to computing $\equiv_\text{\Ankh}$.
 
 \begin{defn}
-	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define the deterministic Büchi automaton $\mathcal{A} \intercal \mathcal{B} = (Q_1 \times Q_2, \Sigma, \delta_\intercal, F_\intercal)$ with $\delta_\intercal((q_1, q_2), a) = (\delta_1(q_1, a), \delta_2(q_2, a))$. The transition structure is a common product automaton.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define the deterministic Büchi automaton $\mathcal{A} \intercal \mathcal{B} = (Q_1 \times Q_2, \Sigma, \delta_\intercal, F_\intercal)$ with $\delta_\intercal((q_1, q_2), a) = (\delta_1(q_1, a), \delta_2(q_2, a))$. 
 	
-	The final states are $F_\intercal = \{ (p, q) \in Q_1 \times Q_2 \mid c_1(p) \neq c_2(q) \}$, i.e. every pair of states at which the priorities differ. 
+	The transition structure is a common product automaton. The final states are $F_\intercal = \{ (p, q) \in Q_1 \times Q_2 \mid c_1(p) \neq c_2(q) \}$, i.e. every pair of states at which the priorities differ. 
 \end{defn}
 
 \begin{lem}
@@ -140,7 +152,7 @@ The following definition is used as an intermediate step on the way to computing
 \subsection{Moore Equivalence}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define \emph{Moore equivalence} as $(\mathcal{A}, p) \equiv_M (\mathcal{B}, q)$ if and only if for all words $w \in \Sigma^*$, $c_1(\delta^*(p, w)) = c_2(\delta^*(q, w))$.
+	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. We define \emph{Moore equivalence} as $(\mathcal{A}, p) \equiv_M (\mathcal{B}, q)$ if and only if for all words $w \in \Sigma^*$, $c_1(\delta_1^*(p, w)) = c_2(\delta_2^*(q, w))$.
 \end{defn}
 
 \begin{lem}
@@ -192,7 +204,7 @@ The following definition is used as an intermediate step on the way to computing
 \end{defn}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\mu : D \rightarrow (2^\mathcal{Q} \setminus \emptyset)$ be a function for some $D \subseteq 2^Q$. We call $\mu$ a \emph{merger function} if 
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\mu : D \rightarrow (2^Q \setminus \emptyset)$ be a function for some $D \subseteq 2^Q$. We call $\mu$ a \emph{merger function} if 
 	\begin{itemize}
 		\item all sets in $D$ are pairwise disjoint; and
 		\item for $U = \bigcup D$ and all sets $X \in D$, $\mu(X) \cap (U \setminus X) = \emptyset$
@@ -200,6 +212,69 @@ The following definition is used as an intermediate step on the way to computing
 	
 	A DPA $\mathcal{A}'$ is a representative merge of $\mathcal{A}$ w.r.t. $\mu$ if there is an enumeration $X_1, \dots, X_{|D|}$ of $D$ and a sequence of automata $\mathcal{A}_0, \dots, \mathcal{A}_{|D|}$ such that $\mathcal{A}_0 = \mathcal{A}$, $\mathcal{A}_{|D|} = \mathcal{A}'$ and every $\mathcal{A}_{i+1}$ is a representative merge of $\mathcal{A}_i$ w.r.t. $X_{i+1}$ by candidates $\mu(X_{i+1})$.
 \end{defn}
+
+
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  		\node[state]           (0)                {$q_0$};
+  		\node[state]           (1) [right=of 0]   {$q_1$};
+  		\node[state]           (2) [below=of 1]   {$q_2$};
+  		\node[state]           (3) [left=of 2]   {$q_3$};
+  		\path[->] (0) edge node [above] {a} (1)
+  				  (0) edge [loop left] node {b} (0)
+  				  (1) edge [bend left] node [right] {a,b} (2)
+  				  (2) edge node [above] {a} (3)
+  				  (2) edge [bend left] node [left] {b} (1)
+  				  (3) edge node [left] {a,b} (0);
+	\end{tikzpicture}
+	\caption{Example for representative merges.}
+	\label{fig:general:repmerg_ex1}
+\end{figure}
+
+\begin{figure}
+\begin{minipage}{0.31\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  		\node[state]           (0)                {$q_0$};
+  		\node[state]           (1) [right=of 0]   {$q_1$};
+  		\node[state]           (2) [below=of 1]   {$q_2$};
+  		\path[->] (0) edge node [above] {a} (1)
+  				  (0) edge [loop left] node {b} (0)
+  				  (1) edge [bend left] node [right] {a,b} (2)
+  				  (2) edge [bend left] node [left] {a,b} (1);
+	\end{tikzpicture}
+\end{minipage}
+\hfill
+\begin{minipage}{0.31\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  		\node[state]           (0)                {$q_0$};
+  		\node[state]           (2) [below right=of 0]   {$q_2$};
+  		\path[->] (0) edge node [above] {a} (2)
+  				  (0) edge [loop left] node {b} (0)
+  				  (2) edge [loop right] node {a,b} (2);
+	\end{tikzpicture}
+\end{minipage}
+\hfill
+\begin{minipage}{0.31\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  		\node[state]           (0)                {$q_0$};
+  		\node[state]           (2) [below=of 1]   {$q_2$};
+  		\node[state]           (3) [left=of 2]   {$q_3$};
+  		\path[->] (0) edge [bend left] node [right] {a} (3)
+  				  (0) edge [loop left] node {b} (0)
+  				  (2) edge node [above] {a,b} (3)
+  				  (3) edge [bend left] node [left] {a,b} (0);
+	\end{tikzpicture}
+\end{minipage}
+	\caption{Example for representative merges. (after the merge)}
+	\label{fig:general:repmerg_ex2}
+\end{figure}
+
+Figure \ref{fig:general:repmerg_ex1} shows an example automaton. We know want to build a representative merge of this automaton w.r.t. $M = \{q_1, q_3\}$ by candidates $C = \{q_1, q_2, q_3\}$. The three possible automata (one for each choice of $r_M \in C$) are shown in figure \ref{fig:general:repmerg_ex2}.
 
 \vspace{5pt}
 
@@ -246,6 +321,7 @@ The following is a comprehensive list of all relevant merger functions that we u
 	\item Moore merger, $\mu_M$. Defined below.
 	\item Skip merger, $\mu_\text{skip}^\sim$. Defined in chapter \ref{chap:skipper}.
 	\item Delayed simulation merger, $\mu_\text{de}$. Defined in chapter \ref{chap:fritzwilke}.
+	\item Iterated Moore merger, $\mu_{IM}$. Defined in chapter \ref{chap:imoore}.
 	\item Path refinement merger, $\mu_\text{PR}^\lambda$. Defined in chapter \ref{chap:pr}.
 	\item Treshold Moore merger, $\mu_\text{TM}^\sim$. Defined in chapter \ref{chap:tm}.
 	\item Labeled SCC Filter merger, $\mu_\text{LSF}^{k,\sim}$. Defined in chapter \ref{chap:lsf}.
@@ -255,7 +331,7 @@ The following is a comprehensive list of all relevant merger functions that we u
 
 \subsection{Quotient merger}
 \begin{defn}
-	Let $\sim$ be a congruence relation. We define the \emph{quotient merger} $\mu^\sim_\div : \mathfrak{C}(\sim) \rightarrow 2^Q, \kappa \mapsto \kappa$. 
+	Let $\sim$ be a congruence relation. We define the \emph{quotient merger} $$\mu^\sim_\div : \mathfrak{C}(\sim, \mathcal{A}) \rightarrow 2^Q, \kappa \mapsto \kappa$$. 
 \end{defn}
 
 
@@ -284,6 +360,8 @@ The following is a comprehensive list of all relevant merger functions that we u
 \begin{proof}
 	Directly implied by Lemma \ref{lem:general:congrel_prio_implies_moore} and Theorem \ref{thm:general:M_subs_Ankh_subs_L}.
 \end{proof}
+
+The representative merge of a DPA w.r.t. $\mu_M$ is unique up to isomorphism and will actually be the same automaton that is created from Hopcroft's reduction algorithm. (\cite{Hopcroft1971})
 
 \vspace{5pt}
 
@@ -332,7 +410,7 @@ As is to be expected from Corollary \ref{cor:general:M_loglin} and confirmed in 
 	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. We define the \emph{reachability order} $\preceq_\text{reach}^\mathcal{S}$ as $p \preceq_\text{reach}^\mathcal{S} q$ if and only if $q$ is reachable from $p$. 
 \end{defn}
 
-We want to note here that we always assume for all automata to only have one connected component, i.e. for all states $p$ and $q$, there is a state $r$ such that $p$ and $q$ are both reachable from $r$. In practice, most automata have an predefined initial state and a simple depth first search can be used to eliminate all unreachable states.
+We want to note here that we always assume for all automata to be completely connected, i.e. for all states $p$ and $q$, there is a state $r$ such that $p$ and $q$ are both reachable from $r$. In practice, most automata have an predefined initial state and a simple depth first search can be used to eliminate all unreachable states.
 
 \begin{lem}
 	$\preceq_\text{reach}^\mathcal{S}$ is a preorder.
@@ -367,7 +445,7 @@ As we mentioned earlier, state reduction of DPAs is difficult and minimization i
 \end{lem}
 
 \begin{proof}
-	Let $q \in Q$ be any state. We show that $L(\mathcal{A}, q) = L(\mathcal{A}', q)$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ starting in $q$ on some $\alpha \in \Sigma^\omega$. As $s$ lies in a trivial SCC, the runs visit that state at most once. Therefore, $\text{Inf} c(\rho) = \text{Inf} c'(\rho')$ and the runs have the same acceptance.
+	Let $q \in Q$ be any state. We show that $L(\mathcal{A}, q) = L(\mathcal{A}', q)$. Let $\rho$ and $\rho'$ be the runs of $\mathcal{A}$ and $\mathcal{A}'$ starting in $q$ on some $\alpha \in \Sigma^\omega$. As $s$ lies in a trivial SCC, the runs visit that state at most once. Therefore, $\text{Inf } c(\rho) = \text{Inf } c'(\rho')$ and the runs have the same acceptance.
 \end{proof}
 
 \vspace{10pt}
@@ -378,8 +456,9 @@ An interesting property that parity automata can have is being \emph{normalized}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We call $\mathcal{A}$ \emph{$c$-normalized} if for every state $q \in Q$ that does not lie in a trivial SCC and all priorities $k \leq c(q)$, there is a path from $q$ to $q$ such that the lowest priority visited is $k$.
 \end{defn}
 
+Algorithm \ref{alg:general:normalize_c} shows how an equivalent normalized priority function can be computed in \linebreak $\mathcal{O}(|Q| \cdot |c(Q)|)$. The algorithm is a slight adaption of that presented in \cite{CartonMaceiras99}, which is why we will not go into further details here and just refer to the original source.
 
-Algorithm \ref{alg:general:normalize_c} shows how an equivalent normalized priority function can be computed in $\mathcal{O}(|Q| \cdot |c(Q)|)$. The algorithm is a slight adaption of that presented in \cite{CartonMaceiras99}, which is why we will not go into further details here and just refer to the original source.
+Not only does this algorithm cause the automaton to be $c$-normalized, it also makes sure that the number of priorities used is minimal on the given transition structure. Again, we refer to the original publication for more information.
 
 \begin{algorithm}[h!]
   \caption{Normalizing the priority function of a DPA.}

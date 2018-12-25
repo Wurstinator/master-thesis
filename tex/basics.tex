@@ -12,9 +12,9 @@
 \begin{defn}
 	Let $X$ and $Y$ be two sets. We use the usual definition of union ($\cup$), intersection ($\cap$), and set difference ($\setminus$). If some domain ($X \subseteq D$) is clear in the context, we write $X^\complement = D \setminus X$.
 	
-	We use the cartesian product $X \times Y = \{ (x, y) \mid x \in X, y \in Y \}$.
+	We use the Cartesian product $X \times Y = \{ (x, y) \mid x \in X, y \in Y \}$.
 	
-	We write $X^Y$ for the set of all functions with domain $Y$ and range $X$. If we have a function $f : D \rightarrow \{0, 1\}$, then we sometimes implicitly use it as a set $X \subseteq D$ with $x \in X$ iff $f(x) = 1$. In particular, $2^Y$ is the powerset of $Y$.
+	We write $X^Y$ for the set of all functions with domain $Y$ and range $X$. If we have a function $f : D \rightarrow \{0, 1\}$, then we sometimes implicitly use it as a set $X \subseteq D$ with $x \in X$ iff $f(x) = 1$. In particular, $2^Y$ is the power set of $Y$.
 \end{defn}
 
 \begin{defn}
@@ -74,7 +74,7 @@
 \end{defn}
 
 \begin{defn}
-	An \emph{$\omega$-word}, usually denoted by $\alpha$ or $\beta$, over an alphabet $\Sigma$ is a function $\alpha : \omega \rightarrow \Sigma$. $\omega$ is the length of $\alpha$ and we write $|\alpha| = \omega$. The set $\Sigma^\omega$ then describes the set of all $\omega$-words over $\Sigma$. 
+	An \emph{$\omega$-word}, usually denoted by $\alpha$ or $\beta$, over an alphabet $\Sigma$ is a function \linebreak $\alpha : \omega \rightarrow \Sigma$. $\omega$ is the length of $\alpha$ and we write $|\alpha| = \omega$. The set $\Sigma^\omega$ then describes the set of all $\omega$-words over $\Sigma$. 
 \end{defn}
 
 \begin{defn}
@@ -127,7 +127,7 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 \end{defn}
 
 \begin{defn}
-	Let $w \in \Sigma^* \cup \Sigma^\omega$ be a word. We define a substring or subword of $w$ for some $n \leq m \leq |w|$ as $w[n, m] = w(n) \cdot w(n+1) \cdots w(m-1)$. In the case that $m = |w| = \omega$, it is simply $w[n, m] = w(n) \cdot w(n+1) \cdots$. Note that for $n = m$, we have $w[n, m] = \varepsilon$.
+	Let $w \in \Sigma^* \cup \Sigma^\omega$ be a word. We define a sub string or sub word of $w$ for some $n \leq m \leq |w|$ as $w[n, m] = w(n) \cdot w(n+1) \cdots w(m-1)$. In the case that $m = |w| = \omega$, it is simply $w[n, m] = w(n) \cdot w(n+1) \cdots$. Note that for $n = m$, we have $w[n, m] = \varepsilon$.
 \end{defn}
 
 \begin{defn}
@@ -147,6 +147,10 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 	$$\text{Inf}(w) = \{ a \in \Sigma \mid \text{For every } n \in \mathbb{N} \text{ there is a } m > n \text{ such that } w(m) = a \text{.}\}$$
 \end{defn}
 
+\begin{defn}
+	Let $w \in \Sigma^* \cup \Sigma^\omega$ be a word and $f : \Sigma \rightarrow \Gamma$ be a funcction. We define $f(w) \in \Gamma^{|w|}$ as $(f(w))(n) = f(w(n))$.
+\end{defn}
+
 
 \subsection{Automata}
 
@@ -154,6 +158,10 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 	Let $Q$ be a set, $\Sigma$ an alphabet, and $\delta : Q \times \Sigma \rightarrow Q$ a function. We call $\mathcal{S} = (Q, \Sigma, \delta)$ a \emph{deterministic transition structure}. We call $Q$ the states or state space.
 	
 	For $q \in Q$ and a word $w \in \Sigma^* \cup \Sigma^\omega$, we call $\rho \in Q^{1+|w|}$ the \emph{run} of $\mathcal{S}$ on $w$ starting in $q$ if $\rho(0) = q$ and for all $i$, $\rho(i+1) = \delta(\rho(i), w(i))$.
+\end{defn}
+
+\begin{defn}
+	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. We define $\delta^* : Q \times \Sigma^* \rightarrow Q$ as $\delta^*(q, \varepsilon) = q$ and $\delta^*(q, w \cdot a) = \delta(\delta^*(q, w), a)$.
 \end{defn}
 
 \begin{defn}
@@ -178,10 +186,6 @@ We also abbreviate $v \cdot w$ to $vw$ and $w \cdot \alpha$ to $w \alpha$. Furth
 	A \emph{deterministic parity automaton} (or DPA) is a tuple $\mathcal{A} = (Q, \Sigma, \delta, c)$, where $c : Q \rightarrow \mathbb{N}$, such that $(Q, \Sigma, \delta)$ is a deterministic transition structure and has acceptance condition $\Omega = \{ \rho \in Q^* \mid \min \text{Inf}(c(\rho)) \text{ is even} \}$. For the language of $(Q, \Sigma, \delta)$ with $\Omega$ from $q$, we write $L(\mathcal{A}, q)$.
 	
 	We call the DPA a \emph{B\"uchi automaton} (or DBA) if $c(Q) \subseteq \{0, 1\}$. In that case, we use $F$ instead of $c$.
-\end{defn}
-
-\begin{defn}
-	Let $\mathcal{S} = (Q, \Sigma, \delta)$ be a deterministic transition structure. We define $\delta^* : Q \times \Sigma^* \rightarrow Q$ as $\delta^*(q, \varepsilon) = q$ and $\delta^*(q, w \cdot a) = \delta(\delta^*(q, w), a)$.
 \end{defn}
 
 \begin{defn}
