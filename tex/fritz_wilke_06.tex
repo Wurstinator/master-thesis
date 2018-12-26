@@ -4,7 +4,7 @@
 
 \section{Theory}
 
-In this part we consider delayed simulation and variants thereof on DPAs. This approach is based on the paper \cite{FritzWilke06}, which considered the games for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
+In this part we consider delayed simulation and variants thereof on DPAs. This approach is based on \cite{FritzWilke06}, which considered the simulation for alternating parity automata. The DPAs we use are a special case of these APAs and therefore worth examining.
 
 \begin{defn}
 	Let $\mathcal{A} = (Q_1, \Sigma, \delta_1, c_1)$ and $\mathcal{B} = (Q_2, \Sigma, \delta_2, c_2)$ be DPAs. For $\alpha \in \Sigma^\omega$, we write $(\mathcal{A}, p) \leq_\text{de}^\alpha (\mathcal{B}, q)$ iff the following holds:
@@ -89,7 +89,7 @@ We move on to establishing $\equiv_\text{de}$ as a \enquote{good} relation for o
 Together with Lemma \ref{lem:general:congrel_prio_implies_moore}, this allows for a merger function that preservers language.
 
 \begin{defn}
-	We define the \emph{delayed simulation merger} as $\mu_\text{de} : \mathfrak{C}(\equiv_\text{de}) \rightarrow 2^Q$ with $\mu_\text{de}(\kappa) = \{ q \in \kappa \mid c(q) = \min c(\kappa) \}$.
+	We define the \emph{delayed simulation merger} as $$\mu_\text{de} : \mathfrak{C}(\equiv_\text{de}, \mathcal{A}) \rightarrow 2^Q, \kappa \mapsto \{ q \in \kappa \mid c(q) = \min c(\kappa) \}.$$
 \end{defn}
 
 \begin{cor}
@@ -119,7 +119,7 @@ So far we have given a definition of $\equiv_\text{de}$ that provides no obvious
 	\begin{itemize}
 		\item $Q_\text{de} = Q_1 \times Q_2 \times (c_1(Q_1) \cup c_2(Q_2) \cup \{ \checkmark \})$, i.e. the states are given as triples in which the first two components are states from $\mathcal{A}$ and the third component is either a priority from $\mathcal{A}$ or $\mathcal{B}$ or $\checkmark$.
 		\item The alphabet remains $\Sigma$.
-		\item $\delta_\text{de}( (p, q, k), a ) = ( p', q', \gamma(c_1(p'), c_2(q'), k)$, where $p' = \delta_1(p, a)$, $q' = \delta_2(q, a)$, and $\gamma$ is the same function as used in the initial state. The first two components behave like a regular product automaton.
+		\item $\delta_\text{de}( (p, q, k), a ) = ( p', q', \gamma(c_1(p'), c_2(q'), k)$, where $p' = \delta_1(p, a)$, $q' = \delta_2(q, a)$. The first two components behave like a regular product automaton. $\gamma$ is defined below.
 		\item $F_\text{de} = Q_1 \times Q_2 \times \{ \checkmark \}$.
 	\end{itemize}
 	
@@ -182,7 +182,7 @@ So far we have given a definition of $\equiv_\text{de}$ that provides no obvious
 
 
 \section{Efficiency}
-Figures \ref{fig:fritzwilke:empirical_size_hist} and \ref{fig:fritzwilke:empirical_reduct_rel} show that at least on the \textsf{detspot} and \textsf{detnbaut} data sets, some state reduction is achieved. We can see that for all input sizes of automata, reduction via delayed simulation saves up to 50\% on \textsf{detspot} and up to 60\% on \textsf{detnbaut}, with the average slowly rising as the number of states grows.
+Figures \ref{fig:fritzwilke:empirical_size_hist} and \ref{fig:fritzwilke:empirical_reduct_rel} show that at least on the \textsf{detspot} and \textsf{detnbaut} data sets, some state reduction is achieved. We can see that for all input sizes of automata, reduction via delayed simulation saves up to 50\% on \textsf{detspot} and up to 30\% on \textsf{detnbaut}, with the average slowly rising as the number of states grows.
 
 Unfortunately, the quadratic run time in the number of states can clearly be seen to have effect in figure \ref{fig:fritzwilke:empirical_runtime}. Already automata with a hundred states can require a run time of over a minute.
 
@@ -242,7 +242,7 @@ Unfortunately, the quadratic run time in the number of states can clearly be see
 
 
 \section{Resetting obligations} 
-In the delayed simulation automaton, \enquote{obligations} correspond to good priorities that the first state has accumulated or bad priorities that the second state has accumulated and the need for the respective other state to compensate in some way. The intuitive idea behind this concept is that an obligation that cannot be compensated, stands for an infinite run in which the acceptance differs between the two states that are being compared. The issue with the original definition is that obligations carry over, even if they can only be caused finitely often. This is demonstrated in figure \ref{fig:fritzwilke:reset_oblig_example}; the two states could be merged into one, but they are not $\equiv_\text{de}$-equivalent as can be seen in the delayed simulation automaton in figure \ref{fig:fritzwilke:reset_oblig_example_dea}.
+In the delayed simulation automaton, \enquote{obligations} correspond to good priorities that the first state has accumulated or bad priorities that the second state has accumulated and the need for the respective other state to compensate in some way. The intuitive idea behind this concept is that an obligation that cannot be compensated stands for an infinite run in which the acceptance differs between the two states that are being compared. An issue with the original definition is that obligations carry over forever, even if they can only be caused finitely often. This is demonstrated in figure \ref{fig:fritzwilke:reset_oblig_example}; the two states could be merged into one, but they are not $\equiv_\text{de}$-equivalent as can be seen in the delayed simulation automaton in figure \ref{fig:fritzwilke:reset_oblig_example_dea}.
 
 \begin{figure}
 \centering
@@ -268,10 +268,10 @@ In the delayed simulation automaton, \enquote{obligations} correspond to good pr
 \label{fig:fritzwilke:reset_oblig_example_dea}
 \end{figure}
 
-As a solution to this, we propose a simple change to the definition of the automaton which resets the obligations every time, either state moves to a new SCC. 
+As a solution to this, we propose a simple change to the definition of the automaton which resets the obligations every time either state moves to a new SCC. 
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, q_0, \delta, c)$ be a DPA. We define the \emph{delayed simulation automaton with SCC resets} $\mathcal{A}_\text{deR}(p, q) = (Q_\text{de}, \Sigma, \delta_\text{deR}, F_\text{de})$ with $\delta_\text{deR}((p, q, k), a) = \delta_\text{de}((p, q, \text{reset}(p, q, k, a)), a)$. Except for the addition of the reset function, this automaton is the same as $\mathcal{A}_\text{de}$.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define the \emph{delayed simulation automaton with SCC resets} $\mathcal{A}_\text{deR}(p, q) = (Q_\text{de}, \Sigma, \delta_\text{deR}, F_\text{de})$ with $\delta_\text{deR}((p, q, k), a) = \delta_\text{de}((p, q, \text{reset}(p, q, k, a)), a)$. Except for the addition of the reset function, this automaton is the same as $\mathcal{A}_\text{de}$.
 	
 	If $p$ and $\delta(p, a)$ lie in the same SCC, as well as $q$ and $\delta(q, a)$, then we simply set $\text{reset}(p, q, k, a) =~k$. Otherwise, i.e. if any state changes its SCC, the reset comes into play and we set $\text{reset}(p, q, k, a) = \checkmark$.
 	

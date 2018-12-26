@@ -3,12 +3,12 @@
 \label{chap:skipper}
 
 \section{Theory}
-The skip merger we introduce now uses the rather simple idea that if we consider classes of language equivalent states, then we only need to use the \enquote{last} SCC of those states and can remove all that come before.
+The so called \emph{skip merger} we introduce now uses the rather simple idea that if we consider classes of language equivalent states, then we only need to use the \enquote{last} SCC of those states and can remove all others.
 
 \begin{defn}
 	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $\sim \,\subseteq Q \times Q$ be a congruence relation on $\mathcal{A}$. Let $\preceq \,\subseteq Q \times Q$ be a total extension of $\preceq_\text{reach}^\mathcal{A}$. 
 	
-	We define the \emph{skip merger function} $\mu_\text{skip}^\sim : D \rightarrow 2^Q$ as follows: for each equivalence class $\kappa \in \mathfrak{C}(\sim)$, let $C_\kappa \subseteq \kappa$ be the of $\preceq$-maximal elements in $\kappa$. Let $M_\kappa = \kappa \setminus C_\kappa$. Then we have $D = \{ M_\kappa \mid \kappa \in \mathfrak{C}(\sim) \}$ and $\mu_\text{skip}^\sim(M_\kappa) = C_\kappa$.
+	We define the \emph{skip merger function} $\mu_\text{skip}^\sim : D \rightarrow 2^Q$ as follows: for each equivalence class $\kappa \in \mathfrak{C}(\sim, \mathcal{A})$, let $C_\kappa \subseteq \kappa$ be the set of $\preceq$-maximal elements in $\kappa$. Let $M_\kappa = \kappa \setminus C_\kappa$. Then we have $D = \{ M_\kappa \mid \kappa \in \mathfrak{C}(\sim, \mathcal{A}) \}$ and $\mu_\text{skip}^\sim(M_\kappa) = C_\kappa$.
 \end{defn}
 
 \vspace{5pt}
@@ -18,15 +18,15 @@ Now that we have established the definition of the merger, we want to analyze it
 \begin{lem}
 \label{lem:skip:run_growing}
 	Let $\rho$ be a run on $\alpha$ in $\mathcal{B}$. Then for all $i$, $\rho(i) \preceq \rho(i+1)$.
-	Furthermore, we have $\rho(i) \prec \rho(i+1)$ if and only if $\rho(i) \prec r_{[\delta(\rho(i), \alpha(i))]_\sim}$.
+	Furthermore, we have $\rho(i) \prec \rho(i+1)$ if and only if $\rho(i) \prec r_{\delta(\rho(i), \alpha(i))}$ (with $r_q = r_{M_{[q]_\sim}}$).
 \end{lem}
 
 \begin{proof}
 	Let $i$ be an arbitrary index of the run. If $\rho(i)$ to $\rho(i+1)$ is also a transition in $\mathcal{A}$, then $\rho(i+1)$ is reachable from $\rho(i)$ in $\mathcal{A}$ and hence $\rho(i) \preceq \rho(i+1)$ by definition of the preorder. Otherwise the transition used was redirected in the construction. The way the redirection is defined, this implies $\rho(i) \prec \rho(i+1)$.
 	
-	We move on to the second part of the lemma. If $\rho(i) \prec r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim}$, then the transition is redirected to $\rho(i+1) = r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim}$ and the statement holds. 
+	We move on to the second part of the lemma. If $\rho(i) \prec r_{M_{[\delta(\rho(i), \alpha(i))]_\sim}}$, then the transition is redirected to $\rho(i+1) = r_{\delta(\rho(i), \alpha(i))}$ and the statement holds. 
 	
-	For the other direction, let $\rho(i) \prec \rho(i+1)$ and assume towards a contradiction that $\rho(i) \not\prec r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim}$. This means that the transition was not redirected and $\rho(i+1) = \delta_\mathcal{A}(\rho(i), \alpha(i))$. Since $\preceq$ is total, we have $r_{[\delta_\mathcal{A}(\rho(i), \alpha(i))]_\sim} = r_{[\rho(i+1)]_\sim} \preceq \rho(i) \prec \rho(i+1)$ which contradicts the $\preceq$-maximality of representatives.
+	For the other direction, let $\rho(i) \prec \rho(i+1)$ and assume towards a contradiction that $\rho(i) \not\prec r_{\delta(\rho(i), \alpha(i))}$. This means that the transition was not redirected and $\rho(i+1) = \delta(\rho(i), \alpha(i))$. Since $\preceq$ is total, we have $r_{\delta(\rho(i), \alpha(i))} = r_{\rho(i+1)} \preceq \rho(i) \prec \rho(i+1)$ which contradicts the $\preceq$-maximality of representatives.
 \end{proof}
 
 \begin{lem}
@@ -65,7 +65,8 @@ Now that we have established the definition of the merger, we want to analyze it
 \begin{proof}
 	Let $\alpha \in \Sigma^\omega$ be a word and let $\rho$ be of $\mathcal{B}$ starting in $q_0$ on $\alpha$. By Lemma \ref{lem:skip:run_suffix}, $\rho$ has a suffix $\pi$ which is a run segment of $\mathcal{A}$ on some suffix $\beta$ of $\alpha$. The acceptance condition of DPAs is prefix independent, so $\alpha \in L(\mathcal{B}, q_0)$ iff $\rho$ is an accepting run iff $\pi$ is an accepting run. Since the priorities do not change during the construction, $\pi$ is accepting in $\mathcal{B}$ iff it is accepting in $\mathcal{A}$.
 	
-	Let $w \in \Sigma^*$ be the prefix of $\alpha$ with $\alpha = w \beta$. By Lemma \ref{lem:general:cong_stays_in_merge}, we know that $\delta^*(q_0, w) \sim \delta^*_\mathcal{B}(q_0, w)$. Since every state is $\sim$-equivalent to its representative and $\sim$ is a congruence relation, we also know $\delta^*_\mathcal{B}(q_0, w) \sim \delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$. From $\delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$, the run $\pi$ accepts $\beta$ iff $\alpha \in L(\mathcal{B}, q_0)$. As $\sim$ implies language equivalence, the same must hold for $\delta^*_\mathcal{A}(q_0, w)$. Therefore, $\alpha \in L(\mathcal{A}, q_0)$ iff $\alpha \in L(\mathcal{B}, q_0)$.
+	Let $w \in \Sigma^*$ be the prefix of $\alpha$ with $\alpha = w \beta$. By Lemma \ref{lem:general:cong_stays_in_merge}, we know that \linebreak
+$(\mathcal{A}, \delta^*(q_0, w)) \sim (\mathcal{A}, \delta^*_\mathcal{B}(q_0, w))$. Since every state is $\sim$-equivalent to its representative and $\sim$ is a congruence relation, we also know $\delta^*_\mathcal{B}(q_0, w) \sim \delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$. From $\delta^*_\mathcal{B}(r_{[q_0]_\sim}, w)$, the run $\pi$ accepts $\beta$ iff $\alpha \in L(\mathcal{B}, q_0)$. As $\sim$ implies language equivalence, the same must hold for $\delta^*_\mathcal{A}(q_0, w)$. Therefore, $\alpha \in L(\mathcal{A}, q_0)$ iff $\alpha \in L(\mathcal{B}, q_0)$.
 \end{proof}
 
 
