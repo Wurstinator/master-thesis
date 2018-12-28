@@ -12,7 +12,7 @@ Before we present the path refinement method, note that it takes a special case 
 	Let $f_\text{PR} : 2^{\lambda \times \lambda} \rightarrow 2^{\lambda \times \lambda}$ be a function such that $(p, q) \in f_\text{PR}(X)$  iff for all $w \in L_{\lambda \hookleftarrow}$, $(\delta^*(p, w), \delta^*(q, w)) \in X$.
 	Then let $X_0 \subseteq \lambda \times \lambda$ such that $(p, q) \in X_0$ iff for all $w \in L_{\lambda \hookleftarrow}$, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$, i.e. the minimal priority when moving from $p$ or $q$ to $\lambda$ again is the same.
 	
-	Using both, we set $X_{i+1} = f_\text{PR}(X_i)$. $f_\text{PR}$ is monotone w.r.t. $\subseteq$, so there is an $X_n = X_{n+1}$ by Kleene's fixed point theorem. We define the \emph{path refinement of $\lambda$}, called $\equiv_\text{PR}^\lambda$, as
+	Using both, we set $X_{i+1} = f_\text{PR}(X_i)$. $f_\text{PR}$ is monotone w.r.t. $\subseteq$, so there is an $X_n = X_{n+1}$ by Kleene's fixed point theorem. We define the \emph{path refinement of $\lambda$}, called $\equiv_\text{PR}^\lambda$, as %TODO citatin Kleene
 	\begin{itemize}
 		\item For $p \in Q \setminus \lambda$, $p \equiv_\text{PR}^\lambda q$ iff $p = q$.
 		\item For $p, q \in \lambda$, $p \equiv_\text{PR}^\lambda q$ iff $(p, q) \in X_n$.
@@ -34,7 +34,7 @@ $\lambda$ being an equivalence class of $R$, a congruence relation, is required 
 \end{proof}
 
 \begin{defn}
-	Let $\mathcal{A}$ be a DPA. We define the \emph{path refinement merger} as $\mu_\text{PR}^\lambda : D \rightarrow 2^Q$ with $D = \{ \kappa \in \mathfrak{C}(\equiv_\text{PR}^\lambda, \mathcal{A}) \mid \kappa \subseteq \lambda \}$ and $\mu_\text{PR}^\lambda(\kappa) = \{ q \in \kappa \mid c(q) = \min c(\kappa) \}$.
+	Let $\mathcal{A}$ be a DPA. We define the \emph{path refinement merger} as $$\mu_\text{PR}^\lambda : \{ \kappa \in \mathfrak{C}(\equiv_\text{PR}^\lambda, \mathcal{A}) \mid \kappa \subseteq \lambda \} \rightarrow 2^Q, \kappa \mapsto \{ q \in \kappa \mid c(q) = \min c(\kappa) \}.$$
 \end{defn}
 
 \vspace{10pt}
@@ -76,11 +76,10 @@ $\lambda$ being an equivalence class of $R$, a congruence relation, is required 
 The definition of path refinement that we introduced is useful for the proofs of correctness. It however does not provide one with a way to actually compute the relation. That is why we now provide an alternative definition that yields the same results but is more algorithmic in nature.
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation. For each equivalence class $\lambda$ of $R$, we define the \emph{path refinement automaton} $\mathcal{G}_\text{PR}^{R,\lambda}(p, q) = (Q_\text{PR}, \Sigma, \delta^\lambda_\text{PR}, F_\text{PR})$, which is a DFA.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA and let $R \subseteq Q \times Q$ be a congruence relation. For each equivalence class $\lambda$ of $R$, we define the \emph{path refinement automaton} \linebreak $\mathcal{G}_\text{PR}^\lambda(p, q) = (Q_\text{PR}, \Sigma, \delta^\lambda_\text{PR}, F_\text{PR})$, which is a DFA.
 	
 	\begin{itemize}
 		\item $Q_\text{PR} = (Q \times Q \times c(Q) \times \{<, >, =\}) \cup \{ \perp \}$
-		\item The initial state we use is $q_0^\text{PR}(p, q) = (p, q, \eta_k(c(p), c(q), \checkmark), \eta_x(c(p), c(q), \checkmark, =))$
 		\item $\delta^\lambda_\text{PR}((p, q, k, x), a) = \begin{cases}
 			(p', q', \eta_k(c(p'), c(q'), k), \eta_x(c(p'), c(q'), k, x)) & \text{if } p' \notin \lambda \\
 			q_0^\text{PR}(p', q') & \text{if } p' \in \lambda \text{ and } \\ 
@@ -96,27 +95,31 @@ The definition of path refinement that we introduced is useful for the proofs of
 			\end{cases}$ 
 		\item $F_\text{PR} = Q_\text{PR} \setminus \{\perp\}$
 	\end{itemize}
+
+	We use the following initial state for $p, q \in \lambda$: $$q_0^\text{PR}(p, q) = (p, q, \eta_k(c(p), c(q), \checkmark), \eta_x(c(p), c(q), \checkmark, =))$$
 \end{defn}
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA with a congruence relation $R$. Let $\lambda$ be an equivalence class of $R$, $p, q \in \lambda$, and $w \in L_{\lambda \rightarrow \lambda}$. For every $v \sqsubset w$ and $\oplus \in \{<, >, =\}$, the fourth component of $(\delta_\text{PR}^\lambda)^*(q_0^\text{PR}(p, q), v)$ is $\oplus$ if and only if $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq v \} \oplus \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq v \}$.
+	Let $p$ and $q$ be two states in $\lambda$ and let $w$ be a word in $L_{\lambda \rightarrow \lambda}$. For every $v \sqsubset w$ and \linebreak
+	$\oplus \in \{<, >, =\}$, the fourth component of $(\delta_\text{PR}^\lambda)^*(q_0^\text{PR}(p, q), v)$ is $\oplus$ if and only if \linebreak
+	$\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq v \} \oplus \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq v \}$.
 	\label{lem:pr:pr_game_nx}
 \end{lem}
-
+\vspace{5pt}
 	The proof of this Lemma is a very formal analysis of every case in the relations between the different priorities that occur and making sure that the definition of $\eta_x$ covers these correctly. No great insight is gained, which is why we omit the proof at this point.
 
 \begin{theorem}
-	Let $\mathcal{A}$ be a DPA with a congruence relation $R$. Let $\lambda$ be an equivalence class of $R$ and $p, q \in \lambda$. Then $p \equiv_\text{PR}^R q$ iff $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q), q_0^\text{PR}(p, q)) = \Sigma^*$.
+	Let $p, q \in \lambda$. Then $p \equiv_\text{PR}^\lambda q$ iff $L(\mathcal{G}_\text{PR}^\lambda(p, q), q_0^\text{PR}(p, q)) = \Sigma^*$.
 \end{theorem}
 
 \begin{proof}
-	\textbf{If } Let $p \not\equiv_\text{PR}^R q$. We use the inductive definition of $R_\kappa \subseteq\, \equiv_\text{PR}^R$ using $f$ and the sets $X_i$ here. Let $m$ be the smallest index at which $(p, q) \notin X_m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i \leq |w|}$ be the run of $\mathcal{G}_\text{PR}^{R,\lambda}(p, q)$ on $w$. We prove that $\rho(|w|) = \perp$ and therefore $\rho$ is not accepting by induction on $m$.
+	\textbf{If } Let $p \not\equiv_\text{PR}^R q$. We use the inductive definition of $R_\kappa \subseteq\, \equiv_\text{PR}^R$ using $f$ and the sets $X_i$ here. Let $m$ be the smallest index at which $(p, q) \notin X_m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i \leq |w|}$ be the run of $\mathcal{G}_\text{PR}^\lambda(p, q)$ on $w$. We prove that $\rho(|w|) = \perp$ and therefore $\rho$ is not accepting by induction on $m$.
 	
 	If $m = 0$, then $(p, q) \notin Y_\lambda$, meaning that there is a word $w$ such that $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} \neq \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. Without loss of generality, assume $\min \{ c(\delta^*(p, u)) \mid u \sqsubset w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubset w \}$. By Lemma \ref{lem:pr:pr_game_nx}, $x_{|w|-1} =\, <$. Furthermore, $\delta(p_{|w|-1}, w_{|w|-1}) \in \lambda$, as $w \in L_{\lambda \rightarrow \lambda}$. Thus, $\rho(|w|) =\, \perp$ and the run is rejecting.
 	
-	Now consider $m+1 > 1$. Since $(p, q) \in X_m \setminus f(X_m)$, there must be a word $w \in L_{\lambda \rightarrow \lambda}$ such that $(p', q') \notin X_m$, where $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. As $R_\kappa \subseteq X_m$, $(p', q') \notin R_\kappa$ and therefore $p' \not\equiv_\text{PR}^R q'$. By induction, $w \notin L(\mathcal{G}_\text{PR}^{R,\lambda}(p', q'), q_0^\text{PR}(p', q'))$; since that run is a suffix of $\rho$, $\rho$ itself is also a rejecting run.
+	Now consider $m+1 > 1$. Since $(p, q) \in X_m \setminus f(X_m)$, there must be a word $w \in L_{\lambda \rightarrow \lambda}$ such that $(p', q') \notin X_m$, where $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. As $R_\kappa \subseteq X_m$, $(p', q') \notin R_\kappa$ and therefore $p' \not\equiv_\text{PR}^R q'$. By induction, $w \notin L(\mathcal{G}_\text{PR}^\lambda(p', q'), q_0^\text{PR}(p', q'))$; since that run is a suffix of $\rho$, $\rho$ itself is also a rejecting run.
 	
-	\paragraph{Only If} Let $L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q), q_0^\text{PR}(p, q)) \neq \Sigma^*$. Since $\varepsilon$ is always accepted, there is a word $w \in \Sigma^+ \setminus L(\mathcal{G}_\text{PR}^{R,\lambda}(p, q), q_0^\text{PR}(p, q))$, meaning that $\delta_\text{PR}^*(q_0^\text{PR}(p, q), w) = \perp$. Split $w$ into sub-words $w = u_1 \cdots u_m$ such that $u_1, \dots, u_m \in L_{\lambda \rightarrow \lambda}$. Note that this partition is unique. We show $p \not\equiv_\text{PR}^R q$ by induction on $m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i < |w|}$ be the run of $\mathcal{G}_\text{PR}^{R,\lambda}(p, q)$ on $w$ starting in $q_0^\text{PR}(p, q)$.
+	\paragraph{Only If} Let $L(\mathcal{G}_\text{PR}^\lambda(p, q), q_0^\text{PR}(p, q)) \neq \Sigma^*$. Since $\varepsilon$ is always accepted, there is a word $w \in \Sigma^+ \setminus L(\mathcal{G}_\text{PR}^\lambda(p, q), q_0^\text{PR}(p, q))$, meaning that $\delta_\text{PR}^*(q_0^\text{PR}(p, q), w) = \perp$. Split $w$ into sub-words $w = u_1 \cdots u_m$ such that $u_1, \dots, u_m \in L_{\lambda \rightarrow \lambda}$. Note that this partition is unique. We show $p \not\equiv_\text{PR}^R q$ by induction on $m$. Let $\rho = (p_i, q_i, k_i, x_i)_{0 \leq i < |w|}$ be the run of $\mathcal{G}_\text{PR}^\lambda(p, q)$ on $w$ starting in $q_0^\text{PR}(p, q)$.
 	
 	If $m = 1$, then $w \in L_{\lambda \rightarrow \lambda}$. Since $\rho(|w|) =\, \perp$, it must be true that $x_{|w|-1} \neq\, =$. Without loss of generality, assume $x_{|w|-1} =\, <$. By Lemma \ref{lem:pr:pr_game_nx}, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} < \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$. Therefore, $p \not\equiv_\text{PR}^R q$.
 	
@@ -124,7 +127,7 @@ The definition of path refinement that we introduced is useful for the proofs of
 \end{proof}
 
 \vspace{5pt}
-The automaton $\mathcal{G}_\text{PR}^{R,\lambda}$ has size $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. For each class $\lambda$, the problem of universal language has to be solved which is solved by reachability in linear time. Thus, $\equiv_\text{PR}^\lambda$ can be computed in time $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$ but has to be repeated for every different $\lambda$.
+The automaton $\mathcal{G}_\text{PR}^\lambda$ has size $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. For each class $\lambda$, the problem of universal language has to be solved which is solved by reachability in linear time. Thus, $\equiv_\text{PR}^\lambda$ can be computed in time $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$ but has to be repeated for every different $\lambda$.
 
 
 
@@ -227,7 +230,7 @@ The computation presented in the previous section was a straight-forward descrip
 \end{proof}
 
 \begin{theorem}
-	Let $\mathcal{A}$, $R$, and $\lambda$ be as before. Let $\hat{c} = \max c(Q)$. Then for all $p, q \in \lambda$, we have $p \equiv_\text{PR}^\lambda q$ iff $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \in V_M$.
+	Let $\hat{c} = \max c(Q)$. Then for all $p, q \in \lambda$, we have $p \equiv_\text{PR}^\lambda q$ iff $(\iota_p^{\hat{c}}, \iota_q^{\hat{c}}) \in V_M$.
 \end{theorem}
 
 \begin{proof}

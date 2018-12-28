@@ -3,7 +3,7 @@
 \label{chap:imoore}
 
 \section{Theory}
-Standard Moore equivalence was created to minimize Moore automata in which the priority of every state matters; in other words, the occurrence set of a given run is considered. Parity automata on the other hand only use the smaller infinity set. The idea of the upcoming approach is to use this relaxation to give the standard Moore equivalence more freedom and remove additional states.
+Standard Moore equivalence was created to minimize Moore automata in which the priority of every state matters; in other words, the occurrence set of a given run is considered. Parity automata on the other hand only use the smaller infinity set. The idea of the upcoming approach is to utilize this relaxation to give the standard Moore equivalence more freedom and remove additional states.
 
 \begin{defn}
 	Let $\mathcal{A} = (P, \Sigma, \delta, c)$ and $\mathcal{B} = (Q, \Sigma, \varepsilon, d)$ be DPAs and $S \subseteq P$. We say that \emph{$\mathcal{A}$ prepends $S$ to $\mathcal{B}$} if 
@@ -29,17 +29,17 @@ Standard Moore equivalence was created to minimize Moore automata in which the p
 		\item The state sets are defined as $Q_i = \bigcup_{j=i}^{|\mathcal{S}|} S_j$.
 		\item The base case is $\mathcal{B}_{|\mathcal{S}|} = \mathcal{A}\upharpoonright_{S_{|\mathcal{S}|}}$.
 		\item Given that $\mathcal{B}_{i+1}$ is defined, let $\mathcal{B}'_i = (Q_i, \Sigma, q_0^{\prime i}, \delta_i, c'_i)$ be a DPA that prepends $S_i$ to $\mathcal{B}_{i+1}$ such that $\delta \upharpoonright_{Q_i \times \Sigma} = \delta_i$ and $c \upharpoonright_{S_i} = c'_i \upharpoonright_{S_i}$.
-		\item Let $M'_i$ be the Moore equivalence on $\mathcal{B}'_i$. If $S_i = \{q\}$ is a trivial SCC, $q$ is not $M'_i$-equivalent to any other state, and there is a $p \in Q_{i+1}$ such that for all $a \in \Sigma$ $(\delta'_i(q, a), \delta'_i(p, a)) \in M'_i$, then let $p_0$ be $\preceq_Q$-maximal among those $p$ and let $c_i(r) = \begin{cases} c_{i+1}(p_0) & \text{if } r = q \\ c_{i+1}(r) & \text{else} \end{cases}$. If any of the three conditions is false, simply set $c_i = c'_i$.
+		\item Let $M'_i$ be the Moore equivalence on $\mathcal{B}'_i$. If $S_i = \{q\}$ is a trivial SCC, $q$ is not $M'_i$-equivalent to any other state, and there is a $p \in Q_{i+1}$ such that for all $a \in \Sigma$, $(\delta'_i(q, a), \delta'_i(p, a)) \in M'_i$, then let $p_0$ be $\preceq_Q$-maximal among those $p$ and let $c_i(r) = \begin{cases} c_{i+1}(p_0) & \text{if } r = q \\ c_{i+1}(r) & \text{else} \end{cases}$. If any of the three conditions is false, simply set $c_i = c'_i$.
 	\end{itemize} 
 	
 	Let $M_i$ be the Moore equivalence on $\mathcal{B}_i$. We define $\equiv_{IM} \,:= M_0$ and call this the \emph{iterated Moore equivalence} of $\mathcal{A}$.
 \end{defn}
 
-At first, this definition might confuse when written down formally like this. We continuously add the SCCs of $\mathcal{A}$ starting from the \enquote{back}. In addition to computing the usual Moore equivalence on our automaton, we also take trivial SCCs into special consideration; as their priority cannot appear infinitely often on any run, its value is effectively arbitrary. We can therefore perform extra steps to more liberally merge it with other states.
+We continuously add the SCCs of $\mathcal{A}$ starting from the \enquote{back}. In addition to computing the usual Moore equivalence on our automaton, we also take trivial SCCs into special consideration; as their priority cannot appear infinitely often on any run, its value is effectively arbitrary. We can therefore perform extra steps to more liberally merge it with other states.
 
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define the \emph{iterated Moore merger function} $\mu_{IM} : \mathfrak{C}(\equiv_{IM}, \mathcal{A}) \rightarrow 2^Q$ as $\mu_{IM}(\kappa) = \{ q \in \kappa \mid q \text{ is } \preceq_\text{reach}^\mathcal{A} \text{-maximal in } \kappa \}$.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define the \emph{iterated Moore merger function} $$\mu_{IM} : \mathfrak{C}(\equiv_{IM}, \mathcal{A}) \rightarrow 2^Q, \kappa \mapsto \{ q \in \kappa \mid q \text{ is } \preceq_\text{reach}^\mathcal{A} \text{-maximal in } \kappa \}.$$
 \end{defn}
 
 \begin{theorem}
@@ -47,7 +47,7 @@ At first, this definition might confuse when written down formally like this. We
 \end{theorem}
 
 \begin{proof}
-	By definition of the iterated Moore equivalence, we only have $c(p) \neq c'(p)$ if $\{p\}$ is a trivial SCC in $\mathcal{A}$. By having candidates of the merge be $\preceq_\text{reach}^\mathcal{A}$-maximal, we assure that for all chosen representatives $r_\kappa$, $c(r_\kappa) = c_{|\mathcal{S}|}(r_\kappa)$. With Lemma \ref{lem:general:trivial_scc_dont_matter}, this finishes our proof.
+	By definition of the iterated Moore equivalence, we only have $c(p) \neq c'(p)$ if $\{p\}$ is a trivial SCC in $\mathcal{A}$. By having candidates of the merge be $\preceq_\text{reach}^\mathcal{A}$-maximal, we ensure that for all chosen representatives $r_\kappa$, $c(r_\kappa) = c_{|\mathcal{S}|}(r_\kappa)$. With Lemma \ref{lem:general:trivial_scc_dont_matter}, this finishes our proof.
 \end{proof}
 
 \vspace{10pt}
@@ -66,7 +66,7 @@ Unfortunately, we were not able to find or prove any relation between iterated M
 \end{lem}
 
 \begin{proof}
-	$\equiv_{IM}$ is already basically defined as an algorithm. We use $|\mathcal{S}|$ many steps of computing Moore equivalence and then checking whether the priority of the newly added state should be changed. The first can be done in log-linear time (Corollary \ref{cor:general:M_loglin}), the second in linear time. This gives us a runtime of $\mathcal{O}(|\mathcal{S}| \cdot |Q| \cdot \log |Q|)$ to calculate $\equiv_{IM}$.
+	$\equiv_{IM}$ is already defined as an algorithm. We use $|\mathcal{S}|$ many steps of computing Moore equivalence and then checking whether the priority of the newly added state should be changed. The first can be done in log-linear time (Corollary \ref{cor:general:M_loglin}), the second in linear time. This gives us a runtime of $\mathcal{O}(|\mathcal{S}| \cdot |Q| \cdot \log |Q|)$ to calculate $\equiv_{IM}$.
 
 	To build $\mu_{IM}$ from that can be done in linear time by Lemma \ref{lem:general:reach_topo_lintime}.
 \end{proof}
