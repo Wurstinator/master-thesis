@@ -24,18 +24,18 @@
 \end{proof}
 
 \begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define $\mathcal{A}\upharpoonright^c_{> k} := \mathcal{A}\upharpoonright_P$ with $P = \{q \in Q \mid c(q) > k\}$ and set $\preceq_k$ to be a total extension of the reachability preorder in $\mathcal{A}\upharpoonright^c_{> k}$.
+	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. We define $\mathcal{A}\upharpoonright^c_{> k} := \mathcal{A}\upharpoonright_{\{q \in Q \mid c(q) > k\}}$ and set $\preceq_k$ to be a total extension of the reachability preorder in $\mathcal{A}\upharpoonright^c_{> k}$.
 \end{defn}
 
 \begin{defn}
-	Let $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim}, \mathcal{A})$ be an equivalence class. We define $C_\kappa^k = \{ r \in \kappa \mid c(r) > k \text{ and } r \text{ is } \preceq_k \text{-maximal among } \kappa \}$ and $M^k_\kappa = \kappa \setminus C_\kappa$.
+	Let $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim}, \mathcal{A})$ be an equivalence class. We define $$C_\kappa^k = \{ r \in \kappa \mid c(r) > k \text{ and } r \text{ is } \preceq_k \text{-maximal among } \kappa \}$$ and $M^k_\kappa = \kappa \setminus C_\kappa$.
 \end{defn}
 
 
 \vspace{5pt}
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA and $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim})$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M_\kappa$ by candidates $C_\kappa$. Then $(\mathcal{A}, p) \equiv_L (\mathcal{A}', p)$ for all $p$.
+	Let $\mathcal{A}$ be a DPA and $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim}, \mathcal{A})$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M_\kappa$ by candidates $C_\kappa$. Then $(\mathcal{A}, p) \equiv_L (\mathcal{A}', p)$ for all $p$.
 	\label{lem:lsf:preserve_language}
 \end{lem}
 
@@ -50,7 +50,7 @@
 \end{proof}
 
 \begin{lem}
-	Let $\mathcal{A}$ be a DPA and $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim})$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M_\kappa$ by candidates $C_\kappa$. Then $(\mathcal{A}, p) \equiv_M^{\leq k} (\mathcal{A}', p)$ for all $p$.
+	Let $\mathcal{A}$ be a DPA and $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim}, \mathcal{A})$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M_\kappa$ by candidates $C_\kappa$. Then $(\mathcal{A}, p) \equiv_M^{\leq k} (\mathcal{A}', p)$ for all $p$.
 	\label{lem:lsf:preserve_kmoore}
 \end{lem}
 
@@ -65,7 +65,7 @@
 While these are already good results, to go further requires us to restrict $\sim$ to $\equiv_L$.
 
 \begin{lem} 
-	Let $\mathcal{A}$ be a DPA and $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim})$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M_\kappa$ by candidates $C_\kappa$. Then $(\mathcal{A}, p) \equiv_\text{LSF}^{k,\equiv_L} (\mathcal{A}', p)$ for all $p$.
+	Let $\mathcal{A}$ be a DPA and $\kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim}, \mathcal{A})$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $M_\kappa$ by candidates $C_\kappa$. Then $(\mathcal{A}, p) \equiv_\text{LSF}^{k,\equiv_L} (\mathcal{A}', p)$ for all $p$.
 	\label{lem:lsf:preserve_lsf}
 \end{lem}
 
@@ -79,11 +79,11 @@ While these are already good results, to go further requires us to restrict $\si
 We can now define a merger function using the LSF method and prove its correctness.
 
 \begin{defn}
-	We define the \emph{LSF merger function}: $$\mu_\text{LSF}^{k,\sim} : \{ M^k_\kappa \mid \kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim}, \mathcal{A}) \} \rightarrow 2^Q , M^k_\kappa \mapsto C^k_\kappa $$
+	We define the \emph{LSF merger function} $$\mu_\text{LSF}^{k,\sim} : \{ M^k_\kappa \mid \kappa \in \mathfrak{C}(\equiv_\text{LSF}^{k,\sim}, \mathcal{A}) \} \rightarrow 2^Q , M^k_\kappa \mapsto C^k_\kappa .$$
 \end{defn}
 
 \begin{theorem}
-	Let $\mathcal{A}'$ be a representative merge of a DPA $\mathcal{A}$ w.r.t. $\equiv_\text{LSF}^{k,\equiv_L}$. Then $(\mathcal{A}, p) \equiv_\text{LSF}^{k,\equiv_L} (\mathcal{A}', p)$ for all $p$.
+	Let $\mathcal{A}'$ be a representative merge of a DPA $\mathcal{A}$ w.r.t. $\equiv_\text{LSF}^{k,\equiv_L}$. For all $p \in Q'$, $(\mathcal{A}, p) \equiv_\text{LSF}^{k,\equiv_L} (\mathcal{A}', p)$.
 \end{theorem}
 
 \begin{proof}
@@ -109,7 +109,7 @@ A final result to show how versatile the LSF merge is is captured by the followi
 
 \section{Computation}
 \begin{lem}
-	For a given DPA $\mathcal{A}$ and equivalence relation $\sim$, $\mu_\text{LSF}^{k,\sim}$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q|)$.
+	For a given DPA $\mathcal{A}$ and equivalence relation $\sim$, the merger function $\mu_\text{LSF}^{k,\sim}$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q|)$.
 \end{lem}
 
 \begin{proof}

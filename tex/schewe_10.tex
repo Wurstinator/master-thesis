@@ -17,9 +17,9 @@ This section is based heavily on \cite{Schewe2010} and partially adapts their re
 
 The definition of a Schewe merge is almost identical to that of a representative merge. The only difference lies therein that some additional transitions are redirected to the representative: when a transition leads to a candidate that is not in $M$ while also moving to a different SCC.
 
-Using the Schewe merge instead of the representative merge does not actually remove any additional states from the automaton, it only provides a better \enquote{framework} for following algorithms such as the Moore reduction. Example figure \ref{fig:schewe:example_useful1} shows that using a Schewe merge followed by another merge of $\mu_M$ creates a better end result.
+Using the Schewe merge instead of the representative merge does not actually remove any additional states from the automaton, it only provides a better \enquote{framework} for following algorithms such as the Moore reduction. 
 
-The automaton has six states. Regarding Moore equivalence, every state builds a singleton class. For priority almost equivalence, the classes are $\{q_0, q_1\}$, $\{q_2, q_4\}$, and $\{q_3\}$. As all states within one equivalence class lie in the same SCC, a representative merge w.r.t. $\mu_\text{skip}^{\equiv_\text{\Ankh}}$ will not change the number of states. However, a Schewe merge w.r.t. $\mu_\text{skip}^{\equiv_\text{\Ankh}}$ can result in figure \ref{fig:schewe:example_useful2}. Now, $q_0$ and $q_1$ are actually Moore equivalent and could be merged with $\mu_M$.
+Example figure \ref{fig:schewe:example_useful1} shows that using a Schewe merge followed by another merge of $\mu_M$ creates a better end result. The automaton has six states. Regarding Moore equivalence, every state builds a singleton class. For priority almost equivalence, the classes are $\{q_0, q_1\}$, $\{q_2, q_4\}$, and $\{q_3\}$. As all states within one equivalence class lie in the same SCC, a representative merge w.r.t. $\mu_\text{skip}^{\equiv_\text{\Ankh}}$ will not change the number of states. However, a Schewe merge w.r.t. $\mu_\text{skip}^{\equiv_\text{\Ankh}}$ can result in figure \ref{fig:schewe:example_useful2}. Now, $q_0$ and $q_1$ are actually Moore equivalent and could be merged with $\mu_M$.
 
 \begin{figure}
 \centering
@@ -66,7 +66,7 @@ The automaton has six states. Regarding Moore equivalence, every state builds a 
 \begin{defn}
 	Let $\mathcal{A}$ be DPA with a merger function $\mu : D \rightarrow 2^Q$. For a representative merge $\mathcal{A}'$, we define the \emph{candidate relation} $\sim_\mathcal{C}^\mu$ as $p \sim_\mathcal{C}^\mu q$ iff there is a $C \in \mu(D)$ with $p, q \in C$.
 	
-	We say that $\mu$ is \emph{Schewe suitable} if for all representative merges $\mathcal{A}'$, $\sim_\mathcal{C}^\mu$ is a congruence relation, it implies language equivalence, and the reachability order restricted to any $\kappa \in \mathfrak{C}(\sim_\mathcal{C}^\mu)$ is an equivalence relation.
+	We say that $\mu$ is \emph{Schewe suitable} if for all representative merges $\mathcal{A}'$, $\sim_\mathcal{C}^\mu$ is a congruence relation, it implies language equivalence, and the reachability order restricted to any $\kappa \in \mathfrak{C}(\sim_\mathcal{C}^\mu, \mathcal{A})$ is an equivalence relation.
 \end{defn}
 
 
@@ -90,7 +90,7 @@ The automaton has six states. Regarding Moore equivalence, every state builds a 
 \begin{proof}
 	Let $K \subseteq \mathbb{N}$ be the set of positions at which $\mathcal{A}''$ uses a transition that is not in $\mathcal{A}'$. That is, given a run $\rho$ on $\alpha$, $\rho(k+1) \neq \delta'(\rho(k) \alpha(k))$ for all $k \in K$. If we can prove that $K$ is finite, then that means $\rho[\max K + 1, \omega]$ is a run in $\mathcal{A}'$.
 	
-	More precisely, we show that for every $\kappa \in \mathfrak{C}(\sim_\mathcal{C}^\mu)$, there is at most one $k \in K$ such that $\rho(k+1) \in \kappa$. Towards a contradiction assume the opposite, so there are $k < k'$ which both have this property. We label the positions in $K$ in ascending order and have $k = k_l$ and $k' = k_{l'}$ for some $l < l'$.
+	More precisely, we show that for every $\kappa \in \mathfrak{C}(\sim_\mathcal{C}^\mu, \mathcal{A})$, there is at most one $k \in K$ such that $\rho(k+1) \in \kappa$. Towards a contradiction assume the opposite, so there are $k < k'$ which both have this property. We label the positions in $K$ in ascending order and have $k = k_l$ and $k' = k_{l'}$ for some $l < l'$.
 	
 	Consider $k_{l+1}$. By definition of the Schewe merge, $\delta'(\rho(k_{l+1}), \alpha(k_{l+1})) \not\preceq_\text{reach}^\mathcal{A} \rho(k_{l+1})$. By Lemma \ref{lem:schewe:different_merges_still_congruent}, we know that $(\delta')^*(\rho(k_{l+1}), \alpha[k_{l+1}, k_{l'}+1]) \sim_\mathcal{C}^\mu (\delta'')^*(\rho(k_{l+1}), \alpha[k_{l+1}, k_{l'}+1]) = \rho(k_{l'}+1)$. That means there is a state $r \in \kappa$ that is reachable from $\delta'(\rho(k_{l+1}), \alpha(k_{l+1}))$ in $\mathcal{A}$ and therefore from $\rho(k_l + 1)$ as well.
 	
@@ -122,7 +122,7 @@ The automaton has six states. Regarding Moore equivalence, every state builds a 
 \begin{proof}
 	Let $\mathcal{A}'$ be a representative merge of a DPA $\mathcal{A}$ w.r.t. $\mu_\text{skip}^\sim$. We prove that $p \sim q$ iff $p \sim_\mathcal{C}^{\mu_\text{skip}^\sim} q$. The required properties then follow from the assumptions in the statement and from Lemma \ref{lem:skip:equiv_same_scc}.
 	
-	We have $\text{dom}(\mu_\text{skip}^\sim) = D = \{M_\kappa \mid \kappa \in \mathfrak{C}(\sim)\}$ and $\mu_\text{skip}^\sim(M_\kappa) = C_\kappa \subseteq \kappa$. Thus, $p \sim_\mathcal{C}^{\mu_\text{skip}^\sim} q$ implies $p \sim q$.
+	We have $\text{dom}(\mu_\text{skip}^\sim) = D = \{M_\kappa \mid \kappa \in \mathfrak{C}(\sim, \mathcal{A})\}$ and $\mu_\text{skip}^\sim(M_\kappa) = C_\kappa \subseteq \kappa$. Thus, $p \sim_\mathcal{C}^{\mu_\text{skip}^\sim} q$ implies $p \sim q$.
 	
 	On the other hand, $\kappa = C_\kappa \cup M_\kappa$, so all states of $\kappa$ that remain in $\mathcal{A}'$ are $C_\kappa$ and thus lie in the same equivalence class of $\sim_\mathcal{C}^{\mu_\text{skip}^\sim}.$
 \end{proof}

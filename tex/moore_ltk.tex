@@ -1,6 +1,8 @@
 \chapter{Threshold Moore}
 \label{chap:tm}
 
+Our next two ideas for mergers are based on the idea to only consider a subset of all priorities and analyze the structure induced by its states.
+
 \section{Theory}
 
 \begin{defn}
@@ -22,7 +24,8 @@
 \end{defn}
 
 \begin{lem}
-	For two numbers $x, y \in \mathbb{N}$, let $x =^{\leq k} y$ iff $x = y$ or $\min \{x, y\} > k$. Then $(\mathcal{A}, p) \equiv_M^{\leq k} (\mathcal{B}, q)$ iff for all $w \in \Sigma^*$, $c_1(\delta_1^*(p, w)) =^{\leq k} c_2(\delta_2^*(q, w))$.
+	For two numbers $x, y \in \mathbb{N}$, we set $x =^{\leq k} y$ iff $x = y$ or $\min \{x, y\} > k$. Then \linebreak
+	$(\mathcal{A}, p) \equiv_M^{\leq k} (\mathcal{B}, q)$ iff for all $w \in \Sigma^*$, $c_1(\delta_1^*(p, w)) =^{\leq k} c_2(\delta_2^*(q, w))$.
 \end{lem}
 
 \begin{proof}
@@ -42,7 +45,7 @@
 
 \vspace{5pt}
 
-We can notice that merging classes of $\equiv_\text{TM}^\sim$ in a specific order is a valid language-preserving operation. This is then used to define a fitting merger function. For this next part, let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM})$ be a set of states in $\mathcal{A}$. By definition of $\equiv^\sim_\text{TM}$, all states in this class have a unique priority $k$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$.
+We observe that merging classes of $\equiv_\text{TM}^\sim$ in a specific order is a valid language-preserving operation. This is then used to define a fitting merger function. For this next part, let $\mathcal{A}$ be a DPA and let $\kappa \in \mathfrak{C}(\equiv^\sim_\text{TM}, \mathcal{A})$ be a set of states in $\mathcal{A}$. By definition of $\equiv^\sim_\text{TM}$, all states in this class have a unique priority $k$. Let $\mathcal{A}'$ be a representative merge of $\mathcal{A}$ w.r.t. $\kappa$.
 
 \begin{lem}
 	For all $q \in Q'$, $(\mathcal{A}, q) \equiv_L (\mathcal{A}', q)$.
@@ -56,10 +59,6 @@ We can notice that merging classes of $\equiv_\text{TM}^\sim$ in a specific orde
 	
 	 Otherwise there is a position $n$ from which $c(\rho)$ only is greater than $k$ and therefore the same is true for $c(\rho')$. That means reading $\alpha[n,\omega]$ from $\rho'(n)$ in either $\mathcal{A}$ or $\mathcal{A}'$ yields the same run which has the same acceptance as $\rho$.
 \end{proof}
-
-\vspace{10pt}
-
-The research becomes more interesting if you fix $\sim$ to be the complete language equivalence $\equiv_L$, which is what we consider for the next Lemmas.
 
 \begin{lem}
 	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv_M^{\leq k} (\mathcal{A}', q)$.
@@ -85,6 +84,10 @@ The research becomes more interesting if you fix $\sim$ to be the complete langu
 	As $l \leq k$, $c_1^{\leq k}(p') = c_1^{\leq l}(p')$ and $c_2^{\leq k}(q') \geq c_2^{\leq l}(q')$, so $c_1^{\leq k}(p') \neq c_2^{\leq k}(q')$ and thus $(\mathcal{A}, p) \not\equiv_M^{\leq k} (\mathcal{B}, q)$.
 \end{proof} 
 
+\vspace{10pt}
+
+The relation becomes more interesting if we fix $\sim$ to be the complete language equivalence $\equiv_L$, which is what we consider for the next Lemmas.
+
 \begin{lem}
 	For all $q \in Q'$ with $c(q) \leq k$, $(\mathcal{A}, q) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$.
 	\label{lem:tremoore:merge_keep_tm}
@@ -95,7 +98,7 @@ The research becomes more interesting if you fix $\sim$ to be the complete langu
 \end{proof}
 
 \begin{lem}
-	For all $p, q \in Q'$ with $\min \{c(p), c(q)\} \leq k$, $(\mathcal{A}, p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}, q)$ iff \linebreak $(\mathcal{A}', p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$.
+	For all $p, q \in Q'$ with $\min \{c(p), c(q)\} \leq k$, $(\mathcal{A}, p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}, q)$ iff $(\mathcal{A}', p) \equiv^{\equiv_L}_\text{TM} (\mathcal{A}', q)$.
 	\label{lem:tremoore:merge_changes_only_higher}
 \end{lem}
 
@@ -130,7 +133,8 @@ The research becomes more interesting if you fix $\sim$ to be the complete langu
 \end{proof}
 
 \begin{lem}
-	For a given $\mathcal{A}$ and equivalence relation $\sim$, $\mu_\text{TM}^\sim$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q| \cdot |c(Q)|)$.
+	For a given $\mathcal{A}$ and equivalence relation $\sim$, the merger $\mu_\text{TM}^\sim$ can be computed in \linebreak 
+	$\mathcal{O}(|Q| \cdot \log |Q| \cdot |c(Q)|)$.
 \end{lem}
 
 \begin{proof}
@@ -142,7 +146,7 @@ The research becomes more interesting if you fix $\sim$ to be the complete langu
 \section{Efficiency}
 Figures \ref{fig:tremoore:empirical_size_hist} and \ref{fig:tremoore:empirical_reduct_rel} show that, unfortunately, the Threshold Moore merger only has very little effect on the \textsf{gendet} and \textsf{detnbaut} data sets. Comparing the results for \textsf{detspot} to those of $\mu_M$ in figure \ref{fig:general:empirical_moore_size_hist} shows that there is not much gain here either. Even though the results of the reduction are disappointing, it still requires us to compute some kind of relation $\sim$; in our case we used $\equiv_L$ again, which also had a noticeable impact on the run time as can be seen in figure \ref{fig:tremoore:empirical_time}.
 
-Like for the path refinement merger, we could use the internal equivalence relation of \textsf{detnbaut} to eliminate the need of explicitly calculating $\sim$. However, as we already barely achieved any reduction with $\equiv_L$ and \enquote{worse} relations only decrease the amount of reduction, this step seems obsolete.
+Like for the path refinement merger, we could use the internal equivalence relation of \textsf{detnbaut} to eliminate the need of explicitly calculating $\sim$. However, as we already barely achieved any reduction with $\equiv_L$ and \enquote{worse} relations only decrease the amount of reduction, this step is considered obsolete.
 
 
 \begin{figure}
@@ -184,7 +188,7 @@ An interesting question to ask ourselves is whether changing $\equiv_M$ in the d
 
 In fact, figure \ref{fig:tremoore:desim_counterex1} displays an automaton that shows that replacing $\equiv_M$ by $\equiv_\text{de}$ will not preserve language when used in a merge. For this purpose we will call this variation of $\equiv_\text{Tde}$ instead and fix $\sim \,=\, \equiv_L$ to be the complete language equivalence.
 
-The equivalence classes are $\mathfrak{C}(\equiv_\text{Tde}) = \{ \{q_0, q_2\}, \{q_1\}, \{q_3\} \}$, which means the automaton shown in figure \ref{fig:tremoore:desim_counterex2} is a representative merge. However, this automaton rejects every word which is not the case for the original.
+The equivalence classes are $\mathfrak{C}(\equiv_\text{Tde}, \mathcal{A}) = \{ \{q_0, q_2\}, \{q_1\}, \{q_3\} \}$, which means the automaton shown in figure \ref{fig:tremoore:desim_counterex2} is a representative merge. However, this automaton rejects every word which is not the case for the original.
 
 \begin{figure}
 \centering
