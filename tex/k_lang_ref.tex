@@ -12,7 +12,7 @@ Before we present the path refinement method, note that it takes a special case 
 	Let $f_\text{PR} : 2^{\lambda \times \lambda} \rightarrow 2^{\lambda \times \lambda}$ be a function such that $(p, q) \in f_\text{PR}(X)$  iff for all $w \in L_{\lambda \hookleftarrow}$, $(\delta^*(p, w), \delta^*(q, w)) \in X$.
 	Then let $X_0 \subseteq \lambda \times \lambda$ such that $(p, q) \in X_0$ iff for all $w \in L_{\lambda \hookleftarrow}$, $\min \{ c(\delta^*(p, u)) \mid u \sqsubseteq w \} = \min \{ c(\delta^*(q, u)) \mid u \sqsubseteq w \}$, i.e. the minimal priority when moving from $p$ or $q$ to $\lambda$ again is the same.
 	
-	Using both, we set $X_{i+1} = f_\text{PR}(X_i)$. $f_\text{PR}$ is monotone w.r.t. $\subseteq$, so there is an $X_n = X_{n+1}$ by Kleene's fixed point theorem. We define the \emph{path refinement of $\lambda$}, called $\equiv_\text{PR}^\lambda$, as %TODO citatin Kleene
+	Using both, we set $X_{i+1} = f_\text{PR}(X_i)$. $f_\text{PR}$ is monotone w.r.t. $\subseteq$, so there is an $X_n = X_{n+1}$ by Tarski's fixed point theorem (\cite{Tarski1955}). We define the \emph{path refinement of $\lambda$}, called $\equiv_\text{PR}^\lambda$, as
 	\begin{itemize}
 		\item For $p \in Q \setminus \lambda$, $p \equiv_\text{PR}^\lambda q$ iff $p = q$.
 		\item For $p, q \in \lambda$, $p \equiv_\text{PR}^\lambda q$ iff $(p, q) \in X_n$.
@@ -260,8 +260,7 @@ For the analysis of efficiency, we performed the merge w.r.t. $\mu_\text{PR}^\la
 
 Figure \ref{fig:pr:empirical_time} displays the run time required for the entire reduction procedure. We can see that it is one of the slower algorithms, similar to delayed simulation. This is, however, not due to the path refinement itself but rather due to the computation of $\equiv_L$ which we use for its equivalence classes.
 
-%TODO safra reference
-The generation of \textsf{detnbaut} also implicitly outputs a relation that implies language equivalence which has to be computed for the determination regardless. We can therefore use that relation without any additional cost. As can be seen in figure \ref{fig:pr:empirical_safra_size_hist} and \ref{fig:pr:empirical_safra_reduct_rel}, using this relation still leads to a relative reduction of about 5 to 15\%. The run time graph also more closely resembles a linear function and is only a fraction of what is required to compute $\equiv_L$ (figure \ref{fig:pr:empirical_safra_time}).
+The generation of \textsf{detnbaut} also implicitly outputs a relation that implies language equivalence which has to be computed for the determination regardless (see e.g. \cite{Schewe2009}, \cite{Piterman2007}). We can therefore use that relation without any additional cost. As can be seen in figure \ref{fig:pr:empirical_safra_size_hist} and \ref{fig:pr:empirical_safra_reduct_rel}, using this relation still leads to a relative reduction of about 5 to 15\%. The run time graph also more closely resembles a linear function and is only a fraction of what is required to compute $\equiv_L$ (figure \ref{fig:pr:empirical_safra_time}).
 
 \begin{figure}
 	\centering

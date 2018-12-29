@@ -30,7 +30,7 @@ Figure \ref{fig:examples:skip1} shows an automaton. If we use $\sim = \equiv_L$,
 
 
 \section{Delayed Simulation}
-Figure \ref{fig:examples:desim1} shows an automaton. The entire delayed simulation automaton is of size 75, so we only consider one pair of states for the example. To determine whether $q_0 \leq_\text{de} q_1$ is true, we need the part of $\mathcal{A}_\text{de}$ that is displayed in figure \ref{fig:examples:desim2}. The question to check is whether from $(q_0, q_1, \checkmark)$, every word is accepted. 
+Figure \ref{fig:examples:desim1} shows an automaton. The entire delayed simulation automaton is of size 75, so we only consider one pair of states for the example. To determine whether $q_0 \leq_\text{de} q_1$ is true, we need the part of $\mathcal{A}_\text{de}$ that is displayed in figure \ref{fig:examples:desim2}. We want to check whether every word is accepted from $(q_0, q_1, \checkmark)$.
 
 As we can see, the run induced by $ba^\omega$ ends in the loop $(q_3, q_3, 0) (q_2, q_2, 0)$ which is not accepting. Thus, $q_0 \not\leq^{ba^\omega}_\text{de} q_1$ and therefore $q_0 \not\leq_\text{de} q_1$. This coincides with the definition of delayed simulation: if the run starting in $q_0$ once sees priority 0, afterwards neither run will see that priority again, as they are stuck in the loop $q_3 q_2$.
 
@@ -91,7 +91,7 @@ As we can see, the run induced by $ba^\omega$ ends in the loop $(q_3, q_3, 0) (q
 \section{Iterated Moore}
 Figure \ref{fig:examples:im1} shows our example automaton for $\mu_{IM}$. We have $q_0 \not\equiv_M q_1$, as the two states have different priorities. With iterated Moore equivalence, we actually have $q_0 \equiv_{IM} q_1$:
 
-First, we choose our order of SCCs as $S_0 = \{q_0\}$ and $S_1 = \{q_1\}$. $\mathcal{B}_1$ then has only one state $q_1$ with the transition to itself. $\mathcal{B}'_0$ is then the same automaton as $\mathcal{A}$. $S_0$ is a trivial SCC, it is not $M'_0$-equivalent to any other state and $(\delta'_0(q_0, a), \delta'_0(q_1, a)) \in M'_0$ for all $a$. Therefore, $c_0(q_0)$ is set to $1$ and we have $(q_0, q_1) \in M_0$. This results in figure \ref{fig:examples:im2}.
+First, we choose our order of SCCs as $S_0 = \{q_0\}$ and $S_1 = \{q_1\}$. $\mathcal{B}_1$ then has only one state $q_1$ with the transition to itself. $\mathcal{B}'_0$ is then the same automaton as $\mathcal{A}$. $S_0$ is a trivial SCC, it is not $M'_0$-equivalent to any other state, and $(\delta'_0(q_0, a), \delta'_0(q_1, a)) \in M'_0$ for all $a$. Therefore, $c_0(q_0)$ is set to $1$ and we have $(q_0, q_1) \in M_0$. This results in figure \ref{fig:examples:im2}.
 
 \begin{figure}
 \centering
@@ -122,7 +122,7 @@ We use the same example automaton as for delayed simulation, \ref{fig:examples:d
 
 Figure \ref{fig:examples:pr1} displays the transition structure $\mathcal{A}^\lambda_\text{visit}$. The relation $V$ then consists of three equivalence classes: $\{(q_3, 1, \perp), (q_3, 0, \perp)\}$, $\{(q_2, 1, 0), (q_4, 0, 0)\}$, and $\{(q_2, 1, 1), (q_4, 0, 1)\}$. We are interested in the question whether $\iota_{q_2}^1 = (q_2, 1, 1)$ and $\iota_{q_4}^1 = (q_4, 0, 1)$ are equivalent.
 
-Unfortunately, $V_M$, the congruence refinement of $V$, actually only contains singleton classes, so $q_2 \not\equiv_\text{PR}^\lambda q_4$. This is because $\delta_\text{visit}^*(\iota_{q_2}^1, aa) = (q_2, 1, 1)$ and $\delta_\text{visit}^*(\iota_{q_4}^1, aa) = (q_2, 1, 0)$, which is not a pair in $V$. 
+Unfortunately, $V_M$, the congruence refinement of $V$, only contains singleton classes, so $q_2 \not\equiv_\text{PR}^\lambda q_4$. This is because $\delta_\text{visit}^*(\iota_{q_2}^1, aa) = (q_2, 1, 1)$ and $\delta_\text{visit}^*(\iota_{q_4}^1, aa) = (q_2, 1, 0)$, which is not a pair in $V$. 
 
 This shows that by reading $aa$ from $q_2$, the automaton reaches back to $\lambda$ and visits priorities of at least 1. On the other hand, from $q_4$ reading $aa$ sees priority 0 once.
 
@@ -173,7 +173,7 @@ Figure \ref{fig:examples:tm1} shows an example DPA. All states are language equi
 \end{figure}
 
 
-\section{LSF} %TODO desim?
+\section{LSF}
 For the LSF merger, we use figure \ref{fig:examples:lsf1} as an example. As parameters, we choose $\sim = \equiv_L$ and $k = 1$. 
 
 All states are language equivalent: from any state, the language $(\Sigma^* a)^\omega$ is accepted. Also, $q_1 \equiv_M^{\leq 1} q_3$ and $q_2 \equiv_M^{\leq 1} q_4$. Thus, the equivalence classes of $\equiv_\text{LSF}^{1, \equiv_L}$ are $\{q_0\}$, $\{q_1, q_3\}$, and $\{q_2, q_4\}$.
