@@ -11,11 +11,11 @@ Several automata generated randomly using different parameters were used in the 
 
 \begin{enumerate}
 	\item Use Spot (\cite{duret.16.atva2}) to generate a random DPA. (called \textsf{gendet})
-	\item Use Spot to generate a random non-deterministic B\"uchi automaton and use Spot again to convert it to a DPA. (called \textsf{detspot})
+	\item Use Spot to generate a random non-deterministic B\"uchi automaton and use Spot to convert it to a DPA. (called \textsf{detspot})
 	\item Use Spot to generate a random non-deterministic B\"uchi automaton and use nbautils (\cite{Pirogov2018}) to convert it to a DPA. (called \textsf{detnbaut})
 \end{enumerate}
 
-Figures \ref{fig:rawstats:rawstats_size}, \ref{fig:rawstats:rawstats_prios}, \ref{fig:rawstats:rawstats_sccs}, \ref{fig:rawstats:rawstats_langclasnum} and \ref{fig:rawstats:rawstats_avg_langclassize} present some information about the automata. Regarding the number of states we stopped the generation at about 150 states, as most algorithms become too slow at that point. 
+Figures \ref{fig:rawstats:rawstats_size}, \ref{fig:rawstats:rawstats_prios}, \ref{fig:rawstats:rawstats_sccs}, \ref{fig:rawstats:rawstats_langclasnum} and \ref{fig:rawstats:rawstats_avg_langclassize} present some information about the automata. Given that most algorithms become too slow at about 150 states, we did not continue the generation beyond that point. 
 
 For the \textsf{detnbaut} set, some proecdures can be sped up which is why the upper limit is higher. This is because the nbautils tool internally computes an equivalence relation that implies language equivalence during the determinization. The relation lets us skip the explicit computation of language equivalent states. We refer to \cite{Schewe2009} and \cite{Piterman2007} for more information.
 
