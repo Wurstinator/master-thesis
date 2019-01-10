@@ -1,0 +1,127 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+
+% PACKAGES
+\usepackage[german,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{marvosym}
+\usepackage{caption}
+\usepackage{diagbox}
+\usepackage{tabu}
+\usepackage{makecell} % thickhline = \Xhline{2\arrayrulewidth}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,scopes,automata,calc}
+
+% THEOREM STYLES
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[subsection]
+\newtheorem{lem}[theorem]{Lemma}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem*{cor}{Corollary}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[subsection]
+\newtheorem{conj}{Conjecture}
+\newtheorem{exmp}{Example}[section]
+\theoremstyle{remark}
+\newtheorem*{rem}{Remark}
+\newtheorem*{nte}{Note}
+\newtheorem{case}{Case}
+
+% COMMANDS
+\newcommand{\enquote}[1]{``#1''}
+\newcommand{\regexarrow}{\underset{\raisebox{.4ex}[0pt][0pt]{\small$\uparrow$}}{\,}}
+
+% Redefine \emph
+\let\emph\textbf
+
+% SLIDE STYLES
+\usetheme{Madrid}
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.55\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.35\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertsection
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+\setbeamertemplate{theorem begin}
+{%
+\begin{\inserttheoremblockenv}
+{%
+\inserttheoremheadfont
+\inserttheoremname
+\inserttheorempunctuation
+}%
+}
+\setbeamertemplate{theorem end}{\end{\inserttheoremblockenv}}
+\makeatother
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[default]
+\setbeamertemplate{enumerate items}[default]
+
+
+
+% DOCUMET INFORMATION
+\title{State Space Reduction For Parity Automata}
+\author[Andreas Tollkötter]{Andreas Tollkötter\\{\small Supervisor: Dr. Christof Löding}}
+\date{\today}
+
+\begin{document}
+{
+\setbeamertemplate{footline}{}
+\frame{\titlepage}
+}
+
+\begin{frame}{Overview}
+We establish the notion of \emph{merger functions}. Using that definition, we present three of our newly developed heuristic techniques to reduce the number of states in deterministic parity automata. 
+
+\vspace{.5cm}
+\pause
+
+\begin{enumerate}
+	\item Deterministic Parity Automata
+	\item Why do we need heuristic reduction?
+	\item Merger functions as a framework
+	\item Delayed Simulation
+	\item Congruence Path Refinement
+	\item Labeled SCC Filter
+\end{enumerate}
+\end{frame}
+
+\AtBeginSection[]
+{
+{
+\setbeamertemplate{footline}{}
+\setbeamercolor{section in toc}{fg=alerted text.fg}
+\setbeamercolor{section in toc shaded}{bg=structure!20,fg=structure}
+\setbeamertemplate{section in toc shaded}[default][100]
+\begin{frame}<beamer>
+  \frametitle{Table Of Contents}
+  \tableofcontents[currentsection]
+\end{frame}
+}
+}
+
+\include{slide_contents}
+
+
+\begin{frame}[allowframebreaks]
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{citations}
+\end{frame}
+\end{document}
