@@ -82,7 +82,7 @@ This is captured by the merger function $\mu_\div : Q_\sim \rightarrow 2^Q , \ka
 \end{defn}
 
 \begin{defn}
-	Let $\mathfrak{C}_\text{de} = \{ [q]_{\equiv_\text{de}} \mid q \in Q \}$ be the set of $\equiv_\text{de}$-equivalence classes.	Define the \emph{delayed simulation merger} as $\mu_\text{de} : \mathfrak{C}_\text{de} \rightarrow 2^Q, \kappa \mapsto c^{-1}(\min c(\kappa))$.
+	Let $\mathfrak{C}_\text{de} = \{ [q]_{\equiv_\text{de}} \mid q \in Q \}$ be the set of $\equiv_\text{de}$-equivalence classes.	Define the \emph{delayed simulation merger} as $\mu_\text{de} : \mathfrak{C}_\text{de} \rightarrow 2^Q, \kappa \mapsto \{ q \in \kappa \mid c(q) = \min c(\kappa) \}$.
 \end{defn}
 
 \begin{theorem}
@@ -152,7 +152,6 @@ Accepting states are $F_\text{de} = Q \times Q \times \{\checkmark\}$.
             (3) edge [bend left] node [above] {b} (4)
             (4) edge [bend left] node [below] {a,b} (3);
 \end{tikzpicture}
-\label{fig:examples:desim1}
 \end{figure}
 
 A DPA with 5 states. We want to check whether $q_0 \equiv_\text{de} q_1$ is true. 
@@ -185,8 +184,14 @@ A DPA with 5 states. We want to check whether $q_0 \equiv_\text{de} q_1$ is true
             (7) edge [bend left] node [left] {a,b} (5)
             (8) edge node [above] {a,b} (2);
 \end{tikzpicture}
-\caption{Example for the delayed simulation merger. (Delayed simulation game)}
-\label{fig:examples:desim2}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Efficiency}
+\begin{figure}
+	\centering
+	\includegraphics[page=6,height=.8\textheight]{../data/analysis/fritzwilke/detnbaut_ap1.pdf} 
 \end{figure}
 \end{frame}
 
@@ -196,16 +201,302 @@ A DPA with 5 states. We want to check whether $q_0 \equiv_\text{de} q_1$ is true
 \section{Congruence Path Refinement}
 \begin{frame}{Congruence Path Refinement}
 	\begin{defn}
-	Let $\sim$ be a congruence relation and let $\lambda \subseteq Q$ be an equivalence class of $\sim$. 
-	The \emph{path refinement} equivalence $\equiv_\text{PR}^\lambda$ is the smallest relation
+	Let $\sim$ be a congruence relation and let $\lambda \subseteq Q$ be an equivalence class of $\sim$. \\
+	We define $L_{\lambda \hookleftarrow} \subseteq \Sigma^*$ as the set of all words such that the induced run from a state in $\lambda$ moves back to $\lambda$ exactly once and ends there. \\ 
+	The \emph{path refinement} equivalence $\equiv_\text{PR}^\lambda$ is the largest relation such that if $p \equiv_\text{PR}^\lambda q$, then for all $w \in L_{\lambda \hookleftarrow}$, $\delta^*(p, w) \equiv_\text{PR}^\lambda \delta^*(q, w)$ and the smallest priority seen when reading $w$ is the same from $p$ and from $q$.
 	\end{defn}
+\end{frame}
+
+
+
+\begin{frame}{Path Refinement Relation}
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,1$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \node[state]           (2) [above=of 0]   {$q_2,1$};
+  \node[state]           (3) [right=of 2]   {$q_3,1$};
+  \node[state]           (4) [right=of 3]   {$q_4,0$};
+  \path[->] (0) edge [bend left] node [above] {a} (1)
+  			(0) edge node [left] {b} (2)
+            (1) edge [bend left] node [below] {a} (0)
+            (1) edge node [below] {b} (4)
+            (2) edge [bend left] node [above] {a,b} (3)
+            (3) edge [bend left] node [below] {a} (2)
+            (3) edge [bend left] node [above] {b} (4)
+            (4) edge [bend left] node [below] {a,b} (3);
+\end{tikzpicture}
+\end{figure}
+
+Potential choices for $\lambda$ are the equivalence classes of $\equiv_L$: \\ 
+$\{q_0, q_1\}$, $\{q_2, q_4\}$, or $\{q_3\}$.
+\end{frame}
+
+
+
+\begin{frame}{Path Refinement Merger}
+\begin{defn}
+	Let $\mathfrak{C}_\text{PR}^\lambda = \{ [q]_{\equiv_\text{PR}^\lambda} \mid q \in Q \}$ be the set of $\equiv_\text{PR}^\lambda$-equivalence classes. Define the \emph{path refinement merger} as $\mu_\text{PR}^\lambda : \mathfrak{C}_\text{PR}^\lambda \rightarrow 2^Q, \kappa \mapsto \{ q \in \kappa \mid c(q) = \min c(\kappa) \}$.
+\end{defn}
+
+\begin{theorem}
+	If all states in $\lambda$ are pairwise language equivalent, merging states according to $\mu_\text{PR}^\lambda$ preserves language.
+\end{theorem}
+\end{frame}
+
+
+\begin{frame}{Computing Path Refinement}
+	\begin{defn}
+		Define the \emph{visit graph} DPA $\mathcal{A}_\text{visit}^\lambda = (Q_\text{visit}^\lambda, \Sigma, \delta_\text{visit}^\lambda, c_\text{visit}^\lambda)$.
+		\begin{itemize}
+			\item $Q_\text{visit}^\lambda = ((Q \setminus \lambda) \times c(Q) \times \{-1\}) \;\cup\; (\lambda \times c(Q) \times c(Q))$.
+			\item $\delta^\lambda_\text{visit}((q, k, k'), a) = \begin{cases}
+				(q', \min \{k, c(q')\}, -1) & \text{if } q' \notin \lambda \\
+				(q', c(q'), \min \{k, c(q')\}) & \text{if } q' \in \lambda
+			\end{cases}$, where $q' = \delta(q, a)$.
+			\item $c_\text{visit}^\lambda((q, k, k')) = k'$.
+		\end{itemize}
+	\end{defn}
+	
+	States consist of three components $q \in Q \times c(Q) \times (c(Q) \cup \{-1\})$. \\
+	The first component \enquote{simulates} the original automaton $\mathcal{A}$. \\
+	The second component tracks the minimal priority seen on one run from $\lambda$ to $\lambda$. \\
+	The third component is required to distinguish the different priorities.
+\end{frame}
+
+
+\begin{frame}{Computing Path Refinement}
+	Moore equivalence in $\mathcal{A}_\text{visit}^\lambda$ corresponds to path refinement equivalence in $\mathcal{A}$.
+	
+	\begin{theorem}
+		$p \equiv_\text{PR}^\lambda q$ iff $(p, c(p), \max c(Q)) \equiv_M (q, c(q), \max c(Q))$.
+	\end{theorem}
+	
+	\begin{theorem}
+		$\equiv_\text{PR}^\lambda$ can be computed in $\mathcal{O}(k^2 n \log n)$.
+	\end{theorem}
+\end{frame}
+
+
+\begin{frame}{Visit Graph}
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,1$};
+  \node[state]           (1) [right=of 0]   {$q_1,1$};
+  \node[state]           (2) [above=of 0]   {$q_2,1$};
+  \node[state]           (3) [right=of 2]   {$q_3,1$};
+  \node[state]           (4) [right=of 3]   {$q_4,0$};
+  \path[->] (0) edge [bend left] node [above] {a} (1)
+  			(0) edge node [left] {b} (2)
+            (1) edge [bend left] node [below] {a} (0)
+            (1) edge node [below] {b} (4)
+            (2) edge [bend left] node [above] {a,b} (3)
+            (3) edge [bend left] node [below] {a} (2)
+            (3) edge [bend left] node [above] {b} (4)
+            (4) edge [bend left] node [below] {a,b} (3);
+\end{tikzpicture}
+\end{figure}
+
+Potential choices for $\lambda$ are the equivalence classes of $\equiv_L$: \\ 
+$\{q_0, q_1\}$, $\{q_2, q_4\}$, or $\{q_3\}$.
+\end{frame}
+
+\begin{frame}{Visit Graph}
+
+$\mathcal{A}_\text{visit}^{\{q_2, q_4\}}$
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,on grid,initial text=]
+  \node[state]           (0)                {$q_2,1,0$};
+  \node[state]           (1) [right=of 0]   {$q_3,0,-1$};
+  \node[state]           (2) [below=of 0]   {$q_3,1,-1$};
+  \node[state]           (3) [right=of 2]   {$q_4,0,0$};
+  \node[state]           (4) [left=of 2]   {$q_2,1,1$};
+  \node[state]           (5) [right=of 1]   {$q_4,0,1$};
+  \path[->] (0) edge node [left] {a,b} (2)
+  			(1) edge node [above] {a} (0)
+  			(1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [above] {a} (4)
+  			(2) edge node [above] {b} (3)
+  			(3) edge [bend left] node [left] {a,b} (1)
+  			(4) edge [bend left] node [above] {a,b} (2)
+  			(5) edge node [above] {a,b} (1);
+\end{tikzpicture}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Efficiency}
+\begin{figure}
+	\centering
+	\includegraphics[page=6,height=.8\textheight]{../data/analysis/path_refinement/detnbaut_ap1.pdf} 
+\end{figure}
 \end{frame}
 
 
 
 
 
+\section{Labeled SCC Filter}
 
+\begin{frame}{Labeled SCC Filter}
+\begin{defn}
+	Define $\equiv_M^{\leq k}$ as the Moore equivalence that considers all priorities \emph{greater than k} to be equal. \\
+	$p \equiv_M^{\leq k} q$ iff for all $w \in \Sigma^*$: $c(\delta^*(p, w)) = c(\delta^*(q, w))$ or $k < c(\delta^*(p, w)), c(\delta^*(q, w))$.
+\end{defn}
+
+\begin{defn}
+	Let $\sim$ be an equivalence relation and $k \in \mathbb{N}$. We define the LSF relation $p \equiv^{k,\sim}_\text{LSF} q$ iff $p \sim q$ and $p \equiv_M^{\leq k} q$.
+\end{defn}
+\end{frame}
+
+
+\begin{frame}{LSF Relation}
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [below left=of 0]   {$q_1,2$};
+  \node[state]           (2) [below right=of 0]   {$q_3,4$};
+  \node[state]           (3) [below=of 1]   {$q_2,3$};
+  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \path[->] (0) edge [bend left] node [below] {a} (2)
+  			(0) edge [bend left] node [above] {b} (1)
+  			(1) edge [bend left] node [above] {a} (0)
+  			(1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [below] {a} (0)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(3) edge [bend left] node [left] {a} (1)
+  			(3) edge [loop left] node [left] {b} (3)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\end{figure}
+
+Equivalence classes of $\equiv_\text{LSF}^{1,\equiv_L}$: $\{q_0\}$, $\{q_1, q_3\}$, and $\{q_2, q_4\}$.
+\end{frame}
+
+
+\begin{frame}{LSF Merger}
+From the DPA $\mathcal{A}$, we remove all states which have priority less or equal to $k$ and call the resulting (possibly incomplete) DPA $\mathcal{A}_k$. \\
+We choose some total preorder $\preceq_k$ on the states of $\mathcal{A}_k$ such that $p$ being reachable from $q$ in $\mathcal{A}_k$ implies $q \preceq_k p$, and $p \preceq_k q \preceq_k p$ is only true if $p$ and $q$ are in the same SCC in $\mathcal{A}_k$. ($\preceq_k$ is a total preorder that is a minimal extension of reachability.)
+
+\vspace{1cm}
+
+In focus are the set of states that are $\preceq_k$-maximal among a given set $P \subseteq Q$. These are all states in one SCC of $\mathcal{A}_k$ such that no other states in $P$ are reachable.
+\end{frame}
+
+
+\begin{frame}{LSF Merger}
+\begin{defn}
+	Let $\mathfrak{C}_\text{LSF}^{k,\sim}$ be the set of equivalence classes in $\equiv_\text{LSF}^{k,\sim}$ and let $\kappa$ be such an equivalence class. Define
+	$$C_\kappa^k = \{ r \in \kappa \mid c(r) > k \text{ and } r \text{ is } \preceq_k \text{-maximal among } \kappa \}$$
+	and $M_\kappa^k = \kappa \setminus C_\kappa^k$.
+\end{defn}
+
+\begin{defn}
+	Define the \emph{LSF merger function} $$\mu_\text{LSF}^{k,\sim} : \{ M_\kappa^k \mid \kappa \in \mathfrak{C}_\text{LSF}^{k,\sim} \} \rightarrow 2^Q , M_\kappa^k \mapsto C_\kappa^k$$
+\end{defn}
+
+\begin{theorem}
+	If $\sim$ implies language equivalence, merging states according to $\mu_\text{LSF}^{k,\sim}$ preserves language.
+\end{theorem}
+\end{frame}
+
+
+\begin{frame}{LSF example}
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [below left=of 0]   {$q_1,2$};
+  \node[state]           (2) [below right=of 0]   {$q_3,4$};
+  \node[state]           (3) [below=of 1]   {$q_2,3$};
+  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \path[->] (0) edge [bend left] node [below] {a} (2)
+  			(0) edge [bend left] node [above] {b} (1)
+  			(1) edge [bend left] node [above] {a} (0)
+  			(1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [below] {a} (0)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(3) edge [bend left] node [left] {a} (1)
+  			(3) edge [loop left] node [left] {b} (3)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\end{figure}
+
+Equivalence classes of $\equiv_\text{LSF}^{1,\equiv_L}$: $\{q_0\}$, $\{q_1, q_3\}$, and $\{q_2, q_4\}$.
+\end{frame}
+
+
+\begin{frame}{LSF example}
+$\mathcal{A}_1$ variant of the automaton.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node           (0)                {};
+  \node[state]           (1) [below left=of 0]   {$q_1,2$};
+  \node[state]           (2) [below right=of 0]   {$q_3,4$};
+  \node[state]           (3) [below=of 1]   {$q_2,3$};
+  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \path[->] (1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(3) edge [bend left] node [left] {a} (1)
+  			(3) edge [loop left] node [left] {b} (3)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\end{figure}
+
+Possible order: $q_1 \simeq_1 q_2 \prec_1 q_3 \simeq_1 q_4$. \\
+$q_3$ is the only $\preceq_1$-maximal element in $\{q_1, q_3\}$. \\
+$q_4$ is the only $\preceq_1$-maximal element in $\{q_2, q_4\}$.
+
+$\mu_\text{LSF}^{1,\equiv_L}(\{q_1\}) = \{q_3\}$ \\
+$\mu_\text{LSF}^{1,\equiv_L}(\{q_2\}) = \{q_4\}$
+\end{frame}
+
+
+\begin{frame}{LSF example}
+After the merge:
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (2) [below=of 0]   {$q_3,4$};
+  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \path[->] (0) edge [bend left] node [right] {a,b} (2)
+  			(2) edge [bend left] node [left] {a} (0)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Computing LSF}
+	The definition provides a straight-forward computation: $\equiv_M^{\leq k}$ is only a slight variation of the normal Moore equivalence and $\preceq_k$ can be computed with a topological sorting on the SCCs of $\mathcal{A}_k$.
+	
+	\begin{theorem}
+		$\mu_\text{LSF}^{k,\sim}$ can be computed in $\mathcal{O}(n \log n)$.
+	\end{theorem}
+\end{frame}
+
+
+
+\begin{frame}{Efficiency}
+\begin{figure}
+	\centering
+	\includegraphics[page=6,height=.8\textheight]{../data/analysis/lsf/detnbaut_ap1.pdf} 
+\end{figure}
+\end{frame}
 
 
 
