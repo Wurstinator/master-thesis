@@ -1,13 +1,12 @@
 
 \section{Deterministic Parity Automata}
 \begin{frame}{$\omega$-automata}
-$\omega$-words are words of one-sided infinite length: $\alpha \in \Sigma^\omega \Leftrightarrow \alpha : \mathbb{N} \rightarrow \Sigma$ \\
-$a^\omega$, $aa(ba)^\omega$, $(abc)^\omega$
+$\omega$-words are words of one-sided infinite length: \\
+$\Sigma^\omega = $ functions from $\mathbb{N}$ to $\Sigma$
 
 \vspace{.5cm}
 
-$\omega$-automata are finite transition structures that describe a language $L(\mathcal{A}) \subseteq \Sigma^\omega$ \\
-$\{ a^n b^\omega \mid n \in \mathbb{N} \}$
+$\omega$-automata are finite transition structures that describe a language $L \subseteq \Sigma^\omega$ 
 
 \vspace{.5cm}
 
@@ -19,7 +18,8 @@ Deterministic parity automata (DPA):
 	\item Priority function $c : Q \rightarrow \mathbb{N}$
 \end{itemize}
 
-An $\omega$-word $\alpha$ starting in a state $q_0 \in Q$ induces a run $q_0 q_1 q_2 \dots$. The DPA accepts $\alpha$ iff the \emph{smallest} priority that occurs infinitely often in the sequence $c(q_0) c(q_1) c(q_2) \dots$ is \emph{even}.
+An $\omega$-word $\alpha$ starting in a state $q_0 \in Q$ induces a run $q_0 q_1 q_2 \dots$. \\
+The DPA accepts $\alpha$ iff the \emph{smallest} priority that occurs infinitely often in the sequence $c(q_0) c(q_1) c(q_2) \dots$ is \emph{even}.
 
 \end{frame}
 
@@ -29,11 +29,15 @@ An $\omega$-word $\alpha$ starting in a state $q_0 \in Q$ induces a run $q_0 q_1
 
 Goal: Reduce number of states in the automaton to ease run time of follow up algorithms.
 
+\vspace{.7cm}
+
 \textbf{Minimization Problem}: Given an automaton $\mathcal{A}$, what is the smallest number of states required to recognize the same language as $\mathcal{A}$?
 
-For deterministic finite automata (on finite words): Minimization is solvable in $\mathcal{O}(n \log n)$.
+\vspace{.7cm}
 
-For DPAs: Minimization is NP-hard. \cite{}
+For DFAs: Minimization is solvable in $\mathcal{O}(n \log n)$. \cite{Hopcroft1971}
+
+For DPAs: Minimization is NP-hard. \cite{Schewe2010}
 
 \end{frame}
 
@@ -41,11 +45,20 @@ For DPAs: Minimization is NP-hard. \cite{}
 \begin{frame}{Moore Minimization}
 A DPA can be interpreted as a Moore automaton with $c$ being the output function.
 
+\begin{defn}[Moore equivalence]
+	$p \equiv_M q$ iff $\forall w \in \Sigma^*: c(\delta^*(p, w)) = c(\delta^*(q, w))$.
+\end{defn}
+
+\vspace{.5cm}
+\pause
+
 \begin{theorem}
 	Deterministic Moore automata can be minimized in log-linear time.
 \end{theorem}
 
-Idea: Compute equivalence $\equiv_M$ with $p \equiv_M q$ iff $\forall w \in \Sigma^*: c(\delta^*(p, w)) = c(\delta^*(q, w))$. Build the quotient automaton w.r.t. $\equiv_M$.
+Idea: Build the quotient automaton w.r.t. $\equiv_M$.
+
+\vspace{.5cm}
 
 The same algorithm can be used to reduce DPAs but will not give minimal DPAs in general.
 \end{frame}
@@ -55,21 +68,40 @@ The same algorithm can be used to reduce DPAs but will not give minimal DPAs in 
 
 \section{Merger functions as a framework}
 \begin{frame}{Merger functions}
-\begin{defn}
-	Let $\mathcal{A} = (Q, \Sigma, \delta, c)$ be a DPA. A \emph{merger function} is a function $\mu : D \rightarrow 2^Q \setminus \{\emptyset\}$ such that 
-	\begin{itemize}
-		\item all sets in $D$ are pairwise disjoint
-		\item for all $X \in D$, $\mu(X) \cap (U \setminus X) = \emptyset$, where $U = \bigcup D$
-	\end{itemize}
-\end{defn}
-
-$\mu(M) = C$ \\
-Merge all states in $M \subseteq Q$ into any one representative of $C \subseteq Q$.
+\emph{Merger functions} $\mu$ map from some $D \subseteq 2^Q$ into $2^Q \setminus \{\emptyset\}$.
 
 \vspace{.5cm}
 
-For a congruence relation $\sim$, the quotient automaton is defined by state set $Q_\sim = \{ [q]_\sim \mid q \in Q\}$. \\
-This is captured by the merger function $\mu_\div : Q_\sim \rightarrow 2^Q , \kappa \mapsto \kappa$.
+$M, C \subseteq Q$
+
+\begin{equation*}
+\tikz[baseline]{\node {$\mu($}} \tikz[baseline]{\node(d4) {$M$}} \tikz[baseline]{\node {$) =$}} \tikz[baseline]{\node(d5){$C$}}
+\end{equation*}
+
+\begin{tikzpicture}[remember picture,overlay]
+\draw[blue,thick,->] (d4) to [in=90,out=245] + (225:2.7cm) node[anchor=north,text = black] {
+	All states from the \emph{merge set} \dots
+};
+\draw[blue,thick,->] (d5) to [in=90,out=265] +(300:2.8cm) node[anchor=north,text = black] {
+	\begin{tabular}{cc}
+		\dots can be represented by any single \\
+		one representative from the \emph{candidate set}.
+	\end{tabular}
+};
+\end{tikzpicture}
+
+\vfill
+\end{frame}
+
+\begin{frame}{Merger functions generalize quotient automata}
+Special case: $\mu(M) = M$. \\
+Remove all states from $M$ except for one (arbitrarily chosen) representative.
+
+\vspace{.5cm}
+
+For a congruence relation $\sim$, let $\mathfrak{C} \subseteq 2^Q$ be the equivalence classes. \\
+The quotient automaton is defined by state set $\mathfrak{C}$. \\
+This is captured by the merger function $\mu_\div : \mathfrak{C} \rightarrow 2^Q , \kappa \mapsto \kappa$.
 \end{frame}
 
 
@@ -80,9 +112,35 @@ This is captured by the merger function $\mu_\div : Q_\sim \rightarrow 2^Q , \ka
 \begin{defn}
 	$p \equiv_\text{de} q$ iff for all $w \in \Sigma^*$, every run that starts in $\delta^*(p, w)$ or $\delta^*(q, w)$ eventually sees a priority of at most $\min \{c(\delta^*(p, w)), c(\delta^*(q, w))\}$.
 \end{defn}
+\end{frame}
 
+\begin{frame}{Delayed Simulation}
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  	\node[state]           (0)                {$p$};
+  	\node[state]           (1) [below=of 0]   {$q$};
+  	\node           (2) [above right=of 0]   {\dots};
+  	\node           (3) [below right=of 1]   {\dots};
+  	\node[state]           (4) [below right=of 2]   {$p'$};
+  	\node[state]           (5) [above right=of 3]   {$q'$};
+  	\node			(6) [below=1cm of 0] {$p \equiv_\text{de} q$};
+  	\node			(7) [below=1cm of 4] {$c(p') < c(q')$};
+  	\node[state]	(8) [right=4cm of 5] {$q''$};
+  	\node	(9) [above=1cm of 8] {$c(q'') \leq c(p')$};
+  	\path[-] 	(0) edge [bend left] node [below right] {$w$} (2)
+  				(1) edge [bend right] node [above right] {$w$} (3);
+  	\path[->]   (2) edge [bend left] node {} (4)
+  				(3) edge [bend right] node {} (5);
+  	\draw[->,decorate,decoration={snake,amplitude=1mm,segment length=4mm,post length=1mm}] (5) -- node[below] {on all paths} (8);
+	\end{tikzpicture}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Delayed Simulation}
 \begin{defn}
-	Let $\mathfrak{C}_\text{de} = \{ [q]_{\equiv_\text{de}} \mid q \in Q \}$ be the set of $\equiv_\text{de}$-equivalence classes.	Define the \emph{delayed simulation merger} as $\mu_\text{de} : \mathfrak{C}_\text{de} \rightarrow 2^Q, \kappa \mapsto \{ q \in \kappa \mid c(q) = \min c(\kappa) \}$.
+	Let $\mathfrak{C}_\text{de} = \{ [q]_{\equiv_\text{de}} \mid q \in Q \}$ be the set of $\equiv_\text{de}$-equivalence classes. \\
+	Define the \emph{delayed simulation merger} as $$\mu_\text{de} : \mathfrak{C}_\text{de} \rightarrow 2^Q, \kappa \mapsto \{ q \in \kappa \mid c(q) = \min c(\kappa) \}.$$
 \end{defn}
 
 \begin{theorem}
@@ -92,26 +150,60 @@ This is captured by the merger function $\mu_\div : Q_\sim \rightarrow 2^Q , \ka
 
 
 \begin{frame}{Computing Delayed Simulation}
-	We define a deterministic Büchi automaton $\mathcal{G}_\text{de}$ such that $p \equiv_\text{de} q$ iff both $L(\mathcal{G}_\text{de}, q_\text{de}^0(p, q))$ and $L(\mathcal{G}_\text{de}, q_\text{de}^0(q, p))$ are universal, i.e. $\Sigma^\omega$.
+	We define a det.\ Büchi automaton $\mathcal{G}_\text{de}$ with states $q_\text{de}^0(p, q)$ such that: \\
+	$p \equiv_\text{de} q$ iff both $L(\mathcal{G}_\text{de}, q_\text{de}^0(p, q))$ and $L(\mathcal{G}_\text{de}, q_\text{de}^0(q, p))$ are universal ($\Sigma^\omega$).
 	
-	This automaton uses the state set $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$. Computing states of universal language in a DBA requires linear time.
+	\vspace{.5cm}
+	
+	This automaton uses the state set $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$. \\
+	Computing states of universal language in a DBA requires linear time.
+	
+	\vspace{.5cm}
 	
 	\begin{theorem}
-		$\equiv_\text{de}$ can be computed in $\mathcal{O}(n^2 k)$.
+		$\mu_\text{de}$ can be computed in $\mathcal{O}(n^2 k)$.
 	\end{theorem}
 \end{frame}
 
 \begin{frame}{Delayed Simulation Automaton}
 $\mathcal{G}_\text{de} = (Q_\text{de}, \Sigma, \delta_\text{de}, F_\text{de})$
 
-States are $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$. \\
+\begin{itemize}
+	\item States are $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$. \\
 The first two components are a \enquote{simulation} of the original DPA. The third component are the so called \enquote{obligations}.
+	\item Transitions $\delta_\text{de}$.
+\begin{align*}
+	\delta_\text{de}((p, q, k), a) = (& \delta(p, a), \\
+									& \delta(q, a), \\
+									& \gamma( \quad c(\delta(p, a)), \quad c(\delta(q, a)), \quad k \quad ))
+\end{align*}
+	\item Accepting states are $F_\text{de} = Q \times Q \times \{\checkmark\}$.
+\end{itemize}
 
-Transitions $\delta_\text{de}$. \\
-The first two components mimic the transitions of $\mathcal{A}$. The third component is defined by $\gamma : Q_\text{de} \times \Sigma \rightarrow c(Q) \cup \{\checkmark\}$. (next slide)
+\end{frame}
 
-Accepting states are $F_\text{de} = Q \times Q \times \{\checkmark\}$.
 
+\begin{frame}{Delayed Simulation Automaton: $\gamma$}
+	(Actual definition of $\gamma$ is more complex for some additional properties.) \\
+	
+	\vspace{.5cm}
+	
+	$\gamma : \mathbb{N} \times \mathbb{N} \times (\mathbb{N} \cup \{\checkmark\}) \rightarrow \mathbb{N} \cup \{\checkmark\}$
+	
+	\begin{align*}
+		& \gamma(i, j, \checkmark) = \begin{cases}
+			\checkmark & \text{if } j \leq i \\
+			i & \text{else}
+		\end{cases} \\
+		\text{for } k \in \mathbb{N}: \quad & \gamma(i, j, k) = \begin{cases}
+			\checkmark & \text{if } j \leq \min \{i, k\} \\
+			\min \{i, k\} & \text{else}
+		\end{cases}
+	\end{align*}
+	
+	\vspace{.5cm}
+	
+	$q_\text{de}^0(p, q) = (p, q, \gamma(c(p), c(q), \checkmark))$.
 \end{frame}
 
 
@@ -161,14 +253,14 @@ A DPA with 5 states. We want to check whether $q_0 \equiv_\text{de} q_1$ is true
 \begin{figure}
 \centering
 \begin{tikzpicture}[shorten >=1pt,node distance=2.9cm,on grid,initial text=]
-  \node[state,accepting] (0)			    {$q_0,q_1,\checkmark$};
+  \node[state,accepting,onslide=<2>{highlight}] (0)			    {$q_0,q_1,\checkmark$};
   \node[state,accepting] (1) [right=of 0]   {$q_2,q_4,\checkmark$};
   \node[state,accepting] (2) [right=of 1]   {$q_3,q_3,\checkmark$};
-  \node[state,accepting] (3) [below=of 0]   {$q_1,q_0,\checkmark$};
-  \node[state] 			 (4) [right=of 3]   {$q_4,q_2,0$};
-  \node[state] 			 (5) [right=of 4]   {$q_3,q_3,0$};
+  \node[state,accepting,onslide=<3>{highlight}] (3) [below=of 0]   {$q_1,q_0,\checkmark$};
+  \node[state,onslide=<4>{highlight}] 			 (4) [right=of 3]   {$q_4,q_2,0$};
+  \node[state,onslide=<5>{highlight},onslide=<7>{highlight}] 			 (5) [right=of 4]   {$q_3,q_3,0$};
   \node[state,accepting] (6) [right=of 5]   {$q_4,q_4,\checkmark$};
-  \node[state] 			 (7) [below=of 5]   {$q_2,q_2,0$};
+  \node[state,onslide=<6-7>{highlight}] 			 (7) [below=of 5]   {$q_2,q_2,0$};
   \node[state,accepting] (8) [right=of 2]   {$q_2,q_2,\checkmark$};
   \path[->] (0) edge node [above] {a} (1)
   			(0) edge [bend left] node [right] {b} (3)
@@ -178,10 +270,10 @@ A DPA with 5 states. We want to check whether $q_0 \equiv_\text{de} q_1$ is true
             (3) edge node [above] {a} (4)
             (3) edge [bend left] node [left] {b} (0)
             (4) edge node [above] {a,b} (5)
-            (5) edge [bend left] node [right] {a} (7)
+            (5) edge [bend left,onslide=<7>{highlight}] node [right] {a} (7)
             (5) edge node [above] {b} (6)
             (6) edge [bend left] node [right] {a,b} (2)
-            (7) edge [bend left] node [left] {a,b} (5)
+            (7) edge [bend left,onslide=<7>{highlight}] node [left] {a,b} (5)
             (8) edge node [above] {a,b} (2);
 \end{tikzpicture}
 \end{figure}

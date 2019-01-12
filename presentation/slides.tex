@@ -13,7 +13,12 @@
 \usepackage{tabu}
 \usepackage{makecell} % thickhline = \Xhline{2\arrayrulewidth}
 \usepackage{tikz}
-\usetikzlibrary{arrows,positioning,scopes,automata,calc}
+\usetikzlibrary{tikzmark,calc,decorations.pathmorphing,arrows,shapes,decorations.pathreplacing,positioning,scopes,automata}
+\tikzset{every picture/.style={remember picture}}
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}}
+}}
+\tikzstyle{highlight}=[red]
 
 % THEOREM STYLES
 \theoremstyle{plain}
@@ -87,19 +92,13 @@
 }
 
 \begin{frame}{Overview}
-We establish the notion of \emph{merger functions}. Using that definition, we present three of our newly developed heuristic techniques to reduce the number of states in deterministic parity automata. 
+Goal: reduce the number of states in a given deterministic parity automaton while keeping the recognized language.
 
 \vspace{.5cm}
-\pause
 
-\begin{enumerate}
-	\item Deterministic Parity Automata
-	\item Why do we need heuristic reduction?
-	\item Merger functions as a framework
-	\item Delayed Simulation
-	\item Congruence Path Refinement
-	\item Labeled SCC Filter
-\end{enumerate}
+\onslide<2>{
+\tableofcontents
+}
 \end{frame}
 
 \AtBeginSection[]
@@ -121,7 +120,7 @@ We establish the notion of \emph{merger functions}. Using that definition, we pr
 
 \begin{frame}[allowframebreaks]
 \nocite{*}
-\bibliographystyle{plain}
+\bibliographystyle{apalike}
 \bibliography{citations}
 \end{frame}
 \end{document}
