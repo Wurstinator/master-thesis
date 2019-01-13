@@ -290,39 +290,57 @@ A DPA with 5 states. We want to check whether $q_0 \equiv_\text{de} q_1$ is true
 
 
 
+
+
+
 \section{Congruence Path Refinement}
 \begin{frame}{Congruence Path Refinement}
 	\begin{defn}
-	Let $\sim$ be a congruence relation and let $\lambda \subseteq Q$ be an equivalence class of $\sim$. \\
-	We define $L_{\lambda \hookleftarrow} \subseteq \Sigma^*$ as the set of all words such that the induced run from a state in $\lambda$ moves back to $\lambda$ exactly once and ends there. \\ 
-	The \emph{path refinement} equivalence $\equiv_\text{PR}^\lambda$ is the largest relation such that if $p \equiv_\text{PR}^\lambda q$, then for all $w \in L_{\lambda \hookleftarrow}$, $\delta^*(p, w) \equiv_\text{PR}^\lambda \delta^*(q, w)$ and the smallest priority seen when reading $w$ is the same from $p$ and from $q$.
+	Let $\sim$ be a congruence relation and let $\lambda \subseteq Q$ be an equiv.\ class of $\sim$. \\
+	We define $L_{\lambda \hookleftarrow} \subseteq \Sigma^*$ as the set of all words such that the induced run from a state in $\lambda$ moves back to $\lambda$ exactly once and ends there. 
 	\end{defn}
-\end{frame}
+\end{frame}	
 
-
-
-\begin{frame}{Path Refinement Relation}
+\begin{frame}{Congruence Path Refinement}
 \begin{figure}
 \centering
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
   \node[state]           (0)                {$q_0,1$};
   \node[state]           (1) [right=of 0]   {$q_1,1$};
-  \node[state]           (2) [above=of 0]   {$q_2,1$};
-  \node[state]           (3) [right=of 2]   {$q_3,1$};
-  \node[state]           (4) [right=of 3]   {$q_4,0$};
+  \node[state,onslide=<2>{highlight},onslide=<4>{highlight}]           (2) [above=of 0]   {$q_2,1$};
+  \node[state,onslide=<3>{highlight}]           (3) [right=of 2]   {$q_3,1$};
+  \node[state,onslide=<5>{highlight}]           (4) [right=of 3]   {$q_4,0$};
   \path[->] (0) edge [bend left] node [above] {a} (1)
   			(0) edge node [left] {b} (2)
             (1) edge [bend left] node [below] {a} (0)
             (1) edge node [below] {b} (4)
-            (2) edge [bend left] node [above] {a,b} (3)
-            (3) edge [bend left] node [below] {a} (2)
-            (3) edge [bend left] node [above] {b} (4)
+            (2) edge [bend left,onslide=<3>{highlight}] node [above] {a,b} (3)
+            (3) edge [bend left,onslide=<4>{highlight}] node [below] {a} (2)
+            (3) edge [bend left,onslide=<5>{highlight}] node [above] {b} (4)
             (4) edge [bend left] node [below] {a,b} (3);
 \end{tikzpicture}
 \end{figure}
 
-Potential choices for $\lambda$ are the equivalence classes of $\equiv_L$: \\ 
-$\{q_0, q_1\}$, $\{q_2, q_4\}$, or $\{q_3\}$.
+$\lambda = \{q_2, q_4\}$ \\
+\uncover<1-2>{Because $\sim$ is a congruence relation, we only need to consider one state. }
+
+\vspace{.5cm}
+
+$L_{\lambda \hookleftarrow} = \{ \alt<1-3>{}{\alt<4>{aa, ba}{aa, ba, ab, bb \}}}$
+\end{frame}
+	
+
+\begin{frame}{Congruence Path Refinement}
+	\begin{defn}
+	The \emph{path refinement} equivalence $\equiv_\text{PR}^\lambda$ is the \emph{largest relation} s.t.: \\
+	For $p, q \in \lambda$, $p \equiv_\text{PR}^\lambda q$ if and only if 
+	\begin{itemize}
+		\item $\forall w \in L_{\lambda \hookleftarrow}: \delta^*(p, w) \equiv_\text{PR}^\lambda \delta^*(q, w)$
+		\item $\forall w \in L_{\lambda \hookleftarrow}:$ the smallest priority seen when reading $w$ is the same from $p$ and from $q$.
+	\end{itemize}
+	\end{defn}
+	
+	$\equiv^\lambda_\text{PR}$ separates the class $\lambda$ further into smaller classes.
 \end{frame}
 
 
@@ -361,8 +379,12 @@ $\{q_0, q_1\}$, $\{q_2, q_4\}$, or $\{q_3\}$.
 \begin{frame}{Computing Path Refinement}
 	Moore equivalence in $\mathcal{A}_\text{visit}^\lambda$ corresponds to path refinement equivalence in $\mathcal{A}$.
 	
+	\begin{defn}
+		For $q \in Q$, we have $\iota_q := (q, c(q), \max c(Q)) \in Q_\text{visit}^\lambda$.
+	\end{defn}
+	
 	\begin{theorem}
-		$p \equiv_\text{PR}^\lambda q$ iff $(p, c(p), \max c(Q)) \equiv_M (q, c(q), \max c(Q))$.
+		$p \equiv_\text{PR}^\lambda q$ iff $\iota_p \equiv_M \iota_q$.
 	\end{theorem}
 	
 	\begin{theorem}
@@ -392,32 +414,39 @@ $\{q_0, q_1\}$, $\{q_2, q_4\}$, or $\{q_3\}$.
 \end{figure}
 
 Potential choices for $\lambda$ are the equivalence classes of $\equiv_L$: \\ 
-$\{q_0, q_1\}$, $\{q_2, q_4\}$, or $\{q_3\}$.
+$\{q_0, q_1\}$, $\{q_2, q_4\}$, or $\{q_3\}$. 
+
+\vspace{.5cm}
+
+We take $\lambda = \{q_2, q_4\}$ and ask if $q_2 \equiv_\text{PR}^\lambda q_4$ is true.
 \end{frame}
 
 \begin{frame}{Visit Graph}
 
-$\mathcal{A}_\text{visit}^{\{q_2, q_4\}}$
+$\mathcal{A}_\text{visit}^{\{q_2, q_4\}}$ \\
+$\iota_{q_2} = (q_2, 1, 1) \qquad \iota_{q_4} = (q_4, 0, 1)$ \hfill Question: $\iota_{q_2} \equiv_M \iota_{q_4}$?
 
 \begin{figure}
 \centering
 \begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,on grid,initial text=]
-  \node[state]           (0)                {$q_2,1,0$};
-  \node[state]           (1) [right=of 0]   {$q_3,0,-1$};
-  \node[state]           (2) [below=of 0]   {$q_3,1,-1$};
+  \node[state,onslide=<4>{highlight}]           (0)                {$q_2,1,0$};
+  \node[state,onslide=<3>{highlight}]           (1) [right=of 0]   {$q_3,0,-1$};
+  \node[state,onslide=<3>{highlight}]           (2) [below=of 0]   {$q_3,1,-1$};
   \node[state]           (3) [right=of 2]   {$q_4,0,0$};
-  \node[state]           (4) [left=of 2]   {$q_2,1,1$};
-  \node[state]           (5) [right=of 1]   {$q_4,0,1$};
+  \node[state,onslide=<2>{highlight},onslide=<4>{highlight}]           (4) [left=of 2]   {$q_2,1,1$};
+  \node[state,onslide=<2>{highlight}]           (5) [right=of 1]   {$q_4,0,1$};
   \path[->] (0) edge node [left] {a,b} (2)
-  			(1) edge node [above] {a} (0)
+  			(1) edge [onslide=<4>{highlight}] node [above] {a} (0)
   			(1) edge [bend left] node [right] {b} (3)
-  			(2) edge [bend left] node [above] {a} (4)
+  			(2) edge [bend left,onslide=<4>{highlight}] node [above] {a} (4)
   			(2) edge node [above] {b} (3)
   			(3) edge [bend left] node [left] {a,b} (1)
-  			(4) edge [bend left] node [above] {a,b} (2)
-  			(5) edge node [above] {a,b} (1);
+  			(4) edge [bend left,onslide=<3>{highlight}] node [above] {a,b} (2)
+  			(5) edge [onslide=<3>{highlight}] node [above] {a,b} (1);
 \end{tikzpicture}
 \end{figure}
+
+\alt<1-3>{(Reminder: the third component defines the color of a state)}{$q_2$ and $q_4$ are not PR-equivalent.}
 \end{frame}
 
 \begin{frame}{Efficiency}
@@ -434,13 +463,45 @@ $\mathcal{A}_\text{visit}^{\{q_2, q_4\}}$
 \section{Labeled SCC Filter}
 
 \begin{frame}{Labeled SCC Filter}
-\begin{defn}
+\begin{defn}[Threshold Moore relation]
 	Define $\equiv_M^{\leq k}$ as the Moore equivalence that considers all priorities \emph{greater than k} to be equal. \\
 	$p \equiv_M^{\leq k} q$ iff for all $w \in \Sigma^*$: $c(\delta^*(p, w)) = c(\delta^*(q, w))$ or $k < c(\delta^*(p, w)), c(\delta^*(q, w))$.
 \end{defn}
+\end{frame}
 
-\begin{defn}
-	Let $\sim$ be an equivalence relation and $k \in \mathbb{N}$. We define the LSF relation $p \equiv^{k,\sim}_\text{LSF} q$ iff $p \sim q$ and $p \equiv_M^{\leq k} q$.
+
+\begin{frame}{Threshold Moore relation}
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [below left=of 0]   {\alt<1>{$q_1,2$}{$q_1,\top$}};
+  \node[state]           (2) [below right=of 0]   {\alt<1>{$q_3,4$}{$q_3,\top$}};
+  \node[state]           (3) [below=of 1]   {\alt<1>{$q_2,3$}{$q_2,\top$}};
+  \node[state]           (4) [below=of 2]   {\alt<1>{$q_4,5$}{$q_4,\top$}};
+  \path[->] (0) edge [bend left] node [below] {a} (2)
+  			(0) edge [bend left] node [above] {b} (1)
+  			(1) edge [bend left] node [above] {a} (0)
+  			(1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [below] {a} (0)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(3) edge [bend left] node [left] {a} (1)
+  			(3) edge [loop left] node [left] {b} (3)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\end{figure}
+
+In $\equiv_M$, every state is its own singleton class.
+
+\pause
+In $\equiv_M^{\leq 1}$, $q_1$ is equivalent to $q_3$ and $q_2$ is equivalent to $q_4$.
+\end{frame}
+
+\begin{frame}
+\begin{defn}[LSF relation]
+	Let $\sim$ be an equivalence relation and $k \in \mathbb{N}$. \\
+	We define $p \equiv^{k,\sim}_\text{LSF} q$ iff $p \sim q$ and $p \equiv_M^{\leq k} q$.
 \end{defn}
 \end{frame}
 
@@ -450,10 +511,10 @@ $\mathcal{A}_\text{visit}^{\{q_2, q_4\}}$
 \centering
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
   \node[state]           (0)                {$q_0,0$};
-  \node[state]           (1) [below left=of 0]   {$q_1,2$};
-  \node[state]           (2) [below right=of 0]   {$q_3,4$};
-  \node[state]           (3) [below=of 1]   {$q_2,3$};
-  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \node[state,blue]           (1) [below left=of 0]   {$q_1,2$};
+  \node[state,blue]           (2) [below right=of 0]   {$q_3,4$};
+  \node[state,green]           (3) [below=of 1]   {$q_2,3$};
+  \node[state,green]           (4) [below=of 2]   {$q_4,5$};
   \path[->] (0) edge [bend left] node [below] {a} (2)
   			(0) edge [bend left] node [above] {b} (1)
   			(1) edge [bend left] node [above] {a} (0)
@@ -467,40 +528,32 @@ $\mathcal{A}_\text{visit}^{\{q_2, q_4\}}$
 \end{tikzpicture}
 \end{figure}
 
+All five states are language equivalent to each other.
+
+\vspace{.2cm}
+
 Equivalence classes of $\equiv_\text{LSF}^{1,\equiv_L}$: $\{q_0\}$, $\{q_1, q_3\}$, and $\{q_2, q_4\}$.
 \end{frame}
 
 
 \begin{frame}{LSF Merger}
-From the DPA $\mathcal{A}$, we remove all states which have priority less or equal to $k$ and call the resulting (possibly incomplete) DPA $\mathcal{A}_k$. \\
-We choose some total preorder $\preceq_k$ on the states of $\mathcal{A}_k$ such that $p$ being reachable from $q$ in $\mathcal{A}_k$ implies $q \preceq_k p$, and $p \preceq_k q \preceq_k p$ is only true if $p$ and $q$ are in the same SCC in $\mathcal{A}_k$. ($\preceq_k$ is a total preorder that is a minimal extension of reachability.)
+From $\mathcal{A}$ to $\mathcal{A}_k$: \\
+remove all states which have \emph{priority less or equal} to $k$.
 
-\vspace{1cm}
+\vspace{.5cm}
+
+Build a total preorder $\preceq_k$ on $\mathcal{A}_k$ such that $q$ being reachable from $p$ implies $p \preceq_k q$. (weaker form of exact reachability)
+
+\vspace{.5cm}
 
 In focus are the set of states that are $\preceq_k$-maximal among a given set $P \subseteq Q$. These are all states in one SCC of $\mathcal{A}_k$ such that no other states in $P$ are reachable.
 \end{frame}
 
 
-\begin{frame}{LSF Merger}
-\begin{defn}
-	Let $\mathfrak{C}_\text{LSF}^{k,\sim}$ be the set of equivalence classes in $\equiv_\text{LSF}^{k,\sim}$ and let $\kappa$ be such an equivalence class. Define
-	$$C_\kappa^k = \{ r \in \kappa \mid c(r) > k \text{ and } r \text{ is } \preceq_k \text{-maximal among } \kappa \}$$
-	and $M_\kappa^k = \kappa \setminus C_\kappa^k$.
-\end{defn}
-
-\begin{defn}
-	Define the \emph{LSF merger function} $$\mu_\text{LSF}^{k,\sim} : \{ M_\kappa^k \mid \kappa \in \mathfrak{C}_\text{LSF}^{k,\sim} \} \rightarrow 2^Q , M_\kappa^k \mapsto C_\kappa^k$$
-\end{defn}
-
-\begin{theorem}
-	If $\sim$ implies language equivalence, merging states according to $\mu_\text{LSF}^{k,\sim}$ preserves language.
-\end{theorem}
-\end{frame}
-
-
-\begin{frame}{LSF example}
+\begin{frame}{$\mathcal{A}_1$ example}
 \begin{figure}
 \centering
+\alt<1>{
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
   \node[state]           (0)                {$q_0,0$};
   \node[state]           (1) [below left=of 0]   {$q_1,2$};
@@ -518,19 +571,9 @@ In focus are the set of states that are $\preceq_k$-maximal among a given set $P
   			(4) edge [bend left] node [left] {a} (2)
   			(4) edge [loop right] node [right] {b} (4);
 \end{tikzpicture}
-\end{figure}
-
-Equivalence classes of $\equiv_\text{LSF}^{1,\equiv_L}$: $\{q_0\}$, $\{q_1, q_3\}$, and $\{q_2, q_4\}$.
-\end{frame}
-
-
-\begin{frame}{LSF example}
-$\mathcal{A}_1$ variant of the automaton.
-
-\begin{figure}
-\centering
+}{
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
-  \node           (0)                {};
+  \node          (0)                {};
   \node[state]           (1) [below left=of 0]   {$q_1,2$};
   \node[state]           (2) [below right=of 0]   {$q_3,4$};
   \node[state]           (3) [below=of 1]   {$q_2,3$};
@@ -542,15 +585,72 @@ $\mathcal{A}_1$ variant of the automaton.
   			(4) edge [bend left] node [left] {a} (2)
   			(4) edge [loop right] node [right] {b} (4);
 \end{tikzpicture}
+}
 \end{figure}
 
-Possible order: $q_1 \simeq_1 q_2 \prec_1 q_3 \simeq_1 q_4$. \\
-$q_3$ is the only $\preceq_1$-maximal element in $\{q_1, q_3\}$. \\
-$q_4$ is the only $\preceq_1$-maximal element in $\{q_2, q_4\}$.
-
-$\mu_\text{LSF}^{1,\equiv_L}(\{q_1\}) = \{q_3\}$ \\
-$\mu_\text{LSF}^{1,\equiv_L}(\{q_2\}) = \{q_4\}$
+\only<1>{Remove all states with priority $\leq 1$.}
+\only<2->{$\preceq_1$ can be one of two relations: \\
+$\{q_1, q_2\} \prec_1 \{q_3, q_4\}$; or \\
+$\{q_3, q_4\} \prec_1 \{q_1, q_2\}$
+}
 \end{frame}
+
+
+\begin{frame}{LSF Merger}
+\begin{defn}
+	Let $\mathfrak{C}_\text{LSF}^{k,\sim}$ be the set of equivalence classes in $\equiv_\text{LSF}^{k,\sim}$ and let $\kappa$ be such an equivalence class. Define
+	$$C_\kappa^k = \{ r \in \kappa \mid c(r) > k \text{ and } r \text{ is } \preceq_k \text{-maximal among } \kappa \}$$
+	and 
+	$$M_\kappa^k = \{ q \in \kappa \setminus C_\kappa^k \mid c(q) > k \}.$$
+\end{defn}
+
+\begin{defn}
+	Define the \emph{LSF merger function} $$\mu_\text{LSF}^{k,\sim} : \{ M_\kappa^k \mid \kappa \in \mathfrak{C}_\text{LSF}^{k,\sim} \} \rightarrow 2^Q , M_\kappa^k \mapsto C_\kappa^k$$
+\end{defn}
+\end{frame}
+
+
+\begin{frame}{LSF example}
+\begin{figure}
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+  \node[state]           (0)                {$q_0,0$};
+  \node[state]           (1) [below left=of 0]   {$q_1,2$};
+  \node[state]           (2) [below right=of 0]   {$q_3,4$};
+  \node[state]           (3) [below=of 1]   {$q_2,3$};
+  \node[state]           (4) [below=of 2]   {$q_4,5$};
+  \path[->] (0) edge [bend left] node [below] {a} (2)
+  			(0) edge [bend left] node [above] {b} (1)
+  			(1) edge [bend left] node [above] {a} (0)
+  			(1) edge [bend left] node [right] {b} (3)
+  			(2) edge [bend left] node [below] {a} (0)
+  			(2) edge [bend left] node [right] {b} (4)
+  			(3) edge [bend left] node [left] {a} (1)
+  			(3) edge [loop left] node [left] {b} (3)
+  			(4) edge [bend left] node [left] {a} (2)
+  			(4) edge [loop right] node [right] {b} (4);
+\end{tikzpicture}
+\end{figure}
+
+Equivalence classes of $\equiv_\text{LSF}^{1,\equiv_L}$: $\{q_0\}$, $\{q_1, q_3\}$, and $\{q_2, q_4\}$. 
+
+\vspace{.2cm}
+
+State order $\{q_1, q_2\} \prec_1 \{q_3, q_4\}$ 
+
+\vspace{.2cm}
+
+$C^1_{\{q_0\}} = \emptyset$ \qquad
+$C^1_{\{q_1, q_3\}} = \{q_3\}$ \qquad
+$C^1_{\{q_2, q_4\}} = \{q_4\}$
+
+\vspace{.1cm}
+
+$M^1_{\{q_0\}} = \emptyset$ \qquad
+$M^1_{\{q_1, q_3\}} = \{q_1\}$ \qquad
+$M^1_{\{q_2, q_4\}} = \{q_2\}$
+\end{frame}
+
 
 
 \begin{frame}{LSF example}
@@ -571,14 +671,20 @@ After the merge:
 \end{figure}
 \end{frame}
 
+\begin{frame}{Language \& Computing LSF}
+\begin{theorem}
+	If $\sim$ implies language equivalence, merging states according to $\mu_\text{LSF}^{k,\sim}$ preserves language.
+\end{theorem}
 
+\pause
+\vspace{1cm}
 
-\begin{frame}{Computing LSF}
-	The definition provides a straight-forward computation: $\equiv_M^{\leq k}$ is only a slight variation of the normal Moore equivalence and $\preceq_k$ can be computed with a topological sorting on the SCCs of $\mathcal{A}_k$.
-	
 	\begin{theorem}
 		$\mu_\text{LSF}^{k,\sim}$ can be computed in $\mathcal{O}(n \log n)$.
 	\end{theorem}
+	
+$\equiv_M^{\leq k}$ is only a slight variation of the normal Moore equivalence. \\
+$\preceq_k$ can be computed with a topological sorting on the SCCs of $\mathcal{A}_k$.
 \end{frame}
 
 
@@ -593,7 +699,43 @@ After the merge:
 
 
 
+\section*{Conclusion}
+\begin{frame}{Summary}
+\begin{tabular}{ccccc}
+\begin{minipage}{0.32\textwidth}
+	\begin{itemize}
+	\item Moore \\
+	\item Skip \\
+	\item Delayed Simulation \\
+	\item Iterated Moore \\
+	\item Path Refinement \\
+	\item Threshold Moore \\
+	\item LSF
+	\end{itemize}
+\end{minipage}
+&
+$\Rightarrow$ 
+&
+\begin{minipage}{0.11\textwidth}
+	Merger function
+\end{minipage}
+&
+$\Rightarrow$
+&
+\begin{minipage}{0.3\textwidth}
+	\begin{itemize}
+	\item Representative merge
+	\item Schewe merge
+	\end{itemize}
+\end{minipage}
+\end{tabular}
 
+
+
+
+
+
+\end{frame}
 
 
 
