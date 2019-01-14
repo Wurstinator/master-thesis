@@ -3,5 +3,6 @@
 \beamer@sectionintoc {2}{Why do we need heuristic reduction?}{6}{0}{2}
 \beamer@sectionintoc {3}{Merger functions as a framework}{10}{0}{3}
 \beamer@sectionintoc {4}{Delayed Simulation}{13}{0}{4}
-\beamer@sectionintoc {5}{Congruence Path Refinement}{30}{0}{5}
-\beamer@sectionintoc {6}{Labeled SCC Filter}{47}{0}{6}
+\beamer@sectionintoc {5}{Congruence Path Refinement}{29}{0}{5}
+\beamer@sectionintoc {6}{Labeled SCC Filter}{48}{0}{6}
+\beamer@sectionintoc {7}{Efficiency}{62}{0}{7}
