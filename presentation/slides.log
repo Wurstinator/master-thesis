@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.3)  14 JAN 2019 12:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.3)  16 JAN 2019 12:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1419,7 +1419,11 @@ File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 
 ] [20
 
-] [21
+]
+Overfull \vbox (30.32907pt too high) detected at line 300
+ []
+
+[21
 
 ]
 Overfull \vbox (30.32907pt too high) detected at line 300
@@ -1457,13 +1461,9 @@ Overfull \vbox (30.32907pt too high) detected at line 300
 
 [27
 
-]
-Overfull \vbox (30.32907pt too high) detected at line 300
- []
+] (./slides.toc) [28
 
-[28
-
-] (./slides.toc) [29
+] [29
 
 ] [30
 
@@ -1483,10 +1483,10 @@ Overfull \vbox (30.32907pt too high) detected at line 300
 
 ] [38
 
-] [39
-
 ]
-[40
+[39
+
+] [40
 
 ] [41
 
@@ -1500,51 +1500,20 @@ Overfull \vbox (30.32907pt too high) detected at line 300
 
 ] [46
 
-] [47
-
-] (./slides.toc) [48
-
-] [49
-
-] [50
-
-] [51
+] (./slides.toc) [47
 
 ]
-[52
-
-] [53
-
-] [54
-
-] [55
-
-] [56
-
-] [57
-
-] [58
-
-] [59
-
-] [60
-
-] [61
-
-] (./slides.toc) [62
-
-]
-<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=570, page=6, 462.52798pt x 34
+<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=442, page=6, 462.52798pt x 34
 6.89601pt>
 File: ../data/analysis/fritzwilke/detnbaut_ap1.pdf Graphic file (type pdf)
 <use ../data/analysis/fritzwilke/detnbaut_ap1.pdf, page 6>
 Package pdftex.def Info: ../data/analysis/fritzwilke/detnbaut_ap1.pdf , page6 u
 sed on input line 712.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [63
+ [48
 
  <../data/analysis/fritzwilke/detnbaut_ap1.pdf>]
-<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=633, page=6, 462.52798pt
+<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=505, page=6, 462.52798pt
  x 346.89601pt>
 File: ../data/analysis/path_refinement/detnbaut_ap1.pdf Graphic file (type pdf)
 
@@ -1552,46 +1521,36 @@ File: ../data/analysis/path_refinement/detnbaut_ap1.pdf Graphic file (type pdf)
 Package pdftex.def Info: ../data/analysis/path_refinement/detnbaut_ap1.pdf , pa
 ge6 used on input line 719.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [64
+ [49
 
  <../data/analysis/path_refinement/detnbaut_ap1.pdf>]
-<../data/analysis/lsf/detnbaut_ap1.pdf, id=696, page=6, 462.52798pt x 346.89601
-pt>
-File: ../data/analysis/lsf/detnbaut_ap1.pdf Graphic file (type pdf)
-<use ../data/analysis/lsf/detnbaut_ap1.pdf, page 6>
-Package pdftex.def Info: ../data/analysis/lsf/detnbaut_ap1.pdf , page6 used on 
-input line 726.
-(pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [65
-
- <../data/analysis/lsf/detnbaut_ap1.pdf>]
 Underfull \hbox (badness 10000) in paragraph at lines 763--763
 []\OT1/cmss/m/n/10.95 Merger
  []
 
-[66
+[50
 
-]) [67
-
-
-] (./slides.bbl) [68
-
- </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [69
+]) [51
 
 
-] [70
+] (./slides.bbl) [52
+
+ </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [53
 
 
-] [71
+] [54
 
 
-] [72
+] [55
 
 
-] [73
+] [56
 
 
-] [74
+] [57
+
+
+] [58
 
 
 ]
@@ -1611,20 +1570,16 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 131.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 131.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 131.
 Package rerunfilecheck Info: File `slides.out' has not changed.
-(rerunfilecheck)             Checksum: 8E6DCB2B69524526606F54385047E7D4;412.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
+(rerunfilecheck)             Checksum: 9D4821A62CF8A9A8F3DFDD60A4E33E0B;359.
  ) 
 Here is how much of TeX's memory you used:
- 36906 strings out of 492639
- 734029 string characters out of 6135498
- 874052 words of memory out of 5000000
- 39935 multiletter control sequences out of 15000+600000
+ 36739 strings out of 492639
+ 731148 string characters out of 6135498
+ 873119 words of memory out of 5000000
+ 39804 multiletter control sequences out of 15000+600000
  546939 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 48i,21n,72p,773b,944s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 48i,21n,72p,773b,908s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/publi
@@ -1639,12 +1594,11 @@ are/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/
 fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/pu
 blic/amsfonts/euler/eufm10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
 ts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbol
-s/msam7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.p
-fb>
-Output written on slides.pdf (74 pages, 361549 bytes).
+s/msbm10.pfb>
+Output written on slides.pdf (58 pages, 306397 bytes).
 PDF statistics:
- 962 PDF objects out of 1000 (max. 8388607)
- 691 compressed objects within 7 object streams
- 181 named destinations out of 1000 (max. 500000)
- 150 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 758 PDF objects out of 1000 (max. 8388607)
+ 558 compressed objects within 6 object streams
+ 148 named destinations out of 1000 (max. 500000)
+ 137 words of extra memory for PDF output out of 10000 (max. 10000000)
 
