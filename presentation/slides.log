@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.3)  16 JAN 2019 12:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.17)  18 JAN 2019 12:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1420,50 +1420,50 @@ File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 ] [20
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 300
+Overfull \vbox (30.32907pt too high) detected at line 290
  []
 
 [21
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 300
+Overfull \vbox (30.32907pt too high) detected at line 290
  []
 
 [22
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 300
+Overfull \vbox (30.32907pt too high) detected at line 290
  []
 
 [23
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 300
+Overfull \vbox (30.32907pt too high) detected at line 290
  []
 
 [24
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 300
+Overfull \vbox (30.32907pt too high) detected at line 290
  []
 
 [25
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 300
+Overfull \vbox (30.32907pt too high) detected at line 290
  []
 
 [26
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 300
+Overfull \vbox (30.32907pt too high) detected at line 290
  []
 
 [27
 
-] (./slides.toc) [28
+] [28
 
-] [29
+] (./slides.toc) [29
 
 ] [30
 
@@ -1500,48 +1500,46 @@ Overfull \vbox (30.32907pt too high) detected at line 300
 
 ] [46
 
-] (./slides.toc) [47
+] [47
+
+] [48
+
+] (./slides.toc) [49
 
 ]
-<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=442, page=6, 462.52798pt x 34
+<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=457, page=6, 462.52798pt x 34
 6.89601pt>
 File: ../data/analysis/fritzwilke/detnbaut_ap1.pdf Graphic file (type pdf)
 <use ../data/analysis/fritzwilke/detnbaut_ap1.pdf, page 6>
 Package pdftex.def Info: ../data/analysis/fritzwilke/detnbaut_ap1.pdf , page6 u
-sed on input line 712.
+sed on input line 716.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [48
+ [50
 
  <../data/analysis/fritzwilke/detnbaut_ap1.pdf>]
-<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=505, page=6, 462.52798pt
+<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=520, page=6, 462.52798pt
  x 346.89601pt>
 File: ../data/analysis/path_refinement/detnbaut_ap1.pdf Graphic file (type pdf)
 
 <use ../data/analysis/path_refinement/detnbaut_ap1.pdf, page 6>
 Package pdftex.def Info: ../data/analysis/path_refinement/detnbaut_ap1.pdf , pa
-ge6 used on input line 719.
+ge6 used on input line 723.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [49
+ [51
 
  <../data/analysis/path_refinement/detnbaut_ap1.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 763--763
+Underfull \hbox (badness 10000) in paragraph at lines 767--767
 []\OT1/cmss/m/n/10.95 Merger
  []
 
-[50
+[52
 
-]) [51
-
-
-] (./slides.bbl) [52
-
- </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [53
+]) [53
 
 
-] [54
+] (./slides.bbl) [54
 
-
-] [55
+ </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [55
 
 
 ] [56
@@ -1551,6 +1549,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 763--763
 
 
 ] [58
+
+
+] [59
+
+
+] [60
 
 
 ]
@@ -1573,9 +1577,9 @@ Package rerunfilecheck Info: File `slides.out' has not changed.
 (rerunfilecheck)             Checksum: 9D4821A62CF8A9A8F3DFDD60A4E33E0B;359.
  ) 
 Here is how much of TeX's memory you used:
- 36739 strings out of 492639
- 731148 string characters out of 6135498
- 873119 words of memory out of 5000000
+ 36743 strings out of 492639
+ 731186 string characters out of 6135497
+ 873106 words of memory out of 5000000
  39804 multiletter control sequences out of 15000+600000
  546939 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1595,10 +1599,10 @@ fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/pu
 blic/amsfonts/euler/eufm10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
 ts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msbm10.pfb>
-Output written on slides.pdf (58 pages, 306397 bytes).
+Output written on slides.pdf (60 pages, 311192 bytes).
 PDF statistics:
- 758 PDF objects out of 1000 (max. 8388607)
- 558 compressed objects within 6 object streams
- 148 named destinations out of 1000 (max. 500000)
+ 773 PDF objects out of 1000 (max. 8388607)
+ 571 compressed objects within 6 object streams
+ 152 named destinations out of 1000 (max. 500000)
  137 words of extra memory for PDF output out of 10000 (max. 10000000)
 

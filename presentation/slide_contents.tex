@@ -150,22 +150,12 @@ This is captured by the merger function $\mu_\div : \mathfrak{C} \rightarrow 2^Q
 
 
 \begin{frame}{Computing Delayed Simulation}
-	We define a det.\ Büchi automaton $\mathcal{G}_\text{de}$ with states $q_\text{de}^0(p, q)$ such that: \\
+We define a det.\ Büchi automaton $\mathcal{G}_\text{de}$ with states $q_\text{de}^0(p, q)$ such that: \\
 	$p \equiv_\text{de} q$ iff both $L(\mathcal{G}_\text{de}, q_\text{de}^0(p, q))$ and $L(\mathcal{G}_\text{de}, q_\text{de}^0(q, p))$ are universal ($\Sigma^\omega$).
 	
-	\vspace{.5cm}
-	
-	This automaton uses the state set $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$. \\
-	Computing states of universal language in a DBA requires linear time.
-	
-	\vspace{.5cm}
-	
-	\begin{theorem}
-		$\mu_\text{de}$ can be computed in $\mathcal{O}(n^2 k)$.
-	\end{theorem}
-\end{frame}
+	\pause
+	\vspace{.6cm}
 
-\begin{frame}{Delayed Simulation Automaton}
 $\mathcal{G}_\text{de} = (Q_\text{de}, \Sigma, \delta_\text{de}, F_\text{de})$
 
 \begin{itemize}
@@ -300,6 +290,17 @@ A DPA with 5 states. We want to check whether $q_0 \equiv_\text{de} q_1$ is true
 \end{frame}
 
 
+\begin{frame}{Complexity}
+	$\mathcal{G}_\text{de}$ uses the state set $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$. \\
+	Computing states of universal language in a DBA requires linear time.
+	
+	\vspace{.5cm}
+	
+	\begin{theorem}
+		$\mu_\text{de}$ can be computed in $\mathcal{O}(n^2 k)$.
+	\end{theorem}
+	\small{$n = |Q|$, $k = |c(Q)|$}
+\end{frame}
 
 
 
@@ -371,31 +372,33 @@ $L_{\lambda \hookleftarrow} = \{ \alt<1-3>{}{\alt<4>{aa, ba}{aa, ba, ab, bb \}}}
 
 
 \begin{frame}{Computing Path Refinement}
+	Define a DPA that relates Moore equivalence to $\equiv_\text{PR}$.
+	\vspace{.2cm}
+	\pause
+
 	\begin{defn}
 		Define the \emph{visit graph} DPA $\mathcal{A}_\text{visit}^\lambda = (Q_\text{visit}^\lambda, \Sigma, \delta_\text{visit}^\lambda, c_\text{visit}^\lambda)$.
 		\begin{itemize}
-			\item $Q_\text{visit}^\lambda = \alert<2>{Q} \times \alert<3>{c(Q)} \times \alert<4>{(c(Q) \cup \{-1\})}$
+			\item $Q_\text{visit}^\lambda = \alert<3>{Q} \times \alert<4>{c(Q)} \times \alert<5>{(c(Q) \cup \{-1\})}$
 			\item $\delta^\lambda_\text{visit}((q, k, k'), a) = \begin{cases}
-				(\alert<2>{q'}, \alert<3>{\min \{k, c(q')\}}, \alert<4>{-1}) & \text{if } q' \notin \lambda \\
-				(\alert<2>{q'}, \alert<3>{c(q')}, \alert<4>{\min \{k, c(q')\}}) & \text{if } q' \in \lambda
-			\end{cases}$, \\ where $\alert<2>{q' = \delta(q, a)}$.
-			\item $c_\text{visit}^\lambda((q, k, \alert<4>{k'})) = \alert<4>{k'}$.
+				(\alert<3>{q'}, \alert<4>{\min \{k, c(q')\}}, \alert<5>{-1}) & \text{if } q' \notin \lambda \\
+				(\alert<3>{q'}, \alert<4>{c(q')}, \alert<5>{\min \{k, c(q')\}}) & \text{if } q' \in \lambda
+			\end{cases}$, \\ where $\alert<3>{q' = \delta(q, a)}$.
+			\item $c_\text{visit}^\lambda((q, k, \alert<5>{k'})) = \alert<5>{k'}$.
 		\end{itemize}
 	\end{defn}
 	
 	\vspace{.5cm}
 	
-	The \alert<2>{first} component \enquote{simulates} the original automaton $\mathcal{A}$. \\
-	The \alert<3>{second} component tracks the minimal priority seen on one run from $\lambda$ to $\lambda$. \\
-	The \alert<4>{third} component is required to distinguish the different priorities.
+	The \alert<3>{first} component \enquote{simulates} the original automaton $\mathcal{A}$. \\
+	The \alert<4>{second} component tracks the minimal priority seen on one run from $\lambda$ to $\lambda$. \\
+	The \alert<5>{third} component is required to distinguish the different priorities.
 \end{frame}
 
 
 \begin{frame}{Computing Path Refinement}
-	Moore equivalence in $\mathcal{A}_\text{visit}^\lambda$ corresponds to path refinement equivalence in $\mathcal{A}$.
-	
 	\begin{defn}
-		For $q \in Q$, we have $\iota_q := (q, c(q), \max c(Q)) \in Q_\text{visit}^\lambda$.
+		For $q \in Q$, we set $\iota_q := (q, c(q), \max c(Q)) \in Q_\text{visit}^\lambda$.
 	\end{defn}
 	
 	\begin{theorem}
@@ -405,6 +408,7 @@ $L_{\lambda \hookleftarrow} = \{ \alt<1-3>{}{\alt<4>{aa, ba}{aa, ba, ab, bb \}}}
 	\begin{theorem}
 		$\equiv_\text{PR}^\lambda$ can be computed in $\mathcal{O}(k^2 n \log n)$.
 	\end{theorem}
+	\small{$n = |Q|$, $k = |c(Q)|$}
 \end{frame}
 
 
