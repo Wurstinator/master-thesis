@@ -159,14 +159,15 @@ We define a det.\ Büchi automaton $\mathcal{G}_\text{de}$ with states $q_\text{
 $\mathcal{G}_\text{de} = (Q_\text{de}, \Sigma, \delta_\text{de}, F_\text{de})$
 
 \begin{itemize}
-	\item States are $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$. \\
-The first two components are a \enquote{simulation} of the original DPA. The third component are the so called \enquote{obligations}.
+	\item States are $Q_\text{de} = \alert<3>{Q} \times \alert<3>{Q} \times \alert<4>{(c(Q) \cup \{\checkmark\})}$. \\
+The first two components are a \enquote{simulation} of the original DPA. \\
+The third component are the so called \enquote{obligations}.
 	\item Accepting states are $F_\text{de} = Q \times Q \times \{\checkmark\}$.
 	\item Transitions $\delta_\text{de}$.
 \begin{align*}
-	\delta_\text{de}((p, q, k), a) = (& \delta(p, a), \\
-									& \delta(q, a), \\
-									& \gamma( \quad c(\delta(p, a)), \quad c(\delta(q, a)), \quad k \quad ))
+	\delta_\text{de}((p, q, k), a) = (& \alert<3>{\delta(p, a)}, \\
+									& \alert<3>{\delta(q, a)}, \\
+									& \alert<4>{\gamma( \quad c(\delta(p, a)), \quad c(\delta(q, a)), \quad k \quad )})
 \end{align*}
 \end{itemize}
 
@@ -352,10 +353,14 @@ $L_{\lambda \hookleftarrow} = \{ \alt<1-3>{}{\alt<4>{aa, ba}{aa, ba, ab, bb \}}}
 	The \emph{path refinement} equivalence $\equiv_\text{PR}^\lambda$ is the \emph{largest relation} s.t.: \\
 	For $p, q \in \lambda$, $p \equiv_\text{PR}^\lambda q$ if and only if 
 	\begin{itemize}
-		\item $\forall w \in L_{\lambda \hookleftarrow}: \delta^*(p, w) \equiv_\text{PR}^\lambda \delta^*(q, w)$
 		\item $\forall w \in L_{\lambda \hookleftarrow}:$ the smallest priority seen when reading $w$ is the same from $p$ and from $q$.
+		\item $\forall w \in L_{\lambda \hookleftarrow}: \delta^*(p, w) \equiv_\text{PR}^\lambda \delta^*(q, w)$
 	\end{itemize}
 	\end{defn}
+	
+	\vspace{.5cm}
+	First point: Makes sure path segments have the same acceptance. \\
+	Second point: Makes sure the argument can be applied repeatedly.
 \end{frame}
 
 

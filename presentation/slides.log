@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.17)  18 JAN 2019 12:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.17)  23 JAN 2019 13:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1190,20 +1190,20 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 (./slides.aux (./slide_contents.aux))
 \openout1 = `slides.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1271,7 +1271,7 @@ e
 ))
 ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box105
-Package hyperref Info: Link coloring OFF on input line 92.
+Package hyperref Info: Link coloring OFF on input line 93.
 
 (/usr/share/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -1281,55 +1281,55 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count358
 )
-LaTeX Info: Redefining \ref on input line 92.
-LaTeX Info: Redefining \pageref on input line 92.
-LaTeX Info: Redefining \nameref on input line 92.
+LaTeX Info: Redefining \ref on input line 93.
+LaTeX Info: Redefining \pageref on input line 93.
+LaTeX Info: Redefining \nameref on input line 93.
  (./slides.out) (./slides.out)
 \@outlinefile=\write5
 \openout5 = `slides.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 92.
+(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 93.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 92.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 93.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 92.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 92.
+(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 93.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 92.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 92.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 92.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 93.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 92.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 92.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 92.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 93.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 92.
+(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 92.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 92.
+(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 93.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 92.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 92.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 93.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 92.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 93.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 92.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 92.
+(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 92.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 92.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 92.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 93.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 92.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 93.
 
 (/usr/share/texmf-dist/tex/latex/translator/translator-basic-dictionary-English
 .dict
@@ -1419,55 +1419,55 @@ File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 
 ] [20
 
-]
-Overfull \vbox (30.32907pt too high) detected at line 290
- []
+] [21
 
-[21
+] [22
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 290
- []
-
-[22
-
-]
-Overfull \vbox (30.32907pt too high) detected at line 290
+Overfull \vbox (30.32907pt too high) detected at line 291
  []
 
 [23
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 290
+Overfull \vbox (30.32907pt too high) detected at line 291
  []
 
 [24
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 290
+Overfull \vbox (30.32907pt too high) detected at line 291
  []
 
 [25
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 290
+Overfull \vbox (30.32907pt too high) detected at line 291
  []
 
 [26
 
 ]
-Overfull \vbox (30.32907pt too high) detected at line 290
+Overfull \vbox (30.32907pt too high) detected at line 291
  []
 
 [27
 
-] [28
+]
+Overfull \vbox (30.32907pt too high) detected at line 291
+ []
 
-] (./slides.toc) [29
+[28
+
+]
+Overfull \vbox (30.32907pt too high) detected at line 291
+ []
+
+[29
 
 ] [30
 
-] [31
+] (./slides.toc) [31
 
 ] [32
 
@@ -1483,12 +1483,12 @@ Overfull \vbox (30.32907pt too high) detected at line 290
 
 ] [38
 
-]
-[39
+] [39
 
 ] [40
 
-] [41
+]
+[41
 
 ] [42
 
@@ -1504,48 +1504,46 @@ Overfull \vbox (30.32907pt too high) detected at line 290
 
 ] [48
 
-] (./slides.toc) [49
+] [49
+
+] [50
+
+] (./slides.toc) [51
 
 ]
-<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=457, page=6, 462.52798pt x 34
+<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=471, page=6, 462.52798pt x 34
 6.89601pt>
 File: ../data/analysis/fritzwilke/detnbaut_ap1.pdf Graphic file (type pdf)
 <use ../data/analysis/fritzwilke/detnbaut_ap1.pdf, page 6>
 Package pdftex.def Info: ../data/analysis/fritzwilke/detnbaut_ap1.pdf , page6 u
-sed on input line 716.
+sed on input line 721.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [50
+ [52
 
  <../data/analysis/fritzwilke/detnbaut_ap1.pdf>]
-<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=520, page=6, 462.52798pt
+<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=534, page=6, 462.52798pt
  x 346.89601pt>
 File: ../data/analysis/path_refinement/detnbaut_ap1.pdf Graphic file (type pdf)
 
 <use ../data/analysis/path_refinement/detnbaut_ap1.pdf, page 6>
 Package pdftex.def Info: ../data/analysis/path_refinement/detnbaut_ap1.pdf , pa
-ge6 used on input line 723.
+ge6 used on input line 728.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [51
+ [53
 
  <../data/analysis/path_refinement/detnbaut_ap1.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 767--767
+Underfull \hbox (badness 10000) in paragraph at lines 772--772
 []\OT1/cmss/m/n/10.95 Merger
  []
 
-[52
+[54
 
-]) [53
-
-
-] (./slides.bbl) [54
-
- </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [55
+]) [55
 
 
-] [56
+] (./slides.bbl) [56
 
-
-] [57
+ </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [57
 
 
 ] [58
@@ -1555,6 +1553,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 767--767
 
 
 ] [60
+
+
+] [61
+
+
+] [62
 
 
 ]
@@ -1567,19 +1571,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 767--767
 \tf@snm=\write8
 \openout8 = `slides.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 131.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 131.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 132.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 132.
  (./slides.aux
 (./slide_contents.aux))
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 131.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 131.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 132.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 132.
 Package rerunfilecheck Info: File `slides.out' has not changed.
 (rerunfilecheck)             Checksum: 9D4821A62CF8A9A8F3DFDD60A4E33E0B;359.
  ) 
 Here is how much of TeX's memory you used:
- 36743 strings out of 492639
- 731186 string characters out of 6135497
- 873106 words of memory out of 5000000
+ 36747 strings out of 492639
+ 731224 string characters out of 6135497
+ 873136 words of memory out of 5000000
  39804 multiletter control sequences out of 15000+600000
  546939 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1599,10 +1603,10 @@ fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/pu
 blic/amsfonts/euler/eufm10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
 ts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msbm10.pfb>
-Output written on slides.pdf (60 pages, 311192 bytes).
+Output written on slides.pdf (62 pages, 314872 bytes).
 PDF statistics:
- 773 PDF objects out of 1000 (max. 8388607)
- 571 compressed objects within 6 object streams
- 152 named destinations out of 1000 (max. 500000)
+ 788 PDF objects out of 1000 (max. 8388607)
+ 584 compressed objects within 6 object streams
+ 156 named destinations out of 1000 (max. 500000)
  137 words of extra memory for PDF output out of 10000 (max. 10000000)
 
