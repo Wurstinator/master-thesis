@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.17)  23 JAN 2019 13:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.17)  24 JAN 2019 10:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1362,50 +1362,50 @@ Package caption Info: End \AtBeginDocument code.
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 (./slides.toc) [2
 
-] (./slides.toc) [3
-
 ]
 \openout2 = `slide_contents.aux'.
 
- (./slide_contents.tex (./slides.toc)
-[4
+ (./slide_contents.tex (./slides.toc) [3
 
 
 ]
 LaTeX Font Info:    Try loading font information for U+msa on input line 24.
- (/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
+
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Try loading font information for U+msb on input line 24.
 
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [5
+) [4
 
-] (./slides.toc) [6
+] (./slides.toc) [5
 
 ]
-[7
+[6
+
+] [7
 
 ] [8
 
-] [9
+] (./slides.toc) [9
 
-] (./slides.toc) [10
-
-] [11
+] [10
 
 ]
 LaTeX Font Info:    Try loading font information for U+euf on input line 105.
 
 (/usr/share/texmf-dist/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
-) [12
+) [11
 
-] (./slides.toc) [13
+] (./slides.toc) [12
 
 ]
-[14
+[13
+
+] [14
 
 ] [15
 
@@ -1421,7 +1421,11 @@ File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 
 ] [21
 
-] [22
+]
+Overfull \vbox (30.32907pt too high) detected at line 291
+ []
+
+[22
 
 ]
 Overfull \vbox (30.32907pt too high) detected at line 291
@@ -1459,15 +1463,11 @@ Overfull \vbox (30.32907pt too high) detected at line 291
 
 [28
 
-]
-Overfull \vbox (30.32907pt too high) detected at line 291
- []
+] [29
 
-[29
+] (./slides.toc) [30
 
-] [30
-
-] (./slides.toc) [31
+] [31
 
 ] [32
 
@@ -1485,10 +1485,10 @@ Overfull \vbox (30.32907pt too high) detected at line 291
 
 ] [39
 
-] [40
-
 ]
-[41
+[40
+
+] [41
 
 ] [42
 
@@ -1506,22 +1506,20 @@ Overfull \vbox (30.32907pt too high) detected at line 291
 
 ] [49
 
-] [50
-
-] (./slides.toc) [51
+] (./slides.toc) [50
 
 ]
-<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=471, page=6, 462.52798pt x 34
+<../data/analysis/fritzwilke/detnbaut_ap1.pdf, id=459, page=6, 462.52798pt x 34
 6.89601pt>
 File: ../data/analysis/fritzwilke/detnbaut_ap1.pdf Graphic file (type pdf)
 <use ../data/analysis/fritzwilke/detnbaut_ap1.pdf, page 6>
 Package pdftex.def Info: ../data/analysis/fritzwilke/detnbaut_ap1.pdf , page6 u
 sed on input line 721.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [52
+ [51
 
  <../data/analysis/fritzwilke/detnbaut_ap1.pdf>]
-<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=534, page=6, 462.52798pt
+<../data/analysis/path_refinement/detnbaut_ap1.pdf, id=522, page=6, 462.52798pt
  x 346.89601pt>
 File: ../data/analysis/path_refinement/detnbaut_ap1.pdf Graphic file (type pdf)
 
@@ -1529,21 +1527,24 @@ File: ../data/analysis/path_refinement/detnbaut_ap1.pdf Graphic file (type pdf)
 Package pdftex.def Info: ../data/analysis/path_refinement/detnbaut_ap1.pdf , pa
 ge6 used on input line 728.
 (pdftex.def)             Requested size: 277.84357pt x 208.38478pt.
- [53
+ [52
 
  <../data/analysis/path_refinement/detnbaut_ap1.pdf>]
 Underfull \hbox (badness 10000) in paragraph at lines 772--772
 []\OT1/cmss/m/n/10.95 Merger
  []
 
-[54
+[53
 
-]) [55
+]) [54
 
 
-] (./slides.bbl) [56
+] (./slides.bbl) [55
 
- </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [57
+ </usr/share/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [56
+
+
+] [57
 
 
 ] [58
@@ -1558,9 +1559,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 772--772
 ] [61
 
 
-] [62
-
-
 ]
 \tf@nav=\write6
 \openout6 = `slides.nav'.
@@ -1571,19 +1569,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 772--772
 \tf@snm=\write8
 \openout8 = `slides.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 132.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 132.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 130.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 130.
  (./slides.aux
 (./slide_contents.aux))
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 132.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 132.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 130.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 130.
 Package rerunfilecheck Info: File `slides.out' has not changed.
 (rerunfilecheck)             Checksum: 9D4821A62CF8A9A8F3DFDD60A4E33E0B;359.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 36747 strings out of 492639
- 731224 string characters out of 6135497
- 873136 words of memory out of 5000000
+ 36743 strings out of 492639
+ 731183 string characters out of 6135497
+ 873128 words of memory out of 5000000
  39804 multiletter control sequences out of 15000+600000
  546939 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1603,10 +1605,10 @@ fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/pu
 blic/amsfonts/euler/eufm10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
 ts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msbm10.pfb>
-Output written on slides.pdf (62 pages, 314872 bytes).
+Output written on slides.pdf (61 pages, 313545 bytes).
 PDF statistics:
- 788 PDF objects out of 1000 (max. 8388607)
- 584 compressed objects within 6 object streams
- 156 named destinations out of 1000 (max. 500000)
+ 776 PDF objects out of 1000 (max. 8388607)
+ 573 compressed objects within 6 object streams
+ 154 named destinations out of 1000 (max. 500000)
  137 words of extra memory for PDF output out of 10000 (max. 10000000)
 
