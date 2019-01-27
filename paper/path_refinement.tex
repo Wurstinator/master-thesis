@@ -1,0 +1,61 @@
+
+\section{Path Refinement}
+
+The upcoming technique, called congruence path refinement or just path refinement, is again one which takes in an already defined relation on the states and refines it to a point where merging classes is a valid operation. To be precise, we define the PR-equivalence for each equivalence class independently. 
+Given such a class, which we call $\lambda$, we consider \enquote{loops} which move from $\lambda$ back to some state in $\lambda$ via some finite path. If two states in $\lambda$ see the same smallest priority on every such loop and we can guarantee that all states they will reach via the loop have the same property, then every run that visits $\lambda$ infinitely often can be divided into path segments on which runs starting in these two states see the same smallest priority. As this then holds for every segment in the run, the set of infinitely often occurring priorities must then also have the same minimum.
+
+Formally, we describe these loops in a set called $L_{\lambda \hookleftarrow}$. This is the set of all finite words, such that reading them from $\lambda$ will move back to $\lambda$ at the end and never before.
+
+\begin{definition}
+	Let $\sim$ be a congruence relation and let $\lambda \in \mathfrak{C}(\sim)$ be an equivalence class. We define a relation $R_\lambda$ on $\lambda$ as $(p, q) \in R_\lambda$ if and only if for all $w \in L_{\lambda \hookleftarrow}$, the smallest priority seen on the path induced by $w$ is the same starting from $p$ and from $q$.
+	
+	We define \emph{path refinement equivalence} $\equiv_\text{PR}^\lambda$ on $\lambda$ as the largest subset of $R_\lambda$ such that $p \equiv_\text{PR}^\lambda q$ if and only if for all $w \in L_{\lambda \hookleftarrow}$, $\delta^*(p, w) \equiv_\text{PR}^\lambda \delta^*(q, w)$.
+\end{definition}
+
+Again, note that this relation is only defined on $\lambda$. Using the merger function below, one can perform this reduction independently on every class in $\mathfrak{C}(\sim)$. 
+
+\begin{definition}
+	We define the \emph{path refinement merger function} $\mu_\text{PR}^\lambda : \mathfrak{C}(\equiv_\text{PR}^\lambda) \rightarrow 2^Q$ with $\mu_\text{PR}^\lambda(\kappa) = \{q \in \kappa \mid c(q) = \min c(\kappa) \}$.
+\end{definition}
+
+\begin{theorem}
+	If all states in $\lambda$ are pairwise language equivalent, then a representative merge of a DPA w.r.t.\ $\mu_\text{PR}^\lambda$ is language equivalent to the original.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+As for delayed simulation, the definition of path refinement is more theoretical and less constructive. We have to dedicate some additional thought to the question of how to actually compute $\mu_\text{PR}^\lambda$. We use a similar approach as before and reduce the computation of PR-equivalence to a known automata problem, which in this case is the Moore equivalence on DPAs.
+
+A direct translation of the definition to an algorithm would be a similar automaton as for delayed simulation. One can build a deterministic finite product automaton with an additional third component that tracks the smallest priority so far and which component it was seen in, and at every visit to $\lambda$ makes sure that the tracked values coincide.
+
+The \emph{visit graph} that we now define instead is a less intuitive solution but has a size only linear in $|Q|$ instead of quadratic. It also uses a \enquote{tracker} of the smallest priorities between one visit to $\lambda$ and the next but only does so for each state individually instead of tracking each state pair.
+
+\begin{definition}
+	The visit graph is a DPA $(Q_\text{visit}^\lambda, \Sigma, \delta_\text{visit}^\lambda, c_\text{visit}^\lambda)$ defined with
+	\begin{itemize}
+		\item $Q_\text{visit}^\lambda = Q \times c(Q) \times (c(Q) \cup \{\perp\})$
+		\item $delta_\text{visit}^\lambda((q, k, k'), a) = \begin{cases}
+			(q', \min \{c(q'), k\}, \perp) & \text{if } q' \notin \lambda \\
+			(q', c(q'), \min \{c(q'), k\}) & \text{if } q' \in \lambda
+		\end{cases}$, where $q' = \delta(q, a)$
+		\item $c_\text{visit}((q, k, k')) = k'$
+	\end{itemize}
+\end{definition}
+
+\begin{theorem}
+	For a state $q \in Q$, let $\iota_q = (q, c(q), \max c(Q)) \in Q_\text{visit}^\lambda$. Then $p \equiv_\text{PR}^\lambda q$ if and only if $\iota_p \equiv_M \iota_q$.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+\begin{theorem}
+	$\equiv_\text{PR}^\lambda$ can be computed in $\mathcal{O}(|Q| \cdot |c(Q)|^2 \cdot \log |Q|)$.
+\end{theorem}
+
+\begin{proof}
+	Moore equivalence can be computed in time $\mathcal{O}(n \log n)$ of its automaton (\cite{Hopcroft1971}). The visit graph has size $n \in \mathcal{O}(|Q| \cdot |c(Q)|^2)$. As $|c(Q)|$ is always at most $|Q|$, this gives us the desired complexity.
+\end{proof}

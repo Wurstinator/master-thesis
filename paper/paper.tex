@@ -1,0 +1,67 @@
+\documentclass{llncs}
+
+% PACKAGES
+\usepackage[german,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{marvosym}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage[nottoc]{tocbibind}
+\usepackage{environ}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{pdfpages}
+\usepackage{subcaption}
+\usepackage[toc,page]{appendix}
+
+\usepackage{geometry}
+
+% COMMANDS
+\newcommand{\enquote}[1]{``#1''}
+
+% Quotient classes
+\newcommand{\bigslant}[2]{{\raisebox{.2em}{$#1$}\left/\raisebox{-.2em}{$#2$}\right.}}
+%\bigslant{A}{B}
+
+%FIX HYPERREF
+\AtBeginDocument{\let\textlabel\label}
+
+
+% DISALLOW LINE BREAKS
+\relpenalty=9999
+\binoppenalty=9999
+
+
+\begin{document}
+
+\input{preamble}
+
+\input{basics_and_general}
+
+\input{skip_merger}
+
+\input{delayed_simulation}
+
+\input{path_refinement}
+
+\newpage\null\thispagestyle{empty}\newpage
+%\nocite{*}
+\bibliography{citations}
+\newpage\null\thispagestyle{empty}\newpage
+
+
+\end{document}
+
+
+
+
+
+
+
+
+

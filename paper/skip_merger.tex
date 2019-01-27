@@ -1,0 +1,29 @@
+
+\section{Skip Merger}
+
+The skip merger is the first reduction algorithm we want to introduce. It can be seen more of a first proof of concept rather than a practical novelty, as the underlying idea is neither complex nor had it great effect during empirical tests.
+
+The skip merger considers the different strongly connected components (SCCs) of the automaton. An SCC is a set of states in which each element can reach every other via some path. We sometimes speak of the \enquote{deepest} SCCs with a certain property, which are those SCCs such that no other SCC with that property is reachable anymore.
+
+If we have an equivalence relation that implies language equivalence but is not strong enough to warrant a merge of states on its own, each equivalence class of that relation only requires its states in the deepest SCC. We can therefore redirect any transition that would move the automaton to a state to a representative in a deepest SCC instead.
+
+To formally capture this idea, the \emph{reachability preorder} is defined as $p \preceq_\text{reach} q$ if and only if $q$ is reachable by some path from $p$. Reachability can be computed in $\mathcal{O}(|Q|^3)$ which, in general, is too high of a complexity to efficiently deal with. It is sufficient to use a total extension of reachability though, which is a minimal superset of the reachability preorder that is a total preorder itself. Such a relation can be computed in linear time by a topological sorting on the SCCs of the automaton.
+
+\begin{definition}
+	Let $\sim$ be a congruence relation on $Q$. Let $\preceq$ be a total extension of reachability. For each $\kappa \in \mathfrak{C}$, we define $C_\kappa \subseteq \kappa$ to be the set of $\preceq$-maximal states and $M_\kappa = \kappa \setminus C_\kappa$.
+		
+	We define the \emph{skip merger function} $\mu_\text{skip}^\sim : \{ M_\kappa \mid \kappa \in \mathfrak{C}(\sim) \} \rightarrow 2^Q$ with $\mu_\text{skip}^\sim(M_\kappa) = C_\kappa$.
+\end{definition}
+
+\begin{theorem}
+	If $\sim$ implies language equivalence, then a representative merge of a DPA w.r.t.\ $\mu_\text{skip}^\sim$ is language equivalent to the original.
+\end{theorem}
+
+\begin{proof}
+	If we have two runs, $\pi$ and $\rho$, of the original DPA and the merged DPA on the same word $\alpha$, we can observe that at every position, $\pi(i)$ and $\rho(i)$ will be $\sim$-equivalent, as $\sim$ is a congruence relation. Furthermore, as there are only finitely many SCCs in an automaton, $\rho$ will eventually reach a point $j$ from which on only transitions are taken that also exist in the original DPA. As $\pi(j) \sim \rho(j)$, that means that the two runs must have the same status of acceptance. \qed
+\end{proof}
+
+\begin{theorem}
+	For a given $\sim$ in a suitable data structure, $\mu_\text{skip}^\sim$ can be computed in $\mathcal{O}(|Q|)$.
+\end{theorem}
+

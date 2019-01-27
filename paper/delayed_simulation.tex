@@ -1,0 +1,65 @@
+\section{Delayed Simulation}
+
+Based on \cite{FritzWilke06}, we consider reduction via delayed simulation. The original paper uses alternating parity automata, a much stronger model compared to our DPAs. Limiting ourselves to this special case not only reduces the run time of the algorithm but allows for a fundamentally better approach to improve the amount of reduction.
+
+Similarly to other simulation techniques for reduction, the concept of delayed simulation is to consider two states to be mergeable if both \enquote{simulate} the behavior of the respective other. Delayed simulation in particular considers simulation in the sense that on every path, both states eventually see the same smallest priority.
+
+\begin{definition}
+	We define the \emph{delayed simulation equivalence relation} as $p \equiv_\text{de} q$ if and only if the following property holds for all $w \in \Sigma^*$: Let $p' = \delta^*(p, w)$ and $q' = \delta^*(q, w)$. Every run in the automaton that starts in $p'$ or $q'$ eventually sees a priority less than or equal to $\min \{c(p'), c(q')\}$.
+\end{definition}
+
+$\equiv_\text{de}$ is a congruence relation that implies language equivalence but states that are $\equiv_\text{de}$-equivalent do in general not have the same priority. It is therefore not trivial to see that equivalent states can be merged. In fact, the merger function is not as simple as a quotient automaton. Rather, we have to add the additional requirement for the chosen representative state to have minimal priority.
+
+\begin{definition}
+	We define the \emph{delayed simulation merger function} $\mu_\text{de} : \mathfrak{C}(\equiv_\text{de}) \rightarrow 2^Q$ with $\mu_\text{de}(\kappa) = \{q \in \kappa \mid c(q) = \min c(\kappa)\}$.
+\end{definition}
+
+\begin{theorem}
+	A representative merge of a DPA w.r.t.\ $\mu_\text{de}$ is language equivalent to the original.
+\end{theorem}
+
+\begin{proof}
+	The main idea of the proof is to show that for two states $p \equiv_\text{de} q$ with $c(p) < c(q)$, we can set the priority of $q$ to $c(p)$ without changing the language of the automaton. Then we can build an equivalent DPA to the original in which $\equiv_\text{de}$ implies priority equivalence, which shows that the quotient automaton of that DPA is language equivalent to the original. That quotient automaton is equivalent to our merger function $\mu_\text{de}$.
+	
+	To see that the priority of $q$ can be changed, assume there is a run $\rho$ of $\mathcal{A}$ on some $\omega$-word $\alpha$ such that changing the priority of $q$ to $c(p)$ also changes the acceptance status of $\rho$. As the argument works symmetrically, we can assume that $c(p)$ is even. We call the DPA with modified priorities $\mathcal{A}'$ with function $c'$. As the priority of every state in $\mathcal{A}$ is at least as good as in $\mathcal{A}'$, we can assume that $c(\rho)$ is accepting and $c'(\rho)$ is rejecting.
+	
+	$\rho$ must visit $q$ infinitely often and in $c'(\rho)$, $c'(q)$ must be the smallest priority. Otherwise, the two runs would have the same smallest priority that occurs infinitely often. Hence, there is a word $w$ such that reading $w$ from $q$ moves back to $q$ and only priorities greater than $c'(q)$ are seen in between. 
+	
+	Now consider the two runs $\pi_p$ and $\pi_q$ on the word $w^\omega$ starting in $p$ and $q$ respectively. By choice of $w$, $c(\pi_q)$ only visits priorities strictly greater than $c'(q)$. On the other hand, $\pi_p$ starts at state $p$ with $c(p) = c'(q)$. As $p \equiv_\text{de} q$, $c(\pi_q)$ must see a priority of at most $c(p)$ on all paths eventually. This is a contradiction and the run $\rho$ cannot exist. \qed
+\end{proof}
+
+Computation of delayed simulation is not trivial, especially if it is to be done efficiently. Taken from the original paper \cite{FritzWilke06}, our approach is to use a B\"uchi automaton and reduce $\equiv_\text{de}$ in the original DPA to language acceptance in that automaton.
+
+The B\"uchi automaton, called $\mathcal{G}_\text{de}$, is a product automaton with an additional component that it uses to track the visited priorities. This third component, called \enquote{obligations}, makes sure that whenever a priority occurs in the first component, the second component eventually has to simulate one at most as large. For each state pair $p, q$ we can then use $\mathcal{G}_\text{de}$ to determine whether $q$ simulates $p$. If this holds in both directions, the two states are $\equiv_\text{de}$-equivalent.
+
+\begin{definition}
+	We define the deterministic B\"uchi automaton $\mathcal{G}_\text{de} = (Q_\text{de}, \Sigma, \delta_\text{de}, F_\text{de})$ as 
+	\begin{itemize}
+		\item $Q_\text{de} = Q \times Q \times (c(Q) \cup \{\checkmark\})$
+		\item $\delta_\text{de}((p, q, k), a) = (p', q', \gamma(c(p'), c(q'), k))$, where $p' = \delta(p, a)$ and $q' = \delta(q, a)$
+		\item $F_\text{de} = Q \times Q \times \{\checkmark\}$.
+	\end{itemize}
+
+	The obligation function $\gamma$ is defined as $$\gamma(i, j, k) = \begin{cases}
+		\checkmark & \text{if } j \leq i \text{ and } j \leq_\checkmark k \\
+		\min_{\leq_\checkmark} \{i, k\} & \text{else}
+	\end{cases}$$ where $0 \leq_\checkmark 1 \leq_\checkmark 2 \leq_\checkmark \dots \leq_\checkmark \checkmark$.
+\end{definition}
+
+Now using this automaton, we can relate delayed simulation to the question of universal language. A state is \emph{language universal} if starting from it, every path is accepted.
+
+\begin{theorem}
+	For two states $p$ and $q$, let $q_\text{de}^0(p, q) = (p, q, \gamma(c(p), c(q), \checkmark))$. Then $p \equiv_\text{de} q$ if and only if $q_\text{de}^0(p, q)$ and $q_\text{de}^0(q, p)$ are language universal states.
+	\label{thm:Gde_related}
+\end{theorem}
+
+The proof of this theorem is just a technical comparison between the theoretical definition of $\equiv_\text{de}$ and the algorithmic definition of $\mathcal{G}_\text{de}$. We omit it, as no particular insight is gained.
+
+
+\begin{theorem}
+	$\mu_\text{de}$ can be computed in $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$.
+\end{theorem}
+
+\begin{proof}
+	Assuming that we can compute $\equiv_\text{de}$ in a suitable data structure in the described time, building $\mu_\text{de}$ from that is rather trivial. To see how we compute $\equiv_\text{de}$, observe that the size of $\mathcal{G}_\text{de}$ is $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. The set of language universal states in a DBA can be computed in linear time: we are looking for loops in the subgraph that only consists of the non-accepting states. Then every state from which such a loop is reachable is not language universal. These operations can all be done with classic graph operations such as depth first search.
+\end{proof}

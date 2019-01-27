@@ -1,0 +1,94 @@
+\begin{thebibliography}{10}
+
+\bibitem{BonchiPous2013}
+Filippo Bonchi and Damien Pous.
+\newblock Checking nfa equivalence with bisimulations up to congruence.
+\newblock In {\em Proceedings of the 40th Annual ACM SIGPLAN-SIGACT Symposium
+  on Principles of Programming Languages}, POPL '13, pages 457--468, New York,
+  NY, USA, 2013. ACM.
+
+\bibitem{Buchi1966}
+Julius~Richard Büchi.
+\newblock On a decision method in restricted second order arithmetic.
+\newblock 1966.
+
+\bibitem{ChamparnaudCoulon2004}
+J.-M. Champarnaud and F.~Coulon.
+\newblock Nfa reduction algorithms by means of regular inequalities.
+\newblock {\em Theoretical Computer Science}, 327(3):241 -- 253, 2004.
+\newblock Developments in Language Theory.
+
+\bibitem{EtessamiWilkeSchuller2001}
+Kousha Etessami, Thomas Wilke, and Rebecca~A. Schuller.
+\newblock Fair simulation relations, parity games, and state space reduction
+  for b{\"u}chi automata.
+\newblock In {\em Automata, Languages and Programming}, pages 694--707, Berlin,
+  Heidelberg, 2001. Springer Berlin Heidelberg.
+
+\bibitem{FritzWilke06}
+Carsten Fritz and Thomas Wilke.
+\newblock Simulation relations for alternating b\"{u}chi automata.
+\newblock {\em Theor. Comput. Sci.}, 338(1-3):275--314, June 2005.
+
+\bibitem{Hopcroft1971}
+John Hopcroft.
+\newblock An n log n algorithm for minimizing states in a finite automaton.
+\newblock {\em An N Log N Algorithm for Minimizing States in A Finite
+  Automaton}, page~15, 01 1971.
+
+\bibitem{JianRavikumar1991}
+Tao Jiang and B.~Ravikumar.
+\newblock Minimal nfa problems are hard.
+\newblock In {\em Automata, Languages and Programming}, pages 629--640, Berlin,
+  Heidelberg, 1991. Springer Berlin Heidelberg.
+
+\bibitem{MayrClemente2012}
+Richard Mayr and Lorenzo Clemente.
+\newblock Advanced automata minimization.
+\newblock In {\em POPL 2013}, Oct 2012.
+
+\bibitem{McCulloch1990}
+Warren~S. McCulloch and Walter Pitts.
+\newblock A logical calculus of the ideas immanent in nervous activity. 1943.
+\newblock {\em Bulletin of mathematical biology}, 52 1-2:99--115; discussion
+  73--97, 1990.
+
+\bibitem{Moore56}
+Edward~F. Moore.
+\newblock Gedanken-experiments on sequential machines.
+\newblock In Claude Shannon and John McCarthy, editors, {\em Automata Studies},
+  pages 129--153. Princeton University Press, Princeton, NJ, 1956.
+
+\bibitem{Mostowski1991}
+A.W. Mostowski.
+\newblock Hierarchies of weak automata and weak monadic formulas.
+\newblock {\em Theoretical Computer Science}, 83(2):323 -- 335, 1991.
+
+\bibitem{RabinScott1959}
+Michael~O Rabin and Dana Scott.
+\newblock Finite automata and their decision problems.
+\newblock {\em IBM Journal of Research and Development}, 3:114--125, 04 1959.
+
+\bibitem{Schewe2010}
+Sven Schewe.
+\newblock {Beyond Hyper-Minimisation---Minimising DBAs and DPAs is
+  NP-Complete}.
+\newblock In Kamal Lodaya and Meena Mahajan, editors, {\em IARCS Annual
+  Conference on Foundations of Software Technology and Theoretical Computer
+  Science (FSTTCS 2010)}, volume~8 of {\em Leibniz International Proceedings in
+  Informatics (LIPIcs)}, pages 400--411, Dagstuhl, Germany, 2010. Schloss
+  Dagstuhl--Leibniz-Zentrum fuer Informatik.
+
+\bibitem{Thomas1991}
+Wolfgang Thomas.
+\newblock Handbook of theoretical computer science (vol. b).
+\newblock chapter Automata on Infinite Objects, pages 133--191. MIT Press,
+  Cambridge, MA, USA, 1990.
+
+\bibitem{Thomas1997}
+Wolfgang Thomas.
+\newblock Handbook of formal languages, vol. 3.
+\newblock chapter Languages, Automata, and Logic, pages 389--455.
+  Springer-Verlag New York, Inc., New York, NY, USA, 1997.
+
+\end{thebibliography}

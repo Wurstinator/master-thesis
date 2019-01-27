@@ -1,0 +1,5 @@
+\contentsline {title}{State Space Reduction For Parity Automata}{1}{chapter.1}
+\authcount {2}
+\contentsline {author}{Christof L\IeC {\"o}ding \and Andreas Tollk\IeC {\"o}tter}{1}{chapter.1}
+\babel@toc {english}{}
+\contentsline {chapter}{References}{8}{chapter*.5}

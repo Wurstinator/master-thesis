@@ -1,0 +1,39 @@
+\section{Merger Functions}
+Our definition of DPAs is a quadruple $(Q, \Sigma, \delta, c)$, where $Q$ is the finite set of states, $\Sigma$ is the finite set of symbols (the alphabet), $\delta : Q \times \Sigma \rightarrow Q$ is the deterministic transition function, and $c : Q \rightarrow \mathbb{N}$ is the priority function. The set of $\omega$-words over $\Sigma$ is then denoted by $\Sigma^\omega$.
+
+\begin{definition}
+	Let $\mu : D \rightarrow (2^Q \setminus \{\emptyset\})$ be a function for some $D \subseteq 2^Q$. We call $\mu$ a \emph{merger function} if all sets in $D$ are pairwise disjoint and for all sets $M \in D$, $\mu(M) \cap (\bigcup D \setminus M) = \emptyset$.
+	
+	A \emph{representative merge} of $\mathcal{A}$ w.r.t. $\mu$ is constructed by choosing a representative $r_M \in \mu(M)$ for all $M \in D$ and then removing all states in $M \setminus \{r_M\}$. Transitions that originally lead to one of the removed states are redirected to the representative $r_M$ instead.
+\end{definition}
+
+While merger functions are a generalization of the more restrictive combination of congruence relation and quotient automaton, we still often build up our various merger functions from the basis of an equivalence relation. We briefly go over a few cases of relations that are of interest in this context before moving on to the first reduction technique.
+
+We consider several types of different relations, mostly over the state domain $Q$. A relation $R$ is a preorder if it is reflexive and transitive. $R$ is an equivalence relation if it is a symmetric preorder. $R$ is a congruence relation if it is an equivalence relation that is compatible with $\delta$, i.e. if $(p, q) \in R$, then also $(\delta(p, a), \delta(q, a)) \in R$ for all $a \in \Sigma$.
+
+If $\sim$ is an equivalence relation and $\mathcal{A}$ is a DPA, we write $\mathfrak{C}(\tilde) \subseteq 2^Q$ for the set of equivalence classes in $\mathcal{A}$. 
+
+\begin{definition}
+	The \emph{language equivalence relation} is defined by $p \equiv_L q$ iff reading every $\omega$-word $\alpha$ from either $p$ or $q$ gives the same acceptance.
+	
+	The \emph{priority almost equivalence relation} is defined by $p \equiv_\text{\Ankh} q$ iff reading every $\omega$-word $\alpha$ from either $p$ or $q$ yields two runs that differ in priorities at only finitely many positions.
+	
+	The \emph{Moore equivalence relation} is defined by $p \equiv_M q$ iff reading every finite word $w$ from either $p$ or $q$ ends up in states with the same priority.
+\end{definition}
+
+All three of these equivalence relations imply language equivalence between states. However, only Moore equivalence is strong enough of a contract to allow for immediate merging of states. Merging states according to $\equiv_\text{\Ankh}$ or $\equiv_L$ can change the language of the DPA. The idea of using already defined relations that imply language equivalence but are not strong enough to allow merging on their own and then refining those relations into finer equivalence classes can be seen in multiple of our techniques, such as the skip merger, path refinement, and LSF merger.
+
+In fact, building the quotient automaton w.r.t. $\equiv_M$ is the canonical way to minimize a deterministic Moore automaton. We can express the same by a merger function to reduce the state space of a DPA.
+
+\begin{definition}
+	The \emph{Moore merger function} is defined as $\mu_M : \mathfrak{C}(\equiv_M) \rightarrow 2^Q$ with $\mu_M(\kappa) = \kappa$.
+\end{definition}
+
+\begin{theorem}
+	A representative merge of a DPA w.r.t. $\mu_M$ is language equivalent to the original.
+\end{theorem}
+
+
+
+
+
