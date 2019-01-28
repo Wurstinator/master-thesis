@@ -24,5 +24,9 @@ We can classify a set of requirements that merger functions have to satisfy to b
 \end{theorem}
 
 \begin{proof}
-	a %TODO
+	Let $\mathcal{A}'$ be the representative merge and $\mathcal{A}''$ be the Schewe merge. Let $q_0$ be some starting state for the three runs $\rho$, $\rho'$, $\rho''$ of the three automata on some word $\alpha$. We claim that $\rho'$ and $\rho''$ have the same acceptance status.
+	
+	Let $K$ be the set of positions where $\rho''$ uses a transition that does not exist in $\rho'$. We can observe that for every equivalence class $\kappa$ of $\sim_\mathcal{C}^\mu$, there is at most one $k_\kappa$ in $K$. If there would be two such positions $k_\kappa$ and $l_\kappa$, then $\rho''(l_\kappa - 1)$ would be reachable from $\rho''(k_\kappa)$ which contradicts the requirement for the redirection of that edge in the first place.
+	
+	As $K = \{k_1, \dots, k_n\}$ is finite, $\rho''$ eventually only uses transitions that are also present in $\rho'$. By induction on $i$, we can show that $\rho'(k_i + 1) \sim_\mathcal{C}^\mu \rho''(k_i + 1)$, in particular for $i = n$. As $\sim_\mathcal{C}^\mu$ implies language equivalence by assumption, that means $\rho'$ and $\rho''$ must have the same acceptance status.
 \end{proof}

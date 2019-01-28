@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.27)  28 JAN 2019 17:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.27)  28 JAN 2019 17:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -968,10 +968,10 @@ LaTeX Font Info:    Try loading font information for U+mvs on input line 19.
 
 (/usr/share/texmf-dist/tex/latex/marvosym/umvs.fd)) (./schewe.tex [3])
 (./skip_merger.tex [4]) (./delayed_simulation.tex [5] [6])
-(./path_refinement.tex [7]) (./threshold_moore.tex [8] [9]) (./lsf.tex [10])
-[11] [12] (./paper.bbl) [13
+(./path_refinement.tex [7] [8]) (./threshold_moore.tex [9]) (./lsf.tex [10]
+[11]) [12] [13] (./paper.bbl) [14
 
-] [14]
+] [15]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 64.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 64.
  (./paper.aux)
@@ -982,8 +982,8 @@ Package rerunfilecheck Info: File `paper.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 64.
  ) 
 Here is how much of TeX's memory you used:
- 21430 strings out of 492639
- 395983 string characters out of 6135497
+ 21431 strings out of 492639
+ 395990 string characters out of 6135497
  499867 words of memory out of 5000000
  24825 multiletter control sequences out of 15000+600000
  13282 words of font info for 49 fonts, out of 8000000 for 9000
@@ -1008,10 +1008,10 @@ fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/typ
 e1/public/amsfonts/symbols/msam5.pfb></usr/share/texmf-dist/fonts/type1/public/
 amsfonts/symbols/msam7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/s
 ymbols/msbm10.pfb>
-Output written on paper.pdf (14 pages, 283715 bytes).
+Output written on paper.pdf (15 pages, 285975 bytes).
 PDF statistics:
- 288 PDF objects out of 1000 (max. 8388607)
- 225 compressed objects within 3 object streams
- 73 named destinations out of 1000 (max. 500000)
+ 292 PDF objects out of 1000 (max. 8388607)
+ 228 compressed objects within 3 object streams
+ 74 named destinations out of 1000 (max. 500000)
  29 words of extra memory for PDF output out of 10000 (max. 10000000)
 
