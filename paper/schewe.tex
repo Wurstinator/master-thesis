@@ -1,0 +1,28 @@
+\section{Schewe Merge}
+While the focus of the reduction analysis lies on the different techniques to generate merger functions, one can also try to improve the actual merging step performed. The representative merge defined above is the most intuitive and direct option when considering how to apply a merger function to a given DPA but we give another example in this section that potentially allows for better overall reduction.
+
+Based on \cite{Schewe2010}, the Schewe merge works rather similar to the representative merge. In addition to merging states from the merge sets into the chosen representative, it also redirects some transitions to the candidate set. While this does not remove additional states on its own, it simplifies the structure of the automaton to potentially improve the reduction of further reduction algorithms that are applied after the first.
+
+\begin{definition}
+	Let $\mu$ be a merger function. A \emph{Schewe merge} of a DPA $\mathcal{A}$ w.r.t.\ $\mu$ is constructed first by building a representative merge. Then, for all merge sets $M$ in $\mu$ and all transitions $\delta(p, a) = q$ in the original automaton, if $q \in \mu(M)$ and $p$ is not reachable from $q$, then the transition is redirected to $r_M$ instead.
+\end{definition}
+
+A Schewe merge differs from the representative merge if there are more than one state from the candidate set remaining and the states in a class are distributed over multiple SCCs. Whenever a transition would move the automaton to a candidate while changing SCC at the same time, that transition is instead redirected to the chosen representative state. 
+One can imagine that, for example, this potentially enhances the reduction of a consecutive Moore merger, as more states now uniformly target the same representative.
+
+It is not obvious if one can simply replace the representative merge with the Schewe merge and still keep the same properties such as preservation of language.
+We can classify a set of requirements that merger functions have to satisfy to be compatible to the Schewe merge.
+
+\begin{definition}
+	For a representative merge $\mathcal{A}'$ of $\mathcal{A}$ w.r.t.\ $\mu$, we define the candidate relation $\sim_\mathcal{C}^\mu$ as $p \sim_\mathcal{C}^\mu q$ if and only if there is a $C \in \mu(D)$ with $p, q \in C$.
+	
+	We call $\mu$ \emph{Schewe suitable} if for all representative merges $\mathcal{A}'$, $\mu_\mathcal{C}^\mu$ is a congruence relation, it implies language equivalence, and the reachability order restricted to any equivalence class of $\mu_\mathcal{C}^\mu$ is symmetric.
+\end{definition}
+
+\begin{theorem}
+	Let $\mu$ be a Schewe suitable merger function. For a DPA $\mathcal{A}$, if a representative merge and a Schewe merge of $\mathcal{A}$ are built with the same choices for the representative states, then these two merge DPAs are language equivalent.
+\end{theorem}
+
+\begin{proof}
+	a %TODO
+\end{proof}

@@ -1,0 +1,68 @@
+\section{Threshold Moore}
+The following approach is based on the idea of intersecting two equivalence relations which by themselves are too weak to allow for merging of states, but together then give a strong enough guarantee of similarity between the states. One of the two relations is one that implies language equivalence, similar to the previous path refinement algorithm. The second relation is a modification of Moore equivalence that only considers state priorities up to a certain upper limit.
+
+\begin{definition}
+	We define the \emph{threshold Moore equivalence relation} as $p \equiv_M^{\leq k} q$ if and only if for all finite words $w$, $\delta^*(p, w)$ and $\delta^*(q, w)$ have the same priority or both priorities are greater than $k$.
+	
+	Let $\sim$ be an equivalence relation that implies language equivalence. We define the \emph{TM equivalence relation} as $p \equiv_\text{TM}^\sim q$ if and only if $p \sim q$, $c(p) = c(q)$, and $p \equiv_M^{\leq c(p)} q$.
+\end{definition}
+
+We make the implicit assumption here that the relation $\sim$ is well-defined overspanning different automata: for two DPAs $\mathcal{A}$ and $\mathcal{A}'$ so that $Q'$ is a subset of $Q$ and for all states $q \in Q'$, both automata accept the same language starting from $q$, the relation $\sim$ considers two states to be equivalent in one automaton if and only if it does so in the other.
+
+This assumption makes sure that if we merge some states while preserving language in the automaton, the $\sim$ relation on the untouched states does not change.
+
+For the TM relation, the merger function is actually quite simple and simply merges classes of $\equiv_\text{TM}^\sim$. Note that this is not, however, a quotient automaton, as the TM relation is in general not a congruence relation.
+
+\begin{definition}
+	We define the \emph{TM merger function} $\mu_\text{TM}^\sim : \mathfrak{C}(\equiv_\text{TM}^\sim) \rightarrow 2^Q$ as $\mu_\text{TM}^\sim(\kappa) = \kappa$.
+\end{definition}
+
+\begin{lemma}
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge w.r.t.\ some equivalence class $\kappa \in \mathfrak{C}(\mu_\text{TM}^\sim)$. Let $k$ be the priority of all states in $\kappa$. For all states $p$ and $q$ in $\mathcal{A}'$, the two states are $\equiv_L$-equivalent in $\mathcal{A}$ if and only if they are in $\mathcal{A}'$. If $k \geq c(p), c(q)$, then the same holds for $\equiv_M^{\leq k}$.
+	\label{lem:threshm_kappamerge}
+\end{lemma}
+
+\begin{proof}
+	We focus on the language equivalence first. Let $\rho$ and $\rho'$ be the runs of the two automata on some word $\alpha$ starting in some state $q_0$. We show that these two runs have the same acceptance status. Then the claim of the Lemma follows by transitivity of $\equiv_L$.
+	
+	$\equiv_L$ is a congruence relation, so we have $\rho(i) \equiv_L \rho'(i)$ for all positions $i$. The same is true for $\equiv_M^{\leq k}$.
+	
+	If $c(\rho)$ visits infinitely priorities of at most $k$, then the two runs will see the same smallest priority $l < k$ infinitely often, as $c(\rho(i)) = l$ if and only if $c'(\rho'(i)) = l$. Thus, they must have the same acceptance status.
+	
+	If $c(\rho)$ only visits finitely many priorities of at most $k$, then from some point $j$ on in $\rho'$, only transitions that also exist in $\mathcal{A}$ are taken. As $\rho(j) \equiv_L \rho'(j)$, that means the two runs have the same acceptance status.
+	
+	\vspace{5pt}
+	
+	Regarding the second part of the Lemma, let $q$ be a state with $k \geq c(q)$ and let $\rho$ and $\rho'$ be the runs of the two automata on some $\alpha$ starting in $q$. As $\equiv_M^{\leq k}$ is a congruence relation, $\rho(i) \equiv_M^{\leq k} \rho'(i)$ for all positions $i$. 
+	
+	Let $p$ be a second state with $k \geq c(p)$ and let $\pi$ and $\pi'$ be the corresponding runs. Towards a contradiction, assume that the two states are $\equiv_M^{\leq k}$-equivalent in $\mathcal{A}$ but not in $\mathcal{A}'$. The other direction works symmetrically. Then there is a position $j$ such that $c'(\pi'(j)) \neq^{\leq k} c'(\rho'(j))$ but $c(\pi(j)) =^{\leq k} c(\rho(j))$. Since $\pi(j) \equiv_M^{\leq k} \pi'(j)$ and $\rho(j) \equiv_M^{\leq k} \rho'(j)$, this violates transitivity of $\equiv_M^{\leq k}$ and finishes our contradiction. \qed
+\end{proof}
+
+\begin{theorem}
+	A representative merge of a DPA w.r.t.\ $\mu_\text{TM}^\sim$ is language equivalent to the original.
+\end{theorem}
+
+\begin{proof}
+	Let $\kappa_1, \dots, \kappa_m$ be an enumeration of the equivalence classes in $\mu_\text{TM}^\sim$ sorted by descending priority. With Lemma \ref{lem:threshm_kappamerge} and our assumption that $\sim$ behaves well with state merges, merging the states in $\kappa_i$ will not change the equivalence classes $\kappa_{i+1}, \dots, \kappa_n$. It is therefore a language preserving operation to merge all equivalence classes in the given order. The resulting automaton is the same as a representative merge w.r.t.\ $\mu_\text{TM}^\sim$. \qed
+\end{proof}
+
+
+The computation of $\mu_\text{TM}^\sim$ is rather straight forward. 
+
+\begin{theorem}
+	For a given $\sim$ in a suitable data structure, $\mu_\text{TM}^\sim$ can be computed in $\mathcal{O}(|Q| \cdot |c(Q)| \cdot \log |Q|)$.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+
+
+
+
+
+
+
+
+

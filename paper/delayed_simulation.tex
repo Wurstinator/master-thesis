@@ -61,5 +61,5 @@ The proof of this theorem is just a technical comparison between the theoretical
 \end{theorem}
 
 \begin{proof}
-	Assuming that we can compute $\equiv_\text{de}$ in a suitable data structure in the described time, building $\mu_\text{de}$ from that is rather trivial. To see how we compute $\equiv_\text{de}$, observe that the size of $\mathcal{G}_\text{de}$ is $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. The set of language universal states in a DBA can be computed in linear time: we are looking for loops in the subgraph that only consists of the non-accepting states. Then every state from which such a loop is reachable is not language universal. These operations can all be done with classic graph operations such as depth first search.
+	Assuming that we can compute $\equiv_\text{de}$ in a suitable data structure in the described time, building $\mu_\text{de}$ from that is rather trivial. To see how we compute $\equiv_\text{de}$, observe that the size of $\mathcal{G}_\text{de}$ is $\mathcal{O}(|Q|^2 \cdot |c(Q)|)$. The set of language universal states in a DBA can be computed in linear time: we are looking for loops in the subgraph that only consists of the non-accepting states. Then every state from which such a loop is reachable is not language universal. These operations can all be done with classic graph operations such as depth first search. \qed
 \end{proof}

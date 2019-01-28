@@ -1,0 +1,43 @@
+\section{Labeled SCC Filter}
+The labeled SCC filter technique (LSF) is similar to the previous TM algorithm. Where the former required equivalent states to have equal priority, which limits its capabilities, LSF improves in that field by adding a different constraint instead; namely, reachability in the subautomaton that is constructed by removing all priorities below a certain threshold.
+
+For every priority $k$, we deine $\mathcal{A} \upharpoonright^c_{\geq k}$ as the subautomaton of $\mathcal{A}$ that contains only states with priority greater than $k$. Furthermore, we built total extensions of the reachability preorders for each such $k$ and call them $\preceq_k$.
+
+\begin{definition}
+	Let $k \in \mathbb{N}$ and let $\sim$ be an equivalence relation that implies language equivalence. We define the \emph{LSF equivalence relation} $\equiv_\text{LSF}^{k,\sim}$ as the intersection of $\equiv_M^{\leq k}$ and $\sim$.
+\end{definition}
+	
+LSF is an example where most of the computational logic is not part of the underlying equivalence relation but rather part of the merger function. For each equivalence class $\kappa$ of $\equiv_\text{LSF}^{k,\sim}$, we define $C_\kappa^k = \{r \in \kappa \mid c(r) > k \text{ and } r \text{ is } \preceq_k \text{-maximal among } \kappa\}$. We also set $M_\kappa^k = \kappa \setminus C_\kappa^k$.
+	
+\begin{definition}
+	We define the \emph{LSF merger function} $\mu_\text{LSF}^{k,\sim}$ as follows: for each equivalence class $\kappa$ of $\equiv_\text{LSF}^{k,\sim}$, we map $\mu_\text{LSF}^{k,\sim}(M_\kappa^k) = C_\kappa^k$.
+\end{definition}
+
+The merging process works similar to that of the TM merger function. We also assume here that the relation $\sim$ behaves well regarding language preserving merges.
+
+\begin{lemma}
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge w.r.t.\ some equivalence class $\kappa \in \mathfrak{C}(\mu_\text{LSF}^{k,\sim})$. For all states $p$ and $q$ in $\mathcal{A}'$, the two states are $\equiv_L$-equivalent in $\mathcal{A}$ if and only if they are in $\mathcal{A}'$. The same holds for $\equiv_M^{\leq k}$.
+	\label{lem:lsf_kappamerge}
+\end{lemma}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+\begin{theorem}
+	A representative merge of a DPA w.r.t.\ $\mu_\text{LSF}^{k,\sim}$ is language equivalent to the original.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
+
+Computation of the LSF merger is more complicated compared to the TM merger but still rather straight forward.
+
+\begin{theorem}
+	For a given $\sim$ in a suitable data structure, $\mu_\text{LSF}^{k,\sim}$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q|)$.
+\end{theorem}
+
+\begin{proof}
+	%TODO
+\end{proof}
