@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.27)  28 JAN 2019 14:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.27)  28 JAN 2019 17:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -954,20 +954,21 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <9> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 16.
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \vbox (badness 1226) has occurred while \output is active []
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]) (./basics_and_general.tex
 
- [2])
-(./basics_and_general.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2]
 LaTeX Font Info:    Try loading font information for U+euf on input line 14.
- (/usr/share/texmf-dist/tex/latex/amsfonts/ueuf.fd
+
+(/usr/share/texmf-dist/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 )
 LaTeX Font Info:    Try loading font information for U+mvs on input line 19.
 
-(/usr/share/texmf-dist/tex/latex/marvosym/umvs.fd) [3]) (./schewe.tex)
+(/usr/share/texmf-dist/tex/latex/marvosym/umvs.fd)) (./schewe.tex [3])
 (./skip_merger.tex [4]) (./delayed_simulation.tex [5] [6])
-(./path_refinement.tex [7] [8]) (./threshold_moore.tex [9]) (./lsf.tex [10])
+(./path_refinement.tex [7]) (./threshold_moore.tex [8] [9]) (./lsf.tex [10])
 [11] [12] (./paper.bbl) [13
 
 ] [14]
@@ -983,33 +984,34 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 64.
 Here is how much of TeX's memory you used:
  21430 strings out of 492639
  395983 string characters out of 6135497
- 498867 words of memory out of 5000000
+ 499867 words of memory out of 5000000
  24825 multiletter control sequences out of 15000+600000
  13282 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,14n,66p,791b,400s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,14n,66p,799b,402s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr
-/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></
-usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf
--dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmti7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/euler/eufm
-10.pfb></usr/share/texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/sh
-are/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texmf
--dist/fonts/type1/public/amsfonts/symbols/msam5.pfb></usr/share/texmf-dist/font
-s/type1/public/amsfonts/symbols/msam7.pfb></usr/share/texmf-dist/fonts/type1/pu
-blic/amsfonts/symbols/msbm10.pfb>
-Output written on paper.pdf (14 pages, 273738 bytes).
+mmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr
+/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></u
+sr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmsy9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.p
+fb></usr/share/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/sh
+are/texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/share/texmf-dist/
+fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/typ
+e1/public/amsfonts/symbols/msam5.pfb></usr/share/texmf-dist/fonts/type1/public/
+amsfonts/symbols/msam7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/s
+ymbols/msbm10.pfb>
+Output written on paper.pdf (14 pages, 283715 bytes).
 PDF statistics:
- 283 PDF objects out of 1000 (max. 8388607)
- 221 compressed objects within 3 object streams
+ 288 PDF objects out of 1000 (max. 8388607)
+ 225 compressed objects within 3 object streams
  73 named destinations out of 1000 (max. 500000)
  29 words of extra memory for PDF output out of 10000 (max. 10000000)
 

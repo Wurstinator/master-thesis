@@ -16,12 +16,24 @@ LSF is an example where most of the computational logic is not part of the under
 The merging process works similar to that of the TM merger function. We also assume here that the relation $\sim$ behaves well regarding language preserving merges.
 
 \begin{lemma}
-	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge w.r.t.\ some equivalence class $\kappa \in \mathfrak{C}(\mu_\text{LSF}^{k,\sim})$. For all states $p$ and $q$ in $\mathcal{A}'$, the two states are $\equiv_L$-equivalent in $\mathcal{A}$ if and only if they are in $\mathcal{A}'$. The same holds for $\equiv_M^{\leq k}$.
+	Let $\mathcal{A}$ be a DPA and let $\mathcal{A}'$ be a representative merge w.r.t.\ some equivalence class $\kappa \in \mathfrak{C}(\mu_\text{LSF}^{k,\sim})$. For all states $p$ and $q$ in $\mathcal{A}'$, the two states are $\equiv_\text{LSF}^{k,\sim}$-equivalent in $\mathcal{A}$ if and only if they are in $\mathcal{A}'$.
 	\label{lem:lsf_kappamerge}
 \end{lemma}
 
 \begin{proof}
-	%TODO
+	We show that the statement holds for $\equiv_L$ and for $\equiv_M^{\leq k}$. Assuming that $\sim$ is well behaved, it then translates to $\equiv_\text{LSF}^{k,\sim}$.
+	
+	Regarding $\equiv_M^{\leq k}$, let $q$ be a state with $k \geq c(q)$ and let $\rho$ and $\rho'$ be the runs of the two automata on some $\alpha$ starting in $q$. As $\equiv_M^{\leq k}$ is a congruence relation, $\rho(i) \equiv_M^{\leq k} \rho'(i)$ for all positions $i$. 
+	
+	Let $p$ be a second state with $k \geq c(p)$ and let $\pi$ and $\pi'$ be the corresponding runs. Towards a contradiction, assume that the two states are $\equiv_M^{\leq k}$-equivalent in $\mathcal{A}$ but not in $\mathcal{A}'$. The other direction works symmetrically. Then there is a position $j$ such that $c'(\pi'(j)) \neq^{\leq k} c'(\rho'(j))$ but $c(\pi(j)) =^{\leq k} c(\rho(j))$. Since $\pi(j) \equiv_M^{\leq k} \pi'(j)$ and $\rho(j) \equiv_M^{\leq k} \rho'(j)$, this violates transitivity of $\equiv_M^{\leq k}$ and finishes our contradiction.
+	
+	\vspace{5pt}
+	
+	Now regarding $\equiv_L$, we show that runs $\rho$ and $\rho'$ of $\mathcal{A}$ and $\mathcal{A}'$ always have the same acceptance status when starting in the same state. We can observe that $\rho(i) \equiv_L \rho'(i)$ and $\rho(i) \equiv_M^{\leq k} \rho'(i)$ at all positions $i$, as both of these are congruence relations. Thus, if $\rho'$ from some point $j$ on only uses transitions in $\mathcal{A}$, then the two runs have the same acceptance status, as $\rho(j) \equiv_L \rho'(j)$.
+	
+	If $\rho'$ visits infinitely many states with priority $k$ or less, then $\rho$ and $\rho'$ see that priority at the same positions and therefore share the same acceptance.
+	
+	Finally, assume that $\rho'$ uses infinitely many redirected edges but only sees states of priority greater than $k$ from some point on. To use a redirected transition, the automaton has to visit a state in $M_\kappa^k$ and then moves to a state in $C_\kappa^k$ instead. From there, however, it is only possible to reach $M_\kappa^k$ again via some states of priority $k$ or less (by definition of the candidate set). Hence, these two assumptions contradict another.
 \end{proof}
 
 \begin{theorem}
@@ -29,7 +41,7 @@ The merging process works similar to that of the TM merger function. We also ass
 \end{theorem}
 
 \begin{proof}
-	%TODO
+	Let $\kappa_1, \dots, \kappa_m$ be an enumeration of the equivalence classes of $\equiv_\text{LSF}^{k,\sim}$. When merging $M_{\kappa_i}^k$ into $C_{\kappa_i}^k$, the equivalence classes $\kappa_{i+1}, \dots, \kappa_m$ do not change by Lemma \ref{lem:lsf_kappamerge}. Also the candidate sets $C_{\kappa_j}^k$ themselves do not change, so we can safely merge all $M_{\kappa_i}^k$ into $C_{\kappa_i}^k$. This is the same operation as performed by the merger function.
 \end{proof}
 
 Computation of the LSF merger is more complicated compared to the TM merger but still rather straight forward.
@@ -39,5 +51,7 @@ Computation of the LSF merger is more complicated compared to the TM merger but 
 \end{theorem}
 
 \begin{proof}
-	%TODO
+	$\sim$ is already given and $\equiv_M^{\leq k}$ can be computed in $\mathcal{O}(|Q| \cdot \log |Q|)$. Building $\equiv_\text{LSF}^{k,\sim}$ is an easy linear time intersection operation.
+	
+	The second step to building $\mu_\text{LSF}^{k,\sim}$ is to compute $C_\kappa^k$ for each $\kappa$. For that, it suffices to find the order $\preceq_k$ and then select all the maximal elements from each equivalence class. This order can be computed by a topological sorting on the SCCs of $\mathcal{A} \upharpoonright^c_{> k}$ which one can construct in linear time.
 \end{proof}

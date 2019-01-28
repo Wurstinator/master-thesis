@@ -54,7 +54,9 @@ The computation of $\mu_\text{TM}^\sim$ is rather straight forward.
 \end{theorem}
 
 \begin{proof}
-	%TODO
+	Assuming that $\equiv_\text{TM}^\sim$ is known, computing $\mu_\text{TM}^\sim$ is easy. $\equiv_\text{TM}^\sim$ is an intersection of three equivalence relations, so the total run time is the sum of the run time to compute each of the three parts.
+	
+	$\sim$ is already given, so no time is needed. Computing the relation of equal priorities is also doable in $\mathcal{O}(|Q|)$, assuming suitable data structures in the automaton. Finally, $\equiv_M^{\leq k}$ can be computed with just a slight adaption of usual algorithms for Moore equivalence in time $\mathcal{O}(|Q| \cdot \log |Q|)$. This needs to be done for every $k$, so $|c(Q)|$ times.
 \end{proof}
 
 
