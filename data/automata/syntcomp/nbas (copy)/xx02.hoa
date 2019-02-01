@@ -1,0 +1,56 @@
+HOA: v1
+name: "!allready | FG!allready | (!decide & hgrant_0 & G(!hgrant_0 | (!hgrant_1 & (hgrant_0 | hgrant_1) & (!hgrant_0 | (busreq & hbusreq_0) | (!busreq & !hbusreq_0)) & F(!hbusreq_1 | hgrant_1) & (allready | (hgrant_0 & Xhgrant_0) | (!hgrant_0 & X!hgrant_0)) & (allready | (hgrant_1 & Xhgrant_1) | (!hgrant_1 & X!hgrant_1)) & ((decide & ((Xhgrant_0 & (!hgrant_0 | (!hgrant_1 & Xhgrant_1) | (hgrant_1 & X!hgrant_1))) | (hgrant_0 & X!hgrant_0 & ((hgrant_1 & Xhgrant_1) | (!hgrant_1 & X!hgrant_1))))) | (!decide & ((hgrant_0 & Xhgrant_0 & ((hgrant_1 & Xhgrant_1) | (!hgrant_1 & X!hgrant_1))) | (X!hgrant_0 & (!hgrant_0 | (!hgrant_1 & Xhgrant_1) | (hgrant_1 & X!hgrant_1)))))) & (!decide | hbusreq_0 | hbusreq_1 | Xhgrant_0))))"
+States: 11
+Start: 0
+AP: 7 "hgrant_0" "hgrant_1" "busreq" "hbusreq_0" "hbusreq_1" "allready" "decide"
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+properties: trans-labels explicit-labels state-acc
+--BODY--
+State: 0
+[!5] 1
+[5] 2
+[0&!1&!2&!3&5&!6 | 0&!1&2&3&5&!6] 3
+[0&!1&!2&!3&5&!6 | 0&!1&2&3&5&!6] 4
+State: 1 {0}
+[t] 1
+State: 2
+[t] 2
+[!5] 5
+State: 3 {0}
+[0&!1&!2&!3&!4&!6 | 0&!1&2&3&!4&!6] 3
+[0&!1&!2&!3&5&!6 | 0&!1&2&3&5&!6] 4
+[0&!1&!2&!3&4&!6 | 0&!1&2&3&4&!6] 6
+[0&!1&!2&!3&4&5&6 | 0&!1&2&3&4&5&6] 7
+[0&!1&2&3&!4&5&6] 8
+State: 4 {0}
+[!0&1] 9
+State: 5 {0}
+[!5] 5
+State: 6
+[0&!1&!2&!3&!4&!6 | 0&!1&2&3&!4&!6] 3
+[0&!1&!2&!3&5&!6 | 0&!1&2&3&5&!6] 4
+[0&!1&!2&!3&4&!6 | 0&!1&2&3&4&!6] 6
+[0&!1&!2&!3&4&5&6 | 0&!1&2&3&4&5&6] 7
+[0&!1&2&3&!4&5&6] 8
+State: 7
+[!0&!1&!4] 9
+[!0&!1&4] 10
+State: 8 {0}
+[!0&!1] 9
+State: 9 {0}
+[0&!1&!2&!3&!4&!6 | 0&!1&2&3&!4&!6] 3
+[0&!1&!2&!3&5&!6 | 0&!1&2&3&5&!6] 4
+[0&!1&!2&!3&4&!6 | 0&!1&2&3&4&!6] 6
+[0&!1&!2&!3&4&5&6 | 0&!1&2&3&4&5&6] 7
+[0&!1&2&3&!4&5&6] 8
+[!0] 9
+State: 10
+[0&!1&!2&!3&!4&!6 | 0&!1&2&3&!4&!6] 3
+[0&!1&!2&!3&5&!6 | 0&!1&2&3&5&!6] 4
+[0&!1&!2&!3&4&!6 | 0&!1&2&3&4&!6] 6
+[0&!1&!2&!3&4&5&6 | 0&!1&2&3&4&5&6] 7
+[0&!1&2&3&!4&5&6] 8
+[!0&1 | !0&!4] 9
+[!0&!1&4] 10
+--END--

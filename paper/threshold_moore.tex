@@ -62,8 +62,30 @@ The computation of $\mu_\text{TM}^\sim$ is rather straight forward.
 
 
 
-
-
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+	\node[state]           (0)                {$q_0,1$};
+	\node[state]           (1) [below=of 0]   {$q_1,1$};
+	\node[state]           (2) [right=of 0]   {$q_2,2$};
+	\node[state]           (3) [below=of 2]   {$q_3,3$};
+	\path[->] 
+	(0) edge [bend left] node [above] {a} (2)
+	(0) edge [bend left] node [left] {b} (1)
+	(0) edge [loop left] node {c} (0)
+	(1) edge [bend left] node [above] {a} (3)
+	(1) edge [bend left] node [left] {b} (0)
+	(1) edge [loop left]node {c} (1)
+	(2) edge [loop right] node {a} (2)
+	(2) edge [bend left] node [right] {b} (3)
+	(2) edge [bend left] node [above] {c} (0)
+	(3) edge [bend left] node [right] {a} (2)
+	(3) edge [loop right] node {b} (3)
+	(3) edge [bend left] node [above] {c} (1);
+	\end{tikzpicture}
+	\caption{Example TM}
+	\label{fig:example_tm}
+\end{figure}
 
 
 

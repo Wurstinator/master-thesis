@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.27)  28 JAN 2019 17:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2019.1.27)  31 JAN 2019 01:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -978,17 +978,17 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 64.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 64.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 64.
 Package rerunfilecheck Info: File `paper.out' has not changed.
-(rerunfilecheck)             Checksum: BD78AD6307FCEDB918E84EF4CD87BC26;122.
+(rerunfilecheck)             Checksum: 31D10E565A4F8D9AAA348569350AAAFF;122.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 64.
  ) 
 Here is how much of TeX's memory you used:
- 21431 strings out of 492639
- 395990 string characters out of 6135497
- 499867 words of memory out of 5000000
- 24825 multiletter control sequences out of 15000+600000
- 13282 words of font info for 49 fonts, out of 8000000 for 9000
+ 21552 strings out of 492639
+ 398523 string characters out of 6135497
+ 502950 words of memory out of 5000000
+ 24944 multiletter control sequences out of 15000+600000
+ 13754 words of font info for 51 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,14n,66p,799b,402s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,14n,68p,799b,955s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-dist/fonts/type1/public
@@ -997,21 +997,22 @@ mmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr
 /share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-di
 st/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></u
-sr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf
--dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmsy9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.p
-fb></usr/share/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/sh
-are/texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/share/texmf-dist/
-fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/typ
-e1/public/amsfonts/symbols/msam5.pfb></usr/share/texmf-dist/fonts/type1/public/
-amsfonts/symbols/msam7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/s
-ymbols/msbm10.pfb>
-Output written on paper.pdf (15 pages, 285975 bytes).
+/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></u
+sr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pf
+b></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pfb></usr/share/t
+exmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/share/texmf-dist/f
+onts/type1/public/marvosym/marvosym.pfb></usr/share/texmf-dist/fonts/type1/publ
+ic/amsfonts/symbols/msam10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
+ts/symbols/msam5.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols
+/msam7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pf
+b>
+Output written on paper.pdf (15 pages, 298130 bytes).
 PDF statistics:
- 292 PDF objects out of 1000 (max. 8388607)
- 228 compressed objects within 3 object streams
- 74 named destinations out of 1000 (max. 500000)
+ 298 PDF objects out of 1000 (max. 8388607)
+ 233 compressed objects within 3 object streams
+ 76 named destinations out of 1000 (max. 500000)
  29 words of extra memory for PDF output out of 10000 (max. 10000000)
 

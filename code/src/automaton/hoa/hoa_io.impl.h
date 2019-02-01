@@ -83,9 +83,9 @@ void ToHOA(const AutomatonT& automaton, std::ostream* ostream, const std::map<st
     (*ostream) << "--BODY--\n";
     for (unsigned int p = 0; p < automaton.States().size(); ++p) {
         (*ostream) << "State: " << p;
-        if (state_labels.find(p) != state_labels.end()) {
+        if (state_labels.find(automaton.States()[p]) != state_labels.end()) {
             (*ostream) << " \"";
-            (*ostream) << state_labels.at(p);
+            (*ostream) << state_labels.at(automaton.States()[p]);
             (*ostream) << '"';
         }
         if (is_parity_automaton)

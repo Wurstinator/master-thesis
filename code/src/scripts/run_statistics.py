@@ -12,13 +12,15 @@ import glob
 import progressbar
 from functools import partial
 
+threadcount = os.cpu_count() - 1
+
 
 # Run the specified experiments in parallel. 'callable' is the test runner. It is called with for each input file with
 # the filename as an argument. It needs to be multiprocessing-compatible, i.e. no lambdas.
 # The formatter is called with every generated output from the callable and should return a new output that is printed.
 def run_experiments(args, callable, formatter = (lambda x, y: y)):
     # Initialize the worker pool and necessary variables.
-    pool = multiprocessing.Pool(os.cpu_count() - 1)
+    pool = multiprocessing.Pool(threadcount)
     data_queue = multiprocessing.Queue()
     counter_lock = threading.Lock()  # lock for "threads_todo"
     threads_todo = 0

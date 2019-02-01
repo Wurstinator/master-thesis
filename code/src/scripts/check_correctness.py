@@ -17,6 +17,7 @@ executable_path_refinement = '../../bin/path_refinement_main'
 executable_threshold_moore = '../../bin/tremoore_main'
 executable_lsf = '../../bin/lsf_main'
 executable_simplelangeq = '../../bin/simplelange_main'
+executable_everything_safra = '../../bin/everything_safra_main'
 
 def executable_exists(filename):
     if not (os.path.isfile(filename) and os.access(filename, os.X_OK)):
@@ -53,6 +54,9 @@ class Execute:
         elif self.construction == 'slange':
             executable = executable_simplelangeq
             cmd = executable
+        elif self.construction == 'everything_safra':
+            executable = executable_everything_safra
+            cmd = executable
         executable_exists(executable)
         cmd = cmd + ' --automaton=' + filename
         return run_process_for_time(cmd, timeout=self.timeout)
@@ -85,7 +89,7 @@ def parse_args():
     parser.add_argument('input', help='One or multiple file paths to HOA files.', nargs='+')
     parser.add_argument('-t', dest='timeout', help='Time limit in seconds for each analysis.', type=int)
     parser.add_argument('-o', dest='output', help='Output file. If none is specified, stdout is used.')
-    constr_choices = ['schewe10', 'fritzwilke06', 'fritzwilke06_reset', 'iterated_moore', 'path_refinement', 'tremoore', 'lsf', 'slange']
+    constr_choices = ['schewe10', 'fritzwilke06', 'fritzwilke06_reset', 'iterated_moore', 'path_refinement', 'tremoore', 'lsf', 'slange', 'everything_safra']
     parser.add_argument('-c', dest='construction', help='Type of construction to perform on the input.', choices=constr_choices)
     parser.add_argument('-v', dest='verbose', help='Prints a message even if there was no error.', action='store_true')
     return parser.parse_args()

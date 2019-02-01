@@ -12,7 +12,7 @@ namespace tollk {
 namespace automaton {
 
 // Read symbols are represented by this type.
-using symbol_t = unsigned char;
+using symbol_t = unsigned short;
 
 /*
  * Abstract extension for the base automaton class which provides basic functionality for transitions.

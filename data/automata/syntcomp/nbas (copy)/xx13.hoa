@@ -1,0 +1,54 @@
+HOA: v1
+name: "G(Fr_0 & Fr_1 & Fg & (!r_0 | !r_1 | G!g)) | (F(G!r_0 | G!r_1) & F(G!g | (r_0 & r_1 & Fg)))"
+States: 12
+Start: 0
+AP: 3 "r_0" "r_1" "g"
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+properties: trans-labels explicit-labels state-acc stutter-invariant
+--BODY--
+State: 0
+[0&1&2] 1
+[!0 | !1] 2
+[!0 | !1 | !2] 3
+[0&1&!2] 4
+[!0&!2] 5
+[!1&!2] 6
+State: 1
+[t] 1
+[!0] 7
+[!1] 8
+State: 2
+[!0&!2 | !1&!2] 2
+[!1&2] 9
+[!0&1&2] 10
+State: 3
+[0&1&2] 1
+[!0 | !1 | !2] 3
+[0&1&!2] 4
+[!0&!2] 5
+[!1&!2] 6
+State: 4
+[!0&2 | !1&2] 1
+[!0&!2 | !1&!2] 4
+[!0&2] 7
+[!1&2] 8
+State: 5 {0}
+[!0&!2] 5
+State: 6 {0}
+[!1&!2] 6
+State: 7 {0}
+[!0] 7
+State: 8 {0}
+[!1] 8
+State: 9
+[!1] 9
+[!0&1] 10
+State: 10
+[!0] 10
+[0&!1] 11
+State: 11 {0}
+[!0&!2 | !1&!2] 2
+[!1&2] 9
+[!0&1&2] 10
+--END--

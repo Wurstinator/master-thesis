@@ -420,3 +420,31 @@ add_executable(everything_statistics
         ${AUTOMATON_HOA_INCLUDE}
         ${MAST_COMMON_HDRS_STAT})
 target_include_directories(everything_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+
+set(EVERYTHING_SAFRA_INCLUDE
+        ${AUTOMATON_INCLUDE}
+        ${SKIPPER_INCLUDE}
+        ${SCHEWE10_INCLUDE}
+        ${FRITZWILKE06_INCLUDE}
+        ${ITERATEDMOORE_INCLUDE}
+        ${PATHREFIN_INCLUDE}
+        ${TREMOORE_INCLUDE}
+        ${LSF_INCLUDE})
+
+add_executable(everything_safra_main
+        src/everything_safra/main_statistics.h
+        src/everything_safra/main_statistics.cpp
+        ${EVERYTHING_INCLUDE}
+        ${AUTOMATON_HOA_INCLUDE}
+        ${MAST_COMMON_HDRS_MAIN})
+target_include_directories(everything_safra_main PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
+
+
+add_executable(everything_safra_statistics
+        src/everything_safra/main_statistics.h
+        src/everything_safra/main_statistics.cpp
+        ${EVERYTHING_INCLUDE}
+        ${AUTOMATON_HOA_INCLUDE}
+        ${MAST_COMMON_HDRS_STAT})
+target_include_directories(everything_safra_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)

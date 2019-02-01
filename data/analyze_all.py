@@ -22,12 +22,17 @@ datasets = {t: read_prefix_to_json(directories[t]) for t in directories}
 rawstats = read_json_to_map('raw/rawstats.json', 'filename')
 all_automata = [f for f in rawstats]
 
-for dir in directories.values():
+def makedir_ifpos(name):
     try:
-        os.makedirs('analysis/' + dir)
+        os.makedirs(name)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
+
+for dir in directories.values():
+    makedir_ifpos('analysis/' + dir)
+makedir_ifpos('analysis/everything_safra')
+
 
 names = {
     'hopcroft': 'Hopcroft',
@@ -78,6 +83,15 @@ analysis_sub(
     data,
     rawstats)
 
+
+# "Everything Safra" syntcomp
+data = read_json_to_map('raw/everything_safra/syntcomp.json', 'filename')
+analysis_sub(
+    'analysis/everything_safra/syntcomp.pdf',
+    'Reduction of Syntcomp automata',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
 
 
 # "Everything" time comparison

@@ -79,7 +79,7 @@ nlohmann::json AnalyzeAutomaton(const AutomatonT& automaton) {
     static_assert(IsFiniteAutomaton<AutomatonT>());
     static_assert(IsParityAutomaton<AutomatonT>());
     static_assert(IsTransitionAutomaton<AutomatonT>());
-    constexpr bool is_deterministic_automaton = IsDeterministicAutomaton<AutomatonT>();
+    constexpr bool is_deterministic_automaton = false; // IsDeterministicAutomaton<AutomatonT>();
 
     nlohmann::json json;
     json["states"] = automaton.States().size();

@@ -71,3 +71,30 @@ The \emph{visit graph} that we now define instead is a less intuitive solution b
 \begin{proof}
 	Moore equivalence can be computed in time $\mathcal{O}(n \log n)$ of its automaton (\cite{Hopcroft1971}). The visit graph has size $n \in \mathcal{O}(|Q| \cdot |c(Q)|^2)$. As $|c(Q)|$ is always at most $|Q|$, this gives us the desired complexity.
 \end{proof}
+
+
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,initial text=]
+	\node[state]           (0)                {$q_0,0$};
+	\node[state]           (1) [below=of 0]   {$q_1,0$};
+	\node[state]           (2) [right=of 0]   {$q_2,0$};
+	\node[state]           (3) [below=of 2]   {$q_3,1$};
+	\path[->] 
+	(0) edge [bend left] node [left] {a} (1)
+	(0) edge [bend left] node [above] {b} (2)
+	(0) edge [loop left] node {c} (0)
+	(1) edge [bend left] node [left] {a} (0)
+	(1) edge [bend left] node [above] {b} (3)
+	(1) edge [loop left]node {c} (1)
+	(2) edge [bend left] node [right] {a} (3)
+	(2) edge [loop right] node {b} (2)
+	(2) edge [bend left] node [above] {c} (0)
+	(3) edge [loop right] node {a} (3)
+	(3) edge [bend left] node [right] {b} (2)
+	(3) edge [bend left] node [above] {c} (1);
+	\end{tikzpicture}
+	\caption{Example PR}
+	\label{fig:example_pr}
+\end{figure}

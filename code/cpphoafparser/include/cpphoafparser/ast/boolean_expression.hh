@@ -136,8 +136,10 @@ public:
 
   /** Get the left child node (might be an empty pointer) */
   ptr getLeft() const {return left;}
+  BooleanExpression<Atoms>* getLeftRaw() const {return left.get();}
   /** Get the right child node (might be an empty pointer) */
   ptr getRight() const {return right;}
+  BooleanExpression<Atoms>* getRightRaw() const {return right.get();}
   /** Get the atom for an EXP_ATOM node. May only be called if `isAtom() == true` */
   const Atoms& getAtom() const {
     if (!isAtom()) throw std::logic_error("Illegal access");

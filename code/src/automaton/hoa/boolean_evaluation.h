@@ -27,13 +27,13 @@ bool EvaluateHOABooleanExpr(const cpphoafparser::BooleanExpression<T>& expressio
     if (expression.isFALSE())
         return false;
     if (expression.isAND())
-        return EvaluateHOABooleanExpr(*expression.getLeft(), values_function) &&
-               EvaluateHOABooleanExpr(*expression.getRight(), values_function);
+        return EvaluateHOABooleanExpr(*expression.getLeftRaw(), values_function) &&
+               EvaluateHOABooleanExpr(*expression.getRightRaw(), values_function);
     if (expression.isOR())
-        return EvaluateHOABooleanExpr(*expression.getLeft(), values_function) ||
-               EvaluateHOABooleanExpr(*expression.getRight(), values_function);
+        return EvaluateHOABooleanExpr(*expression.getLeftRaw(), values_function) ||
+               EvaluateHOABooleanExpr(*expression.getRightRaw(), values_function);
     if (expression.isNOT())
-        return !EvaluateHOABooleanExpr(*expression.getLeft(), values_function);
+        return !EvaluateHOABooleanExpr(*expression.getLeftRaw(), values_function);
     throw std::logic_error("Expression has invalid format.");
 }
 
