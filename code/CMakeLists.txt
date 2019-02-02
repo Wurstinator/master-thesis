@@ -383,6 +383,14 @@ add_executable(lsf_statistics
 target_include_directories(lsf_statistics PRIVATE ${RANGEV3_DIR}/include ${HOAFP_DIR}/include)
 
 
+set(LSF_TESTS
+        src/lsf/tests/test_main.cpp
+        src/lsf/tests/test_lsf_relation.cpp)
+
+add_executable(test_lsf ${LSF_INCLUDE} ${LSF_TESTS} ${Catch2_HDRS})
+target_include_directories(test_lsf PRIVATE ${CATCH2_DIR}/single_include range-v3/include)
+
+
 
 # Simple Langeq
 
