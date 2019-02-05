@@ -84,11 +84,35 @@ analysis_sub(
     rawstats)
 
 
-# "Everything Safra" syntcomp
+# syntcomp
 data = read_json_to_map('raw/everything_safra/syntcomp.json', 'filename')
 analysis_sub(
     'analysis/everything_safra/syntcomp.pdf',
-    'Reduction of Syntcomp automata',
+    'Reduction of Syntcomp automata (with all techniques)',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
+
+data = read_json_to_map('raw/path_refinement/syntcomp.json', 'filename')
+analysis_sub(
+    'analysis/path_refinement/syntcomp.pdf',
+    'Reduction of Syntcomp automata (with PR)',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
+
+data = read_json_to_map('raw/threshold_moore/syntcomp.json', 'filename')
+analysis_sub(
+    'analysis/threshold_moore/syntcomp.pdf',
+    'Reduction of Syntcomp automata (with TM)',
+    set(data.keys()).intersection(rawstats.keys()),
+    data,
+    rawstats)
+
+data = read_json_to_map('raw/lsf/syntcomp.json', 'filename')
+analysis_sub(
+    'analysis/lsf/syntcomp.pdf',
+    'Reduction of Syntcomp automata (with LSF)',
     set(data.keys()).intersection(rawstats.keys()),
     data,
     rawstats)

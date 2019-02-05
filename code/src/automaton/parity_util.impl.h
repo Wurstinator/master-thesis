@@ -71,7 +71,7 @@ void QuotientAutomatonLabelled(AutomatonT* automaton, const EquivalenceRelation 
 template<typename AutomatonT>
 std::unordered_set<state_t> BuchiEmptyStates(const AutomatonT& automaton) {
     static_assert(std::is_base_of<ParityAutomaton, AutomatonT>::value);
-    assert(automaton.IsBuchi());
+    assert(ParityIsBuchi(automaton));
     //TODO why doesn't this compile?
 //    static_assert(is_specialization_base_of<TransitionAutomaton, AutomatonT>::value);
 
